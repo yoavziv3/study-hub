@@ -9,8 +9,12 @@ data/moodle.json
 data/progress.json
 data/*.tmp
 
-# Lecture data IS committed (the cloud site is built from it), except the intermediate PDFs
+# Lecture data IS committed (the cloud site is built from it), except the intermediate PDFs.
+# The cloud shows slides from one PDF per lecture (deck.pdf, or the original if it's a PDF), so the rendered
+# slide images stay on this Mac – only the first-slide thumbnail is committed.
 data/lectures/*/slides.pdf
+data/lectures/*/slides/*
+!data/lectures/*/slides/t001.jpg
 data/lectures/**/*.tmp
 
 inbox/*
@@ -27,3 +31,4 @@ data/reports.json
 
 # Weekly backups of student accounts from the cloud – never commit
 backups/
+.playwright-mcp/

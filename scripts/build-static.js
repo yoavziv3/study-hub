@@ -22,12 +22,31 @@ const write = async (rel, value) => {
 
 // Only lectures that finished processing are published.
 const lectures = listLectures().filter((l) => l.status === 'ready');
+
+// Slides are shown from one PDF per lecture (drawn in the browser) plus one thumbnail – instead of two images
+// per slide – which keeps the site far below Cloudflare's 20,000-file limit. Decks whose PDF is too big for a
+// Pages asset (25 MiB) fall back to slide images.
+const MAX_ASSET = 24 * 1024 * 1024;
+const slideAssets = new Map();
+for (const m of lectures) {
+  const dir = lectureDir(m.id);
+  const original = path.join(dir, m.originalFile);
+  const isPdf = path.extname(m.originalFile).toLowerCase() === '.pdf';
+  const src = isPdf ? original : [path.join(dir, 'deck.pdf'), path.join(dir, 'slides.pdf')].find((f) => fs.existsSync(f));
+  const fits = src && fs.existsSync(src) && fs.statSync(src).size <= MAX_ASSET;
+  slideAssets.set(m.id, {
+    pdf: fits ? (isPdf ? `/data/orig/${m.id}/${m.originalFile}` : `/data/pdf/${m.id}.pdf`) : null,
+    pdfSource: fits && !isPdf ? src : null,
+    thumb: fs.existsSync(path.join(dir, 'slides', 't001.jpg')) ? `/data/thumb/${m.id}.jpg` : null,
+  });
+}
+const withSlides = (m) => ({ ...m, pdf: slideAssets.get(m.id)?.pdf || null, thumb: slideAssets.get(m.id)?.thumb || null });
 const courses = listCourses();
 
 const card = (m) => {
   const c = getContent(m.id);
   return {
-    ...m,
+    ...withSlides(m),
     overview: c?.overview || '',
     topicCount: c?.topics?.length || 0,
     quizCount: c?.quiz?.length || 0,
@@ -63,7 +82,7 @@ await write(
 for (const c of courses) {
   const ls = lectures.filter((l) => l.courseId === c.id);
   await write(`courses/${c.id}.json`, { ...c, lectures: ls.map(card) });
-  await write(`bundles/${c.id}.json`, { ...c, lectures: ls.map((m) => ({ ...m, content: getContent(m.id) })), practice: getPractice(c.id) });
+  await write(`bundles/${c.id}.json`, { ...c, lectures: ls.map((m) => ({ ...withSlides(m), content: getContent(m.id) })), practice: getPractice(c.id) });
 }
 
 // Search index per course, so each student downloads (and is allowed) only their own courses.
@@ -72,7 +91,7 @@ for (const m of lectures) {
   const course = courses.find((c) => c.id === m.courseId);
   const content = getContent(m.id);
   const slides = getSlides(m.id);
-  await write(`lectures/${m.id}.json`, { ...m, content, slides, course });
+  await write(`lectures/${m.id}.json`, { ...withSlides(m), content, slides, course });
 
   const base = { lectureId: m.id, lectureTitle: m.title, courseId: m.courseId, courseShort: course?.short, color: course?.color };
   const index = (search[m.courseId] ||= []);
@@ -87,9 +106,20 @@ for (const m of lectures) {
   // Slide images are static (their URLs are only listed inside the access-checked lecture JSON);
   // the original deck sits under /data/orig/, which only enrolled students can download.
   const src = lectureDir(m.id);
-  const dest = path.join(OUT, 'files', m.id);
-  await fsp.mkdir(dest, { recursive: true });
-  if (fs.existsSync(path.join(src, 'slides'))) await fsp.cp(path.join(src, 'slides'), path.join(dest, 'slides'), { recursive: true });
+  const assets = slideAssets.get(m.id);
+  if (assets.pdfSource) {
+    await fsp.mkdir(path.join(OUT, 'data', 'pdf'), { recursive: true });
+    await fsp.copyFile(assets.pdfSource, path.join(OUT, 'data', 'pdf', `${m.id}.pdf`));
+  }
+  if (assets.thumb) {
+    await fsp.mkdir(path.join(OUT, 'data', 'thumb'), { recursive: true });
+    await fsp.copyFile(path.join(src, 'slides', 't001.jpg'), path.join(OUT, 'data', 'thumb', `${m.id}.jpg`));
+  }
+  if (!assets.pdf) {
+    // Fallback: slide images (kept in git under fallback/ for decks too big for a single PDF asset).
+    const images = ['fallback', 'slides'].map((d) => path.join(src, d)).find((d) => fs.existsSync(d) && fs.readdirSync(d).length > 1);
+    if (images) await fsp.cp(images, path.join(OUT, 'files', m.id, 'slides'), { recursive: true });
+  }
   if (fs.existsSync(path.join(src, m.originalFile))) {
     await fsp.mkdir(path.join(OUT, 'data', 'orig', m.id), { recursive: true });
     await fsp.copyFile(path.join(src, m.originalFile), path.join(OUT, 'data', 'orig', m.id, m.originalFile));
@@ -98,6 +128,10 @@ for (const m of lectures) {
 for (const [courseId, entries] of Object.entries(search)) await write(`search/${courseId}.json`, entries);
 // Links from each course's Moodle page (served only to the course's students, like the rest of /data).
 for (const c of courses) await write(`links/${c.id}.json`, getLinks(c.id));
+
+// pdf.js standard fonts (for PDFs that don't embed them), served next to the app.
+const fontsDir = path.join(ROOT, 'node_modules', 'pdfjs-dist', 'standard_fonts');
+if (fs.existsSync(fontsDir)) await fsp.cp(fontsDir, path.join(OUT, 'pdfjs', 'standard_fonts'), { recursive: true });
 
 // Only /api/* and /data/* run the Functions (sign-in and access checks); everything else is plain static hosting.
 await fsp.writeFile(

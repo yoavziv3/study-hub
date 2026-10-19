@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { slideUrl, useFetch, STATIC } from '../api.js';
+import { thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 
@@ -167,7 +167,7 @@ export default function Home() {
         <div className="stack">
           {last && (
             <Link to={`/lecture/${last.id}?tab=slides&slide=${progress.last.slide || 1}`} className="card hover continue-card" data-color={lastCourse?.color}>
-              <div className="continue-thumb">{last.slideCount > 0 && <img src={slideUrl(last.id, progress.last.slide || 1, true)} alt="" />}</div>
+              <div className="continue-thumb">{last.slideCount > 0 && thumbUrl(last, progress.last.slide || 1) && <img src={thumbUrl(last, progress.last.slide || 1)} alt="" />}</div>
               <div className="grow">
                 <div className="faint" style={{ fontSize: 12.5 }}>המשך מאיפה שעצרת · {lastCourse?.short}</div>
                 <div style={{ fontWeight: 700, fontSize: 17 }}>{last.title}</div>
@@ -188,7 +188,7 @@ export default function Home() {
               const c = courses.find((x) => x.id === l.courseId);
               return (
                 <Link key={l.id} to={`/lecture/${l.id}`} className="row" data-color={c?.color} style={{ padding: 10, borderRadius: 12 }}>
-                  <div className="continue-thumb" style={{ width: 92 }}>{l.slideCount > 0 && <img src={slideUrl(l.id, 1, true)} alt="" loading="lazy" />}</div>
+                  <div className="continue-thumb" style={{ width: 92 }}>{l.slideCount > 0 && thumbUrl(l) && <img src={thumbUrl(l)} alt="" loading="lazy" />}</div>
                   <div className="grow">
                     <div style={{ fontWeight: 600 }}>{l.title}</div>
                     <div className="row" style={{ gap: 6, marginTop: 4 }}>

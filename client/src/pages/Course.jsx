@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, slideUrl, useFetch, shuffle } from '../api.js';
+import { api, thumbUrl, useFetch, shuffle } from '../api.js';
 import { CourseIcon, Page, Ring, Tabs, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { Markdown, Tex } from '../components/markdown.jsx';
 import Quiz from '../components/Quiz.jsx';
@@ -22,7 +22,7 @@ function LectureCard({ l, course, i }) {
     <motion.div variants={fadeUp} initial="hidden" animate="show" custom={i}>
       <Link to={`/lecture/${l.id}`} className="card hover lecture-card">
         <div className="lecture-thumb">
-          {l.slideCount > 0 && l.hasPdf && <img src={slideUrl(l.id, 1, true)} alt="" loading="lazy" />}
+          {l.slideCount > 0 && thumbUrl(l) && <img src={thumbUrl(l)} alt="" loading="lazy" />}
           <span className="badge chip" style={{ background: 'rgba(0,0,0,.6)', color: '#fff', borderColor: 'transparent' }}>{l.slideCount} שקפים</span>
         </div>
         <div>

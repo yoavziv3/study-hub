@@ -50,8 +50,8 @@ export async function gate({ request, env }) {
     let courseId = m?.[2];
     if (!m) {
       // A lecture's JSON or original file: allowed by the course the lecture belongs to.
-      m = path.match(/^\/data\/(?:lectures\/([\w]+-[\w]+)\.json|orig\/([\w]+-[\w]+)\/[^/]+)$/);
-      courseId = m ? await lectureCourse(env, request, m[1] || m[2]) : null;
+      m = path.match(/^\/data\/(?:lectures\/([\w]+-[\w]+)\.json|orig\/([\w]+-[\w]+)\/[^/]+|pdf\/([\w]+-[\w]+)\.pdf|thumb\/([\w]+-[\w]+)\.jpg)$/);
+      courseId = m ? await lectureCourse(env, request, m[1] || m[2] || m[3] || m[4]) : null;
     }
     if (!m) return fail(404, 'לא נמצא');
     if (!allowed.has(courseId)) return fail(403, 'החומר הזה פתוח רק לסטודנטים הרשומים לקורס');

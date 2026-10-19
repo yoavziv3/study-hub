@@ -107,6 +107,9 @@ export const api = {
 /** The original deck/PDF for download (in the cloud it sits behind the enrollment check). */
 export const originalUrl = (lecture) => (STATIC ? `/data/orig/${lecture.id}/${lecture.originalFile}` : `/files/${lecture.id}/${lecture.originalFile}`);
 
+/** A lecture's thumbnail for cards and lists (the cloud keeps one per lecture: the first slide). */
+export const thumbUrl = (lecture, n = 1) => (STATIC ? lecture.thumb || null : lecture.hasPdf ? slideUrl(lecture.id, n, true) : null);
+
 export const slideUrl = (lectureId, n, thumb = false) =>
   `/files/${lectureId}/slides/${thumb ? 't' : ''}${String(n).padStart(3, '0')}.jpg`;
 

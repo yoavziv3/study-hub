@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Sparkles, FileText, PanelLeftClose, PanelLeftOpen, Download } from 'lucide-react';
-import { slideUrl, originalUrl } from '../api.js';
+import { slideUrl, originalUrl, STATIC } from '../api.js';
+import { PdfPage, PdfThumb, loadPdf } from './PdfSlides.jsx';
 import { useApp } from '../store.jsx';
 import { ltr } from './ui.jsx';
 
@@ -16,7 +17,9 @@ export default function SlideViewer({ lecture, slide, setSlide }) {
   const topics = lecture.content?.topics || [];
   const topic = topics.find((t) => slide >= t.slideStart && slide <= t.slideEnd);
   const text = lecture.slides[slide - 1]?.text || '';
-  const hasImages = lecture.hasPdf;
+  // Cloud: slides come from the lecture's PDF (drawn in the browser); on the Mac and as a fallback, from images.
+  const pdf = STATIC ? lecture.pdf : null;
+  const hasImages = !pdf && lecture.hasPdf && (!STATIC || lecture.pdf === null);
 
   const go = (n) => {
     const next = Math.max(1, Math.min(total, n));
@@ -39,6 +42,11 @@ export default function SlideViewer({ lecture, slide, setSlide }) {
   useEffect(() => {
     thumbsRef.current?.querySelector('.thumb.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
   }, [slide]);
+
+  // Start loading the PDF right away (it's one download for the whole deck).
+  useEffect(() => {
+    if (pdf) loadPdf(pdf).catch(() => {});
+  }, [pdf]);
 
   // Preload neighbours for instant navigation.
   useEffect(() => {
@@ -64,7 +72,19 @@ export default function SlideViewer({ lecture, slide, setSlide }) {
             onTouchEnd={(e) => { const dx = e.changedTouches[0].clientX - swipe.current; if (Math.abs(dx) > 40) go(slide + (dx > 0 ? 1 : -1)); }}
           >
             <AnimatePresence initial={false} custom={dir}>
-              {hasImages ? (
+              {pdf ? (
+                <motion.div
+                  key={slide}
+                  className="stage-pdf"
+                  custom={dir}
+                  initial={{ opacity: 0, x: dir * -40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: dir * 40 }}
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <PdfPage url={pdf} page={slide} label={`שקף ${slide}`} />
+                </motion.div>
+              ) : hasImages ? (
                 <motion.img
                   key={slide}
                   src={slideUrl(lecture.id, slide)}
@@ -129,7 +149,7 @@ export default function SlideViewer({ lecture, slide, setSlide }) {
           <div className="thumbs" ref={thumbsRef}>
             {[...Array(total)].map((_, i) => (
               <button key={i} className={`thumb ${slide === i + 1 ? 'active' : ''}`} onClick={() => go(i + 1)}>
-                {hasImages ? <img src={slideUrl(lecture.id, i + 1, true)} alt="" loading="lazy" /> : <div style={{ padding: 6, fontSize: 9, overflow: 'hidden', height: '100%' }}>{lecture.slides[i]?.text.slice(0, 80)}</div>}
+                {pdf ? <PdfThumb url={pdf} page={i + 1} /> : hasImages ? <img src={slideUrl(lecture.id, i + 1, true)} alt="" loading="lazy" /> : <div style={{ padding: 6, fontSize: 9, overflow: 'hidden', height: '100%' }}>{lecture.slides[i]?.text.slice(0, 80)}</div>}
                 <i>{i + 1}</i>
               </button>
             ))}

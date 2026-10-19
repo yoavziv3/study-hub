@@ -137,9 +137,16 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   if (!aiOnly) {
     await stage(id, 'converting');
     const hasPdf = await convertToPdf(original, pdf);
+    // The cloud shows slides from this PDF. For a PDF original the original itself is used.
+    if (hasPdf && path.extname(original).toLowerCase() !== '.pdf') await fsp.copyFile(pdf, path.join(dir, 'deck.pdf'));
 
     await stage(id, 'rendering');
     const count = hasPdf ? await renderSlides(pdf, path.join(dir, 'slides')) : 0;
+    // A deck whose PDF is too big for one cloud asset keeps its slide images in git instead (fallback/).
+    if (count && fs.statSync(pdf).size > 24 * 1024 * 1024) {
+      await fsp.rm(path.join(dir, 'fallback'), { recursive: true, force: true });
+      await fsp.cp(path.join(dir, 'slides'), path.join(dir, 'fallback'), { recursive: true });
+    }
 
     await stage(id, 'extracting');
     const texts = await extractSlidesText(original, hasPdf ? pdf : null);
