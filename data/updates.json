@@ -268,6 +268,19 @@
       "deadlineId": "mvf5i5q1b2xp",
       "createdAt": "2026-10-19T11:08:20.473Z",
       "addedAt": "2026-10-19T11:08:20.473Z"
+    },
+    {
+      "id": "mvf5sffov72l",
+      "key": "material:econ-5i1pveoh",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "econ",
+      "title": "שיעורי בית / תרגילים חדשים במבוא לכלכלה: תרגיל 1 – עקומת התמורה (פתרון מלא)",
+      "body": "",
+      "lectureId": "econ-5i1pveoh",
+      "source": "moodle",
+      "createdAt": "2026-10-19T11:08:15.284Z",
+      "addedAt": "2026-10-19T11:16:19.620Z"
     }
   ],
   "deadlines": [

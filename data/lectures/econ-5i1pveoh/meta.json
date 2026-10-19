@@ -1,0 +1,27 @@
+{
+  "id": "econ-5i1pveoh",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגיל 1 – עקומת התמורה (פתרון מלא)",
+  "originalName": "Problem_set_1_26_27.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-19T11:08:15.284Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "section": "",
+    "module": "תרגיל 1",
+    "note": "תרגילים לעשות מתוך התרגיל:\n\r\n1,\n\r\n2א,ב,ג\n\r\n4\n\r\n5 א,ב\n\r\n6"
+  },
+  "updatedAt": "2026-10-19T11:16:19.621Z",
+  "aiError": null,
+  "announced": true
+}
