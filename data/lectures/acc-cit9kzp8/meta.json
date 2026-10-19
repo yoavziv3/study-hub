@@ -19,7 +19,9 @@
     "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
     "module": "יחידה 5 - פיננסית - דוחות כספיים"
   },
-  "updatedAt": "2026-10-19T11:08:07.245Z",
+  "updatedAt": "2026-10-19T11:49:21.185Z",
   "aiError": null,
-  "announced": true
+  "announced": true,
+  "notesStatus": null,
+  "notesError": "הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר"
 }

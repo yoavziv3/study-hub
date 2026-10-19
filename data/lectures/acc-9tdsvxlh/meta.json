@@ -13,6 +13,8 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.447Z",
-  "updatedAt": "2026-10-19T11:08:07.245Z",
-  "announced": true
+  "updatedAt": "2026-10-19T11:49:11.099Z",
+  "announced": true,
+  "notesStatus": null,
+  "notesError": null
 }

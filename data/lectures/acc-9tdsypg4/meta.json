@@ -13,6 +13,8 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.451Z",
-  "updatedAt": "2026-10-19T11:08:07.246Z",
-  "announced": true
+  "updatedAt": "2026-10-19T11:49:14.455Z",
+  "announced": true,
+  "notesStatus": null,
+  "notesError": "הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר"
 }
