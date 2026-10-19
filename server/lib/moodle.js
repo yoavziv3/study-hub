@@ -5,9 +5,9 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse } from './store.js';
+import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
 import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
-import { addAnnouncements, syncDeadlines, announceMaterial } from './updates.js';
+import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert } from './updates.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
@@ -20,7 +20,8 @@ const cloudEnabled = () => !!(CLOUD && ADMIN_SECRET.length >= 32);
 
 // Which files in a course page become site items, and of which type.
 const LECTURE_HINT = /הרצא|שיעור(?!י בית)|יחידה|מצגת|שקפים|lecture|slides?|presentation|week|שבוע|chapter|פרק/i;
-const EXCLUDE = /מבחן|מבחנים|בוחן|סילבוס|syllabus|\bexam|quiz|דף נוסחאות|formula sheet|ציונים|grades|נהלי|לוח זמנים/i;
+// Not imported as material (they still appear under "קישורים"). Past exams are imported – as their own kind.
+const EXCLUDE = /בוחן|סילבוס|syllabus|quiz|דף נוסחאות|formula sheet|ציונים|grades|נהלי|לוח זמנים|הדרכה לקראת|הנחיות לבחינ/i;
 
 /** 'lecture' | 'tutorial' | 'homework' | null (not imported automatically). */
 function classify(filename, moduleName, sectionName) {
@@ -117,6 +118,16 @@ async function getToken(username, password) {
   return data.token;
 }
 
+// ---------- academic terms ----------
+// BGU short names: [dept 3][degree 1][course 4][group 2][year 4][semester 1], e.g. 214197110120271 → 2027, sem 1.
+export function termFromShortname(shortname = '') {
+  const m = String(shortname).match(/^\d{8}\d{2}(\d{4})(\d)$/);
+  return m ? { year: Number(m[1]), semester: Number(m[2]) } : null;
+}
+const academicYear = (d = new Date()) => (d.getMonth() >= 7 ? d.getFullYear() + 1 : d.getFullYear());
+/** This year's (or a later) academic course – not the library course, exam guides or old courses. */
+const isCurrentAcademic = (mc) => (termFromShortname(mc.shortname)?.year || 0) >= academicYear();
+
 // ---------- course matching ----------
 const digits = (s) => String(s || '').replace(/\D/g, '');
 
@@ -139,6 +150,27 @@ function guessSiteCourse(mc) {
   return best && best.score >= 25 ? best.id : null;
 }
 
+// ---------- "report a mistake" from students on the cloud site ----------
+export async function cloudReports() {
+  if (!cloudEnabled()) return [];
+  return (await admin('/api/admin/reports')).json();
+}
+export async function resolveCloudReport(id) {
+  await admin(`/api/admin/reports/${Number(id)}/resolve`, { method: 'POST' });
+}
+
+// ---------- health ----------
+/** What needs the owner's attention right now (shown red in the sidebar and on the Moodle page). */
+function healthProblems() {
+  const problems = [];
+  if (!state.token) problems.push('המפתח של המודל פג – צריך להתחבר מחדש');
+  const noAi = listLectures().filter((l) => (l.aiError || l.notesError) && l.status === 'ready');
+  if (noAi.length) problems.push(`${noAi.length} ${noAi.length === 1 ? 'פריט' : 'פריטים'} בלי סיכום AI – כנראה מגבלת השימוש`);
+  const errors = state.lastResult?.errors?.length || 0;
+  if (errors) problems.push(`בסנכרון האחרון היו ${errors} שגיאות`);
+  return problems;
+}
+
 // ---------- public API ----------
 export function moodleStatus() {
   return {
@@ -151,6 +183,7 @@ export function moodleStatus() {
     lastSync: state.lastSync,
     lastResult: state.lastResult,
     cloud: cloudEnabled() ? CLOUD : null,
+    health: { problems: healthProblems() },
     remote: Object.entries(state.remote || {}).map(([mid, siteId]) => ({ moodleId: Number(mid), siteCourse: siteId, lastSync: state.remoteSynced?.[mid] || null })),
     syncing,
   };
@@ -200,6 +233,21 @@ export async function refreshCourses() {
     if (guess && !Object.values(state.map).includes(guess)) {
       state.map[mc.id] = guess;
       await fillCourseDetails(guess, mc);
+    }
+  }
+  // A new semester: this year's courses that aren't on the site yet are created (with AI material), so the
+  // site follows Moodle without setup. A course set to "not mapped" on the Moodle page stays out.
+  for (const mc of state.courses) {
+    if (state.map[mc.id] !== undefined || !isCurrentAcademic(mc)) continue;
+    const existing = state.remote?.[mc.id];
+    if (existing) {
+      // Built earlier for other students – it's yours now too: turn on AI material.
+      await patchCourse(existing, { ai: true, remote: false });
+      delete state.remote[mc.id];
+      state.map[mc.id] = existing;
+    } else {
+      const course = await createCourseFromMoodle({ moodleId: mc.id, shortname: mc.shortname, fullname: mc.fullname }, { own: true });
+      state.map[mc.id] = course.id;
     }
   }
 }
@@ -257,9 +305,29 @@ export async function setOptions({ autoSync, intervalMin }) {
 }
 
 /** All presentation files in a mapped course, with their sync status. */
+// Course page items that aren't lecture files but belong on the site: Zoom, recordings, external links,
+// syllabus, pages and activities. (Forums, assignments and quizzes come in as updates and deadlines.)
+const LINK_TYPES = { url: 'link', zoom: 'zoom', lti: 'online', page: 'page', folder: 'folder', resource: 'file', choice: 'activity', feedback: 'activity', questionnaire: 'activity', h5pactivity: 'activity', book: 'page' };
+
+function courseLinks(sections, importedModules) {
+  const links = [];
+  for (const sec of sections) {
+    for (const mod of sec.modules || []) {
+      const type = LINK_TYPES[mod.modname];
+      if (!type || mod.visible === 0 || importedModules.has(mod.id)) continue;
+      const external = mod.modname === 'url' ? (mod.contents || [])[0]?.fileurl : null;
+      const href = external || mod.url || `${SITE}/mod/${mod.modname}/view.php?id=${mod.id}`;
+      const file = mod.modname === 'resource' ? (mod.contents || [])[0]?.filename || '' : '';
+      links.push({ id: mod.id, type: /syllabus|סילבוס/i.test(`${mod.name} ${file}`) ? 'syllabus' : type, name: mod.name, href, section: sec.name || '', ext: file ? path.extname(file).slice(1).toLowerCase() : '' });
+    }
+  }
+  return links;
+}
+
 export async function courseFiles(moodleId, call = rest) {
   const sections = await call('core_course_get_contents', { courseid: Number(moodleId) });
   const out = [];
+  const importedModules = new Set();
   for (const sec of sections) {
     for (const mod of sec.modules || []) {
       if (!['resource', 'folder'].includes(mod.modname)) continue;
@@ -267,6 +335,7 @@ export async function courseFiles(moodleId, call = rest) {
         if (f.type !== 'file' || !ACCEPTED.includes(path.extname(f.filename).toLowerCase())) continue;
         const key = `${moodleId}:${mod.id}:${f.filepath || '/'}${f.filename}`;
         const kind = classify(f.filename, mod.name, sec.name);
+        if (kind) importedModules.add(mod.id);
         out.push({
           key,
           filename: f.filename,
@@ -312,6 +381,7 @@ export async function courseFiles(moodleId, call = rest) {
       }
     }
   }
+  out.links = courseLinks(sections, importedModules);
   return out;
 }
 
@@ -470,6 +540,7 @@ async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial 
     result.errors.push(`${mid}: ${e.message}`);
     return;
   }
+  if (files.links) await saveLinks(siteCourseId, files.links);
   const existingNames = new Set(listLectures(siteCourseId).map((l) => nfc(l.originalName)));
   for (const f of files) {
     let rec = state.files[f.key];
@@ -518,14 +589,22 @@ async function linkCourses() {
   for (const [mid, siteId] of [...Object.entries(state.map), ...Object.entries(state.remote || {})]) {
     if (siteId) (links[siteId] ||= []).push(Number(mid));
   }
+  const shortnameOf = (mid) => state.courses.find((c) => c.id === Number(mid))?.shortname || state.remoteInfo?.[mid]?.shortname;
   for (const c of listCourses()) {
     const ids = (links[c.id] || []).sort((a, b) => a - b);
-    if (JSON.stringify(ids) !== JSON.stringify(c.moodleIds || [])) await patchCourse(c.id, { moodleIds: ids });
+    const patch = {};
+    if (JSON.stringify(ids) !== JSON.stringify(c.moodleIds || [])) patch.moodleIds = ids;
+    const term = ids.map(shortnameOf).map(termFromShortname).find(Boolean);
+    if (term && JSON.stringify(term) !== JSON.stringify(c.term)) patch.term = term;
+    if (Object.keys(patch).length) await patchCourse(c.id, patch);
   }
 }
 
-/** A course a signed-in student is enrolled in but this Mac isn't: build it with slides and files only (no AI). */
-async function createRemoteCourse(mc) {
+/**
+ * A site course built from a Moodle course: your own new course (with AI material), or one a signed-in
+ * student is enrolled in but this Mac isn't (slides and files only, no AI).
+ */
+async function createCourseFromMoodle(mc, { own = false } = {}) {
   const m = mc.shortname.match(/^(\d{3})(\d)(\d{4})/);
   const name = mc.fullname
     .replace(/\s*\(.*?\)\s*$/, '')
@@ -544,9 +623,10 @@ async function createRemoteCourse(mc) {
     unitLabel: 'הרצאה',
     tagline: '',
     keywords: [],
-    ai: false,
-    remote: true,
+    ai: own,
+    remote: !own,
     moodleIds: [mc.moodleId],
+    term: termFromShortname(mc.shortname),
   });
 }
 
@@ -561,10 +641,12 @@ async function syncRemote(result) {
   state.remote ||= {};
   state.remoteSynced ||= {};
   result.remote = 0;
+  state.remoteInfo ||= {};
   for (const mc of list) {
     if (state.map[mc.moodleId] || (state.remoteIgnore || []).includes(mc.moodleId)) continue;
+    state.remoteInfo[mc.moodleId] = { shortname: mc.shortname, fullname: mc.fullname };
     if (!state.remote[mc.moodleId]) {
-      const course = await createRemoteCourse(mc);
+      const course = await createCourseFromMoodle(mc);
       state.remote[mc.moodleId] = course.id;
       await linkCourses();
       await save();
@@ -629,6 +711,7 @@ export async function sync() {
     await save();
   }
   if (result.imported.length || result.updated.length) console.log(`[moodle] imported ${result.imported.length}, updated ${result.updated.length}`);
+  for (const p of healthProblems()) adminAlert(p);
   return result;
 }
 

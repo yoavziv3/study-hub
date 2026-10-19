@@ -9,7 +9,7 @@ import { schedulePublish } from './publish.js';
 
 const FILE = path.join(DATA_DIR, 'updates.json');
 const DAY = 86400000;
-const KIND_LABEL = { lecture: 'הרצאה חדשה', tutorial: 'תרגול חדש', homework: 'שיעורי בית / תרגילים חדשים' };
+const KIND_LABEL = { lecture: 'הרצאה חדשה', tutorial: 'תרגול חדש', homework: 'שיעורי בית / תרגילים חדשים', exam: 'מבחן קודם חדש' };
 
 let state = load();
 let timer = null;
@@ -38,6 +38,15 @@ function notify(title, message, subtitle = '') {
   if (!state?.settings?.notify || process.platform !== 'darwin') return;
   const args = NOTIFY_SCRIPT.flatMap((l) => ['-e', l]);
   execFile('/usr/bin/osascript', [...args, message.slice(0, 220), title, subtitle], { timeout: 10000 }, () => {});
+}
+
+/** A problem the site owner should know about (sync broken, AI limit…): a Mac notification, at most hourly per problem. */
+const alerted = new Map();
+export function adminAlert(message) {
+  const last = alerted.get(message) || 0;
+  if (Date.now() - last < 3600000) return;
+  alerted.set(message, Date.now());
+  notify('מחברת – צריך תשומת לב', message, '');
 }
 
 // ---------- public API ----------

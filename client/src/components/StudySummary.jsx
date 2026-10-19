@@ -5,6 +5,7 @@ import { useApp } from '../store.jsx';
 import { api } from '../api.js';
 import { Markdown, Tex, ltr } from './ui.jsx';
 import { requiredMap, partsLabel } from './Assignment.jsx';
+import ReportButton from './ReportButton.jsx';
 
 // "תרגיל 3 – …", "שאלה 3", "3. …" → 3
 const exerciseNo = (title = '') => Number((title.match(/(?:תרגיל|שאלה)\s*(\d{1,2})/) || title.match(/^(\d{1,2})[.)\s]/) || [])[1]) || null;
@@ -99,6 +100,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
               ) : (
                 <span className="chip">לא במטלה</span>
               ))}
+              {!s.special && <ReportButton lectureId={lecture.id} section={s.title} />}
               {s.slideStart > 0 && goSlide && (
                 <button className="chip slide-link" onClick={() => goSlide(s.slideStart)} title="מעבר לשקפים">
                   <Presentation size={12} /> {s.slideEnd > s.slideStart ? `שקפים ${s.slideStart}–${s.slideEnd}` : `שקף ${s.slideStart}`}

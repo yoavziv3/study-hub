@@ -8,7 +8,7 @@ import {
 } from './store.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
-import { announceMaterial } from './updates.js';
+import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
 export const ACCEPTED = ['.pdf', '.pptx', '.ppt'];
@@ -20,11 +20,15 @@ const queue = [];
 let running = false;
 
 // Item types: lectures, tutorial sessions (תרגולים) and homework / exercise sheets.
-export const KINDS = ['lecture', 'tutorial', 'homework'];
+export const KINDS = ['lecture', 'tutorial', 'homework', 'exam'];
+// Past exams ("מבחן מועד א 2024", "בחינה לדוגמה", "exam 2023") – not quizzes or exam-day instructions.
+export const EXAM_RE = /מבחן|מבחנים|בחינה|בחינות|מועד\s*[אבג]['׳]?(?![\u0590-\u05FF])|(?<![a-z])exams?(?![a-z])|moed[\s_-]*[abc](?![a-z])|midterm|final[\s_-]*exam/i;
+const NOT_EXAM_RE = /הדרכה לקראת|נהלי|הנחיות לבחינ|לוח בחינות|תאריכי בחינות/i;
 const TUTORIAL_RE = /תרגול|tutorial|recitation|tirgul/i;
-const HOMEWORK_RE = /תרגיל|שיעורי בית|ש["״']ב(?![\u0590-\u05FF])|homework|\bhw\s*\d|exercise|assignment|problem set|מטל[הו]|גיליון|חוברת תרגילים|פתרון|פתרונות|solution|booklet/i;
+const HOMEWORK_RE = /תרגיל|שיעורי בית|ש["״']ב(?![\u0590-\u05FF])|homework|\bhw\s*\d|exercise|assignment|problem[\s_-]*set|מטל[הו]|גיליון|חוברת תרגילים|פתרון|פתרונות|solution|booklet/i;
 export function detectKind(...texts) {
   const t = texts.filter(Boolean).join(' ');
+  if (EXAM_RE.test(t) && !NOT_EXAM_RE.test(t)) return 'exam';
   if (TUTORIAL_RE.test(t) && !/חוברת/.test(t)) return 'tutorial';
   if (HOMEWORK_RE.test(t)) return 'homework';
   return 'lecture';
@@ -172,7 +176,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     await saveContent(id, content);
   } else if (existing && !aiOnly && !regenerate) {
     content = existing;
-  } else if (aiStatus().ready && course?.ai !== false && slides.some((s) => s.trim())) {
+  } else if (aiStatus().ready && course?.ai !== false && meta.kind !== 'exam' && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
     try {
@@ -190,6 +194,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       console.error(`[ingest] ${id} AI analysis failed:`, e.message.slice(0, 200));
       content = null;
       await patchLecture(id, { aiError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו "יצירת סיכום מחדש" מאוחר יותר' : 'יצירת הסיכום נכשלה' });
+      adminAlert(/429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – חומר חדש נכנס בלי סיכום' : 'יצירת סיכום נכשלה');
     }
   }
 

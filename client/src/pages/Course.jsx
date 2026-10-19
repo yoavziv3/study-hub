@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText } from 'lucide-react';
+import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, shuffle } from '../api.js';
 import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
@@ -9,6 +9,7 @@ import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
 import CourseSummaries from '../components/CourseSummaries.jsx';
+import CourseLinks from '../components/CourseLinks.jsx';
 import { LABS } from '../labs/index.js';
 import { AssignmentLine } from '../components/Assignment.jsx';
 
@@ -209,6 +210,7 @@ const KIND = {
   lecture: { tab: 'שיעורים', group: 'שיעור', empty: 'הרצאות' },
   tutorial: { tab: 'תרגולים', group: 'תרגול', empty: 'תרגולים' },
   homework: { tab: 'שיעורי בית ותרגילים', group: 'מס׳', empty: 'שיעורי בית או תרגילים' },
+  exam: { tab: 'מבחנים קודמים', group: 'מבחן', empty: 'מבחנים קודמים' },
 };
 const kindOf = (l) => l.kind || 'lecture';
 
@@ -229,7 +231,8 @@ export default function Course() {
   const navigate = useNavigate();
   const { setContext, openUpload, openChat, progress } = useApp();
   const { data: course } = useFetch(`/api/courses/${id}`, { poll: (d) => d.lectures.some((l) => l.status === 'processing') });
-  const needsBundle = !['lessons', 'tutorials', 'labs', 'grades'].includes(tab);
+  const needsBundle = !['lessons', 'tutorials', 'labs', 'grades', 'links', 'exams'].includes(tab);
+  const { data: links } = useFetch(`/api/courses/${id}/links`);
   const { data: bundle, setData: setBundle } = useFetch(needsBundle ? `/api/courses/${id}/bundle` : null);
   const [labOpen, setLabOpen] = useState(null);
 
@@ -273,6 +276,8 @@ export default function Course() {
         ]
       : []),
     ...(labs.length ? [{ id: 'labs', label: 'מעבדה אינטראקטיבית', icon: <FlaskConical size={16} />, count: labs.length }] : []),
+    { id: 'exams', label: 'מבחנים קודמים', icon: <ScrollText size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'exam').length || null },
+    ...(links?.length ? [{ id: 'links', label: 'קישורים', icon: <Link2 size={16} />, count: links.length }] : []),
     { id: 'grades', label: 'ציונים', icon: <Award size={16} /> },
   ];
 
@@ -315,10 +320,10 @@ export default function Course() {
           <Tabs tabs={tabs} value={tab} onChange={(t) => { setLabOpen(null); navigate(`/course/${id}/${t === 'lessons' ? '' : t}`, { replace: true }); }} layoutId="course-tab" />
         </div>
 
-        {[['lessons', 'lecture'], ['tutorials', 'tutorial'], ['homework', 'homework']].map(([t, kind]) => tab === t && (
+        {[['lessons', 'lecture'], ['tutorials', 'tutorial'], ['homework', 'homework'], ['exams', 'exam']].map(([t, kind]) => tab === t && (
           <div key={t}>
             {groups[kind].length === 0 ? (
-              <div style={{ marginTop: 22 }}><Empty course={course} what={KIND[kind].empty} text={kind === 'lecture' ? undefined : `${KIND[kind].empty} נכנסים לכאן אוטומטית ממודל, או בהעלאה ידנית (בחירת הסוג בחלון ההעלאה).`} /></div>
+              <div style={{ marginTop: 22 }}><Empty course={course} what={KIND[kind].empty} text={kind === 'lecture' ? undefined : kind === 'exam' ? 'כשהמרצה יעלה מבחנים קודמים למודל (בדרך כלל לקראת סוף הסמסטר) הם ייכנסו לכאן אוטומטית. אפשר גם להעלות מבחן ידנית ולבחור "מבחן קודם".' : `${KIND[kind].empty} נכנסים לכאן אוטומטית ממודל, או בהעלאה ידנית (בחירת הסוג בחלון ההעלאה).`} /></div>
             ) : (
               groups[kind].map(([num, ls]) => (
                 <div className="lesson-group" key={num}>
@@ -340,6 +345,7 @@ export default function Course() {
         <div style={{ marginTop: 22 }}>
           {needsBundle && !bundle && <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>}
           {tab === 'grades' && <Grades course={course} />}
+          {tab === 'links' && <CourseLinks links={links} />}
           {tab === 'summaries' && bundle && <CourseSummaries course={course} bundle={bundle} />}
           {tab === 'exam' && bundle && <ExamMode bundle={bundle} />}
           {tab === 'flashcards' && bundle && (allCards.length ? <Flashcards cards={allCards} /> : <Empty course={course} />)}

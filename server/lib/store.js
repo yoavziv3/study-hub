@@ -113,6 +113,15 @@ export function newLectureId(courseId) {
   return `${courseId || 'new'}-${stamp}${rand}`;
 }
 
+// ---------- links from the course's Moodle page (Zoom, recordings, external links, syllabus) ----------
+const linksFile = (courseId) => path.join(DATA_DIR, 'links', `${courseId}.json`);
+export const getLinks = (courseId) => readJSON(linksFile(courseId), []);
+export async function saveLinks(courseId, links) {
+  if (JSON.stringify(getLinks(courseId)) === JSON.stringify(links)) return;
+  await writeJSON(linksFile(courseId), links);
+  schedulePublish('קישורים מהמודל');
+}
+
 // ---------- homework-level practice generated per course ----------
 const practiceFile = (courseId) => path.join(DATA_DIR, 'practice', `${courseId}.json`);
 export const getPractice = (courseId) => readJSON(practiceFile(courseId), { quiz: [], problems: [] });

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, RotateCcw, Flame } from 'lucide-react';
+import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, slideUrl, useFetch, STATIC } from '../api.js';
-import { CountUp, CourseIcon, Page, Ring, fadeUp, ltr } from '../components/ui.jsx';
+import { slideUrl, useFetch, STATIC } from '../api.js';
+import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 
 function greeting() {
@@ -16,47 +16,8 @@ function greeting() {
   return 'לילה טוב';
 }
 
-function DailyCard({ lectures }) {
-  const [card, setCard] = useState(null);
-  const [flip, setFlip] = useState(false);
-  const ready = lectures.filter((l) => l.flashcardCount);
-  const pick = async (offset = 0) => {
-    if (!ready.length) return;
-    const day = Math.floor(Date.now() / 86400000) + offset;
-    const lec = ready[day % ready.length];
-    const full = await api.get(`/api/lectures/${lec.id}`);
-    const fc = full.content.flashcards;
-    setFlip(false);
-    setCard({ ...fc[(day * 7) % fc.length], lecture: full });
-  };
-  useEffect(() => { pick(); }, [ready.length]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!card) return null;
-  return (
-    <div className="card daily-card" data-color={card.lecture.course?.color}>
-      <div className="row" style={{ marginBottom: 12 }}>
-        <span className="chip c"><Sparkles size={13} /> כרטיסיית היום</span>
-        <span className="faint" style={{ fontSize: 12.5 }}>{card.lecture.course?.short}</span>
-        <div className="spacer" />
-        <button className="btn sm icon ghost" title="כרטיסייה אחרת" onClick={() => pick(Math.floor(Math.random() * 1000))}><RotateCcw size={15} /></button>
-      </div>
-      <motion.div onClick={() => setFlip((f) => !f)} style={{ cursor: 'pointer', minHeight: 110 }} key={card.front + flip} initial={{ rotateX: -70, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
-        {!flip ? (
-          <>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 21, fontWeight: 700, lineHeight: 1.4 }}>{ltr(card.front)}</div>
-            <div className="faint" style={{ fontSize: 13, marginTop: 10 }}>לחצו כדי לראות את התשובה</div>
-          </>
-        ) : (
-          <div style={{ fontSize: 16, lineHeight: 1.7 }}>{ltr(card.back)}</div>
-        )}
-      </motion.div>
-      <Link to={`/lecture/${card.lecture.id}?tab=flashcards`} className="row" style={{ fontSize: 13.5, color: 'var(--c)', fontWeight: 600, marginTop: 12 }}>
-        לכל הכרטיסיות של {card.lecture.title} <ArrowLeft size={15} />
-      </Link>
-    </div>
-  );
-}
-
-function Heatmap({ activity }) {
+/** Study activity of the last 12 weeks, the current streak, and today's flashcard review. */
+function Heatmap({ activity, dueCards }) {
   const days = 7 * 12;
   const today = new Date();
   const cells = [...Array(days)].map((_, i) => {
@@ -70,11 +31,12 @@ function Heatmap({ activity }) {
     for (let i = cells.length - 1; i >= 0 && cells[i].v > 0; i--) s++;
     return s;
   })();
+  const week = cells.slice(-7).reduce((n, c) => n + (c.v > 0 ? 1 : 0), 0);
   return (
-    <div className="card pad">
+    <div className="card pad heat-card">
       <div className="row" style={{ marginBottom: 14 }}>
         <h3 style={{ fontSize: 16 }} className="grow">פעילות למידה</h3>
-        <span className="chip warn"><Flame size={13} /> רצף {streak} ימים</span>
+        <span className="chip warn"><Flame size={13} /> {streak === 0 ? 'מתחילים רצף היום' : streak === 1 ? 'יום אחד ברצף' : `${streak} ימים ברצף`}</span>
       </div>
       <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gap: 4, direction: 'ltr' }}>
         {cells.map((c, i) => (
@@ -87,6 +49,10 @@ function Heatmap({ activity }) {
             style={{ aspectRatio: '1', borderRadius: 4, background: c.v === 0 ? 'var(--surface-3)' : `color-mix(in srgb, #12976a ${Math.min(100, 25 + c.v * 6)}%, transparent)` }}
           />
         ))}
+      </div>
+      <div className="heat-foot">
+        <span className="muted">למדת ב־{week} מתוך 7 הימים האחרונים</span>
+        <Link to="/review" className="btn sm accent"><Layers size={15} /> {dueCards ? `חזרה להיום · ${dueCards} כרטיסיות` : 'חזרה על כרטיסיות'}</Link>
       </div>
     </div>
   );
@@ -114,6 +80,7 @@ export default function Home() {
     };
   }, [list, progress]);
 
+  const dueCards = Object.values(progress.cards).filter((c) => c.due && c.due <= Date.now()).length;
   const last = progress.last && list.find((l) => l.id === progress.last.lectureId);
   const lastCourse = last && courses.find((c) => c.id === last.courseId);
   const recent = [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
@@ -194,7 +161,7 @@ export default function Home() {
         })}
       </div>
 
-      <div className="two-col" style={{ marginTop: 34 }}>
+      <div className="two-col home-bottom" style={{ marginTop: 34 }}>
         <div className="stack">
           {last && (
             <Link to={`/lecture/${last.id}?tab=slides&slide=${progress.last.slide || 1}`} className="card hover continue-card" data-color={lastCourse?.color}>
@@ -208,8 +175,7 @@ export default function Home() {
             </Link>
           )}
           <UpcomingWidget />
-          <DailyCard lectures={list} />
-          <Heatmap activity={progress.activity} />
+          <Heatmap activity={progress.activity} dueCards={dueCards} />
         </div>
         <div className="card pad">
           <div className="row" style={{ marginBottom: 12 }}>

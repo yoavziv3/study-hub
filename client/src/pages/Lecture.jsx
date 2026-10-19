@@ -285,7 +285,7 @@ export default function Lecture() {
   const ready = lecture.status === 'ready' || (lecture.slides.length > 0 && lecture.stage === 'analyzing');
   // Courses built for other students have the deck and personal notes only (no AI material);
   // a link to an AI tab of such a course falls back to the slides.
-  const noAi = course?.ai === false;
+  const noAi = course?.ai === false || lecture.kind === 'exam';
   const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : tab;
   const tabs = noAi ? [
     { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
@@ -307,12 +307,12 @@ export default function Lecture() {
         <div className="crumbs">
           <Link to="/">לוח בקרה</Link><ChevronLeft size={14} />
           <Link to={`/course/${course?.id}`}>{course?.short}</Link><ChevronLeft size={14} />
-          <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
+          <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
         </div>
         <div className="lecture-head">
           <motion.div className="unit-badge" initial={{ scale: 0.6, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 15 }}>{unitNo || '•'}</motion.div>
           <div className="grow">
-            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {{ lecture: course?.unitLabel, tutorial: 'תרגול', homework: 'שיעורי בית ותרגילים' }[lecture.kind || 'lecture']} {unitNo}</div>
+            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {{ lecture: course?.unitLabel, tutorial: 'תרגול', homework: 'שיעורי בית ותרגילים', exam: 'מבחן קודם' }[lecture.kind || 'lecture']} {unitNo}</div>
             <h1>{lecture.title}</h1>
             <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
               <span className="chip">{lecture.slideCount} שקפים</span>

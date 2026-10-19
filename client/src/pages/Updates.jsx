@@ -2,8 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check,
-  Trash2, RefreshCw, ChevronDown, Inbox,
+  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
@@ -21,7 +20,7 @@ const TYPE = {
   deadline: { label: 'הגשה חדשה', icon: CalendarClock },
   reminder: { label: 'תזכורת', icon: AlarmClock },
 };
-const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler };
+const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler, exam: ScrollText };
 
 const FILTERS = [
   ['all', 'הכל'],
@@ -60,6 +59,8 @@ function DeadlineCard({ d, course, i }) {
   const c = countdown(d.dueAt);
   const finished = d.submitted || d.done;
   const color = finished ? 'var(--good)' : c.level === 'urgent' || c.level === 'past' ? 'var(--bad)' : c.level === 'soon' ? 'var(--warn)' : 'var(--c)';
+  // Same hue, a shade dark enough to read as text.
+  const textColor = finished ? 'var(--good-text)' : c.level === 'urgent' || c.level === 'past' ? 'var(--bad-text)' : c.level === 'soon' ? 'var(--warn-text)' : 'var(--c-strong)';
   const act = async (fn) => {
     try {
       await fn();
@@ -86,7 +87,7 @@ function DeadlineCard({ d, course, i }) {
             return d.intro ? <div className="faint clamp-3" style={{ fontSize: 13, marginTop: 4 }} title={d.intro}>{ltr(oneLine(d.intro))}</div> : null;
           })()}
         </div>
-        <div className="deadline-count" style={{ color }}>{finished ? '✓' : c.text}</div>
+        <div className="deadline-count" style={{ color: textColor }}>{finished ? '✓' : c.text}</div>
       </div>
       <div className="row wrap" style={{ gap: 6, marginTop: 10 }}>
         {d.url && <a className="btn sm" href={d.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> להגשה במודל</a>}
@@ -162,7 +163,7 @@ function UpdateItem({ item, course, isNew, i }) {
       <div className="grow" style={{ minWidth: 0 }}>
         <div className="row wrap" style={{ gap: 6 }}>
           {isNew && <span className="chip bad" style={{ fontWeight: 700 }}>חדש</span>}
-          <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית' }[item.kind] || T.label : T.label}</span>
+          <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם' }[item.kind] || T.label : T.label}</span>
           {course && <span className="chip c">{course.short}</span>}
           <span className="faint" style={{ fontSize: 12.5, marginInlineStart: 'auto' }}>{timeOf(item.addedAt)}</span>
         </div>

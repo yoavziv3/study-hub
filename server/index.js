@@ -6,7 +6,7 @@ import express from 'express';
 import multer from 'multer';
 import {
   ROOT, listCourses, getCourse, listLectures, getLecture, patchLecture, getContent, saveContent, getSlides,
-  deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice,
+  deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice, getLinks,
 } from './lib/store.js';
 import { addLectureFile, enqueue, queueState, resumePending, watchInbox, ACCEPTED, KINDS } from './lib/ingest.js';
 import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
@@ -105,6 +105,64 @@ app.post('/api/lectures/:id/regenerate', async (req, res) => {
   await patchLecture(meta.id, { status: 'processing', stage: 'queued' });
   enqueue(meta.id, { aiOnly: true });
   res.json({ ok: true });
+});
+
+app.get('/api/courses/:id/links', (req, res) => res.json(getLinks(req.params.id)));
+
+// ---------- "report a mistake" ----------
+// Reports made on this Mac are kept locally; reports from students arrive through the cloud's admin channel.
+const REPORTS_FILE = path.join(ROOT, 'data', 'reports.json');
+const readReports = () => { try { return JSON.parse(fs.readFileSync(REPORTS_FILE, 'utf8')); } catch { return []; } };
+app.post('/api/reports', (req, res) => {
+  const { lectureId = '', section = '', text = '' } = req.body || {};
+  if (!getLecture(lectureId) || String(text).trim().length < 3) return res.status(400).json({ error: 'כתבו בקצרה מה לא נכון' });
+  const list = readReports();
+  list.push({ id: Date.now(), lecture_id: lectureId, section: String(section).slice(0, 200), text: String(text).trim().slice(0, 1000), created_at: Date.now(), status: 'open' });
+  fs.writeFileSync(REPORTS_FILE, JSON.stringify(list, null, 2));
+  res.json({ ok: true });
+});
+app.get('/api/reports', async (req, res) => {
+  const local = readReports().filter((r) => r.status === 'open').map((r) => ({ ...r, source: 'local' }));
+  let cloud = [];
+  let cloudError = null;
+  try {
+    cloud = (await moodle.cloudReports()).map((r) => ({ ...r, source: 'cloud' }));
+  } catch (e) {
+    cloudError = e.message;
+  }
+  const withTitle = (r) => {
+    const l = getLecture(r.lecture_id);
+    return { ...r, lectureTitle: l?.title || r.lecture_id, courseId: l?.courseId, courseShort: getCourse(l?.courseId)?.short };
+  };
+  res.json({ reports: [...cloud, ...local].map(withTitle).sort((a, b) => b.created_at - a.created_at), cloudError });
+});
+app.post('/api/reports/:source/:id/resolve', async (req, res) => {
+  try {
+    if (req.params.source === 'cloud') await moodle.resolveCloudReport(req.params.id);
+    else fs.writeFileSync(REPORTS_FILE, JSON.stringify(readReports().map((r) => (String(r.id) === req.params.id ? { ...r, status: 'resolved' } : r)), null, 2));
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+/** "Try again" for everything that came in without AI material (e.g. after the usage limit reset). */
+app.post('/api/maintenance/retry-ai', async (req, res) => {
+  if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
+  let n = 0;
+  for (const l of listLectures()) {
+    if (l.status !== 'ready') continue;
+    if (l.aiError) {
+      await patchLecture(l.id, { status: 'processing', stage: 'queued' });
+      enqueue(l.id, { aiOnly: true });
+      n++;
+    } else if (l.notesError) {
+      await patchLecture(l.id, { notesStatus: 'queued', notesError: null });
+      enqueue(l.id, { notesOnly: true });
+      n++;
+    }
+  }
+  res.json({ queued: n });
 });
 
 app.get('/api/me/grades/:courseId', async (req, res) => {
@@ -240,6 +298,13 @@ app.get('/api/search', (req, res) => {
     }
     for (const s of getSlides(m.id)) {
       if (s.text.toLowerCase().includes(q)) results.push({ ...base, type: 'slide', title: `שקף ${s.n}`, slide: s.n, snippet: snippet(s.text), score: 3 });
+    }
+    // The structured summary: definitions, rules, examples… (title = the block's or the section's)
+    for (const sec of content?.notes?.sections || []) {
+      for (const b of sec.blocks || []) {
+        const text = `${b.title || ''} ${b.body || ''}`;
+        if (text.toLowerCase().includes(q)) results.push({ ...base, type: 'note', title: b.title || sec.title, snippet: snippet(b.body || ''), score: (b.title || '').toLowerCase().includes(q) ? 8.5 : 6 });
+      }
     }
   }
   results.sort((a, b) => b.score - a.score);

@@ -1,0 +1,60 @@
+// Service worker for the cloud site: the app opens instantly and pages you've visited work offline.
+// Code and slide images: cache first (they don't change). Course data and the account: network first,
+// falling back to the last copy when offline. Sign-in, admin and calendar requests are never cached.
+const VERSION = 'v1';
+const SHELL = `shell-${VERSION}`;
+const STATIC = `static-${VERSION}`;
+const DATA = `data-${VERSION}`;
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(SHELL).then((c) => c.addAll(['/', '/manifest.webmanifest', '/icon-192.png'])).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => ![SHELL, STATIC, DATA].includes(k)).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+const networkFirst = async (req, cacheName) => {
+  const cache = await caches.open(cacheName);
+  try {
+    const res = await fetch(req);
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch {
+    const hit = await cache.match(req);
+    if (hit) return hit;
+    throw new Error('offline');
+  }
+};
+
+const cacheFirst = async (req) => {
+  const cache = await caches.open(STATIC);
+  const hit = await cache.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res.ok) cache.put(req, res.clone());
+  return res;
+};
+
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== location.origin) return;
+  if (/^\/api\/(auth|admin|cal)\//.test(url.pathname)) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).catch(async () => (await caches.match('/')) || Response.error()));
+  } else if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/files/') || /\.(png|svg|woff2?)$/.test(url.pathname)) {
+    e.respondWith(cacheFirst(req));
+  } else if (url.pathname.startsWith('/data/') || url.pathname.startsWith('/api/')) {
+    e.respondWith(networkFirst(req, DATA));
+  }
+});
+
+// Signing out clears everything personal that was cached on this device.
+self.addEventListener('message', (e) => {
+  if (e.data === 'clear-data') e.waitUntil(caches.delete(DATA));
+});

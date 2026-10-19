@@ -118,6 +118,7 @@ export default function UploadModal() {
                   <option value="lecture">הרצאה</option>
                   <option value="tutorial">תרגול</option>
                   <option value="homework">שיעורי בית / תרגילים</option>
+                  <option value="exam">מבחן קודם</option>
                 </select>
               </label>
               <label className="field" style={{ width: 110 }}>

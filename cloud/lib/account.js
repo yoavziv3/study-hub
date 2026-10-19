@@ -109,6 +109,7 @@ export async function deleteAccount(env, user) {
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM progress WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM cache WHERE user_id = ?').bind(user.id),
+    env.DB.prepare('UPDATE reports SET user_id = NULL WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(user.id),
   ]);
   return json({ ok: true }, 200, { 'Set-Cookie': sessionCookie('', 0) });

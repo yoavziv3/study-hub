@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Info } from 'lucide-react';
 import { api, hash, STATIC, AUTH_EVENT, resetSearchIndex } from './api.js';
+import { termsOf, currentTerm, inTerm } from './lib/terms.js';
 
 /* App-wide state: the signed-in student (cloud), study progress, courses, updates & deadlines, toasts,
    chat + upload + search controls. Locally (on the Mac) there is no sign-in and data comes from the server. */
@@ -214,8 +215,10 @@ export function AppProvider({ children }) {
   }, [toast]);
   const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), []);
 
+  const forgetCachedData = () => navigator.serviceWorker?.controller?.postMessage('clear-data');
   const signOut = useCallback(async () => {
     await api.post('/api/auth/logout', {}).catch(() => {});
+    forgetCachedData();
     setMe(false);
     setProgress(EMPTY);
     setCourses([]);
@@ -224,6 +227,7 @@ export function AppProvider({ children }) {
   }, []);
   const deleteAccount = useCallback(async () => {
     await api.del('/api/me');
+    forgetCachedData();
     try { localStorage.removeItem(OLD_LOCAL_PROGRESS); } catch { /* storage unavailable */ }
     setMe(false);
     setProgress(EMPTY);
@@ -240,14 +244,19 @@ export function AppProvider({ children }) {
     document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
   }, [unread]);
 
+  // "My courses" are this semester's; earlier semesters live under "לימודי עבר".
   // On the Mac, courses built for other students (no AI material) are listed separately from yours.
-  const courses = useMemo(() => (STATIC ? allCourses : allCourses.filter((c) => !c.remote)), [allCourses]);
-  const otherCourses = useMemo(() => (STATIC ? [] : allCourses.filter((c) => c.remote)), [allCourses]);
+  const mine = useMemo(() => (STATIC ? allCourses : allCourses.filter((c) => !c.remote)), [allCourses]);
+  const terms = useMemo(() => termsOf(mine), [mine]);
+  const term = useMemo(() => currentTerm(mine), [mine]);
+  const courses = useMemo(() => mine.filter((c) => inTerm(c, term)), [mine, term]);
+  const pastCourses = useMemo(() => mine.filter((c) => !inTerm(c, term)), [mine, term]);
+  const otherCourses = useMemo(() => (STATIC ? [] : allCourses.filter((c) => c.remote && inTerm(c, term))), [allCourses, term]);
 
   const value = {
     me, refreshMe, signOut, deleteAccount,
     updates, refreshUpdates, unread, seenAt, deadlineActions,
-    progress, courses, otherCourses, refreshCourses, status, toast, ...actions,
+    progress, courses, otherCourses, allCourses: mine, pastCourses, terms, term, refreshCourses, status, toast, ...actions,
     chat, openChat, closeChat,
     uploadOpen, openUpload: (courseId = 'auto') => (STATIC ? toast('העלאת הרצאות זמינה באתר שרץ במחשב שלך', 'info') : setUploadOpen({ courseId })), closeUpload: () => setUploadOpen(null),
     searchOpen, setSearchOpen,

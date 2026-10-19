@@ -20,6 +20,9 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS cache (user_id INTEGER NOT NULL, key TEXT NOT NULL, data TEXT, at INTEGER, PRIMARY KEY (user_id, key))`,
   `CREATE TABLE IF NOT EXISTS attempts (key TEXT NOT NULL, at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS attempts_key ON attempts(key, at)`,
+  // "Report a mistake" on a summary section; read by the site owner through the admin channel.
+  `CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, lecture_id TEXT NOT NULL, section TEXT, text TEXT NOT NULL, created_at INTEGER, status TEXT NOT NULL DEFAULT 'open')`,
+  `CREATE INDEX IF NOT EXISTS reports_status ON reports(status, created_at)`,
 ];
 
 let ready = null;

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { ROOT, DATA_DIR, listCourses, listLectures, getContent, getSlides, lectureDir, getPractice } from '../server/lib/store.js';
+import { ROOT, DATA_DIR, listCourses, listLectures, getContent, getSlides, lectureDir, getPractice, getLinks } from '../server/lib/store.js';
 
 const OUT = path.join(ROOT, 'dist-cloud');
 
@@ -80,6 +80,9 @@ for (const m of lectures) {
   for (const t of content?.topics || []) index.push({ ...base, type: 'topic', title: t.title, slide: t.slideStart, text: t.summary });
   for (const g of content?.glossary || []) index.push({ ...base, type: 'term', title: g.term, text: g.definition });
   for (const s of slides) index.push({ ...base, type: 'slide', title: `שקף ${s.n}`, slide: s.n, text: s.text });
+  for (const sec of content?.notes?.sections || []) {
+    for (const b of sec.blocks || []) index.push({ ...base, type: 'note', title: b.title || sec.title, text: b.body || '' });
+  }
 
   // Slide images are static (their URLs are only listed inside the access-checked lecture JSON);
   // the original deck sits under /data/orig/, which only enrolled students can download.
@@ -93,6 +96,8 @@ for (const m of lectures) {
   }
 }
 for (const [courseId, entries] of Object.entries(search)) await write(`search/${courseId}.json`, entries);
+// Links from each course's Moodle page (served only to the course's students, like the rest of /data).
+for (const c of courses) await write(`links/${c.id}.json`, getLinks(c.id));
 
 // Only /api/* and /data/* run the Functions (sign-in and access checks); everything else is plain static hosting.
 await fsp.writeFile(
@@ -104,7 +109,7 @@ await fsp.writeFile(
 await fsp.writeFile(path.join(OUT, '_redirects'), '/* /index.html 200\n');
 await fsp.writeFile(
   path.join(OUT, '_headers'),
-  ['/files/*', '  Cache-Control: public, max-age=86400', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', '/data/*', '  Cache-Control: no-cache', ''].join('\n')
+  ['/sw.js', '  Cache-Control: no-cache', '/files/*', '  Cache-Control: public, max-age=86400', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', '/data/*', '  Cache-Control: no-cache', ''].join('\n')
 );
 
 const count = (dir) => fs.readdirSync(dir, { recursive: true }).length;

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown, ListChecks, Presentation, Clock, Printer, FileText } from 'lucide-react';
 import { ltr } from './ui.jsx';
 import { Block, markdownSections, useActiveSection } from './StudySummary.jsx';
+import ReportButton from './ReportButton.jsx';
 
 const words = (s) => (s ? String(s).split(/\s+/).length : 0);
 
@@ -81,6 +82,7 @@ export default function CourseSummaries({ course, bundle }) {
               <section key={s.id} id={s.id} className="note-section">
                 <div className="note-section-head">
                   <h3 className="note-section-title"><span className="note-num">{i + 1}</span>{ltr(s.title)}</h3>
+                  {!s.special && <ReportButton lectureId={p.lecture.id} section={s.title} />}
                   {s.slideStart > 0 && (
                     <Link className="chip slide-link no-print" to={`/lecture/${p.lecture.id}?tab=slides&slide=${s.slideStart}`} title="מעבר לשקפים">
                       <Presentation size={12} /> {s.slideEnd > s.slideStart ? `שקפים ${s.slideStart}–${s.slideEnd}` : `שקף ${s.slideStart}`}

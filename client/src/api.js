@@ -41,7 +41,7 @@ async function staticSearch(q) {
   for (const e of searchIndex) {
     const hay = `${e.title} ${e.text}`.toLowerCase();
     if (!hay.includes(q)) continue;
-    const score = e.type === 'lecture' ? 10 : e.type === 'topic' ? 8 : e.type === 'term' ? (e.title.toLowerCase().includes(q) ? 9 : 5) : 3;
+    const score = e.type === 'lecture' ? 10 : e.type === 'topic' ? 8 : e.type === 'term' ? (e.title.toLowerCase().includes(q) ? 9 : 5) : e.type === 'note' ? (e.title.toLowerCase().includes(q) ? 8.5 : 6) : 3;
     out.push({ ...e, snippet: e.text ? snippet(e.text) : undefined, text: undefined, score });
   }
   return out.sort((a, b) => b.score - a.score).slice(0, 40);
@@ -52,13 +52,14 @@ const STATIC_ROUTES = [
   [/^\/api\/courses$/, () => '/data/courses.json'],
   [/^\/api\/courses\/([\w-]+)$/, (m) => `/data/courses/${m[1]}.json`],
   [/^\/api\/courses\/([\w-]+)\/bundle$/, (m) => `/data/bundles/${m[1]}.json`],
+  [/^\/api\/courses\/([\w-]+)\/links$/, (m) => `/data/links/${m[1]}.json`],
   [/^\/api\/lectures$/, () => '/data/lectures.json'],
   [/^\/api\/updates$/, () => '/data/updates.json'],
   [/^\/api\/lectures\/([\w-]+)$/, (m) => `/data/lectures/${m[1]}.json`],
 ];
 
 // Served by the cloud Functions (accounts, progress, personal Moodle data) rather than by static files.
-const CLOUD_API = /^\/api\/(auth|me|progress)(\/|$)/;
+const CLOUD_API = /^\/api\/(auth|me|progress|reports)(\/|$)/;
 
 async function staticRequest(method, url, body) {
   const [path, query = ''] = url.split('?');

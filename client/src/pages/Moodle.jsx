@@ -210,6 +210,22 @@ export default function Moodle() {
         )}
       </motion.div>
 
+      {status.health?.problems?.length > 0 && (
+        <div className="card pad health-box">
+          <div className="row" style={{ gap: 8, marginBottom: 8 }}><AlertTriangle size={18} /> <b>צריך תשומת לב</b></div>
+          <ul>{status.health.problems.map((p) => <li key={p}>{p}</li>)}</ul>
+          {status.health.problems.some((p) => p.includes('סיכום AI')) && (
+            <button className="btn sm accent" onClick={async () => {
+              try {
+                const r = await api.post('/api/maintenance/retry-ai');
+                toast(r.queued ? `${r.queued} פריטים נכנסו שוב לתור הסיכומים` : 'אין מה לנסות שוב');
+                reload();
+              } catch (e) { toast(e.message, 'info'); }
+            }}><RefreshCw size={14} /> לנסות שוב ליצור את הסיכומים</button>
+          )}
+        </div>
+      )}
+
       <div className="section-title">
         <h2>הקורסים שלך במודל</h2>
         <div className="line" />

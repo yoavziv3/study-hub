@@ -1,0 +1,17 @@
+{
+  "name": "מחברת – עזר ללימודים",
+  "short_name": "מחברת",
+  "description": "הקורסים שלך מהמודל: מצגות, סיכומים, תרגול, הגשות ועדכונים.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#1b1a17",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

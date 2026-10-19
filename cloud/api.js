@@ -103,6 +103,20 @@ async function route({ request, env }) {
     }
   }
 
+  if (path === '/api/reports' && method === 'POST') {
+    const { lectureId = '', section = '', text = '' } = await readJson(request, 6000);
+    const body = String(text).trim();
+    if (body.length < 3 || body.length > 1000) throw new HttpError(400, 'כתבו בקצרה מה לא נכון (עד 1000 תווים)');
+    const courseId = String(lectureId).slice(0, String(lectureId).lastIndexOf('-'));
+    if (!/^[\w]+-[\w]+$/.test(lectureId) || !allowedCourseIds(user, await siteCourses(env, request)).includes(courseId)) throw new HttpError(403, 'אין גישה לשיעור הזה');
+    const today = await env.DB.prepare('SELECT COUNT(*) AS n FROM reports WHERE user_id = ? AND created_at > ?').bind(user.id, Date.now() - 86400000).first();
+    if (today.n >= 20) throw new HttpError(429, 'הגעת למספר הדיווחים היומי – תודה על העזרה!');
+    await env.DB.prepare('INSERT INTO reports (user_id, lecture_id, section, text, created_at) VALUES (?, ?, ?, ?, ?)')
+      .bind(user.id, lectureId, String(section).slice(0, 200), body, Date.now())
+      .run();
+    return json({ ok: true });
+  }
+
   if (path === '/api/me/deadlines' && method === 'GET') {
     const courses = await siteCourses(env, request);
     return json(await studentDeadlines(env, user, courses, url.searchParams.has('fresh')));
@@ -199,6 +213,17 @@ async function admin({ request, env, url, path, method }) {
       }
     }
     return json([...byId.values()].sort((a, b) => b.students - a.students));
+  }
+
+  if (path === '/api/admin/reports' && method === 'GET') {
+    // Reporters stay anonymous to the owner: only the lecture, the section and the text.
+    const rows = (await env.DB.prepare("SELECT id, lecture_id, section, text, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 200").all()).results;
+    return json(rows);
+  }
+  const resolve = path.match(/^\/api\/admin\/reports\/(\d+)\/resolve$/);
+  if (resolve && method === 'POST') {
+    await env.DB.prepare("UPDATE reports SET status = 'resolved' WHERE id = ?").bind(Number(resolve[1])).run();
+    return json({ ok: true });
   }
 
   if (path === '/api/admin/moodle' && method === 'POST') {

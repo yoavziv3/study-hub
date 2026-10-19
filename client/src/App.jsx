@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -10,6 +10,11 @@ import Lecture from './pages/Lecture.jsx';
 import Moodle from './pages/Moodle.jsx';
 import Updates from './pages/Updates.jsx';
 import Login from './pages/Login.jsx';
+import Archive from './pages/Archive.jsx';
+import Reports from './pages/Reports.jsx';
+import Review from './pages/Review.jsx';
+import Privacy from './pages/Privacy.jsx';
+import { SEMESTER_LABEL, studyYearLabel } from './lib/terms.js';
 import { useFetch, STATIC } from './api.js';
 import ChatPanel from './components/ChatPanel.jsx';
 import UploadModal from './components/UploadModal.jsx';
@@ -40,7 +45,8 @@ function CourseNav({ c, progress, onNavigate }) {
 }
 
 function Sidebar({ open, onNavigate }) {
-  const { courses, otherCourses, status, progress, refreshCourses, unread, me } = useApp();
+  const { courses, otherCourses, status, progress, refreshCourses, unread, me, term, terms } = useApp();
+  const navigate = useNavigate();
   const { data: moodle } = useFetch('/api/moodle', { poll: () => !STATIC, interval: 15000 });
   // New lectures may have arrived from Moodle – refresh the course counters after each sync.
   useEffect(() => { if (moodle?.lastSync) refreshCourses(); }, [moodle?.lastSync, refreshCourses]);
@@ -51,7 +57,7 @@ function Sidebar({ open, onNavigate }) {
         <div className="brand-mark" />
         <div>
           <div className="brand-name">מחברת</div>
-          <div className="brand-sub">שנה א׳ · סמסטר א׳</div>
+          <div className="brand-sub">{term ? `${studyYearLabel(term, terms)} · ${SEMESTER_LABEL[term.semester]}` : 'עזר ללימודים'}</div>
         </div>
       </NavLink>
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
@@ -66,6 +72,7 @@ function Sidebar({ open, onNavigate }) {
           <div className="faint" style={{ fontSize: 11.5 }}>בהכנה – יופיעו אחרי הסנכרון הבא</div>
         </div>
       )}
+      <NavItem to="/archive" icon={<History size={17} />} label="לימודי עבר" onClick={onNavigate} />
       {otherCourses.length > 0 && (
         <>
           <div className="nav-label row" style={{ gap: 6 }}><Users size={12} /> קורסים של סטודנטים אחרים</div>
@@ -80,13 +87,37 @@ function Sidebar({ open, onNavigate }) {
         count={moodle?.syncing ? <Loader2 size={13} className="spin" /> : <span className={`pulse ${moodle?.connected ? '' : 'off'}`} style={{ display: 'inline-block' }} />}
         onClick={onNavigate}
       />}
+      {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים על טעויות" onClick={onNavigate} />}
       <div className="sidebar-foot">
-        <div className="ai-pill" title={ai ? `מודל: ${ai.model}` : ''}>
-          <span className={`pulse ${ai?.ready ? '' : 'off'}`} />
-          {STATIC ? (me?.moodleOk === false ? 'החיבור למודל פג – התחברו מחדש' : 'מחובר למודל') : ai?.ready ? (ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)') : 'AI לא מחובר'}
-        </div>
+        <StatusPill
+          items={STATIC
+            ? [me?.moodleOk === false ? { bad: true, text: 'החיבור למודל פג – התנתקו והתחברו שוב' } : { text: 'מחובר למודל' }]
+            : [
+                !moodle?.connected ? { bad: true, text: 'המודל לא מחובר' }
+                  : moodle.health?.problems?.length ? { bad: true, text: moodle.health.problems[0] } : { text: 'מחובר למודל' },
+                ai?.ready ? { text: ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)' } : { bad: true, text: 'AI לא מחובר' },
+              ]}
+          onClick={!STATIC ? () => { onNavigate?.(); navigate('/moodle'); } : undefined}
+        />
       </div>
     </aside>
+  );
+}
+
+/** Connection status at the bottom of the sidebar: a green dot when all is well, red with a warning sign when not. */
+function StatusPill({ items, onClick }) {
+  const bad = items.some((i) => i.bad);
+  return (
+    <button className={`ai-pill ${bad ? 'bad' : ''}`} onClick={onClick} disabled={!onClick} title={bad ? 'יש בעיה בחיבור' : ''}>
+      <div className="stack" style={{ gap: 6, width: '100%' }}>
+        {items.map((i) => (
+          <div key={i.text} className="row" style={{ gap: 8 }}>
+            {i.bad ? <AlertTriangle size={14} className="status-warn" /> : <span className="pulse" />}
+            <span style={{ textAlign: 'start' }}>{i.text}</span>
+          </div>
+        ))}
+      </div>
+    </button>
   );
 }
 
@@ -129,6 +160,7 @@ function AccountMenu() {
               <div style={{ fontWeight: 700 }}>{me.user?.name}</div>
               <div className="faint" style={{ fontSize: 12.5 }} dir="ltr">{me.user?.username}</div>
             </div>
+            <Link className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} to="/privacy" onClick={() => setOpen(false)}><ShieldCheck size={15} /> פרטיות ואבטחה</Link>
             <button className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setOpen(false); signOut(); }}><LogOut size={15} /> התנתקות</button>
             <button className="btn ghost sm danger" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setOpen(false); remove(); }}><Trash2 size={15} /> מחיקת החשבון וכל המידע</button>
           </motion.div>
@@ -140,6 +172,9 @@ function AccountMenu() {
 
 export default function App() {
   const { me } = useApp();
+  const location = useLocation();
+  // The privacy page is readable before signing in.
+  if (STATIC && !me && location.pathname === '/privacy') return <Privacy />;
   if (STATIC && me === null) return <div className="login-wrap"><Loader2 className="spin" size={28} /></div>;
   if (STATIC && me === false) return <Login />;
   return <Shell />;
@@ -227,6 +262,10 @@ function Shell() {
             <Route path="/lecture/:id" element={<Lecture />} />
             <Route path="/moodle" element={<Moodle />} />
             <Route path="/updates" element={<Updates />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </AnimatePresence>
       </main>

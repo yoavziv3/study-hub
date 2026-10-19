@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { Search, FileText, Hash, BookMarked, Presentation, CornerDownLeft } from 'lucide-react';
+import { Search, FileText, Hash, BookMarked, Presentation, CornerDownLeft, NotebookText } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
 import { Highlight, ltr } from './ui.jsx';
@@ -11,6 +11,7 @@ const TYPE = {
   topic: { icon: Hash, label: 'נושא' },
   term: { icon: BookMarked, label: 'מושג' },
   slide: { icon: FileText, label: 'שקף' },
+  note: { icon: NotebookText, label: 'מהסיכום' },
 };
 
 export default function SearchPalette() {
@@ -32,7 +33,7 @@ export default function SearchPalette() {
 
   const go = (r) => {
     setSearchOpen(false);
-    const tab = r.type === 'term' ? 'glossary' : r.type === 'topic' ? 'topics' : 'slides';
+    const tab = r.type === 'term' ? 'glossary' : r.type === 'topic' ? 'topics' : r.type === 'note' ? 'summary' : 'slides';
     navigate(`/lecture/${r.lectureId}?tab=${tab}${r.slide ? `&slide=${r.slide}` : ''}`);
   };
 

@@ -45,7 +45,7 @@ export async function gate({ request, env }) {
       });
     }
 
-    let m = path.match(/^\/data\/(courses|bundles|search)\/([\w-]+)\.json$/);
+    let m = path.match(/^\/data\/(courses|bundles|search|links)\/([\w-]+)\.json$/);
     let courseId = m?.[2];
     if (!m) {
       // Lecture ids start with their course id: acc-9tdsp6zl, m68600-ab12cd.
