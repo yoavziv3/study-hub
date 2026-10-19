@@ -20,3 +20,6 @@ inbox/*
 # Cloudflare local dev (wrangler pages dev): local database and dev secrets
 .wrangler/
 .dev.vars
+
+# Before/after screenshots for design reviews
+.design-shots/

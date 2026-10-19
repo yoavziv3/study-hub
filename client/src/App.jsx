@@ -15,6 +15,8 @@ import ChatPanel from './components/ChatPanel.jsx';
 import UploadModal from './components/UploadModal.jsx';
 import SearchPalette from './components/SearchPalette.jsx';
 
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+
 function useTheme() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   useEffect(() => {
@@ -193,7 +195,7 @@ function Shell() {
           <button className="search-trigger" onClick={() => setSearchOpen(true)}>
             <Search size={17} />
             <span className="grow" style={{ textAlign: 'start' }}>חיפוש בכל החומר – מושגים, שקפים, נושאים…</span>
-            <span className="kbd">⌘K</span>
+            <span className="kbd">{IS_MAC ? '⌘K' : 'Ctrl K'}</span>
           </button>
           <div className="spacer" />
           <motion.button className="btn icon ghost bell" onClick={() => navigate('/updates')} aria-label="עדכונים" whileTap={{ scale: 0.9 }}

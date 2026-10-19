@@ -79,7 +79,7 @@ export function Tabs({ tabs, value, onChange, layoutId = 'tab' }) {
   );
 }
 
-export function Ring({ value = 0, size = 52, stroke = 6, label, color = 'var(--c)' }) {
+export function Ring({ value = 0, size = 52, stroke = 6, label, color = 'var(--accent)' }) {
   const r = (size - stroke) / 2;
   const C = 2 * Math.PI * r;
   return (
