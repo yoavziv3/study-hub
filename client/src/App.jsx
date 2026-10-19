@@ -35,7 +35,7 @@ function CourseNav({ c, progress, onNavigate }) {
       color={c.color}
       icon={<span className="nav-dot"><CourseIcon name={c.icon} size={15} /></span>}
       label={c.short}
-      count={c.processing ? <Loader2 size={13} className="spin" /> : total ? `${studied}/${total}` : '—'}
+      count={c.processing ? <Loader2 size={13} className="spin" /> : studied ? `${studied}/${total}` : null}
       onClick={onNavigate}
     />
   );

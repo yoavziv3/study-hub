@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Upload, PlayCircle, Sparkles, RotateCcw, Flame } from 'lucide-react';
+import { ChevronLeft, Upload, PlayCircle, RotateCcw, Flame, Eye } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, STATIC } from '../api.js';
-import { CountUp, CourseIcon, Page, Ring, fadeUp, ltr } from '../components/ui.jsx';
+import { CourseIcon, Page, fadeUp, ltr } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 
 function greeting() {
@@ -16,80 +16,16 @@ function greeting() {
   return 'לילה טוב';
 }
 
-function DailyCard({ lectures }) {
-  const [card, setCard] = useState(null);
-  const [flip, setFlip] = useState(false);
-  const ready = lectures.filter((l) => l.flashcardCount);
-  const pick = async (offset = 0) => {
-    if (!ready.length) return;
-    const day = Math.floor(Date.now() / 86400000) + offset;
-    const lec = ready[day % ready.length];
-    const full = await api.get(`/api/lectures/${lec.id}`);
-    const fc = full.content.flashcards;
-    setFlip(false);
-    setCard({ ...fc[(day * 7) % fc.length], lecture: full });
-  };
-  useEffect(() => { pick(); }, [ready.length]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!card) return null;
-  return (
-    <div className="card daily-card" data-color={card.lecture.course?.color}>
-      <div className="row" style={{ marginBottom: 12 }}>
-        <span className="chip c"><Sparkles size={13} /> כרטיסיית היום</span>
-        <span className="faint" style={{ fontSize: 12.5 }}>{card.lecture.course?.short}</span>
-        <div className="spacer" />
-        <button className="btn sm icon ghost" title="כרטיסייה אחרת" onClick={() => pick(Math.floor(Math.random() * 1000))}><RotateCcw size={15} /></button>
-      </div>
-      <motion.div onClick={() => setFlip((f) => !f)} style={{ cursor: 'pointer', minHeight: 110 }} key={card.front + flip} initial={{ rotateX: -70, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
-        {!flip ? (
-          <>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 21, fontWeight: 700, lineHeight: 1.4 }}>{ltr(card.front)}</div>
-            <div className="faint" style={{ fontSize: 13, marginTop: 10 }}>לחצו כדי לראות את התשובה</div>
-          </>
-        ) : (
-          <div style={{ fontSize: 16, lineHeight: 1.7 }}>{ltr(card.back)}</div>
-        )}
-      </motion.div>
-      <Link to={`/lecture/${card.lecture.id}?tab=flashcards`} className="row" style={{ fontSize: 13.5, color: 'var(--c-strong)', fontWeight: 600, marginTop: 12 }}>
-        לכל הכרטיסיות של {card.lecture.title} <ArrowLeft size={15} />
-      </Link>
-    </div>
-  );
-}
-
-function Heatmap({ activity }) {
-  const days = 7 * 12;
-  const today = new Date();
-  const cells = [...Array(days)].map((_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - (days - 1 - i));
-    const key = d.toISOString().slice(0, 10);
-    return { key, v: activity?.[key] || 0 };
-  });
-  const streak = (() => {
-    let s = 0;
-    for (let i = cells.length - 1; i >= 0 && cells[i].v > 0; i--) s++;
-    return s;
-  })();
-  return (
-    <div className="card pad">
-      <div className="row" style={{ marginBottom: 14 }}>
-        <h3 style={{ fontSize: 16 }} className="grow">פעילות למידה</h3>
-        <span className="chip warn"><Flame size={13} /> רצף {streak} ימים</span>
-      </div>
-      <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gap: 4, direction: 'ltr' }}>
-        {cells.map((c, i) => (
-          <motion.div
-            key={c.key}
-            title={`${c.key}: ${c.v} פעולות`}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: i * 0.004 }}
-            style={{ aspectRatio: '1', borderRadius: 4, background: c.v === 0 ? 'var(--surface-3)' : `color-mix(in srgb, #12976a ${Math.min(100, 25 + c.v * 6)}%, transparent)` }}
-          />
-        ))}
-      </div>
-    </div>
-  );
+/** Consecutive days (ending today or yesterday) with any study activity. */
+function streakOf(activity = {}) {
+  let n = 0;
+  const d = new Date();
+  if (!activity[d.toISOString().slice(0, 10)]) d.setDate(d.getDate() - 1);
+  while (activity[d.toISOString().slice(0, 10)]) {
+    n++;
+    d.setDate(d.getDate() - 1);
+  }
+  return n;
 }
 
 /** The page's main card: pick up where you stopped (or a suggested first lecture). */
@@ -109,10 +45,9 @@ function ResumeCard({ last, lastCourse, next, nextCourse, slide, onUpload }) {
     );
   }
   const at = last ? slide : 1;
-  const href = `/lecture/${lecture.id}?tab=slides&slide=${at}`;
   return (
     <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="resume-wrap">
-      <Link to={href} className="card hover resume-card" data-color={course?.color}>
+      <Link to={`/lecture/${lecture.id}?tab=slides&slide=${at}`} className="card hover resume-card" data-color={course?.color}>
         <div className="resume-thumb">{lecture.slideCount > 0 && lecture.hasPdf !== false && <img src={slideUrl(lecture.id, at, true)} alt="" />}</div>
         <div className="grow" style={{ minWidth: 0 }}>
           <div className="resume-eyebrow">
@@ -133,6 +68,82 @@ function ResumeCard({ last, lastCourse, next, nextCourse, slide, onUpload }) {
   );
 }
 
+/** Courses as one quiet list: icon, name, one line of what's inside, progress once you've started. */
+function CourseList({ courses, lectures, studied }) {
+  return (
+    <div className="card course-list">
+      {courses.map((c, i) => {
+        const ls = lectures.filter((l) => l.courseId === c.id);
+        const lec = ls.filter((l) => (l.kind || 'lecture') === 'lecture').length;
+        const practice = ls.filter((l) => l.kind === 'homework' || l.kind === 'tutorial').length;
+        const done = ls.filter((l) => studied[l.id]).length;
+        const unit = lec === 1 ? c.unitLabel : c.unitLabel === 'יחידה' ? 'יחידות' : c.unitLabel === 'שיעור' ? 'שיעורים' : 'הרצאות';
+        const meta = ls.length ? [lec ? `${lec} ${unit}` : null, practice ? `${practice} תרגול ושיעורי בית` : null].filter(Boolean).join(' · ') : 'ממתין לחומרים מהמודל';
+        return (
+          <motion.div key={c.id} variants={fadeUp} initial="hidden" animate="show" custom={i}>
+            <Link to={`/course/${c.id}`} className="course-row" data-color={c.color}>
+              <div className="course-icon sm"><CourseIcon name={c.icon} size={19} /></div>
+              <div className="grow" style={{ minWidth: 0 }}>
+                <div className="course-row-name">{c.short}</div>
+                <div className="course-row-meta">{meta}</div>
+              </div>
+              {done > 0 && (
+                <div className="course-row-progress" title="נלמדו">
+                  <div className="bar"><span style={{ width: `${Math.round((done / ls.length) * 100)}%`, background: 'var(--accent)' }} /></div>
+                  <span>{done}/{ls.length}</span>
+                </div>
+              )}
+              <ChevronLeft size={18} className="course-arrow" />
+            </Link>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** One flashcard a day, as a light strip rather than a big card. */
+function DailyCard({ lectures }) {
+  const [card, setCard] = useState(null);
+  const [flip, setFlip] = useState(false);
+  const ready = lectures.filter((l) => l.flashcardCount);
+  const pick = async (offset = 0) => {
+    if (!ready.length) return;
+    const day = Math.floor(Date.now() / 86400000) + offset;
+    const lec = ready[day % ready.length];
+    const full = await api.get(`/api/lectures/${lec.id}`);
+    const fc = full.content.flashcards;
+    setFlip(false);
+    setCard({ ...fc[(day * 7) % fc.length], lecture: full });
+  };
+  useEffect(() => { pick(); }, [ready.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!card) return null;
+  return (
+    <>
+    <div className="home-section-title">חזרה קצרה</div>
+    <div className="daily" data-color={card.lecture.course?.color}>
+      <div className="daily-head">
+        <span>כרטיסיית היום</span>
+        <span className="faint">· {card.lecture.course?.short}</span>
+        <div className="spacer" />
+        <button className="btn sm icon ghost" title="כרטיסייה אחרת" onClick={() => pick(Math.floor(Math.random() * 1000))}><RotateCcw size={15} /></button>
+      </div>
+      <motion.div key={card.front + flip} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+        {!flip ? (
+          <div className="daily-front">{ltr(card.front)}</div>
+        ) : (
+          <div className="daily-back">{ltr(card.back)}</div>
+        )}
+      </motion.div>
+      <div className="row" style={{ gap: 8, marginTop: 12 }}>
+        <button className="btn sm" onClick={() => setFlip((f) => !f)}><Eye size={14} /> {flip ? 'חזרה לשאלה' : 'הצגת התשובה'}</button>
+        <Link to={`/lecture/${card.lecture.id}?tab=flashcards`} className="btn sm ghost">לכל הכרטיסיות של השיעור</Link>
+      </div>
+    </div>
+    </>
+  );
+}
+
 export default function Home() {
   const { courses, progress, openUpload, setContext } = useApp();
   const { data: lectures = [] } = useFetch('/api/lectures', { poll: (d) => d.some((l) => l.status === 'processing') });
@@ -140,19 +151,20 @@ export default function Home() {
 
   useEffect(() => { setContext({}); }, [setContext]);
 
-  const stats = useMemo(() => {
+  // A short line of real progress – shown only once there is something to show (no rows of zeros).
+  const summary = useMemo(() => {
     const quiz = Object.values(progress.quiz);
     const answered = quiz.reduce((s, q) => s + q.answered, 0);
     const correct = quiz.reduce((s, q) => s + q.correct, 0);
+    const studied = list.filter((l) => progress.studied[l.id]).length;
     const mastered = Object.values(progress.cards).filter((c) => c.box >= 3).length;
-    return {
-      lectures: list.length,
-      slides: list.reduce((s, l) => s + (l.slideCount || 0), 0),
-      accuracy: answered ? (correct / answered) * 100 : 0,
-      answered,
-      mastered,
-      totalCards: list.reduce((s, l) => s + (l.flashcardCount || 0), 0),
-    };
+    const streak = streakOf(progress.activity);
+    return [
+      studied ? `למדת ${studied} מתוך ${list.length}` : null,
+      answered ? `${Math.round((correct / answered) * 100)}% הצלחה בתרגול` : null,
+      mastered ? `${mastered} כרטיסיות בעל־פה` : null,
+      streak > 1 ? { streak } : null,
+    ].filter(Boolean);
   }, [list, progress]);
 
   const last = progress.last && list.find((l) => l.id === progress.last.lectureId);
@@ -160,105 +172,32 @@ export default function Home() {
   // No history yet: suggest the first lecture not studied, in course order.
   const nextUp = !last ? courses.flatMap((c) => list.filter((l) => l.courseId === c.id && (l.kind || 'lecture') === 'lecture' && l.status === 'ready' && !progress.studied[l.id]))[0] : null;
   const nextCourse = nextUp && courses.find((c) => c.id === nextUp.courseId);
-  const recent = [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
 
   return (
-    <Page>
+    <Page className="home">
       <section className="home-top">
         <motion.div className="welcome" variants={fadeUp} initial="hidden" animate="show">
           <div className="welcome-date">{new Date().toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
           <h1>{greeting()}</h1>
-          <p>{STATIC ? 'כל הקורסים שלך במקום אחד – מצגות, תרגולים, הגשות, הודעות מהמודל, סיכומים ותרגול.' : 'כל ההרצאות של הסמסטר במקום אחד – מצגות, סיכומים, נושאים ותרגול.'}</p>
+          {summary.length > 0 && (
+            <div className="welcome-summary">
+              {summary.map((s, i) => (typeof s === 'string'
+                ? <span key={i}>{s}</span>
+                : <span key={i} className="streak"><Flame size={14} /> רצף של {s.streak} ימים</span>))}
+            </div>
+          )}
         </motion.div>
 
         <div className="home-main">
           <ResumeCard last={last} lastCourse={lastCourse} next={nextUp} nextCourse={nextCourse} slide={progress.last?.slide || 1} onUpload={() => openUpload()} />
           <UpcomingWidget />
         </div>
-
-        <motion.div className="card stat-strip" variants={fadeUp} initial="hidden" animate="show" custom={2}>
-          {[
-            { value: stats.lectures, label: 'הרצאות' },
-            { value: stats.slides, label: 'שקפים' },
-            { value: stats.accuracy, label: `דיוק בתרגול · ${stats.answered} שאלות`, suffix: '%' },
-            { value: stats.mastered, label: `כרטיסיות שנשלטו מתוך ${stats.totalCards}` },
-          ].map((s) => (
-            <div key={s.label} className="stat-item">
-              <b><CountUp to={s.value} suffix={s.suffix} /></b>
-              <span>{s.label}</span>
-            </div>
-          ))}
-        </motion.div>
       </section>
 
-      <div className="section-title"><h2>הקורסים שלי</h2><div className="line" /></div>
-      <div className="course-grid">
-        {courses.map((c, i) => {
-          const ls = list.filter((l) => l.courseId === c.id);
-          const studied = ls.filter((l) => progress.studied[l.id]).length;
-          return (
-            <motion.div key={c.id} variants={fadeUp} initial="hidden" animate="show" custom={i}>
-              <Link to={`/course/${c.id}`} className="card hover course-card" data-color={c.color}>
-                <div className="course-card-top">
-                  <div className="course-icon sm"><CourseIcon name={c.icon} size={20} /></div>
-                  <div className="grow" style={{ minWidth: 0 }}>
-                    <h3>{c.short}</h3>
-                    <div className="course-code">{c.code}</div>
-                  </div>
-                  <Ring value={ls.length ? studied / ls.length : 0} size={40} stroke={4} />
-                </div>
-                {c.tagline && <div className="course-tagline">{c.tagline}</div>}
-                <div className="foot">
-                  {(() => {
-                    const lec = ls.filter((l) => (l.kind || 'lecture') === 'lecture').length;
-                    const hw = ls.filter((l) => l.kind === 'homework' || l.kind === 'tutorial').length;
-                    if (!ls.length) return <span className="chip">ממתין לחומרים</span>;
-                    return (
-                      <>
-                        {lec > 0 && <span className="chip">{lec} {lec === 1 ? c.unitLabel : c.unitLabel === 'יחידה' ? 'יחידות' : c.unitLabel === 'שיעור' ? 'שיעורים' : 'הרצאות'}</span>}
-                        {hw > 0 && <span className="chip">{hw} תרגול ושיעורי בית</span>}
-                      </>
-                    );
-                  })()}
-                  <div className="spacer" />
-                  <ArrowLeft size={17} className="course-arrow" />
-                </div>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
+      <div className="home-section-title">הקורסים שלי</div>
+      <CourseList courses={courses} lectures={list} studied={progress.studied} />
 
-      <div className="two-col" style={{ marginTop: 34 }}>
-        <div className="stack">
-          <DailyCard lectures={list} />
-          <Heatmap activity={progress.activity} />
-        </div>
-        <div className="card pad">
-          <div className="row" style={{ marginBottom: 12 }}>
-            <h3 style={{ fontSize: 16 }} className="grow">נוספו לאחרונה</h3>
-          </div>
-          <div className="stack" style={{ gap: 8 }}>
-            {recent.map((l) => {
-              const c = courses.find((x) => x.id === l.courseId);
-              return (
-                <Link key={l.id} to={`/lecture/${l.id}`} className="row" data-color={c?.color} style={{ padding: 10, borderRadius: 12 }}>
-                  <div className="continue-thumb" style={{ width: 92 }}>{l.slideCount > 0 && <img src={slideUrl(l.id, 1, true)} alt="" loading="lazy" />}</div>
-                  <div className="grow">
-                    <div style={{ fontWeight: 600 }}>{l.title}</div>
-                    <div className="row" style={{ gap: 6, marginTop: 4 }}>
-                      <span className="chip c">{c?.short}</span>
-                      {l.status === 'processing' && <span className="chip warn">בעיבוד…</span>}
-                      {progress.studied[l.id] && <span className="chip good">נלמד</span>}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-            {!recent.length && <p className="muted">עוד לא הועלו הרצאות.</p>}
-          </div>
-        </div>
-      </div>
+      <DailyCard lectures={list} />
     </Page>
   );
 }
