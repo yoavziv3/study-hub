@@ -17,7 +17,7 @@ const ago = (iso) => {
 
 const STATUS = {
   imported: { label: 'באתר', cls: 'good' },
-  'not-lecture': { label: 'לא מצגת הרצאה', cls: '' },
+  'not-lecture': { label: 'לא מיובא אוטומטית', cls: '' },
   ignored: { label: 'הוסתר', cls: '' },
 };
 
@@ -109,7 +109,8 @@ function CourseFiles({ moodleId, onChanged }) {
   return (
     <div className="stack" style={{ gap: 6, padding: '4px 14px 14px' }}>
       {files.map((f) => {
-        const st = f.record ? STATUS[f.record.status] : f.lectureLike ? { label: 'חדש – ייובא בסנכרון', cls: 'warn' } : { label: 'לא מצגת הרצאה', cls: '' };
+        const KIND_LABEL = { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית' };
+        const st = f.record?.status === 'imported' ? STATUS.imported : f.record?.status === 'ignored' ? STATUS.ignored : f.kind ? { label: 'חדש – ייובא בסנכרון', cls: 'warn' } : { label: 'לא מיובא אוטומטית', cls: '' };
         const inSite = f.record?.status === 'imported';
         return (
           <div key={f.key} className="file-row" style={{ background: 'var(--surface-2)' }}>
@@ -125,7 +126,8 @@ function CourseFiles({ moodleId, onChanged }) {
                 {busy === f.key ? <Loader2 size={14} className="spin" /> : <Download size={14} />} הוספה
               </button>
             )}
-            {!inSite && f.record?.status !== 'ignored' && f.lectureLike && (
+            {f.kind && <span className="chip c">{KIND_LABEL[f.kind]}</span>}
+            {!inSite && f.record?.status !== 'ignored' && f.kind && (
               <button className="btn sm icon ghost" title="לא לייבא את הקובץ הזה" onClick={() => act(f, 'ignore')}><EyeOff size={14} /></button>
             )}
           </div>
@@ -213,7 +215,7 @@ export default function Moodle() {
         <div className="line" />
         <button className="btn sm ghost" onClick={() => setShowAll((s) => !s)}>{showAll ? 'רק הסמסטר הנוכחי' : 'הצגת כל הקורסים'}</button>
       </div>
-      <p className="muted" style={{ marginTop: -6 }}>לכל קורס במודל בחרו לאיזה קורס באתר הוא שייך. רק קורסים משויכים מסונכרנים. מצגות הרצאה (PowerPoint, או PDF שנראה כמו הרצאה) נוספות אוטומטית. תרגילים, פתרונות ומבחנים לא נוספים, אבל אפשר להוסיף כל קובץ ידנית.</p>
+      <p className="muted" style={{ marginTop: -6 }}>לכל קורס במודל בחרו לאיזה קורס באתר הוא שייך. רק קורסים משויכים מסונכרנים. הרצאות, תרגולים ושיעורי בית / תרגילים (כולל פתרונות) נוספים אוטומטית, כל אחד לסקשן שלו. סילבוס ומבחנים לא נוספים אוטומטית, אבל אפשר להוסיף כל קובץ ידנית.</p>
 
       <div className="stack" style={{ gap: 10 }}>
         {courses.map((c, i) => {

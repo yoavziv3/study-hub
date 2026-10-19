@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { ROOT, listCourses, listLectures, getContent, getSlides, lectureDir } from '../server/lib/store.js';
+import { ROOT, listCourses, listLectures, getContent, getSlides, lectureDir, getPractice } from '../server/lib/store.js';
 
 const OUT = path.join(ROOT, 'dist-cloud');
 
@@ -42,14 +42,15 @@ await write(
   'courses.json',
   courses.map((c) => {
     const ls = lectures.filter((l) => l.courseId === c.id);
-    return { ...c, lectureCount: ls.length, slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0), processing: 0 };
+    const of = (k) => ls.filter((l) => (l.kind || 'lecture') === k).length;
+    return { ...c, lectureCount: of('lecture'), tutorialCount: of('tutorial'), homeworkCount: of('homework'), slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0), processing: 0 };
   })
 );
 
 for (const c of courses) {
   const ls = lectures.filter((l) => l.courseId === c.id);
   await write(`courses/${c.id}.json`, { ...c, lectures: ls.map(card) });
-  await write(`bundles/${c.id}.json`, { ...c, lectures: ls.map((m) => ({ ...m, content: getContent(m.id) })) });
+  await write(`bundles/${c.id}.json`, { ...c, lectures: ls.map((m) => ({ ...m, content: getContent(m.id) })), practice: getPractice(c.id) });
 }
 
 const search = [];

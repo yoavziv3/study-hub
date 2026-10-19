@@ -104,6 +104,14 @@ export function newLectureId(courseId) {
   return `${courseId || 'new'}-${stamp}${rand}`;
 }
 
+// ---------- homework-level practice generated per course ----------
+const practiceFile = (courseId) => path.join(DATA_DIR, 'practice', `${courseId}.json`);
+export const getPractice = (courseId) => readJSON(practiceFile(courseId), { quiz: [], problems: [] });
+export async function savePractice(courseId, value) {
+  await writeJSON(practiceFile(courseId), value);
+  schedulePublish('תרגול ברמת שיעורי בית');
+}
+
 // ---------- progress (a single JSON blob owned by the client) ----------
 export const getProgress = () => readJSON(PROGRESS_FILE, {});
 export const saveProgress = (value) => writeJSON(PROGRESS_FILE, value);

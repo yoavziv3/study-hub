@@ -18,8 +18,19 @@ export const STAGES = ['queued', 'converting', 'rendering', 'extracting', 'class
 const queue = [];
 let running = false;
 
+// Item types: lectures, tutorial sessions (תרגולים) and homework / exercise sheets.
+export const KINDS = ['lecture', 'tutorial', 'homework'];
+const TUTORIAL_RE = /תרגול|tutorial|recitation|tirgul/i;
+const HOMEWORK_RE = /תרגיל|שיעורי בית|ש["״']ב(?![\u0590-\u05FF])|homework|\bhw\s*\d|exercise|assignment|problem set|מטל[הו]|גיליון|חוברת תרגילים|פתרון|פתרונות|solution|booklet/i;
+export function detectKind(...texts) {
+  const t = texts.filter(Boolean).join(' ');
+  if (TUTORIAL_RE.test(t) && !/חוברת/.test(t)) return 'tutorial';
+  if (HOMEWORK_RE.test(t)) return 'homework';
+  return 'lecture';
+}
+
 export const numberFromName = (name) => {
-  const m = name.match(/(?:הרצאה|שיעור|יחידה|lecture|lesson|unit|week|שבוע)\s*[-_ ]?\s*0*(\d{1,2})/i) || name.match(/(?:^|\D)0*(\d{1,2})(?:\D|$)/);
+  const m = name.match(/(?:הרצאה|שיעור|יחידה|תרגול|תרגיל|גיליון|מטלה|lecture|lesson|unit|week|שבוע|tutorial|exercise|assignment|hw)\s*[-_ ]?\s*0*(\d{1,2})/i) || name.match(/(?:^|\D)0*(\d{1,2})(?:\D|$)/);
   return m ? parseInt(m[1], 10) : 0;
 };
 
@@ -46,7 +57,7 @@ function guessCourse(fileName, text) {
  * Register an uploaded file and queue it for processing.
  * courseId may be 'auto' (or empty) to detect the course from the content.
  */
-export async function addLectureFile({ filePath, originalName, courseId, lessonNumber, unitNumber, title, content = null, move = false, source = null }) {
+export async function addLectureFile({ filePath, originalName, courseId, lessonNumber, unitNumber, title, content = null, move = false, source = null, kind = null }) {
   const ext = path.extname(originalName).toLowerCase();
   if (!ACCEPTED.includes(ext)) throw new Error(`סוג קובץ לא נתמך: ${ext}`);
   const known = courseId && courseId !== 'auto' && getCourse(courseId);
@@ -64,6 +75,7 @@ export async function addLectureFile({ filePath, originalName, courseId, lessonN
     autoCourse: !known,
     title: title || prettyName(originalName),
     originalName,
+    kind: KINDS.includes(kind) ? kind : detectKind(originalName, source?.module),
     originalFile: `original${ext}`,
     lessonNumber: Number(lessonNumber) || null,
     unitNumber: unit || null,
@@ -163,7 +175,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     try {
       content = await generateJSON({
         system: lectureSystem(course),
-        prompt: lecturePrompt({ course, fileName: meta.originalName, slides, hint: meta.lessonNumber ? `שיעור מספר ${meta.lessonNumber}` : '' }),
+        prompt: lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '' }),
         schema: LECTURE_SCHEMA,
         effort: 'high',
       });
@@ -182,18 +194,20 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   if (content?.title && meta.title === prettyName(meta.originalName)) patch.title = content.title;
   if (!meta.lessonNumber) {
     const unit = meta.unitNumber || content?.lessonNumber || 0;
-    patch.lessonNumber = (course.unitToLesson && unit && course.unitToLesson[unit]) || unit || nextLessonNumber(course.id);
+    const kind = meta.kind || 'lecture';
+    const mapped = kind === 'lecture' && course.unitToLesson && unit ? course.unitToLesson[unit] : 0;
+    patch.lessonNumber = mapped || unit || nextLessonNumber(course.id, kind);
   }
   await patchLecture(id, patch);
   await stage(id, 'ready');
 }
 
-function nextLessonNumber(courseId) {
+function nextLessonNumber(courseId, kind = 'lecture') {
   const dirs = fs.readdirSync(path.dirname(lectureDir('x')));
   let max = 0;
   for (const d of dirs) {
     const m = getLecture(d);
-    if (m && m.courseId === courseId && m.lessonNumber) max = Math.max(max, m.lessonNumber);
+    if (m && m.courseId === courseId && (m.kind || 'lecture') === kind && m.lessonNumber) max = Math.max(max, m.lessonNumber);
   }
   return max + 1;
 }

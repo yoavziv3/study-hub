@@ -7,7 +7,7 @@ import { promisify } from 'node:util';
 
 const run = promisify(execFile);
 const QUIET_MS = 2 * 60 * 1000;
-const PATHS = ['data/lectures', 'data/courses.json'];
+const PATHS = ['data/lectures', 'data/courses.json', 'data/practice'];
 
 let timer = null;
 let busy = false;

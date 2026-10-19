@@ -48,7 +48,7 @@ function Sidebar({ open, onNavigate }) {
             color={c.color}
             icon={<span className="nav-dot"><CourseIcon name={c.icon} size={15} /></span>}
             label={c.short}
-            count={c.processing ? <Loader2 size={13} className="spin" /> : c.lectureCount ? `${studied}/${c.lectureCount}` : '—'}
+            count={c.processing ? <Loader2 size={13} className="spin" /> : c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0) ? `${studied}/${c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0)}` : '—'}
             onClick={onNavigate}
           />
         );

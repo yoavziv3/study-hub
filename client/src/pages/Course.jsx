@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2 } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { slideUrl, useFetch, shuffle } from '../api.js';
-import { CourseIcon, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
+import { api, slideUrl, useFetch, shuffle } from '../api.js';
+import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
 import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
@@ -81,12 +81,106 @@ function ExamMode({ bundle }) {
   );
 }
 
-function Empty({ course, text }) {
+function Problem({ p, i }) {
+  const [open, setOpen] = useState(false);
+  const DIFF = { easy: ['קל', 'good'], medium: ['בינוני', 'warn'], hard: ['קשה', 'bad'] };
+  const [label, cls] = DIFF[p.difficulty] || DIFF.medium;
+  return (
+    <motion.div className="card pad" variants={fadeUp} initial="hidden" animate="show" custom={i % 10}>
+      <div className="row wrap" style={{ gap: 6, marginBottom: 6 }}>
+        <span className="topic-index" style={{ width: 34, height: 34, fontSize: 15 }}>{i + 1}</span>
+        <span className={`chip ${cls}`}>{label}</span>
+        {p.topic && <span className="chip c">{p.topic}</span>}
+      </div>
+      <Markdown>{p.question}</Markdown>
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
+            <div className="explain"><Markdown>{p.solution}</Markdown></div>
+            <button className="btn sm ghost" style={{ marginTop: 8 }} onClick={() => setOpen(false)}><EyeOff size={14} /> הסתרת הפתרון</button>
+          </motion.div>
+        ) : (
+          <motion.div exit={{ opacity: 0 }} style={{ marginTop: 10 }}>
+            <button className="btn sm" onClick={() => setOpen(true)}><Eye size={14} /> הצגת פתרון מלא</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function HomeworkPractice({ course, bundle, setBundle }) {
+  const { toast } = useApp();
+  const practice = bundle.practice || { quiz: [], problems: [] };
+  const [count, setCount] = useState(5);
+  const [topic, setTopic] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState('problems');
+  const hasMaterial = bundle.lectures.some((l) => kindOf(l) !== 'lecture' && l.status === 'ready');
+  const generate = async () => {
+    setBusy(true);
+    try {
+      const r = await api.post(`/api/courses/${course.id}/practice`, { count, topic });
+      setBundle({ ...bundle, practice: r.practice });
+      toast(`נוספו ${r.added.problems} תרגילים ו-${r.added.quiz} שאלות`);
+    } catch (e) {
+      toast(e.message, 'info');
+    } finally {
+      setBusy(false);
+    }
+  };
+  const problems = practice.problems;
+  return (
+    <div style={{ marginTop: 34 }}>
+      <div className="section-title" style={{ marginTop: 0 }}><h2>תרגול ברמת שיעורי הבית</h2><div className="line" /></div>
+      <p className="muted" style={{ marginTop: -6 }}>
+        תרגילים חדשים שנכתבים לפי שיעורי הבית והתרגולים של הקורס – באותה רמה ובאותו סגנון, עם פתרון מלא לכל תרגיל.
+      </p>
+      <div className="card pad local-only row wrap" style={{ gap: 10, alignItems: 'flex-end' }}>
+        <label className="field" style={{ width: 130 }}>מספר תרגילים
+          <select className="input" value={count} onChange={(e) => setCount(+e.target.value)}>{[3, 5, 8, 10].map((n) => <option key={n}>{n}</option>)}</select>
+        </label>
+        <label className="field grow" style={{ minWidth: 200 }}>נושא (לא חובה)
+          <input className="input" placeholder="למשל: נגזרות, רישומי התאמה…" value={topic} onChange={(e) => setTopic(e.target.value)} />
+        </label>
+        <button className="btn accent" style={{ height: 42 }} disabled={busy || !hasMaterial} onClick={generate}>
+          {busy ? <Loader2 size={16} className="spin" /> : <Wand2 size={16} />} {busy ? 'כותב תרגילים… (כדקה–שתיים)' : 'צור תרגילים חדשים'}
+        </button>
+        {!hasMaterial && <div className="faint" style={{ fontSize: 13, width: '100%' }}>התרגול ייווצר אחרי שיתווספו לקורס שיעורי בית או תרגולים.</div>}
+      </div>
+      {(problems.length > 0 || practice.quiz.length > 0) && (
+        <>
+          <div className="row" style={{ margin: '18px 0 12px', justifyContent: 'center' }}>
+            <div className="tabs">
+              {[['problems', `תרגילים פתוחים (${problems.length})`], ['quiz', `שאלות אמריקאיות (${practice.quiz.length})`]].map(([id, label]) => (
+                <button key={id} className={`tab ${mode === id ? 'active' : ''}`} onClick={() => setMode(id)}>
+                  {mode === id && <motion.span layoutId="hw-mode" className="tab-bg" />}
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {mode === 'problems' && <div className="stack">{problems.map((p, i) => <Problem key={p.at + i} p={p} i={i} />)}</div>}
+          {mode === 'quiz' && practice.quiz.length > 0 && <Quiz key={practice.quiz.length} questions={practice.quiz} lectureId={`${course.id}-homework`} />}
+        </>
+      )}
+    </div>
+  );
+}
+
+const KIND = {
+  lecture: { tab: 'שיעורים', group: 'שיעור', empty: 'הרצאות' },
+  tutorial: { tab: 'תרגולים', group: 'תרגול', empty: 'תרגולים' },
+  homework: { tab: 'שיעורי בית ותרגילים', group: 'מס׳', empty: 'שיעורי בית או תרגילים' },
+};
+const kindOf = (l) => l.kind || 'lecture';
+
+function Empty({ course, text, what = 'הרצאות' }) {
   const { openUpload } = useApp();
   return (
     <motion.div className="empty" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
       <div className="empty-icon"><CourseIcon name={course.icon} size={30} /></div>
-      <h3>עדיין אין כאן הרצאות</h3>
+      <h3>עדיין אין כאן {what}</h3>
       <p>{text || 'גררו לכאן מצגת או לחצו להעלאה – היא תומר לשקפים, תסוכם ותחולק לנושאים אוטומטית.'}</p>
       <button className="local-only btn accent" onClick={() => openUpload(course.id)}><Upload size={17} /> העלאת הרצאה ל{course.short}</button>
     </motion.div>
@@ -98,8 +192,8 @@ export default function Course() {
   const navigate = useNavigate();
   const { setContext, openUpload, openChat, progress } = useApp();
   const { data: course } = useFetch(`/api/courses/${id}`, { poll: (d) => d.lectures.some((l) => l.status === 'processing') });
-  const needsBundle = tab !== 'lessons' && tab !== 'labs';
-  const { data: bundle } = useFetch(needsBundle ? `/api/courses/${id}/bundle` : null);
+  const needsBundle = !['lessons', 'tutorials', 'labs'].includes(tab);
+  const { data: bundle, setData: setBundle } = useFetch(needsBundle ? `/api/courses/${id}/bundle` : null);
   const [labOpen, setLabOpen] = useState(null);
 
   useEffect(() => {
@@ -107,13 +201,17 @@ export default function Course() {
   }, [course?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const groups = useMemo(() => {
-    const g = new Map();
-    for (const l of course?.lectures || []) {
-      const k = l.lessonNumber || 0;
-      if (!g.has(k)) g.set(k, []);
-      g.get(k).push(l);
+    const out = {};
+    for (const kind of Object.keys(KIND)) {
+      const g = new Map();
+      for (const l of (course?.lectures || []).filter((x) => kindOf(x) === kind)) {
+        const k = l.lessonNumber || 0;
+        if (!g.has(k)) g.set(k, []);
+        g.get(k).push(l);
+      }
+      out[kind] = [...g.entries()].sort((a, b) => (a[0] || 99) - (b[0] || 99));
     }
-    return [...g.entries()].sort((a, b) => (a[0] || 99) - (b[0] || 99));
+    return out;
   }, [course]);
 
   if (!course) return <Page><div style={{ padding: 60, textAlign: 'center' }}><Loader2 className="spin" /></div></Page>;
@@ -123,7 +221,9 @@ export default function Course() {
   const flashTotal = course.lectures.reduce((s, l) => s + l.flashcardCount, 0);
   const quizTotal = course.lectures.reduce((s, l) => s + l.quizCount, 0);
   const tabs = [
-    { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.length },
+    { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
+    { id: 'tutorials', label: 'תרגולים', icon: <Presentation size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'tutorial').length || null },
+    { id: 'homework', label: 'שיעורי בית ותרגילים', icon: <PencilRuler size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'homework').length || null },
     { id: 'exam', label: 'מבחן תרגול', icon: <Target size={16} />, count: quizTotal || null },
     { id: 'flashcards', label: 'כרטיסיות', icon: <Layers size={16} />, count: flashTotal || null },
     { id: 'glossary', label: 'מילון מושגים', icon: <BookMarked size={16} /> },
@@ -150,7 +250,9 @@ export default function Course() {
               <h1>{course.name}</h1>
               <div className="meta">
                 {course.staff.length > 0 && <span className="chip"><Users size={13} /> {course.staff.join(' · ')}</span>}
-                <span className="chip">{course.lectures.length} {course.unitLabel === 'יחידה' ? 'יחידות' : 'הרצאות'}</span>
+                <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'lecture').length} {course.unitLabel === 'יחידה' ? 'יחידות' : 'הרצאות'}</span>
+                {course.lectures.some((l) => kindOf(l) === 'tutorial') && <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'tutorial').length} תרגולים</span>}
+                {course.lectures.some((l) => kindOf(l) === 'homework') && <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'homework').length} שיעורי בית ותרגילים</span>}
                 <span className="chip">{course.lectures.reduce((s, l) => s + (l.slideCount || 0), 0)} שקפים</span>
               </div>
             </div>
@@ -168,16 +270,21 @@ export default function Course() {
           <Tabs tabs={tabs} value={tab} onChange={(t) => { setLabOpen(null); navigate(`/course/${id}/${t === 'lessons' ? '' : t}`, { replace: true }); }} layoutId="course-tab" />
         </div>
 
-        {tab === 'lessons' && (
-          course.lectures.length === 0 ? <div style={{ marginTop: 22 }}><Empty course={course} /></div> : (
-            groups.map(([num, ls]) => (
-              <div className="lesson-group" key={num}>
-                <div className="lesson-num"><span>שיעור</span><b>{num || '?'}</b></div>
-                <div className="lecture-list">{ls.map((l, i) => <LectureCard key={l.id} l={l} course={course} i={i} />)}</div>
-              </div>
-            ))
-          )
-        )}
+        {[['lessons', 'lecture'], ['tutorials', 'tutorial'], ['homework', 'homework']].map(([t, kind]) => tab === t && (
+          <div key={t}>
+            {groups[kind].length === 0 ? (
+              <div style={{ marginTop: 22 }}><Empty course={course} what={KIND[kind].empty} text={kind === 'lecture' ? undefined : `${KIND[kind].empty} נכנסים לכאן אוטומטית ממודל, או בהעלאה ידנית (בחירת הסוג בחלון ההעלאה).`} /></div>
+            ) : (
+              groups[kind].map(([num, ls]) => (
+                <div className="lesson-group" key={num}>
+                  <div className="lesson-num"><span>{KIND[kind].group}</span><b>{num || '•'}</b></div>
+                  <div className="lecture-list">{ls.map((l, i) => <LectureCard key={l.id} l={l} course={course} i={i} />)}</div>
+                </div>
+              ))
+            )}
+            {kind === 'homework' && bundle && <HomeworkPractice course={course} bundle={bundle} setBundle={setBundle} />}
+          </div>
+        ))}
 
         <div style={{ marginTop: 22 }}>
           {needsBundle && !bundle && <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>}

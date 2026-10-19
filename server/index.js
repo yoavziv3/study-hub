@@ -6,11 +6,11 @@ import express from 'express';
 import multer from 'multer';
 import {
   ROOT, listCourses, getCourse, listLectures, getLecture, patchLecture, getContent, saveContent, getSlides,
-  deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR,
+  deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice,
 } from './lib/store.js';
-import { addLectureFile, enqueue, queueState, resumePending, watchInbox, ACCEPTED } from './lib/ingest.js';
+import { addLectureFile, enqueue, queueState, resumePending, watchInbox, ACCEPTED, KINDS } from './lib/ingest.js';
 import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
-import { chatSystem, practicePrompt, PRACTICE_SCHEMA } from './lib/prompts.js';
+import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
 import * as moodle from './lib/moodle.js';
 import { initPublish } from './lib/publish.js';
@@ -45,7 +45,15 @@ app.get('/api/courses', (_req, res) => {
   res.json(
     listCourses().map((c) => {
       const ls = lectures.filter((l) => l.courseId === c.id);
-      return { ...c, lectureCount: ls.length, slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0), processing: ls.filter((l) => l.status === 'processing').length };
+      const of = (k) => ls.filter((l) => (l.kind || 'lecture') === k).length;
+      return {
+        ...c,
+        lectureCount: of('lecture'),
+        tutorialCount: of('tutorial'),
+        homeworkCount: of('homework'),
+        slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0),
+        processing: ls.filter((l) => l.status === 'processing').length,
+      };
     })
   );
 });
@@ -61,7 +69,7 @@ app.get('/api/courses/:id/bundle', (req, res) => {
   const course = getCourse(req.params.id);
   if (!course) return res.status(404).json({ error: 'קורס לא נמצא' });
   const lectures = listLectures(course.id).map((m) => ({ ...m, content: getContent(m.id) }));
-  res.json({ ...course, lectures });
+  res.json({ ...course, lectures, practice: getPractice(course.id) });
 });
 
 // ---------- lectures ----------
@@ -74,9 +82,10 @@ app.get('/api/lectures/:id', (req, res) => {
 });
 
 app.patch('/api/lectures/:id', async (req, res) => {
-  const allowed = ['title', 'lessonNumber', 'courseId', 'unitNumber'];
+  const allowed = ['title', 'lessonNumber', 'courseId', 'unitNumber', 'kind'];
   const patch = Object.fromEntries(Object.entries(req.body).filter(([k]) => allowed.includes(k)));
   if (patch.courseId && !getCourse(patch.courseId)) return res.status(400).json({ error: 'קורס לא קיים' });
+  if (patch.kind && !KINDS.includes(patch.kind)) return res.status(400).json({ error: 'סוג לא תקין' });
   const meta = await patchLecture(req.params.id, patch);
   if (!meta) return res.status(404).json({ error: 'הרצאה לא נמצאה' });
   res.json(meta);
@@ -99,14 +108,14 @@ app.post('/api/lectures/:id/regenerate', async (req, res) => {
 
 // ---------- upload ----------
 app.post('/api/upload', upload.array('files', 30), async (req, res) => {
-  const { courseId = 'auto', lessonNumber } = req.body;
+  const { courseId = 'auto', lessonNumber, kind } = req.body;
   const created = [];
   const errors = [];
   for (const f of req.files || []) {
     // multer decodes multipart filenames as latin1; restore UTF-8 (Hebrew names).
     const name = Buffer.from(f.originalname, 'latin1').toString('utf8');
     try {
-      created.push(await addLectureFile({ filePath: f.path, originalName: name, courseId, lessonNumber, move: true }));
+      created.push(await addLectureFile({ filePath: f.path, originalName: name, courseId, lessonNumber, kind: KINDS.includes(kind) ? kind : null, move: true }));
     } catch (e) {
       errors.push({ name, error: e.message });
       fs.rm(f.path, { force: true }, () => {});
@@ -150,6 +159,43 @@ app.post('/api/practice', async (req, res) => {
   } catch (e) {
     console.error('[practice]', e);
     res.status(500).json({ error: e.message });
+  }
+});
+
+// ---------- homework-level practice ----------
+app.get('/api/courses/:id/practice', (req, res) => res.json(getPractice(req.params.id)));
+
+app.post('/api/courses/:id/practice', async (req, res) => {
+  const course = getCourse(req.params.id);
+  if (!course) return res.status(404).json({ error: 'קורס לא נמצא' });
+  const { count = 5, topic = '' } = req.body;
+  const items = listLectures(course.id).filter((l) => l.status === 'ready');
+  const homework = items.filter((l) => l.kind === 'homework' || l.kind === 'tutorial');
+  if (!homework.length) return res.status(400).json({ error: 'אין עדיין שיעורי בית או תרגולים בקורס הזה' });
+  try {
+    const hwText = homework
+      .map((l) => `## ${l.kind === 'homework' ? 'שיעורי בית' : 'תרגול'}: ${l.title}\n${getSlides(l.id).map((s) => s.text).join('\n')}`)
+      .join('\n\n')
+      .slice(0, 250000);
+    const lecText = items.filter((l) => (l.kind || 'lecture') === 'lecture').map((l) => `## ${l.title}\n${getContent(l.id)?.overview || ''}`).join('\n');
+    const saved = getPractice(course.id);
+    const out = await generateJSON({
+      system: `${lectureSystem(course)}\nבמשימה הזו אתה המתרגל של הקורס: כותב תרגילים ופתרונות רשמיים ברמה של שיעורי הבית.`,
+      prompt: homeworkPracticePrompt({ course, homework: hwText, lectures: lecText, count: Math.min(10, Number(count) || 5), topic, avoid: saved.problems.map((p) => p.question.slice(0, 120)).slice(-40) }),
+      schema: HOMEWORK_PRACTICE_SCHEMA,
+      effort: 'high',
+      maxTokens: 32000,
+    });
+    const stamp = new Date().toISOString();
+    const next = {
+      quiz: [...saved.quiz, ...out.quiz.map((q) => ({ ...q, generated: true, at: stamp }))],
+      problems: [...saved.problems, ...out.problems.map((p) => ({ ...p, at: stamp }))],
+    };
+    await savePractice(course.id, next);
+    res.json({ added: { quiz: out.quiz.length, problems: out.problems.length }, practice: next });
+  } catch (e) {
+    console.error('[homework-practice]', e.message);
+    res.status(500).json({ error: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : e.message });
   }
 });
 

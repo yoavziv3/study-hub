@@ -173,7 +173,17 @@ export default function Home() {
                 </div>
                 <div className="muted" style={{ fontSize: 14 }}>{c.tagline}</div>
                 <div className="foot">
-                  <span className="chip c">{ls.length ? `${ls.length} ${ls.length === 1 ? c.unitLabel : c.unitLabel === 'יחידה' ? 'יחידות' : c.unitLabel === 'שיעור' ? 'שיעורים' : 'הרצאות'}` : 'ממתין להרצאות'}</span>
+                  {(() => {
+                    const lec = ls.filter((l) => (l.kind || 'lecture') === 'lecture').length;
+                    const hw = ls.filter((l) => l.kind === 'homework' || l.kind === 'tutorial').length;
+                    if (!ls.length) return <span className="chip c">ממתין לחומרים</span>;
+                    return (
+                      <>
+                        {lec > 0 && <span className="chip c">{lec} {lec === 1 ? c.unitLabel : c.unitLabel === 'יחידה' ? 'יחידות' : c.unitLabel === 'שיעור' ? 'שיעורים' : 'הרצאות'}</span>}
+                        {hw > 0 && <span className="chip">{hw} תרגול ושיעורי בית</span>}
+                      </>
+                    );
+                  })()}
                   <div className="spacer" />
                   <motion.span whileHover={{ x: -4 }} style={{ display: 'grid', color: 'var(--c)' }}><ArrowLeft size={18} /></motion.span>
                 </div>

@@ -12,6 +12,7 @@ export default function UploadModal() {
   const [files, setFiles] = useState(() => window.__droppedFiles || []);
   const [courseId, setCourseId] = useState(uploadOpen?.courseId || 'auto');
   const [lesson, setLesson] = useState('');
+  const [kind, setKind] = useState('auto');
   const [over, setOver] = useState(false);
   const [phase, setPhase] = useState('pick'); // pick | uploading | tracking
   const [items, setItems] = useState([]);
@@ -48,6 +49,7 @@ export default function UploadModal() {
     files.forEach((f) => fd.append('files', f));
     fd.append('courseId', courseId);
     if (lesson) fd.append('lessonNumber', lesson);
+    if (kind !== 'auto') fd.append('kind', kind);
     try {
       const res = await api.post('/api/upload', fd);
       res.errors.forEach((e) => toast(`${e.name}: ${e.error}`, 'info'));
@@ -109,8 +111,17 @@ export default function UploadModal() {
                   {courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </label>
-              <label className="field" style={{ width: 130 }}>
-                מס׳ שיעור
+              <label className="field" style={{ width: 170 }}>
+                סוג
+                <select className="input" value={kind} onChange={(e) => setKind(e.target.value)}>
+                  <option value="auto">✨ לפי שם הקובץ</option>
+                  <option value="lecture">הרצאה</option>
+                  <option value="tutorial">תרגול</option>
+                  <option value="homework">שיעורי בית / תרגילים</option>
+                </select>
+              </label>
+              <label className="field" style={{ width: 110 }}>
+                מספר
                 <input className="input" type="number" min="1" placeholder="אוטומטי" value={lesson} onChange={(e) => setLesson(e.target.value)} />
               </label>
             </div>

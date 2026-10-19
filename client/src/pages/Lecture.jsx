@@ -257,7 +257,7 @@ function NotesTab({ lecture }) {
 
 function EditDialog({ lecture, onClose, onSaved }) {
   const { courses } = useApp();
-  const [form, setForm] = useState({ title: lecture.title, lessonNumber: lecture.lessonNumber || '', unitNumber: lecture.unitNumber || '', courseId: lecture.courseId });
+  const [form, setForm] = useState({ title: lecture.title, lessonNumber: lecture.lessonNumber || '', unitNumber: lecture.unitNumber || '', courseId: lecture.courseId, kind: lecture.kind || 'lecture' });
   const save = async () => {
     await api.patch(`/api/lectures/${lecture.id}`, { ...form, lessonNumber: Number(form.lessonNumber) || null, unitNumber: Number(form.unitNumber) || null });
     onSaved();
@@ -277,6 +277,15 @@ function EditDialog({ lecture, onClose, onSaved }) {
             </label>
             <label className="field" style={{ width: 120 }}>מס׳ שיעור<input className="input" type="number" value={form.lessonNumber} onChange={(e) => setForm({ ...form, lessonNumber: e.target.value })} /></label>
             <label className="field" style={{ width: 120 }}>מס׳ יחידה<input className="input" type="number" value={form.unitNumber} onChange={(e) => setForm({ ...form, unitNumber: e.target.value })} /></label>
+          </div>
+          <div className="row">
+            <label className="field grow">סוג
+              <select className="input" value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
+                <option value="lecture">הרצאה</option>
+                <option value="tutorial">תרגול</option>
+                <option value="homework">שיעורי בית / תרגילים</option>
+              </select>
+            </label>
           </div>
         </div>
         <div className="row" style={{ marginTop: 22, justifyContent: 'flex-end' }}>
@@ -354,12 +363,12 @@ export default function Lecture() {
         <div className="crumbs">
           <Link to="/">לוח בקרה</Link><ChevronLeft size={14} />
           <Link to={`/course/${course?.id}`}>{course?.short}</Link><ChevronLeft size={14} />
-          <span>שיעור {lecture.lessonNumber || '?'}</span>
+          <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
         </div>
         <div className="lecture-head">
           <motion.div className="unit-badge" initial={{ scale: 0.6, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 15 }}>{unitNo || '•'}</motion.div>
           <div className="grow">
-            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {course?.unitLabel} {unitNo}</div>
+            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {{ lecture: course?.unitLabel, tutorial: 'תרגול', homework: 'שיעורי בית ותרגילים' }[lecture.kind || 'lecture']} {unitNo}</div>
             <h1>{lecture.title}</h1>
             <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
               <span className="chip">{lecture.slideCount} שקפים</span>
