@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-cloud
+logs
+.env
+
+# Private / machine-local state – never commit
+data/moodle.json
+data/progress.json
+data/*.tmp
+
+# Lecture data IS committed (the cloud site is built from it), except the intermediate PDFs
+data/lectures/*/slides.pdf
+data/lectures/**/*.tmp
+
+inbox/*
+!inbox/.gitkeep
+.DS_Store

@@ -1,0 +1,41 @@
+{
+  "name": "study-hub",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "אתר למידה אישי לסמסטר – מצגות, סיכומים, תרגול וצ'אט AI",
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c cyan,magenta \"node --watch server/index.js\" \"vite\"",
+    "build": "vite build",
+    "start": "vite build && node server/index.js",
+    "serve": "node server/index.js",
+    "seed": "node scripts/seed.js",
+    "build:static": "node scripts/build-static.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "chokidar": "^5.0.0",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "jszip": "^3.10.2",
+    "katex": "^0.19.0",
+    "lucide-react": "^1.59.0",
+    "motion": "^14.3.0",
+    "multer": "^2.4.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.4",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "vite": "^8.3.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "acc-cit9kzp8",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "הדוחות הכספיים – המאזן, דוח רווח והפסד והדוח על השינויים בהון",
+  "originalName": "יחידה 5- דוחות כספיים.pptx",
+  "originalFile": "original.pptx",
+  "lessonNumber": 3,
+  "unitNumber": 5,
+  "slideCount": 19,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-18T21:37:02.121Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 5 - פיננסית - דוחות כספיים"
+  },
+  "updatedAt": "2026-10-19T05:53:19.040Z",
+  "aiError": null
+}

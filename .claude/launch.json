@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "study-hub",
+      "url": "http://localhost:5180",
+      "port": 5180
+    },
+    {
+      "name": "cloud-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve-cloud.js"
+      ],
+      "port": 5190
+    }
+  ]
+}

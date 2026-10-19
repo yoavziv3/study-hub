@@ -1,0 +1,138 @@
+[
+  {
+    "n": 1,
+    "text": "מבוא למערכות מידע\nארגון ,מידע ,מערכת\n\nד\"ר דוד קודיש | אוקטובר 2026"
+  },
+  {
+    "n": 2,
+    "text": "צרכים שונים ,מערכות שונות\nמערכות מידע בארגונים – סיכום\n\n2"
+  },
+  {
+    "n": 3,
+    "text": "מידע תפעולי\nאופק זמן\nמילישניות עד שעות\n\nמקור נתונים\nפנימי לארגון\n\nרמת פירוט\nמפורט ומדויק\n\nדיוק ואמינות\nגבוהים — נתוני אמת\nGIGO: Garbage In, Garbage Out\n\nמטרה עיקרית\nיעילות תפעולית\n\nAnthony, R.N. (1965). Planning and Control Systems: A Framework for Analysis\n\n3"
+  },
+  {
+    "n": 4,
+    "text": "דוגמאות קלאסיות למידע תפעולי\nמה קורה עכשיו? מה קרה היום?\n\nרשימת קריאות\nשירות\nשנפתחו ונסגרו\nהשבוע\n\nרישום שעות\nעבודה\nונוכחות עובדים\n\nמצב המלאי\nבמחסן ברגע נתון\n\nהזמנת אוכל\nדרך האפליקציה\n\nתיעוד הזמנת\nכרטיסי טיסה\n\nמידע מפורט ,מובנה ,בזמן אמת או כמעט — משמש את הדרג התפעולי\n\n4"
+  },
+  {
+    "n": 5,
+    "text": "מידע ניהולי\nאופק זמן\nשבועות ,חודשים ,רבעונים\n\nמקור נתונים\nפנימי +חיצוני\n\nרמת פירוט\nמסוכם ומצרפי\n\nדיוק ואמינות\nבינוניים -מבוססי הערכות ומגמות\n\nמטרה עיקרית\nבקרה ותיאום\n\nAnthony, R.N. (1965). Planning and Control Systems: A Framework for Analysis\n\n5"
+  },
+  {
+    "n": 6,
+    "text": "דוגמאות קלאסיות למידע ניהולי\nמה קרה בחודש/רבעון האחרון? מה המגמה?\n\nמדדי ביצוע\nלחודש האחרון\n\nהשוואת תפוקות\nבין צוותים/סניפים\n\nניתוח עלויות\nמול תקציב שנתי\n\nדו\"ח ביצועים רבעוני\nשל חטיבה\n\nMonthly KPIs\n\nTeam comparison\n\nBudget vs. actual\n\nQuarterly\nperformance\n\nמידע מסוכם ,ברמת מדדים וסטטיסטיקה — משמש את הדרג הניהולי הבינוני והבכיר\n\n6"
+  },
+  {
+    "n": 7,
+    "text": "מידע אסטרטגי\nאופק זמן\nשנים קדימה\n\nמקור נתונים\nבעיקר חיצוני (שוק ,מתחרים ,רגולציה)\n\nרמת פירוט\nתמונת-על ,אגרגטיבי\n\nדיוק ואמינות\nנמוכים -תחזיות ואי-ודאות\n\nמטרה עיקרית\nקביעת כיוון ומדיניות\n\nAnthony, R.N. (1965). Planning and Control Systems: A Framework for Analysis\n\n7"
+  },
+  {
+    "n": 8,
+    "text": "דוגמאות קלאסיות למידע אסטרטגי\nלאן אנחנו הולכים? מה קורה בשוק?\n\nתוכנית מיזוג\nאו רכישה\n\nהחלטה על כניסה\nלשוק חדש\n\nניתוח מתחרים\nומיצוב תחרותי\n\nמגמות שוק ותחזית\nצמיחה ל 5-שנים\n\nמידע חיצוני ,לטווח ארוך ,עם אי-ודאות גבוהה — משמש את ההנהלה הבכירה\n\n8"
+  },
+  {
+    "n": 9,
+    "text": "רמות ניהול וסוגי החלטות\nסוגי החלטות\nהחלטות בלתי מובנות\nUnstructured\n\nהחלטות מובנות למחצה\nSemi-structured\n\nהחלטות מובנות\nStructured\n\nAnthony, R.N. (1965). Planning and Control Systems: A Framework for Analysis\n\n9"
+  },
+  {
+    "n": 10,
+    "text": "סוגי החלטות\nהחלטות מובנות\n\nהחלטות מובנות למחצה\n\nהחלטות בלתי מובנות\n\nStructured\n\nSemi-structured\n\nUnstructured\n\nחוזרות ונשנות ,יש תהליך\nמוגדר לטיפול\n\nתהליך שגרתי אך דרושה\nתובנה של מקבל ההחלטה\n\nלא שגרתי ,אין תהליך מוגדר,\nמצריך הערכות ותובנות\n\nדוגמה:\n\nדוגמה:\n\nדוגמה:\n\nהזמנת מלאי כשהמלאי\nיורד מתחת לסף מוגדר\n\nקביעת תקציב שיווק\nלרבעון הבא לפי ביצועים\n\nהאם לפתח מוצר חדש\nמבוסס AIאו לרכוש סטארטאפ\n\n10"
+  },
+  {
+    "n": 11,
+    "text": "החלטה מובנית -קטע וידאו\nהולך רגל חוצה באדום ומסביר לשוטרת שזו הייתה החלטה שלו\nסרקו כדי לצפות\n\nlive.themathbible.com\n/tool/02/decision-video\n 17שניות · יש קול\n\n11"
+  },
+  {
+    "n": 12,
+    "text": "רמות ניהול וסוגי מערכות מידע\nתכנון אסטרטגי\n\nEIS\nמערכות מידע למנהלים בכירים\n\nבקרה ניהולית\n\nMIS/BI, DSS\nמערכות מידע ניהוליות /בינה עסקית ,תמיכה בהחלטות\n\nבקרה תפעולית\n\nTPS, ERP\nמערכות עיבוד תנועות ,תכנון משאבים\n* MIS/BIמשרתות גם מנהלים תפעוליים בכירים (מנהלי משמרת ,מנהלי סניף)\nAnthony, R.N. (1965). Planning and Control Systems: A Framework for Analysis\n\n12"
+  },
+  {
+    "n": 13,
+    "text": "- TPSמערכות עיבוד תנועות\nTransaction Processing Systems\n\nמערכות TPSהן המקור לכל הנתונים בארגון\nכל אפליקציה שאתם משתמשים בה -רישום ,הזמנה ,תשלום ,צ'ק-אין -היא מערכת TPS\n\nמה זה ?TPS\nמערכת שמתעדת ומעבדת את העסקאות\nהיומיומיות של הארגון בזמן אמת.\nאוספת ,מאמתת ושומרת כל פעולה.\n\nדוגמאות שאתם מכירים\nקנייה באונליין\n\nהעברה בנקאית\n\nצ'ק-אין לטיסה\n\nרישום לקורס\n\nהזמנת אוכל\nבמשלוחה\n\nתור לרופא\n\nללא TPSאין נתונים -וללא נתונים אין מידע ניהולי ,בינה עסקית או החלטות אסטרטגיות\n\nLaudon & Laudon (2025). Management Information Systems: Managing the Digital Firm, 18th ed., Ch. 2\n\n13"
+  },
+  {
+    "n": 14,
+    "text": "- TPSזרימת נתונים\nTransaction Processing Systems\nמידע ניהולי\n\nעסקאות יומיומיות\nהזמנת לקוח\n\nסיכום מכירות חודשי\n\nתשלום\n\nמגמות ותחזיות\n\nקלט\n\nקבלת מלאי\n\nבסיס נתונים\nDatabase\n\nעיבוד\n\nדו\"ח חריגות תקציב\n\nכל העסקאות נשמרות\n\nרישום עובד\n\nניתוח רווחיות\n\n TPSאוסף עסקאות בודדות ← בסיס הנתונים צובר אותן ← המידע הניהולי נגזר מהן\n\n14"
+  },
+  {
+    "n": 15,
+    "text": "עיבוד נתונים תפעוליים – שלוש פרדיגמות\nדוגמהInstagram :\nBatch processing\n\nעיבוד בזמן אמת\nReal time\n\nמונחה אירועים\n\nעיבוד באצווה\n\nדוגמה מInstagram-\n\nדוגמה מInstagram-\n\nדוגמה מInstagram-\n\nדוח שבועי ליוצרי תוכן –\nנתוני צמיחה ,פוסטים מובילים\nמחושבים בסוף השבוע\n\nאלגוריתם הפיד מתאים תוכן\nבזמן אמת תוך כדי גלילה –\nזיהוי העדפות מיידי\n\nפרסום תמונה ← שירותים עצמאים\nמגיבים :התראות ,פיד ,מודרציה,\nאנליטיקס – כל אחד בנפרד\n\nשאלת מפתח\n\nשאלת מפתח\n\nשאלת מפתח\n\nמה קרה\nבתקופה האחרונה?\n\nמה קורה\nעכשיו?\n\nמשהו קרה –\nמי צריך לדעת?\n\nכלים\n\nכלים\n\nכלים\n\nHadoop, Apache Spark\n\nSpark Streaming,\nApache Flink\n\nKafka, RabbitMQ,\nAWS EventBridge\n\nEvent driven\n\nבאצווה = מתי לעבד (אחר כך) | בזמן אמת = מתי לעבד (עכשיו) | מונחה אירועים = איך מערכות מתקשרות (תגובה למה שקרה)\n15"
+  },
+  {
+    "n": 16,
+    "text": "מערכות מידע ניהוליות- MIS\nManagement Information Systems\n\nLaudon & Laudon (2025). Management Information Systems: Managing the Digital Firm, 18th ed., Ch. 2\n\n16"
+  },
+  {
+    "n": 17,
+    "text": "DSS - Decision Support Systems\n\"מערכת מידע ממוחשבת המשלבת מודלים ונתונים\nכדי לסייע בפתרון בעיות מובנות למחצה\nולא מובנות,\n\nתוך שיתוף המשתמש בתהליך\"\n)Sharda, Delen & Turban (2024\n DSSקלאסי -המשתמש מנתח ומחליט\n - Clinical DSSרופא מקבל המלצות טיפול ,הוא מחליט\nמערכת תכנון מבצעי מכירות -מנהל בוחר תרחיש\nחקלאות מדייקת -חקלאי מחליט על סמך נתונים\n...או מערכת המלצות? המערכת מחליטה בשבילך\n - Spotifyבוחר שירים עבורך ,אתה רק מאזין\n - Netflixמחליט מה להציג לך ,אתה רק צופה\nמה ההבדל? נחזור לזה בהרצאה 10\n\n GenAIוDSS-\n AIלא מחליף את הDSS-\nהוא מוסיף שכבה חדשה:\nניתוח שפה טבעית\nתחזיות אוטומטיות\nהסברים למשתמש\n\nהתפתחות\n)DSS (1970s\nניתוח ומידול ידני\n\n↓\n\n)Decision Intelligence (2024+\nשילוב AI/MLואוטומציה\n\n↓\n\n)GenAI + Agents (2025+\nשפה טבעית ,סוכנים אוטונומיים\n\n)Sharda, Delen & Turban (2024). Business Intelligence, Analytics, Data Science, and AI, 5th ed.; Gartner MQ for Decision Intelligence Platforms (2026\n\n17"
+  },
+  {
+    "n": 18,
+    "text": "ABI – Analytics & Business Intelligence\n\"Analytics and business intelligence (ABI) is an\numbrella term that includes the applications,\ninfrastructure and tools, and best practices\nthat enable access to and analysis of\ninformation to improve and optimize decisions\nand performance.\"\n\n) הוא מונח מטריהABI( \"אנליטיקה ובינה עסקית\n הכלים ושיטות העבודה, התשתיות,הכולל את האפליקציות\nהמאפשרים גישה לניתוח מידע\n\".לצורך שיפור ומיטוב החלטות וביצועים\n\nGartner IT Glossary: Analytics and Business Intelligence (ABI)\n\n18"
+  },
+  {
+    "n": 19,
+    "text": "בינה עסקית- BI\nBusiness Intelligence\n\nLaudon & Laudon (2025). Management Information Systems: Managing the Digital Firm, 18th ed., Ch. 12\n\n19"
+  },
+  {
+    "n": 20,
+    "text": "- Salesforceבינה עסקית מבוססת AI\n\n20"
+  },
+  {
+    "n": 21,
+    "text": "Power BI\n\nSource: Microsoft Learn, Power BI Retail Analysis Sample\n\n21"
+  },
+  {
+    "n": 22,
+    "text": "כרטיס מוצר- Power BI\nסיפורים ששווה לזכור\n\nQuick Profile\n\nמה זה עושה\n: כגון,הכלי מאפשר לאנליסטים לחבר נתונים ממגוון מקורות\n דשבורדים אינטראקטיביים: פלט. ועוד מאותExcel, SQL\n.בגרירה ושחרור\n\nPower BI\n\nמוצר\n\nMicrosoft\n\nחברה\n\nמקור\n שלSQL Server בצוות-Project Crescent נולד כ2010-ב\n.2015 ; הושק לציבור ביוליMicrosoft\n הקנדית; רוב הוויזואלים שלDatazen נרכשה2015-ב\n. התחילו כוויזואלים שלהPower BI\n\nBI & Analytics\n\nקטגוריה\n\n2015\n\nהושק\n\nFree / $14/user/mo (Pro)\n\nתמחור\n\nWeb, Windows, iOS, Android\n\nפלטפורמות\n\n משתמשים פעילים35M מעל\n\nקנה מידה\n\nהזווית הישראלית\n כיום, ישראלי,Amir Netz : של המוצר-CTOמייסד ו\n-Microsoft. בTechnical Fellow\n בהם, צוותי פיתוח40 : בישראלMicrosoft של-R&Dמרכז ה\nBusiness Analytics.\n\nSources: Microsoft Power BI pricing & product pages | Microsoft Azure Blog (Mar 2026) | Microsoft Fabric Blog (Amir Netz) | Microsoft Israel R&D | CFO Desk | Wikipedia\n\n22"
+  },
+  {
+    "n": 23,
+    "text": "- Advanced Analyticsניתוח מתקדם\nData Mining\n\nSentiment Analysis\n\nכריית נתונים\n\nניתוח סנטימנט\n\nגילוי דפוסים ומגמות נסתרות\nבמאגרי נתונים גדולים\n\nזיהוי רגשות ודעות בטקסטים,\nרשתות חברתיות וביקורות\n\nPredictive Analytics\n\nMachine Learning\n\nניתוח חזוי\n\nלמידת מכונה\n\nחיזוי מגמות עתידיות על בסיס\nנתוני עבר ומודלים סטטיסטיים\n\nאלגוריתמים שמשתפרים\nאוטומטית עם חשיפה לנתונים\n\n - Data Scientistמדען נתונים\nמשלב סטטיסטיקה ,תכנות ומומחיות תחומית כדי להפוך נתונים גולמיים להחלטות עסקיות\n23"
+  },
+  {
+    "n": 24,
+    "text": "מערכות מידע למנהלים בכירים- EIS\nExecutive Information Systems\n\nLaudon & Laudon (2025). Management Information Systems: Managing the Digital Firm, 18th ed., Ch. 2\n\n24"
+  },
+  {
+    "n": 25,
+    "text": "Power BI Dashboard : דוגמה- EIS\n\n25"
+  },
+  {
+    "n": 26,
+    "text": "התפתחות מערכות תמיכה בהחלטות\n\nממד\n\nMIS\n\nBI\n\nAA\n\nGenAI\n\nתקופה\n\n1970s-2000s\n\n2000s-2010s\n\n2010s-2020s\n\n2020s+\n\nשאלה מרכזית\n\nמה קרה?\n\nלמה זה קרה?\n\nמה יקרה?\n\nמה כדאי לעשות?\n\nשיטות\n\nדוחות קבועים,\nסיכומים תקופתיים\n\nדשבורדים,OLAP ,\nדוחות אד-הוק\n\nמודלים חזויים,\n ,MLסימולציה\n\nשפה טבעית,\nסוכני AI\n\nסוגי נתונים\n\nמובנים בלבד\n\nבעיקר מובנים\n\nמובנים +לא מובנים\n\nכל סוג:\nטקסט ,תמונה ,קול\n\nמשתמשים\n\nמנהלים\n\nאנליסטים\n\nData Scientists\n\nכולם\n\n)Based on: Gartner Analytic Ascendancy Model (descriptive, diagnostic, predictive, prescriptive\n\n26"
+  },
+  {
+    "n": 27,
+    "text": "צרכים שונים ,מערכות שונות\n\nמערכות מידע בארגונים – סיכום\n\n27"
+  },
+  {
+    "n": 28,
+    "text": "טכנולוגיות שכדאי להכיר\nבינה מלאכותית וסוכנים\n\nאבטחת מידע\n\nדאטהפיקציה\n\nכותבת ,מציירת ועונה ,ועכשיו גם מבצעת\nמשימות בשבילכם\n\nפישינג וזיוף קולות :הונאות שנראות\nאמינות מתמיד\n\nכל צעד ,לייק ותשלום הופכים לנתון\nשמישהו מנתח\n\nמציאות מדומה ורבודה\n\nהאינטרנט של הדברים\n\nמחשוב קוונטי\n\nלהיכנס לעולם אחר ,או להוסיף שכבה\nדיגיטלית לעולם שלנו\n\nשעון ,מזגן ורכב שמחוברים לרשת\nומדברים זה עם זה\n\nדור חדש של מחשבים :הבטחה גדולה,\nואיום על ההצפנה\n28"
+  },
+  {
+    "n": 29,
+    "text": "- IoTהאינטרנט של הדברים\nמכשירים פיזיים שמחוברים לאינטרנט ,אוספים נתונים ומשתפים אותם -ללא התערבות אנושית\nמה זה ?IoT\n\nדוגמאות שאתם מכירים\n\nאתגרים מרכזיים\n\nחיישנים +קישוריות +ענן\n\n• שעון חכם -דופק ,צעדים ,שינה\n\n• אבטחה -מכשירים ללא הגנה\n\n• כל 'דבר' מקבל כתובת IP\n\n• בית חכם -תאורה ,מזגן ,מנעול\n\n• פרטיות -כל מכשיר אוסף מידע\n\n• נתונים נאספים בזמן אמת\n\n• רכב מחובר ,GPS -ניווט ואבחון\n\n• נפח מידע -קשה לאחסן ולנתח\n\n• 21מיליארד מכשירים מחוברים\n\n• עיר חכמה -חניה ,תנועה\n\n• תקינה -אין תקן אחיד\n\n• - IoTמקור עיקרי לנתוני TPS\n\n• רפואה מרחוק -גלוקוז ,צג לב\n\nרפואה מרחוק\n\nבית חכם\n\nעוזר קולי\n\nשעון חכם\n\n29"
+  },
+  {
+    "n": 30,
+    "text": "מחשוב קוונטי -הסבר פשוט\nמה זה?\nמחשוב שמשתמש בפיזיקה קוונטית לעיבוד מידע\n\nקלאסי מול קוונטי\nמחשב קלאסי -ביטים\n• כל ביט הוא 0או 1\n\nמחשב קוונטי -קיוביטים\n• מחזיק את שניהם יחד ,עם סיכוי לכל אחד\n\nשני מושגים\n .1סופרפוזיציה\nמחזיק את כל האפשרויות יחד,\nאבל הקריאה מחזירה תשובה אחת\n\n .2שזירה\nמקושרים כמו גלגלי שיניים:\nסיבוב של אחד מזיז את כולם\n\nמגבלה חשובה\n\nלמה זה טוב\n• אופטימיזציה -תזמון ולוגיסטיקה\n• סימולציה של חומרים ותרופות\n• חיפוש בכמויות עצומות של אפשרויות\n\nומה האיום\nההצפנה של בנקים ואתרים בנויה על בעיה\nשלוקחת שנים לפצח .קוונטי יפצח אותה מהר.\n\n\"לאסוף היום ,לפענח מחר\"\nמקליטים מידע מוצפן היום ,פותחים בעתיד\nלכן כבר יש תקני הצפנה עמידים לקוונטים\n\nהזווית הישראלית\n• מרכז מחשוב קוונטי פעיל בתל אביב\n• מחשב ישראלי בן 20קיוביטים\nלשם השוואה :לגוגל ,105לשבב החדש של 120 IBM\nהמטרה :לבנות ידע ויכולת ,לא לשבור שיאים\n• תוכנית לאומית :כ 1.25-מיליארד שקל\n\nלא מהיר יותר לכל בעיה ,רק לבעיות מסוימות\n)NIST PQC standards FIPS 203/204/205 (2024); Israeli Quantum Computing Center, Tel Aviv (2024); Israel's 20-qubit computer, IAI + HUJI (2024); Google Willow (2024); IBM Nighthawk (2025\n\n30"
+  },
+  {
+    "n": 31,
+    "text": "מה זה קיוביט\nכלי אינטראקטיבי -ביט רגיל מול קיוביט :קראו ,וראו מה קורה אחרי\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/02/qubit-lab\nעובד גם אחרי השיעור\n\n31"
+  },
+  {
+    "n": 32,
+    "text": "מנעול קוונטי\nכלי אינטראקטיבי -מחשב קלאסי מנסה אחת אחת ,קוונטי מסדר את הסיכויים\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/02/quantum-lab\nעובד גם אחרי השיעור\n\n32"
+  },
+  {
+    "n": 33,
+    "text": "@world_record_egg\n\n60M+ likes\nהחזיק בשיא הלייקים של אינסטגרם במשך כמעט ארבע שנים\nRecord held Jan 2019 to Dec 2022; current holder: Lionel Messi's World Cup photo, ~75M likes | Wikipedia: List of most-liked Instagram posts\n\n33"
+  },
+  {
+    "n": 34,
+    "text": "Technology vs. Humanity\n\n34"
+  }
+]
