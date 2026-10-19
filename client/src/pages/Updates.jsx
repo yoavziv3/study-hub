@@ -59,8 +59,6 @@ function DeadlineCard({ d, course, i }) {
   const c = countdown(d.dueAt);
   const finished = d.submitted || d.done;
   const color = finished ? 'var(--good)' : c.level === 'urgent' || c.level === 'past' ? 'var(--bad)' : c.level === 'soon' ? 'var(--warn)' : 'var(--c)';
-  // Same hue, a shade dark enough to read as text.
-  const textColor = finished ? 'var(--good-text)' : c.level === 'urgent' || c.level === 'past' ? 'var(--bad-text)' : c.level === 'soon' ? 'var(--warn-text)' : 'var(--c-strong)';
   const act = async (fn) => {
     try {
       await fn();
@@ -83,7 +81,7 @@ function DeadlineCard({ d, course, i }) {
           <div className="muted" style={{ fontSize: 13.5 }}>להגשה עד {fmtDue(d.dueAt)}</div>
           {d.intro && <div className="faint clamp-3" style={{ fontSize: 13, marginTop: 4 }} title={d.intro}>{ltr(oneLine(d.intro))}</div>}
         </div>
-        <div className="deadline-count" style={{ color: textColor }}>{finished ? '✓' : c.text}</div>
+        <div className="deadline-count" style={{ color }}>{finished ? '✓' : c.text}</div>
       </div>
       <div className="row wrap" style={{ gap: 6, marginTop: 10 }}>
         {d.url && <a className="btn sm" href={d.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> להגשה במודל</a>}
@@ -238,7 +236,7 @@ export default function Updates() {
     <Page>
       <motion.div className="card pad" style={{ marginTop: 10, padding: 24 }} variants={fadeUp} initial="hidden" animate="show">
         <div className="row wrap" style={{ gap: 14 }}>
-          <motion.div className="course-icon" animate={{ rotate: [0, -12, 10, -6, 0] }} transition={{ duration: 0.9, delay: 0.3 }}>
+          <motion.div className="course-icon" style={{ background: 'linear-gradient(135deg,#e5484d,#ff8a5c)' }} animate={{ rotate: [0, -12, 10, -6, 0] }} transition={{ duration: 0.9, delay: 0.3 }}>
             <Bell size={22} />
           </motion.div>
           <div className="grow">

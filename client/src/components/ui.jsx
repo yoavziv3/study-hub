@@ -79,7 +79,7 @@ export function Tabs({ tabs, value, onChange, layoutId = 'tab' }) {
   );
 }
 
-export function Ring({ value = 0, size = 52, stroke = 6, label, color = 'var(--accent)' }) {
+export function Ring({ value = 0, size = 52, stroke = 6, label, color = 'var(--c)' }) {
   const r = (size - stroke) / 2;
   const C = 2 * Math.PI * r;
   return (
@@ -116,9 +116,9 @@ export const fadeUp = {
   show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }),
 };
 
-export function Page({ children, className = '' }) {
+export function Page({ children }) {
   return (
-    <motion.div className={`page ${className}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div className="page" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
       {children}
     </motion.div>
   );
