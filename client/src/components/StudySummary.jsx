@@ -12,10 +12,10 @@ const BLOCK = {
   important: { label: 'חשוב לזכור', icon: Lightbulb },
   mistake: { label: 'טעות נפוצה', icon: AlertTriangle },
 };
-const KIND_LABEL = { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית' };
+export const KIND_LABEL = { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית' };
 
 // Older content (and homework) has a single markdown summary: split it on "## " into sections.
-function markdownSections(md = '') {
+export function markdownSections(md = '') {
   const parts = md.split(/^## +/m);
   const intro = parts.shift().trim();
   const sections = parts.map((p) => {
@@ -129,7 +129,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
   );
 }
 
-function Block({ block }) {
+export function Block({ block }) {
   if (block.type === 'text' || !BLOCK[block.type]) {
     return (
       <div className="note-text">
@@ -182,7 +182,7 @@ function MobileToc({ sections, active, go }) {
 }
 
 /** The section whose top has passed just below the sticky top bar. */
-function useActiveSection(sections) {
+export function useActiveSection(sections) {
   const [active, setActive] = useState(sections[0]?.id);
   const frame = useRef(0);
   useEffect(() => {

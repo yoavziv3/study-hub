@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info } from 'lucide-react';
+import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, shuffle } from '../api.js';
 import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
 import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
+import CourseSummaries from '../components/CourseSummaries.jsx';
 import { LABS } from '../labs/index.js';
 
 function LectureCard({ l, course, i }) {
@@ -258,6 +259,7 @@ export default function Course() {
   const ai = course.ai !== false;
   const tabs = [
     { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
+    ...(ai ? [{ id: 'summaries', label: 'סיכומים', icon: <FileText size={16} />, count: course.lectures.filter((l) => kindOf(l) !== 'homework' && l.hasContent).length || null }] : []),
     { id: 'tutorials', label: 'תרגולים', icon: <Presentation size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'tutorial').length || null },
     { id: 'homework', label: ai ? 'שיעורי בית ותרגילים' : 'תרגול מהמרצה', icon: <PencilRuler size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'homework').length || null },
     ...(ai
@@ -336,6 +338,7 @@ export default function Course() {
         <div style={{ marginTop: 22 }}>
           {needsBundle && !bundle && <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>}
           {tab === 'grades' && <Grades course={course} />}
+          {tab === 'summaries' && bundle && <CourseSummaries course={course} bundle={bundle} />}
           {tab === 'exam' && bundle && <ExamMode bundle={bundle} />}
           {tab === 'flashcards' && bundle && (allCards.length ? <Flashcards cards={allCards} /> : <Empty course={course} />)}
           {tab === 'glossary' && bundle && (allTerms.length ? <Glossary terms={allTerms} showSource /> : <Empty course={course} />)}
