@@ -54,15 +54,14 @@ function dayLabel(iso) {
 
 const timeOf = (iso) => new Date(iso).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
 
-function DeadlineCard({ d, course, onChange, i }) {
-  const { toast } = useApp();
+function DeadlineCard({ d, course, i }) {
+  const { toast, deadlineActions } = useApp();
   const c = countdown(d.dueAt);
   const finished = d.submitted || d.done;
   const color = finished ? 'var(--good)' : c.level === 'urgent' || c.level === 'past' ? 'var(--bad)' : c.level === 'soon' ? 'var(--warn)' : 'var(--c)';
   const act = async (fn) => {
     try {
       await fn();
-      onChange();
     } catch (e) {
       toast(e.message, 'info');
     }
@@ -73,7 +72,7 @@ function DeadlineCard({ d, course, onChange, i }) {
         <div className="deadline-icon">{finished ? <Check size={18} /> : <CalendarClock size={18} />}</div>
         <div className="grow" style={{ minWidth: 0 }}>
           <div className="row wrap" style={{ gap: 6 }}>
-            {course && <span className="chip c">{course.short}</span>}
+            {course ? <span className="chip c">{course.short}</span> : d.courseName && <span className="chip">{d.courseName}</span>}
             {d.source === 'manual' && <span className="chip">הוספתי בעצמי</span>}
             {d.submitted && <span className="chip good">הוגש במודל</span>}
             {d.done && !d.submitted && <span className="chip good">סומן כבוצע</span>}
@@ -87,36 +86,35 @@ function DeadlineCard({ d, course, onChange, i }) {
       <div className="row wrap" style={{ gap: 6, marginTop: 10 }}>
         {d.url && <a className="btn sm" href={d.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> להגשה במודל</a>}
         {!d.submitted && (
-          <button className="local-only btn sm" onClick={() => act(() => api.patch(`/api/updates/deadlines/${d.id}`, { done: !d.done }))}>
+          <button className="btn sm" onClick={() => act(() => deadlineActions.toggleDone(d))}>
             <Check size={14} /> {d.done ? 'ביטול סימון' : 'סימון כבוצע'}
           </button>
         )}
         {d.source === 'manual' && (
-          <button className="local-only btn sm icon ghost" title="מחיקה" onClick={() => act(() => api.del(`/api/updates/deadlines/${d.id}`))}><Trash2 size={14} /></button>
+          <button className="btn sm icon ghost" title="מחיקה" onClick={() => act(() => deadlineActions.removeManual(d.id))}><Trash2 size={14} /></button>
         )}
       </div>
     </motion.div>
   );
 }
 
-function AddDeadline({ courses, onAdded }) {
-  const { toast } = useApp();
+function AddDeadline({ courses }) {
+  const { toast, deadlineActions } = useApp();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ title: '', courseId: '', dueAt: '', note: '' });
   const submit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/updates/deadlines', { ...form, dueAt: new Date(form.dueAt).toISOString() });
+      await deadlineActions.addManual({ ...form, dueAt: new Date(form.dueAt).toISOString() });
       toast('הדדליין נוסף – תקבל תזכורות לפני');
       setForm({ title: '', courseId: '', dueAt: '', note: '' });
       setOpen(false);
-      onAdded();
     } catch (err) {
       toast(err.message, 'info');
     }
   };
   return (
-    <div className="local-only" style={{ marginTop: 10 }}>
+    <div style={{ marginTop: 10 }}>
       {!open ? (
         <button className="btn sm" onClick={() => setOpen(true)}><Plus size={14} /> הוספת דדליין ידנית</button>
       ) : (
@@ -177,7 +175,7 @@ function UpdateItem({ item, course, isNew, i }) {
 }
 
 export default function Updates() {
-  const { updates, refreshUpdates, seenAt, markUpdatesSeen, courses, setContext, toast } = useApp();
+  const { updates, refreshUpdates, seenAt, markUpdatesSeen, courses, setContext, toast, deadlineActions, me } = useApp();
   const [filter, setFilter] = useState('all');
   const [syncing, setSyncing] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -224,8 +222,11 @@ export default function Updates() {
   };
   const setSetting = async (patch) => {
     try {
-      await api.put('/api/updates/settings', patch);
-      refreshUpdates();
+      if (patch.reminderDays) await deadlineActions.setReminderDays(patch.reminderDays);
+      else {
+        await api.put('/api/updates/settings', patch);
+        refreshUpdates();
+      }
     } catch (e) {
       toast(e.message, 'info');
     }
@@ -248,14 +249,17 @@ export default function Updates() {
             </button>
           )}
         </div>
-        {!STATIC && (
-          <div className="row wrap" style={{ gap: 12, marginTop: 16, fontSize: 14 }}>
-            <label className="row" style={{ gap: 8, fontWeight: 600 }}>
-              <input type="checkbox" checked={!!settings.notify} onChange={(e) => setSetting({ notify: e.target.checked })} />
-              <BellRing size={15} /> התראות במחשב (macOS)
-            </label>
-            <button className="btn sm ghost" onClick={() => api.post('/api/updates/test-notification').then(() => toast('נשלחה התראת בדיקה'))}>בדיקת התראה</button>
-            <span className="faint">·</span>
+        <div className="row wrap" style={{ gap: 12, marginTop: 16, fontSize: 14 }}>
+            {!STATIC && (
+              <>
+                <label className="row" style={{ gap: 8, fontWeight: 600 }}>
+                  <input type="checkbox" checked={!!settings.notify} onChange={(e) => setSetting({ notify: e.target.checked })} />
+                  <BellRing size={15} /> התראות במחשב (macOS)
+                </label>
+                <button className="btn sm ghost" onClick={() => api.post('/api/updates/test-notification').then(() => toast('נשלחה התראת בדיקה'))}>בדיקת התראה</button>
+                <span className="faint">·</span>
+              </>
+            )}
             <span style={{ fontWeight: 600 }}>תזכורות לפני הגשה:</span>
             {[7, 3, 2, 1].map((d) => {
               const on = (settings.reminderDays || []).includes(d);
@@ -265,6 +269,11 @@ export default function Updates() {
                 </button>
               );
             })}
+        </div>
+        {STATIC && me?.calendarPath && <CalendarCard path={me.calendarPath} />}
+        {STATIC && me && me.moodleOk === false && (
+          <div className="callout row" style={{ marginTop: 14, background: 'var(--warn-bg)' }}>
+            <AlarmClock size={16} color="var(--warn)" /> החיבור למודל פג, אז ההגשות לא מתעדכנות. התנתקו והתחברו שוב כדי לחדש אותו.
           </div>
         )}
       </motion.div>
@@ -274,7 +283,7 @@ export default function Updates() {
         <div className="card pad muted" style={{ textAlign: 'center' }}>אין הגשות פתוחות כרגע 🎉</div>
       ) : (
         <div className="deadline-grid">
-          {upcoming.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} onChange={refreshUpdates} i={i} />)}
+          {upcoming.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} i={i} />)}
         </div>
       )}
       {others.length > 0 && (
@@ -285,11 +294,11 @@ export default function Updates() {
       <AnimatePresence>
         {showDone && (
           <motion.div className="deadline-grid" style={{ marginTop: 10 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {others.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} onChange={refreshUpdates} i={i} />)}
+            {others.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} i={i} />)}
           </motion.div>
         )}
       </AnimatePresence>
-      <AddDeadline courses={courses} onAdded={refreshUpdates} />
+      <AddDeadline courses={courses} />
 
       <div className="section-title">
         <h2>כל העדכונים</h2>
@@ -315,6 +324,36 @@ export default function Updates() {
         </div>
       ))}
     </Page>
+  );
+}
+
+/** Subscribe link for the student's personal calendar: deadlines with alarms N days before. */
+function CalendarCard({ path }) {
+  const { toast } = useApp();
+  const https = `${location.origin}${path}`;
+  const webcal = https.replace(/^https?:/, 'webcal:');
+  const google = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(https);
+      toast('הקישור הועתק');
+    } catch {
+      toast('לא הצלחתי להעתיק – אפשר לסמן ולהעתיק ידנית', 'info');
+    }
+  };
+  return (
+    <div className="callout" style={{ marginTop: 14 }}>
+      <div className="row wrap" style={{ gap: 10 }}>
+        <CalendarClock size={18} />
+        <b className="grow">ההגשות ביומן שלך, עם תזכורות</b>
+        <a className="btn sm" href={webcal}>אייפון / מק</a>
+        <a className="btn sm" href={google} target="_blank" rel="noreferrer">יומן גוגל</a>
+        <button className="btn sm ghost" onClick={copy}>העתקת קישור</button>
+      </div>
+      <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>
+        היומן מתעדכן לבד מהמודל, והתראות מגיעות לטלפון לפי ימי התזכורת שבחרת. הקישור אישי – לא לשתף אותו.
+      </div>
+    </div>
   );
 }
 

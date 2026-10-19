@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, RotateCcw, Flame } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, slideUrl, useFetch } from '../api.js';
+import { api, slideUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp, ltr } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 
@@ -127,7 +127,7 @@ export default function Home() {
           <div style={{ position: 'relative' }}>
             <div style={{ opacity: 0.6, fontSize: 14 }}>{new Date().toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
             <h1>{greeting()} 👋</h1>
-            <p>כל ההרצאות של הסמסטר במקום אחד – מצגות, סיכומים, נושאים, תרגול ומורה פרטי שמכיר את כל החומר.</p>
+            <p>{STATIC ? 'כל הקורסים שלך במקום אחד – מצגות, תרגולים, הגשות, הודעות מהמודל, סיכומים ותרגול.' : 'כל ההרצאות של הסמסטר במקום אחד – מצגות, סיכומים, נושאים, תרגול ומורה פרטי שמכיר את כל החומר.'}</p>
             <div className="row wrap">
               {last ? (
                 <Link to={`/lecture/${last.id}?tab=slides&slide=${progress.last.slide || 1}`} className="btn"><PlayCircle size={17} /> המשך: {last.title}</Link>

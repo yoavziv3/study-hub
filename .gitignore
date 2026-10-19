@@ -16,3 +16,7 @@ data/lectures/**/*.tmp
 inbox/*
 !inbox/.gitkeep
 .DS_Store
+
+# Cloudflare local dev (wrangler pages dev): local database and dev secrets
+.wrangler/
+.dev.vars

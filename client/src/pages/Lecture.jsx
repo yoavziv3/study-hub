@@ -6,7 +6,7 @@ import {
   RefreshCw, Trash2, Pencil, Loader2, AlertTriangle, ChevronLeft, Wand2, Eye, Download,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, useFetch, STAGE_LABELS, STAGE_ORDER } from '../api.js';
+import { api, useFetch, originalUrl, STAGE_LABELS, STAGE_ORDER } from '../api.js';
 import { Markdown, Page, Tabs, fadeUp } from '../components/ui.jsx';
 import SlideViewer from '../components/SlideViewer.jsx';
 import Quiz from '../components/Quiz.jsx';
@@ -282,7 +282,14 @@ export default function Lecture() {
   };
 
   const ready = lecture.status === 'ready' || (lecture.slides.length > 0 && lecture.stage === 'analyzing');
-  const tabs = [
+  // Courses built for other students have the deck and personal notes only (no AI material);
+  // a link to an AI tab of such a course falls back to the slides.
+  const noAi = course?.ai === false;
+  const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : tab;
+  const tabs = noAi ? [
+    { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
+    { id: 'notes', label: 'הערות', icon: <NotebookPen size={16} /> },
+  ] : [
     { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
     { id: 'summary', label: 'סיכום', icon: <FileText size={16} /> },
     { id: 'topics', label: 'נושאים', icon: <ListTree size={16} />, count: content?.topics?.length },
@@ -324,7 +331,7 @@ export default function Lecture() {
                 {menu && (
                   <motion.div className="card" style={{ position: 'absolute', top: 46, insetInlineEnd: 0, zIndex: 30, padding: 6, width: 220, boxShadow: 'var(--shadow-lg)' }} initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }}>
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setMenu(false); setEdit(true); }}><Pencil size={15} /> עריכת פרטים</button>
-                    <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={`/files/${lecture.id}/${lecture.originalFile}`} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>
+                    <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={originalUrl(lecture)} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={regenerate}><RefreshCw size={15} /> יצירת סיכום מחדש (AI)</button>
                     <button className="local-only btn ghost sm danger" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={remove}><Trash2 size={15} /> מחיקה</button>
                   </motion.div>
@@ -338,18 +345,18 @@ export default function Lecture() {
           <Processing lecture={lecture} />
         ) : (
           <>
-            <div style={{ marginBottom: 20 }}><Tabs tabs={tabs} value={tab} onChange={setTab} layoutId="lecture-tab" /></div>
+            <div style={{ marginBottom: 20 }}><Tabs tabs={tabs} value={view} onChange={setTab} layoutId="lecture-tab" /></div>
             {lecture.status === 'processing' && <div className="callout row" style={{ marginBottom: 16 }}><Loader2 size={16} className="spin" /> הסיכום והשאלות בהכנה – השקפים כבר זמינים.</div>}
             <AnimatePresence mode="wait">
-              <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.25 }}>
-                {tab === 'slides' && <SlideViewer lecture={lecture} slide={Math.min(slide, lecture.slideCount || 1)} setSlide={setSlide} />}
-                {tab !== 'slides' && tab !== 'notes' && !content && <NoContent lecture={lecture} onRegenerate={regenerate} />}
-                {tab === 'summary' && content && <StudySummary lecture={lecture} content={content} goSlide={goSlide} reload={reload} />}
-                {tab === 'topics' && content && <TopicsTab content={content} goSlide={goSlide} />}
-                {tab === 'practice' && content && <PracticeTab lecture={lecture} goSlide={goSlide} reload={reload} />}
-                {tab === 'flashcards' && content && <Flashcards cards={content.flashcards.map((c) => ({ ...c, lectureId: lecture.id }))} />}
-                {tab === 'glossary' && content && <Glossary terms={content.glossary} />}
-                {tab === 'notes' && <NotesTab lecture={lecture} />}
+              <motion.div key={view} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.25 }}>
+                {view === 'slides' && <SlideViewer lecture={lecture} slide={Math.min(slide, lecture.slideCount || 1)} setSlide={setSlide} />}
+                {view !== 'slides' && view !== 'notes' && !content && !noAi && <NoContent lecture={lecture} onRegenerate={regenerate} />}
+                {view === 'summary' && content && <StudySummary lecture={lecture} content={content} goSlide={goSlide} reload={reload} />}
+                {view === 'topics' && content && <TopicsTab content={content} goSlide={goSlide} />}
+                {view === 'practice' && content && <PracticeTab lecture={lecture} goSlide={goSlide} reload={reload} />}
+                {view === 'flashcards' && content && <Flashcards cards={content.flashcards.map((c) => ({ ...c, lectureId: lecture.id }))} />}
+                {view === 'glossary' && content && <Glossary terms={content.glossary} />}
+                {view === 'notes' && <NotesTab lecture={lecture} />}
               </motion.div>
             </AnimatePresence>
           </>

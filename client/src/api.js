@@ -1,14 +1,35 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-// Cloud build (Cloudflare Pages): no server – data comes from pre-exported JSON files, progress lives in the browser.
+// Cloud build (Cloudflare Pages): course material comes from pre-exported JSON under /data (served only to
+// signed-in students of each course); the student's account, progress and Moodle data come from /api (Functions).
 export const STATIC = import.meta.env.VITE_STATIC === '1';
 export const LOCAL_ONLY = 'זמין רק באתר שרץ במחשב שלך';
 
-const PROGRESS_KEY = 'study-progress';
+/** Fired when the cloud answers 401 – the app then shows the sign-in screen. */
+export const AUTH_EVENT = 'study-auth-required';
+
 let searchIndex = null;
+export const resetSearchIndex = () => { searchIndex = null; };
+
+async function loadSearchIndex() {
+  // One index file per course; the cloud only serves the student's own courses.
+  const courses = await getJson('/data/courses.json');
+  const parts = await Promise.all(courses.map((c) => getJson(`/data/search/${c.id}.json`).catch(() => [])));
+  return parts.flat();
+}
+
+async function getJson(url) {
+  const res = await fetch(url, { credentials: 'same-origin' });
+  if (res.status === 401) window.dispatchEvent(new Event(AUTH_EVENT));
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || (res.status === 404 ? 'לא נמצא' : `שגיאה ${res.status}`));
+  }
+  return res.json();
+}
 
 async function staticSearch(q) {
-  searchIndex ||= await (await fetch('/data/search.json')).json();
+  searchIndex ||= await loadSearchIndex();
   q = q.trim().toLowerCase();
   if (q.length < 2) return [];
   const snippet = (text) => {
@@ -36,35 +57,41 @@ const STATIC_ROUTES = [
   [/^\/api\/lectures\/([\w-]+)$/, (m) => `/data/lectures/${m[1]}.json`],
 ];
 
+// Served by the cloud Functions (accounts, progress, personal Moodle data) rather than by static files.
+const CLOUD_API = /^\/api\/(auth|me|progress)(\/|$)/;
+
 async function staticRequest(method, url, body) {
   const [path, query = ''] = url.split('?');
-  if (path === '/api/progress') {
-    if (method === 'GET') { try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch { return {}; } }
-    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(body)); } catch { /* storage unavailable */ }
-    return { ok: true };
-  }
+  if (CLOUD_API.test(path)) return networkRequest(method, url, body);
   if (path === '/api/search') return staticSearch(new URLSearchParams(query).get('q') || '');
   if (path === '/api/moodle') return { connected: false, static: true, courses: [] };
   if (method !== 'GET') throw new Error(LOCAL_ONLY);
   for (const [re, to] of STATIC_ROUTES) {
     const m = path.match(re);
-    if (!m) continue;
-    const res = await fetch(to(m));
-    if (!res.ok) throw new Error(res.status === 404 ? 'לא נמצא' : `שגיאה ${res.status}`);
-    return res.json();
+    if (m) return getJson(to(m));
   }
   throw new Error(LOCAL_ONLY);
 }
 
 async function request(method, url, body) {
   if (STATIC) return staticRequest(method, url, body);
+  return networkRequest(method, url, body);
+}
+
+async function networkRequest(method, url, body) {
   const res = await fetch(url, {
     method,
     headers: body && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : undefined,
     body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`);
+  if (STATIC && res.status === 401 && !url.startsWith('/api/auth/')) window.dispatchEvent(new Event(AUTH_EVENT));
+  if (!res.ok) {
+    const err = new Error(data.error || `שגיאה ${res.status}`);
+    err.status = res.status;
+    err.relogin = !!data.relogin;
+    throw err;
+  }
   return data;
 }
 
@@ -75,6 +102,9 @@ export const api = {
   put: (url, body) => request('PUT', url, body),
   del: (url) => request('DELETE', url),
 };
+
+/** The original deck/PDF for download (in the cloud it sits behind the enrollment check). */
+export const originalUrl = (lecture) => (STATIC ? `/data/orig/${lecture.id}/${lecture.originalFile}` : `/files/${lecture.id}/${lecture.originalFile}`);
 
 export const slideUrl = (lectureId, n, thumb = false) =>
   `/files/${lectureId}/slides/${thumb ? 't' : ''}${String(n).padStart(3, '0')}.jpg`;

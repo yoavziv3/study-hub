@@ -52,6 +52,15 @@ export async function patchCourse(id, patch) {
   return courses.find((c) => c.id === id);
 }
 
+/** A course created automatically from a student's Moodle enrollment (e.g. linear algebra). */
+export async function addCourse(course) {
+  const courses = listCourses();
+  if (courses.some((c) => c.id === course.id)) return courses.find((c) => c.id === course.id);
+  await writeJSON(COURSES_FILE, [...courses, course]);
+  schedulePublish(`קורס חדש: ${course.short}`);
+  return course;
+}
+
 export function getCourse(id) {
   return listCourses().find((c) => c.id === id) || null;
 }

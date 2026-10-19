@@ -81,14 +81,16 @@ function materialItem(l, { addedAt, updated = false } = {}) {
     lectureId: l.id,
     source: l.source?.type || 'upload',
     createdAt: l.createdAt || iso(),
-    addedAt: addedAt || iso(),
+    addedAt: addedAt || (l.source?.initial && l.source?.timemodified ? iso(l.source.timemodified * 1000) : iso()),
   };
 }
 
 function push(item, { silent = false } = {}) {
   if (state.items.some((x) => x.key === item.key)) return false;
   state.items.push(item);
-  if (!silent) notify('מחברת', item.title, getCourse(item.courseId)?.short || '');
+  // Courses built for other students appear in their feed but never pop up on this Mac.
+  const course = getCourse(item.courseId);
+  if (!silent && !course?.remote) notify('מחברת', item.title, course?.short || '');
   return true;
 }
 
@@ -101,9 +103,9 @@ export async function announceMaterial(meta, { updated = false } = {}) {
 }
 
 /** Moodle news-forum posts. On the very first sync, only the last 3 days count as new. */
-export async function addAnnouncements(posts) {
+export async function addAnnouncements(posts, { history = false } = {}) {
   if (!state) return 0;
-  const first = !state.bootstrapped?.announcements;
+  const first = history || !state.bootstrapped?.announcements;
   let added = 0;
   for (const p of posts) {
     const created = iso(p.created * 1000);

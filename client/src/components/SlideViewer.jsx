@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Sparkles, FileText, PanelLeftClose, PanelLeftOpen, Download } from 'lucide-react';
-import { slideUrl } from '../api.js';
+import { slideUrl, originalUrl } from '../api.js';
 import { useApp } from '../store.jsx';
 import { ltr } from './ui.jsx';
 
@@ -107,7 +107,7 @@ export default function SlideViewer({ lecture, slide, setSlide }) {
               <Sparkles size={14} /> הסבר את השקף
             </button>
             <button className={`btn sm ${showText ? 'accent' : ''}`} onClick={() => setShowText((s) => !s)}><FileText size={14} /> טקסט</button>
-            <a className="btn sm icon" href={`/files/${lecture.id}/${lecture.originalFile}`} download={lecture.originalName} title="הורדת הקובץ המקורי"><Download size={15} /></a>
+            <a className="btn sm icon" href={originalUrl(lecture)} download={lecture.originalName} title="הורדת הקובץ המקורי"><Download size={15} /></a>
             <button className="btn sm icon" onClick={() => setFocus((f) => !f)} title={focus ? 'הצגת תמונות ממוזערות' : 'מצב מיקוד'}>
               {focus ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
             </button>

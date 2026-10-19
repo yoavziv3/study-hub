@@ -1,41 +1,95 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Info } from 'lucide-react';
-import { api, hash, STATIC } from './api.js';
+import { api, hash, STATIC, AUTH_EVENT, resetSearchIndex } from './api.js';
 
-/* App-wide state: study progress (persisted on the server), courses list, toasts, chat + upload + search controls. */
+/* App-wide state: the signed-in student (cloud), study progress, courses, updates & deadlines, toasts,
+   chat + upload + search controls. Locally (on the Mac) there is no sign-in and data comes from the server. */
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
 
 const EMPTY = { studied: {}, quiz: {}, cards: {}, notes: {}, slidePos: {}, last: null, activity: {} };
 const LEITNER_DAYS = [0, 1, 2, 4, 8, 16];
+const DAY = 86400000;
+const OLD_LOCAL_PROGRESS = 'study-progress'; // progress kept in the browser before accounts existed
+
+const whenText = (ms) => {
+  if (ms < DAY) {
+    const h = Math.max(1, Math.round(ms / 3600000));
+    return h === 1 ? 'בעוד שעה' : h === 2 ? 'בעוד שעתיים' : `בעוד ${h} שעות`;
+  }
+  const d = Math.round(ms / DAY);
+  return d === 1 ? 'בעוד יום' : d === 2 ? 'בעוד יומיים' : `בעוד ${d} ימים`;
+};
+const fmtDue = (iso) => new Date(iso).toLocaleString('he-IL', { weekday: 'long', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 export function AppProvider({ children }) {
+  // Cloud: null = checking, false = signed out, object = the student. Locally there is always a "user".
+  const [me, setMe] = useState(STATIC ? null : { local: true });
   const [progress, setProgress] = useState(EMPTY);
-  const [courses, setCourses] = useState([]);
+  const [allCourses, setCourses] = useState([]);
   const [status, setStatus] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [chat, setChat] = useState({ open: false, request: null });
   const [uploadOpen, setUploadOpen] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [context, setContext] = useState({});
+  const [feed, setFeed] = useState({ items: [], deadlines: [], since: null, settings: {} });
+  const [personal, setPersonal] = useState([]); // cloud: the student's pending Moodle submissions
   const saveTimer = useRef();
-  const loaded = useRef(false);
+  const signedIn = !!me;
+
+  const refreshMe = useCallback(
+    () => api.get('/api/me').then(setMe).catch((e) => { if (e.status === 401) setMe(false); }),
+    []
+  );
+  useEffect(() => {
+    if (!STATIC) return undefined;
+    refreshMe();
+    const onAuth = () => setMe(false);
+    window.addEventListener(AUTH_EVENT, onAuth);
+    return () => window.removeEventListener(AUTH_EVENT, onAuth);
+  }, [refreshMe]);
 
   const refreshCourses = useCallback(() => api.get('/api/courses').then(setCourses).catch(() => {}), []);
-  const [updates, setUpdates] = useState({ items: [], deadlines: [], since: null, settings: {} });
-  const refreshUpdates = useCallback(() => api.get('/api/updates').then(setUpdates).catch(() => {}), []);
+  const refreshUpdates = useCallback(() => {
+    api.get('/api/updates').then(setFeed).catch(() => {});
+    if (STATIC) {
+      api.get('/api/me/deadlines').then(setPersonal).catch((e) => {
+        if (e.relogin) setMe((m) => (m ? { ...m, moodleOk: false } : m));
+      });
+    }
+  }, []);
+
   useEffect(() => {
+    if (!signedIn) return undefined;
     refreshUpdates();
     const t = setInterval(refreshUpdates, STATIC ? 5 * 60000 : 60000);
     return () => clearInterval(t);
-  }, [refreshUpdates]);
+  }, [signedIn, refreshUpdates]);
 
   useEffect(() => {
-    api.get('/api/progress').then((p) => { setProgress({ ...EMPTY, ...p }); loaded.current = true; }).catch(() => { loaded.current = true; });
+    if (!signedIn) return;
+    resetSearchIndex();
+    api.get('/api/progress')
+      .then((p) => {
+        let next = { ...EMPTY, ...p };
+        if (STATIC && !p.updatesSeenAt) {
+          // First sign-in on the cloud: bring over progress saved in this browser before accounts, and start
+          // the updates feed "read" so a new student isn't greeted by dozens of old items.
+          try {
+            const old = JSON.parse(localStorage.getItem(OLD_LOCAL_PROGRESS) || 'null');
+            if (old && !Object.keys(p).length) next = { ...EMPTY, ...old };
+          } catch { /* storage unavailable */ }
+          next.updatesSeenAt = next.updatesSeenAt || new Date().toISOString();
+          api.put('/api/progress', next).catch(() => {});
+        }
+        setProgress(next);
+      })
+      .catch(() => {});
     api.get('/api/status').then(setStatus).catch(() => {});
     refreshCourses();
-  }, [refreshCourses]);
+  }, [signedIn, refreshCourses]);
 
   const update = useCallback((fn) => {
     setProgress((prev) => {
@@ -81,23 +135,119 @@ export function AppProvider({ children }) {
     [update]
   );
 
+  /* Deadlines: locally they live on the Mac's server; in the cloud Moodle's own list is merged with the
+     student's "done" marks and personal deadlines, which are saved with their progress. */
+  const deadlineActions = useMemo(
+    () => ({
+      toggleDone: async (d) => {
+        if (!STATIC) return api.patch(`/api/updates/deadlines/${d.id}`, { done: !d.done }).then(refreshUpdates);
+        update((p) => {
+          if (d.source === 'manual') {
+            p.manualDeadlines = (p.manualDeadlines || []).map((x) => (x.id === d.id ? { ...x, done: !x.done } : x));
+          } else {
+            p.deadlinesDone ||= {};
+            if (p.deadlinesDone[d.moodleKey]) delete p.deadlinesDone[d.moodleKey];
+            else p.deadlinesDone[d.moodleKey] = Date.now();
+          }
+          return p;
+        });
+      },
+      addManual: async (form) => {
+        if (!STATIC) return api.post('/api/updates/deadlines', form).then(refreshUpdates);
+        if (!form.title?.trim() || Number.isNaN(new Date(form.dueAt).getTime())) throw new Error('צריך כותרת ותאריך');
+        update((p) => {
+          p.manualDeadlines = [...(p.manualDeadlines || []), { id: Math.random().toString(36).slice(2, 10), ...form, title: form.title.trim(), done: false }];
+          return p;
+        });
+      },
+      removeManual: async (id) => {
+        if (!STATIC) return api.del(`/api/updates/deadlines/${id}`).then(refreshUpdates);
+        update((p) => { p.manualDeadlines = (p.manualDeadlines || []).filter((x) => x.id !== id); return p; });
+      },
+      setReminderDays: async (reminderDays) => {
+        if (!STATIC) return api.put('/api/updates/settings', { reminderDays }).then(refreshUpdates);
+        const r = await api.put('/api/me/settings', { reminderDays });
+        setMe((m) => (m ? { ...m, reminderDays: r.reminderDays } : m));
+      },
+    }),
+    [update, refreshUpdates]
+  );
+
+  const updates = useMemo(() => {
+    if (!STATIC) return feed;
+    const done = progress.deadlinesDone || {};
+    const deadlines = [
+      ...personal.map((d) => ({ ...d, source: 'moodle', intro: d.action || '', submitted: false, done: !!done[d.moodleKey] })),
+      ...(progress.manualDeadlines || []).map((d) => ({ ...d, source: 'manual' })),
+    ].sort((a, b) => a.dueAt.localeCompare(b.dueAt));
+    // Reminders: one per deadline, for the closest threshold already crossed (default 3 days and 1 day before).
+    const days = me?.reminderDays?.length ? me.reminderDays : [3, 1];
+    const now = Date.now();
+    const reminders = [];
+    for (const d of deadlines) {
+      const due = Date.parse(d.dueAt);
+      if (d.done || due <= now) continue;
+      const crossed = days.filter((x) => due - x * DAY <= now);
+      if (!crossed.length) continue;
+      const x = Math.min(...crossed);
+      reminders.push({
+        id: `rem-${d.id}-${x}`,
+        type: 'reminder',
+        courseId: d.courseId,
+        title: `⏰ ${whenText(due - now)}: ${d.title}`,
+        body: `להגשה עד ${fmtDue(d.dueAt)}`,
+        url: d.url,
+        addedAt: new Date(due - x * DAY).toISOString(),
+      });
+    }
+    return {
+      ...feed,
+      deadlines,
+      items: [...feed.items, ...reminders].sort((a, b) => b.addedAt.localeCompare(a.addedAt)),
+      settings: { reminderDays: days },
+    };
+  }, [feed, personal, progress.deadlinesDone, progress.manualDeadlines, me]);
+
   const openChat = useCallback((request = null) => {
     if (STATIC) return toast('הצ׳אט עם המורה זמין באתר שרץ במחשב שלך', 'info');
     setChat({ open: true, request: request ? { ...request, id: Math.random() } : null });
   }, [toast]);
   const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), []);
 
+  const signOut = useCallback(async () => {
+    await api.post('/api/auth/logout', {}).catch(() => {});
+    setMe(false);
+    setProgress(EMPTY);
+    setCourses([]);
+    setPersonal([]);
+    setFeed({ items: [], deadlines: [], since: null, settings: {} });
+  }, []);
+  const deleteAccount = useCallback(async () => {
+    await api.del('/api/me');
+    try { localStorage.removeItem(OLD_LOCAL_PROGRESS); } catch { /* storage unavailable */ }
+    setMe(false);
+    setProgress(EMPTY);
+    setCourses([]);
+    setPersonal([]);
+    setFeed({ items: [], deadlines: [], since: null, settings: {} });
+  }, []);
+
   // Unread = added after the last visit to the updates page (or after the feed started, on first use).
   const seenAt = progress.updatesSeenAt && progress.updatesSeenAt > (updates.since || '') ? progress.updatesSeenAt : updates.since || '';
-  const unread = updates.items.filter((i) => i.addedAt > seenAt).length;
+  const unread = updates.items.filter((i) => i.addedAt > seenAt && i.addedAt <= new Date().toISOString()).length;
 
   useEffect(() => {
     document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
   }, [unread]);
 
+  // On the Mac, courses built for other students (no AI material) are listed separately from yours.
+  const courses = useMemo(() => (STATIC ? allCourses : allCourses.filter((c) => !c.remote)), [allCourses]);
+  const otherCourses = useMemo(() => (STATIC ? [] : allCourses.filter((c) => c.remote)), [allCourses]);
+
   const value = {
-    updates, refreshUpdates, unread, seenAt,
-    progress, courses, refreshCourses, status, toast, ...actions,
+    me, refreshMe, signOut, deleteAccount,
+    updates, refreshUpdates, unread, seenAt, deadlineActions,
+    progress, courses, otherCourses, refreshCourses, status, toast, ...actions,
     chat, openChat, closeChat,
     uploadOpen, openUpload: (courseId = 'auto') => (STATIC ? toast('העלאת הרצאות זמינה באתר שרץ במחשב שלך', 'info') : setUploadOpen({ courseId })), closeUpload: () => setUploadOpen(null),
     searchOpen, setSearchOpen,

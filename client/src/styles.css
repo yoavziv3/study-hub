@@ -566,6 +566,18 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
   .notes-lead { font-size: 17px; }
 }
 
+/* ============ Cloud sign-in & account ============ */
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.login-card { width: 100%; max-width: 440px; padding: 30px 28px; box-shadow: var(--shadow-lg); }
+.login-title { font-size: 25px; margin: 18px 0 6px; }
+.login-error { padding: 10px 14px; border-radius: 12px; background: var(--bad-bg); color: var(--bad); font-size: 14px; font-weight: 600; overflow: hidden; }
+.login-privacy { margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: var(--surface-2); font-size: 14px; }
+.login-privacy ul { margin: 10px 0 0; padding-inline-start: 20px; overflow: hidden; color: var(--text-2); line-height: 1.7; }
+.login-privacy li { margin: 6px 0; }
+.avatar-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--c-soft); color: var(--c-strong); font-weight: 800; font-size: 14px; }
+.account-menu { position: absolute; top: 46px; inset-inline-end: 0; z-index: 30; padding: 6px; width: 240px; box-shadow: var(--shadow-lg); }
+.nav-pending { margin: 4px 6px 0; padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--border-strong); color: var(--text-2); font-size: 13px; display: grid; gap: 6px; }
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .hero, .two-col { grid-template-columns: 1fr; }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -9,6 +9,7 @@ import Course from './pages/Course.jsx';
 import Lecture from './pages/Lecture.jsx';
 import Moodle from './pages/Moodle.jsx';
 import Updates from './pages/Updates.jsx';
+import Login from './pages/Login.jsx';
 import { useFetch, STATIC } from './api.js';
 import ChatPanel from './components/ChatPanel.jsx';
 import UploadModal from './components/UploadModal.jsx';
@@ -23,8 +24,23 @@ function useTheme() {
   return [theme, () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))];
 }
 
+function CourseNav({ c, progress, onNavigate }) {
+  const studied = Object.keys(progress.studied).filter((id) => id.startsWith(c.id + '-')).length;
+  const total = c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0);
+  return (
+    <NavItem
+      to={`/course/${c.id}`}
+      color={c.color}
+      icon={<span className="nav-dot"><CourseIcon name={c.icon} size={15} /></span>}
+      label={c.short}
+      count={c.processing ? <Loader2 size={13} className="spin" /> : total ? `${studied}/${total}` : '—'}
+      onClick={onNavigate}
+    />
+  );
+}
+
 function Sidebar({ open, onNavigate }) {
-  const { courses, status, progress, refreshCourses, unread } = useApp();
+  const { courses, otherCourses, status, progress, refreshCourses, unread, me } = useApp();
   const { data: moodle } = useFetch('/api/moodle', { poll: () => !STATIC, interval: 15000 });
   // New lectures may have arrived from Moodle – refresh the course counters after each sync.
   useEffect(() => { if (moodle?.lastSync) refreshCourses(); }, [moodle?.lastSync, refreshCourses]);
@@ -41,20 +57,21 @@ function Sidebar({ open, onNavigate }) {
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
       <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <div className="nav-label">הקורסים שלי</div>
-      {courses.map((c) => {
-        const studied = Object.keys(progress.studied).filter((id) => id.startsWith(c.id + '-')).length;
-        return (
-          <NavItem
-            key={c.id}
-            to={`/course/${c.id}`}
-            color={c.color}
-            icon={<span className="nav-dot"><CourseIcon name={c.icon} size={15} /></span>}
-            label={c.short}
-            count={c.processing ? <Loader2 size={13} className="spin" /> : c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0) ? `${studied}/${c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0)}` : '—'}
-            onClick={onNavigate}
-          />
-        );
-      })}
+      {courses.map((c) => <CourseNav key={c.id} c={c} progress={progress} onNavigate={onNavigate} />)}
+      {STATIC && me?.pending?.length > 0 && (
+        <div className="nav-pending" title="הקורסים האלה נבנים מהמודל – החומר יופיע כאן בקרוב">
+          {me.pending.map((p) => (
+            <div key={p.moodleId} className="row" style={{ gap: 8 }}><Hourglass size={13} /> <span className="grow">{p.name}</span></div>
+          ))}
+          <div className="faint" style={{ fontSize: 11.5 }}>בהכנה – יופיעו אחרי הסנכרון הבא</div>
+        </div>
+      )}
+      {otherCourses.length > 0 && (
+        <>
+          <div className="nav-label row" style={{ gap: 6 }}><Users size={12} /> קורסים של סטודנטים אחרים</div>
+          {otherCourses.map((c) => <CourseNav key={c.id} c={c} progress={progress} onNavigate={onNavigate} />)}
+        </>
+      )}
       {!STATIC && <div className="nav-label">כלים</div>}
       {!STATIC && <NavItem
         to="/moodle"
@@ -66,7 +83,7 @@ function Sidebar({ open, onNavigate }) {
       <div className="sidebar-foot">
         <div className="ai-pill" title={ai ? `מודל: ${ai.model}` : ''}>
           <span className={`pulse ${ai?.ready ? '' : 'off'}`} />
-          {STATIC ? 'גרסת ענן · הצ׳אט וההעלאה במחשב' : ai?.ready ? (ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)') : 'AI לא מחובר'}
+          {STATIC ? (me?.moodleOk === false ? 'החיבור למודל פג – התחברו מחדש' : 'מחובר למודל') : ai?.ready ? (ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)') : 'AI לא מחובר'}
         </div>
       </div>
     </aside>
@@ -88,7 +105,47 @@ function NavItem({ to, end, icon, label, count, color, onClick }) {
   );
 }
 
+function AccountMenu() {
+  const { me, signOut, deleteAccount, toast } = useApp();
+  const [open, setOpen] = useState(false);
+  if (!STATIC || !me) return null;
+  const initials = (me.user?.name || '?').split(/\s+/).map((w) => w[0]).slice(0, 2).join('');
+  const remove = async () => {
+    if (!confirm('למחוק את החשבון? מפתח המודל, ההתקדמות וההערות שלך יימחקו לגמרי מהאתר.')) return;
+    try {
+      await deleteAccount();
+      toast('החשבון וכל המידע נמחקו');
+    } catch (e) {
+      toast(e.message, 'info');
+    }
+  };
+  return (
+    <div style={{ position: 'relative' }}>
+      <button className="btn icon ghost avatar-btn" onClick={() => setOpen((o) => !o)} aria-label="החשבון שלי">{initials}</button>
+      <AnimatePresence>
+        {open && (
+          <motion.div className="card account-menu" initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }}>
+            <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid var(--border)', marginBottom: 6 }}>
+              <div style={{ fontWeight: 700 }}>{me.user?.name}</div>
+              <div className="faint" style={{ fontSize: 12.5 }} dir="ltr">{me.user?.username}</div>
+            </div>
+            <button className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setOpen(false); signOut(); }}><LogOut size={15} /> התנתקות</button>
+            <button className="btn ghost sm danger" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setOpen(false); remove(); }}><Trash2 size={15} /> מחיקת החשבון וכל המידע</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function App() {
+  const { me } = useApp();
+  if (STATIC && me === null) return <div className="login-wrap"><Loader2 className="spin" size={28} /></div>;
+  if (STATIC && me === false) return <Login />;
+  return <Shell />;
+}
+
+function Shell() {
   const { openUpload, setSearchOpen, openChat, chat, uploadOpen, searchOpen, context, unread } = useApp();
   const navigate = useNavigate();
   const [theme, toggleTheme] = useTheme();
@@ -160,6 +217,7 @@ export default function App() {
           <button className="local-only btn primary" onClick={() => openUpload(context.courseId || 'auto')}>
             <Upload size={17} /> העלאת הרצאה
           </button>
+          <AccountMenu />
         </header>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>

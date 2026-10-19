@@ -172,7 +172,8 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     await saveContent(id, content);
   } else if (existing && !aiOnly && !regenerate) {
     content = existing;
-  } else if (aiStatus().ready && slides.some((s) => s.trim())) {
+  } else if (aiStatus().ready && course?.ai !== false && slides.some((s) => s.trim())) {
+    // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
     try {
       content = await generateJSON({
@@ -215,6 +216,7 @@ export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
   if (!meta || !content || (meta.kind || 'lecture') === 'homework' || !aiStatus().ready) return null;
+  if (getCourse(meta.courseId)?.ai === false) return null;
   const slides = getSlides(id).map((s) => s.text);
   if (!slides.some((s) => s.trim())) return null;
   const course = getCourse(meta.courseId);

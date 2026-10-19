@@ -107,6 +107,14 @@ app.post('/api/lectures/:id/regenerate', async (req, res) => {
   res.json({ ok: true });
 });
 
+app.get('/api/me/grades/:courseId', async (req, res) => {
+  try {
+    res.json(await moodle.courseGrades(req.params.courseId));
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
 app.post('/api/lectures/:id/notes', async (req, res) => {
   const meta = getLecture(req.params.id);
   if (!meta) return res.status(404).json({ error: 'הרצאה לא נמצאה' });

@@ -1,0 +1,15 @@
+# Cloudflare Pages project (built from GitHub). Bindings for the Functions in functions/ (code in cloud/).
+# Secrets are set with `wrangler pages secret put` and never committed:
+#   TOKEN_KEY    – base64 32-byte key that encrypts students' Moodle tokens
+#   ADMIN_SECRET – shared with the Mac (STUDY_ADMIN_SECRET in .env) for /api/admin/*
+name = "study-hub-git"
+pages_build_output_dir = "dist-cloud"
+compatibility_date = "2026-06-01"
+
+[vars]
+MOODLE_URL = "https://moodle.bgu.ac.il/moodle"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "study-hub"
+database_id = "3c061774-a18e-470a-abe1-7a511602b7ff"

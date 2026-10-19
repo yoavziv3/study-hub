@@ -5,13 +5,18 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture } from './store.js';
+import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse } from './store.js';
 import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
 import { addAnnouncements, syncDeadlines, announceMaterial } from './updates.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
 const SERVICE = 'moodle_mobile_app';
+// The cloud site (students sign in there). Courses of other students are read through its admin channel,
+// so their Moodle tokens never leave Cloudflare. Both come from .env; without them only this Mac's courses sync.
+const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
+const ADMIN_SECRET = process.env.STUDY_ADMIN_SECRET || '';
+const cloudEnabled = () => !!(CLOUD && ADMIN_SECRET.length >= 32);
 
 // Which files in a course page become site items, and of which type.
 const LECTURE_HINT = /הרצא|שיעור(?!י בית)|יחידה|מצגת|שקפים|lecture|slides?|presentation|week|שבוע|chapter|פרק/i;
@@ -87,6 +92,23 @@ async function rest(wsfunction, params = {}) {
   return data;
 }
 
+async function admin(pathname, init = {}) {
+  const res = await fetch(`${CLOUD}${pathname}`, {
+    ...init,
+    headers: { Authorization: `Bearer ${ADMIN_SECRET}`, ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...(init.headers || {}) },
+    signal: init.signal || AbortSignal.timeout(120000),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `שרת הענן החזיר ${res.status}`);
+  }
+  return res;
+}
+
+/** Same signature as rest(), but runs in the cloud with the token of a student enrolled in `moodleId`. */
+const remoteRest = (moodleId) => async (wsfunction, params = {}) =>
+  (await admin('/api/admin/moodle', { method: 'POST', body: JSON.stringify({ course: Number(moodleId), wsfunction, params }) })).json();
+
 async function getToken(username, password) {
   const body = new URLSearchParams({ username, password, service: SERVICE });
   const res = await fetch(`${SITE}/login/token.php`, { method: 'POST', body, signal: AbortSignal.timeout(30000) });
@@ -128,6 +150,8 @@ export function moodleStatus() {
     intervalMin: state.intervalMin,
     lastSync: state.lastSync,
     lastResult: state.lastResult,
+    cloud: cloudEnabled() ? CLOUD : null,
+    remote: Object.entries(state.remote || {}).map(([mid, siteId]) => ({ moodleId: Number(mid), siteCourse: siteId, lastSync: state.remoteSynced?.[mid] || null })),
     syncing,
   };
 }
@@ -199,8 +223,29 @@ export async function mapCourse(moodleId, siteId) {
   state.map[moodleId] = siteId || null;
   const mc = state.courses.find((c) => c.id === Number(moodleId));
   if (siteId && mc) await fillCourseDetails(siteId, mc);
+  await linkCourses();
   await save();
   return moodleStatus();
+}
+
+/** Your grades in a site course (the same shape the cloud's /api/me/grades/:id returns). */
+export async function courseGrades(siteId) {
+  if (!state.token) throw new Error('המודל לא מחובר');
+  const moodleId = Object.entries(state.map).find(([, v]) => v === siteId)?.[0];
+  if (!moodleId) return { courseId: siteId, items: [] };
+  const data = await rest('gradereport_user_get_grade_items', { courseid: Number(moodleId), userid: state.user.id });
+  const items = (data.usergrades?.[0]?.gradeitems || [])
+    .filter((g) => g.itemtype === 'mod' || g.itemtype === 'course')
+    .map((g) => ({
+      name: g.itemtype === 'course' ? 'ציון הקורס' : g.itemname,
+      total: g.itemtype === 'course',
+      grade: g.gradeformatted && g.gradeformatted !== '-' ? g.gradeformatted : null,
+      percentage: g.percentageformatted && g.percentageformatted !== '-' ? g.percentageformatted : null,
+      range: g.rangeformatted || '',
+      feedback: g.feedback ? htmlToText(g.feedback).replace(/\s+/g, ' ').slice(0, 400) : '',
+      url: g.itemmodule && g.cmid ? `${SITE}/mod/${g.itemmodule}/view.php?id=${g.cmid}` : null,
+    }));
+  return { courseId: siteId, items };
 }
 
 export async function setOptions({ autoSync, intervalMin }) {
@@ -212,8 +257,8 @@ export async function setOptions({ autoSync, intervalMin }) {
 }
 
 /** All presentation files in a mapped course, with their sync status. */
-export async function courseFiles(moodleId) {
-  const sections = await rest('core_course_get_contents', { courseid: moodleId });
+export async function courseFiles(moodleId, call = rest) {
+  const sections = await call('core_course_get_contents', { courseid: Number(moodleId) });
   const out = [];
   for (const sec of sections) {
     for (const mod of sec.modules || []) {
@@ -237,7 +282,7 @@ export async function courseFiles(moodleId) {
     }
   }
   // Exercise sheets are often attached to the assignment itself rather than posted as a file.
-  const assigns = await rest('mod_assign_get_assignments', { courseids: [moodleId] }).catch(() => ({ courses: [] }));
+  const assigns = await call('mod_assign_get_assignments', { courseids: [Number(moodleId)] }).catch(() => ({ courses: [] }));
   for (const c of assigns.courses || []) {
     for (const a of c.assignments || []) {
       for (const f of a.introattachments || []) {
@@ -268,22 +313,23 @@ const sectionNumber = (name = '') => {
   return m ? Number(m[1]) : 0;
 };
 
-async function download(file) {
+async function download(file, via = null) {
   const dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'moodle-'));
   const dest = path.join(dir, file.filename.replace(/[/\\]/g, '_'));
-  const url = `${file.fileurl}${file.fileurl.includes('?') ? '&' : '?'}token=${encodeURIComponent(state.token)}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(300000) });
+  const res = via
+    ? await admin(`/api/admin/file?course=${via}&url=${encodeURIComponent(file.fileurl)}`, { signal: AbortSignal.timeout(300000) })
+    : await fetch(`${file.fileurl}${file.fileurl.includes('?') ? '&' : '?'}token=${encodeURIComponent(state.token)}`, { signal: AbortSignal.timeout(300000) });
   if (!res.ok) throw new Error(`הורדה נכשלה (${res.status})`);
   await fsp.writeFile(dest, Buffer.from(await res.arrayBuffer()));
   return dest;
 }
 
-async function importFile(file, siteCourseId, moodleId) {
+async function importFile(file, siteCourseId, moodleId, { via = null, initial = false } = {}) {
   const existingKey = state.files[file.key];
   // A newer version of a file we already imported: replace the deck and regenerate the study material.
   if (existingKey?.lectureId && getLecture(existingKey.lectureId)) {
     const meta = getLecture(existingKey.lectureId);
-    const tmp = await download(file);
+    const tmp = await download(file, via);
     await fsp.copyFile(tmp, path.join(lectureDir(meta.id), meta.originalFile));
     await fsp.rm(path.dirname(tmp), { recursive: true, force: true });
     await fsp.rm(path.join(lectureDir(meta.id), 'slides'), { recursive: true, force: true });
@@ -293,7 +339,7 @@ async function importFile(file, siteCourseId, moodleId) {
     state.files[file.key] = { ...existingKey, timemodified: file.timemodified, updatedAt: Date.now() };
     return 'updated';
   }
-  const tmp = await download(file);
+  const tmp = await download(file, via);
   const meta = await addLectureFile({
     filePath: tmp,
     originalName: file.filename,
@@ -301,7 +347,15 @@ async function importFile(file, siteCourseId, moodleId) {
     lessonNumber: numberFromName(file.filename) ? undefined : sectionNumber(file.section) || sectionNumber(file.module) || undefined,
     move: true,
     kind: file.kind || undefined,
-    source: { type: 'moodle', courseId: moodleId, section: file.section, module: file.module, ...(file.note ? { note: file.note } : {}) },
+    source: {
+      type: 'moodle',
+      courseId: moodleId,
+      section: file.section,
+      module: file.module,
+      timemodified: file.timemodified,
+      ...(initial ? { initial: true } : {}),
+      ...(file.note ? { note: file.note } : {}),
+    },
   });
   await fsp.rm(path.dirname(tmp), { recursive: true, force: true });
   state.files[file.key] = { status: 'imported', lectureId: meta.id, timemodified: file.timemodified, at: Date.now() };
@@ -398,6 +452,143 @@ async function syncNews(result) {
   }
 }
 
+/** Import new or changed files of one Moodle course into its site course. */
+async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial = false }, result) {
+  let files;
+  try {
+    files = await courseFiles(mid, call);
+  } catch (e) {
+    result.errors.push(`${mid}: ${e.message}`);
+    return;
+  }
+  const existingNames = new Set(listLectures(siteCourseId).map((l) => nfc(l.originalName)));
+  for (const f of files) {
+    let rec = state.files[f.key];
+    if (rec?.status === 'ignored') continue;
+    // Re-check files previously judged "not a lecture" – the rule may have changed.
+    if (rec?.status === 'not-lecture') {
+      if (!f.kind) continue;
+      delete state.files[f.key];
+      rec = undefined;
+    }
+    if (rec && (rec.timemodified || 0) >= f.timemodified) continue;
+    if (!rec && !f.kind) {
+      state.files[f.key] = { status: 'not-lecture', timemodified: f.timemodified, at: Date.now() };
+      result.skipped++;
+      continue;
+    }
+    // Already uploaded by hand before Moodle was connected – link instead of duplicating.
+    if (!rec && existingNames.has(nfc(f.filename))) {
+      const lec = listLectures(siteCourseId).find((l) => nfc(l.originalName) === nfc(f.filename));
+      state.files[f.key] = { status: 'imported', lectureId: lec.id, timemodified: f.timemodified, at: Date.now(), linked: true };
+      continue;
+    }
+    try {
+      const r = await importFile(f, siteCourseId, Number(mid), { via, initial });
+      result[r === 'updated' ? 'updated' : 'imported'].push(`${getCourse(siteCourseId)?.short}: ${f.filename}`);
+    } catch (e) {
+      result.errors.push(`${f.filename}: ${e.message}`);
+    }
+    await save();
+  }
+}
+
+// ---------- courses of other students (through the cloud) ----------
+const PALETTE = ['sky', 'violet', 'rose', 'amber', 'emerald'];
+
+/** Every site course knows which Moodle course(s) it mirrors – the cloud uses this to check enrollment. */
+async function linkCourses() {
+  const links = {};
+  for (const [mid, siteId] of [...Object.entries(state.map), ...Object.entries(state.remote || {})]) {
+    if (siteId) (links[siteId] ||= []).push(Number(mid));
+  }
+  for (const c of listCourses()) {
+    const ids = (links[c.id] || []).sort((a, b) => a - b);
+    if (JSON.stringify(ids) !== JSON.stringify(c.moodleIds || [])) await patchCourse(c.id, { moodleIds: ids });
+  }
+}
+
+/** A course a signed-in student is enrolled in but this Mac isn't: build it with slides and files only (no AI). */
+async function createRemoteCourse(mc) {
+  const m = mc.shortname.match(/^(\d{3})(\d)(\d{4})/);
+  const name = mc.fullname
+    .replace(/\s*\(.*?\)\s*$/, '')
+    .replace(/\s+(קב|סמ|קבוצה|סמסטר)['׳]?\s*\d+.*$/, '')
+    .replace(/\s+-\s+.*$/, '')
+    .trim() || mc.fullname;
+  const id = `m${mc.moodleId}`;
+  return addCourse({
+    id,
+    code: m ? `${m[1]}-${m[2]}-${m[3]}` : '',
+    name,
+    short: name.length > 22 ? `${name.slice(0, 20).trim()}…` : name,
+    color: PALETTE[mc.moodleId % PALETTE.length],
+    icon: /אלגברה|מתמטיק|חדו|חשבון|סטטיסט|הסתברות/.test(name) ? 'Sigma' : 'BookOpen',
+    staff: [],
+    unitLabel: 'הרצאה',
+    tagline: '',
+    keywords: [],
+    ai: false,
+    remote: true,
+    moodleIds: [mc.moodleId],
+  });
+}
+
+async function syncRemote(result) {
+  let list;
+  try {
+    list = await (await admin('/api/admin/courses')).json();
+  } catch (e) {
+    result.errors.push(`ענן: ${e.message}`);
+    return;
+  }
+  state.remote ||= {};
+  state.remoteSynced ||= {};
+  result.remote = 0;
+  for (const mc of list) {
+    if (state.map[mc.moodleId] || (state.remoteIgnore || []).includes(mc.moodleId)) continue;
+    if (!state.remote[mc.moodleId]) {
+      const course = await createRemoteCourse(mc);
+      state.remote[mc.moodleId] = course.id;
+      await linkCourses();
+      await save();
+    }
+    const siteId = state.remote[mc.moodleId];
+    const call = remoteRest(mc.moodleId);
+    const initial = !state.remoteSynced[mc.moodleId];
+    await syncCourse(mc.moodleId, siteId, { call, via: mc.moodleId, initial }, result);
+    await remoteNews(mc.moodleId, siteId, call, initial, result);
+    state.remoteSynced[mc.moodleId] = new Date().toISOString();
+    result.remote++;
+    await save();
+  }
+}
+
+/** Announcements of a remote course (personal deadlines come to each student straight from Moodle). */
+async function remoteNews(moodleId, siteId, call, initial, result) {
+  try {
+    const forums = await call('mod_forum_get_forums_by_courses', { courseids: [Number(moodleId)] });
+    const posts = [];
+    for (const f of forums.filter((x) => x.type === 'news')) {
+      const d = await call('mod_forum_get_forum_discussions', { forumid: f.id, sortorder: 1, page: 0, perpage: 25 });
+      for (const x of d.discussions || []) {
+        posts.push({
+          id: x.discussion,
+          courseId: siteId,
+          subject: x.name || x.subject,
+          body: htmlToText(x.message),
+          author: x.userfullname,
+          created: x.created,
+          url: `${SITE}/mod/forum/discuss.php?d=${x.discussion}`,
+        });
+      }
+    }
+    await addAnnouncements(posts, { history: initial });
+  } catch (e) {
+    result.errors.push(`הודעות ${siteId}: ${e.message}`);
+  }
+}
+
 export async function sync() {
   if (!state.token || syncing) return state.lastResult;
   syncing = true;
@@ -405,46 +596,11 @@ export async function sync() {
   try {
     await refreshCourses().catch(() => {});
     for (const [mid, siteCourseId] of Object.entries(state.map)) {
-      if (!siteCourseId) continue;
-      let files;
-      try {
-        files = await courseFiles(mid);
-      } catch (e) {
-        result.errors.push(`${mid}: ${e.message}`);
-        continue;
-      }
-      const existingNames = new Set(listLectures(siteCourseId).map((l) => nfc(l.originalName)));
-      for (const f of files) {
-        let rec = state.files[f.key];
-        if (rec?.status === 'ignored') continue;
-        // Re-check files previously judged "not a lecture" – the rule may have changed.
-        if (rec?.status === 'not-lecture') {
-          if (!f.kind) continue;
-          delete state.files[f.key];
-          rec = undefined;
-        }
-        if (rec && (rec.timemodified || 0) >= f.timemodified) continue;
-        if (!rec && !f.kind) {
-          state.files[f.key] = { status: 'not-lecture', timemodified: f.timemodified, at: Date.now() };
-          result.skipped++;
-          continue;
-        }
-        // Already uploaded by hand before Moodle was connected – link instead of duplicating.
-        if (!rec && existingNames.has(nfc(f.filename))) {
-          const lec = listLectures(siteCourseId).find((l) => nfc(l.originalName) === nfc(f.filename));
-          state.files[f.key] = { status: 'imported', lectureId: lec.id, timemodified: f.timemodified, at: Date.now(), linked: true };
-          continue;
-        }
-        try {
-          const r = await importFile(f, siteCourseId, Number(mid));
-          result[r === 'updated' ? 'updated' : 'imported'].push(`${getCourse(siteCourseId)?.short}: ${f.filename}`);
-        } catch (e) {
-          result.errors.push(`${f.filename}: ${e.message}`);
-        }
-        await save();
-      }
+      if (siteCourseId) await syncCourse(mid, siteCourseId, {}, result);
     }
     await syncNews(result);
+    await linkCourses();
+    if (cloudEnabled()) await syncRemote(result);
   } catch (e) {
     if (e.code === 'invalidtoken') {
       state.token = null;
@@ -467,6 +623,7 @@ export function schedule() {
 }
 
 export function startMoodle() {
+  linkCourses().catch((e) => console.error('[moodle] link courses:', e.message));
   if (!state.token) return;
   schedule();
   setTimeout(() => sync().catch((e) => console.error('[moodle]', e.message)), 20000);

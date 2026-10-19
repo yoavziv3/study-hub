@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2 } from 'lucide-react';
+import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, shuffle } from '../api.js';
 import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
@@ -168,6 +168,40 @@ function HomeworkPractice({ course, bundle, setBundle }) {
   );
 }
 
+/** The student's grades in this course, straight from Moodle. */
+function Grades({ course }) {
+  const { data, error, loading } = useFetch(`/api/me/grades/${course.id}`);
+  if (loading) return <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>;
+  if (error) return <div className="card pad muted" style={{ textAlign: 'center' }}>{error}</div>;
+  const graded = (data?.items || []).filter((g) => g.grade);
+  const total = data?.items.find((g) => g.total);
+  return (
+    <div className="stack" style={{ gap: 10, maxWidth: 760 }}>
+      {graded.length === 0 && <div className="card pad muted" style={{ textAlign: 'center' }}>עוד אין ציונים בקורס הזה במודל.</div>}
+      {(data?.items || []).filter((g) => !g.total).map((g, i) => (
+        <motion.div key={i} className="card pad row" style={{ gap: 14, padding: '14px 18px' }} variants={fadeUp} initial="hidden" animate="show" custom={i % 10}>
+          <div className="deadline-icon" style={{ '--dl': g.grade ? 'var(--good)' : 'var(--text-3)' }}><Award size={18} /></div>
+          <div className="grow" style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700 }}>{g.name}</div>
+            {g.feedback && <div className="faint" style={{ fontSize: 13 }}>{g.feedback}</div>}
+          </div>
+          <div style={{ textAlign: 'end' }}>
+            <div style={{ fontWeight: 800, fontSize: 18 }} dir="ltr">{g.grade || '—'}</div>
+            {g.percentage && <div className="faint" style={{ fontSize: 12.5 }} dir="ltr">{g.percentage}</div>}
+          </div>
+          {g.url && <a className="btn sm icon ghost" href={g.url} target="_blank" rel="noreferrer" title="במודל"><ExternalLink size={14} /></a>}
+        </motion.div>
+      ))}
+      {total?.grade && (
+        <div className="card pad row" style={{ gap: 12, background: 'var(--c-soft)' }}>
+          <b className="grow">ציון הקורס עד כה</b>
+          <b style={{ fontSize: 20 }} dir="ltr">{total.grade}</b>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const KIND = {
   lecture: { tab: 'שיעורים', group: 'שיעור', empty: 'הרצאות' },
   tutorial: { tab: 'תרגולים', group: 'תרגול', empty: 'תרגולים' },
@@ -192,7 +226,7 @@ export default function Course() {
   const navigate = useNavigate();
   const { setContext, openUpload, openChat, progress } = useApp();
   const { data: course } = useFetch(`/api/courses/${id}`, { poll: (d) => d.lectures.some((l) => l.status === 'processing') });
-  const needsBundle = !['lessons', 'tutorials', 'labs'].includes(tab);
+  const needsBundle = !['lessons', 'tutorials', 'labs', 'grades'].includes(tab);
   const { data: bundle, setData: setBundle } = useFetch(needsBundle ? `/api/courses/${id}/bundle` : null);
   const [labOpen, setLabOpen] = useState(null);
 
@@ -220,15 +254,22 @@ export default function Course() {
   const studied = course.lectures.filter((l) => progress.studied[l.id]).length;
   const flashTotal = course.lectures.reduce((s, l) => s + l.flashcardCount, 0);
   const quizTotal = course.lectures.reduce((s, l) => s + l.quizCount, 0);
+  // Courses built for other students have no AI material: files, the lecturer's exercises and grades only.
+  const ai = course.ai !== false;
   const tabs = [
     { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
     { id: 'tutorials', label: 'תרגולים', icon: <Presentation size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'tutorial').length || null },
-    { id: 'homework', label: 'שיעורי בית ותרגילים', icon: <PencilRuler size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'homework').length || null },
-    { id: 'exam', label: 'מבחן תרגול', icon: <Target size={16} />, count: quizTotal || null },
-    { id: 'flashcards', label: 'כרטיסיות', icon: <Layers size={16} />, count: flashTotal || null },
-    { id: 'glossary', label: 'מילון מושגים', icon: <BookMarked size={16} /> },
-    { id: 'formulas', label: 'נוסחאות', icon: <Sigma size={16} /> },
+    { id: 'homework', label: ai ? 'שיעורי בית ותרגילים' : 'תרגול מהמרצה', icon: <PencilRuler size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'homework').length || null },
+    ...(ai
+      ? [
+          { id: 'exam', label: 'מבחן תרגול', icon: <Target size={16} />, count: quizTotal || null },
+          { id: 'flashcards', label: 'כרטיסיות', icon: <Layers size={16} />, count: flashTotal || null },
+          { id: 'glossary', label: 'מילון מושגים', icon: <BookMarked size={16} /> },
+          { id: 'formulas', label: 'נוסחאות', icon: <Sigma size={16} /> },
+        ]
+      : []),
     ...(labs.length ? [{ id: 'labs', label: 'מעבדה אינטראקטיבית', icon: <FlaskConical size={16} />, count: labs.length }] : []),
+    { id: 'grades', label: 'ציונים', icon: <Award size={16} /> },
   ];
 
   const allCards = bundle?.lectures.flatMap((l) => (l.content?.flashcards || []).map((c) => ({ ...c, lectureId: l.id, lectureTitle: l.title }))) || [];
@@ -282,12 +323,19 @@ export default function Course() {
                 </div>
               ))
             )}
-            {kind === 'homework' && bundle && <HomeworkPractice course={course} bundle={bundle} setBundle={setBundle} />}
+            {kind === 'homework' && course.ai === false && (
+              <div className="callout row" style={{ marginTop: 18, gap: 10 }}>
+                <Info size={17} />
+                <span>בקורס הזה התרגול הוא חוברות התרגילים והתרגולים של המרצה, ישירות מהמודל. סמנו כל אחד כ"נלמד" כשסיימתם אותו.</span>
+              </div>
+            )}
+            {kind === 'homework' && bundle && course.ai !== false && <HomeworkPractice course={course} bundle={bundle} setBundle={setBundle} />}
           </div>
         ))}
 
         <div style={{ marginTop: 22 }}>
           {needsBundle && !bundle && <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>}
+          {tab === 'grades' && <Grades course={course} />}
           {tab === 'exam' && bundle && <ExamMode bundle={bundle} />}
           {tab === 'flashcards' && bundle && (allCards.length ? <Flashcards cards={allCards} /> : <Empty course={course} />)}
           {tab === 'glossary' && bundle && (allTerms.length ? <Glossary terms={allTerms} showSource /> : <Empty course={course} />)}
