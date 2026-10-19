@@ -19,9 +19,16 @@
     "courseId": 68380,
     "section": "",
     "module": "תרגיל 1",
-    "note": "תרגילים לעשות מתוך התרגיל:\n\r\n1,\n\r\n2א,ב,ג\n\r\n4\n\r\n5 א,ב\n\r\n6"
+    "note": "תרגילים לעשות מתוך התרגיל:\n\n1,\n\n2א,ב,ג\n\n4\n\n5 א,ב\n\n6",
+    "assignment": {
+      "id": 202001,
+      "name": "תרגיל 1",
+      "dueAt": "2026-10-25T21:59:00.000Z",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3450717",
+      "instructions": "תרגילים לעשות מתוך התרגיל:\n1,\n2א,ב,ג\n4\n5 א,ב\n6"
+    }
   },
-  "updatedAt": "2026-10-19T11:16:19.621Z",
+  "updatedAt": "2026-10-19T17:17:19.376Z",
   "aiError": null,
   "announced": true
 }
