@@ -23,6 +23,13 @@ export function AppProvider({ children }) {
   const loaded = useRef(false);
 
   const refreshCourses = useCallback(() => api.get('/api/courses').then(setCourses).catch(() => {}), []);
+  const [updates, setUpdates] = useState({ items: [], deadlines: [], since: null, settings: {} });
+  const refreshUpdates = useCallback(() => api.get('/api/updates').then(setUpdates).catch(() => {}), []);
+  useEffect(() => {
+    refreshUpdates();
+    const t = setInterval(refreshUpdates, STATIC ? 5 * 60000 : 60000);
+    return () => clearInterval(t);
+  }, [refreshUpdates]);
 
   useEffect(() => {
     api.get('/api/progress').then((p) => { setProgress({ ...EMPTY, ...p }); loaded.current = true; }).catch(() => { loaded.current = true; });
@@ -69,6 +76,7 @@ export function AppProvider({ children }) {
         }),
       setNote: (id, text) => update((p) => { p.notes[id] = text; return p; }),
       visit: (lectureId, slide) => update((p) => { p.last = { lectureId, slide, at: Date.now() }; if (slide) p.slidePos[lectureId] = slide; return p; }),
+      markUpdatesSeen: () => update((p) => { p.updatesSeenAt = new Date().toISOString(); return p; }),
     }),
     [update]
   );
@@ -79,7 +87,16 @@ export function AppProvider({ children }) {
   }, [toast]);
   const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), []);
 
+  // Unread = added after the last visit to the updates page (or after the feed started, on first use).
+  const seenAt = progress.updatesSeenAt && progress.updatesSeenAt > (updates.since || '') ? progress.updatesSeenAt : updates.since || '';
+  const unread = updates.items.filter((i) => i.addedAt > seenAt).length;
+
+  useEffect(() => {
+    document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
+  }, [unread]);
+
   const value = {
+    updates, refreshUpdates, unread, seenAt,
     progress, courses, refreshCourses, status, toast, ...actions,
     chat, openChat, closeChat,
     uploadOpen, openUpload: (courseId = 'auto') => (STATIC ? toast('העלאת הרצאות זמינה באתר שרץ במחשב שלך', 'info') : setUploadOpen({ courseId })), closeUpload: () => setUploadOpen(null),

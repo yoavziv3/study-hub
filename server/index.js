@@ -14,6 +14,7 @@ import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPra
 import { toolsStatus } from './lib/extract.js';
 import * as moodle from './lib/moodle.js';
 import { initPublish } from './lib/publish.js';
+import * as updates from './lib/updates.js';
 
 const PORT = Number(process.env.PORT) || 5180;
 const app = express();
@@ -311,6 +312,14 @@ app.get('/api/moodle/courses/:id/files', wrap((req) => moodle.courseFiles(req.pa
 app.post('/api/moodle/import', wrap(async (req) => ({ result: await moodle.importOne(req.body.moodleId, req.body.key) })));
 app.post('/api/moodle/ignore', wrap(async (req) => { await moodle.ignoreOne(req.body.key); return { ok: true }; }));
 
+// ---------- updates & deadlines ----------
+app.get('/api/updates', (_req, res) => res.json(updates.updatesView()));
+app.post('/api/updates/deadlines', wrap((req) => updates.addManualDeadline(req.body)));
+app.patch('/api/updates/deadlines/:id', wrap((req) => updates.patchDeadline(req.params.id, req.body)));
+app.delete('/api/updates/deadlines/:id', wrap(async (req) => { await updates.deleteDeadline(req.params.id); return { ok: true }; }));
+app.put('/api/updates/settings', wrap((req) => updates.setSettings(req.body)));
+app.post('/api/updates/test-notification', wrap(async () => { updates.testNotification(); return { ok: true }; }));
+
 // ---------- progress ----------
 app.get('/api/progress', (_req, res) => res.json(getProgress()));
 app.put('/api/progress', async (req, res) => {
@@ -333,6 +342,7 @@ app.listen(PORT, () => {
   console.log(`  AI: ${ai.provider} (${ai.model})`);
   console.log(`  תיקיית קליטה: ${path.join(ROOT, 'inbox')}\n`);
   initPublish({ rootDir: ROOT, processing: () => queueState().running || listLectures().some((l) => l.status === 'processing') });
+  updates.initUpdates().catch((e) => console.error('[updates]', e.message));
   resumePending();
   if (process.env.NO_INBOX !== '1') watchInbox();
   moodle.startMoodle();

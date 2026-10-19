@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
 import Course from './pages/Course.jsx';
 import Lecture from './pages/Lecture.jsx';
 import Moodle from './pages/Moodle.jsx';
+import Updates from './pages/Updates.jsx';
 import { useFetch, STATIC } from './api.js';
 import ChatPanel from './components/ChatPanel.jsx';
 import UploadModal from './components/UploadModal.jsx';
@@ -23,7 +24,7 @@ function useTheme() {
 }
 
 function Sidebar({ open, onNavigate }) {
-  const { courses, status, progress, refreshCourses } = useApp();
+  const { courses, status, progress, refreshCourses, unread } = useApp();
   const { data: moodle } = useFetch('/api/moodle', { poll: () => !STATIC, interval: 15000 });
   // New lectures may have arrived from Moodle – refresh the course counters after each sync.
   useEffect(() => { if (moodle?.lastSync) refreshCourses(); }, [moodle?.lastSync, refreshCourses]);
@@ -38,6 +39,7 @@ function Sidebar({ open, onNavigate }) {
         </div>
       </NavLink>
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
+      <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <div className="nav-label">הקורסים שלי</div>
       {courses.map((c) => {
         const studied = Object.keys(progress.studied).filter((id) => id.startsWith(c.id + '-')).length;
@@ -87,7 +89,8 @@ function NavItem({ to, end, icon, label, count, color, onClick }) {
 }
 
 export default function App() {
-  const { openUpload, setSearchOpen, openChat, chat, uploadOpen, searchOpen, context } = useApp();
+  const { openUpload, setSearchOpen, openChat, chat, uploadOpen, searchOpen, context, unread } = useApp();
+  const navigate = useNavigate();
   const [theme, toggleTheme] = useTheme();
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -136,6 +139,17 @@ export default function App() {
             <span className="kbd">⌘K</span>
           </button>
           <div className="spacer" />
+          <motion.button className="btn icon ghost bell" onClick={() => navigate('/updates')} aria-label="עדכונים" whileTap={{ scale: 0.9 }}
+            animate={unread ? { rotate: [0, -14, 12, -8, 6, 0] } : { rotate: 0 }} transition={{ duration: 0.8, repeat: unread ? Infinity : 0, repeatDelay: 6 }}>
+            <Bell size={19} />
+            <AnimatePresence>
+              {unread > 0 && (
+                <motion.span className="bell-badge" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 20 }}>
+                  {unread > 99 ? '99+' : unread}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
           <button className="btn icon ghost" onClick={toggleTheme} aria-label="מצב תצוגה">
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={theme} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.25 }} style={{ display: 'grid' }}>
@@ -154,6 +168,7 @@ export default function App() {
             <Route path="/course/:id/:tab" element={<Course />} />
             <Route path="/lecture/:id" element={<Lecture />} />
             <Route path="/moodle" element={<Moodle />} />
+            <Route path="/updates" element={<Updates />} />
           </Routes>
         </AnimatePresence>
       </main>

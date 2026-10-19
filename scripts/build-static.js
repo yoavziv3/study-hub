@@ -37,6 +37,18 @@ const card = (m) => {
 };
 
 await write('status.json', { ai: { provider: 'static', ready: false }, static: true });
+// Updates feed & deadlines (read state lives in each visitor's browser).
+{
+  let upd = { since: new Date().toISOString(), items: [], deadlines: [], settings: {} };
+  try { upd = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'updates.json'), 'utf8')); } catch { /* none yet */ }
+  const cutoff = Date.now() - 7 * 86400000;
+  await write('updates.json', {
+    since: upd.since,
+    items: [...(upd.items || [])].sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, 300),
+    deadlines: (upd.deadlines || []).filter((d) => new Date(d.dueAt).getTime() > cutoff).sort((a, b) => a.dueAt.localeCompare(b.dueAt)),
+    settings: { notify: false, reminderDays: upd.settings?.reminderDays || [3, 1] },
+  });
+}
 await write('build.json', { commit: process.env.CF_PAGES_COMMIT_SHA || 'local', builtAt: new Date().toISOString() });
 await write('lectures.json', lectures.map(card));
 await write(

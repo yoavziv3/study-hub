@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture } from './store.js';
 import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
+import { addAnnouncements, syncDeadlines, announceMaterial } from './updates.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
@@ -29,6 +30,24 @@ function classify(filename, moduleName, sectionName) {
   if (LECTURE_HINT.test(own)) return 'lecture';
   if (secKind !== 'lecture') return secKind;
   return LECTURE_HINT.test(sectionName || '') ? 'lecture' : null;
+}
+
+// Moodle rich text (announcements, assignment descriptions) → readable plain text with line breaks and links.
+export function htmlToText(html = '') {
+  return html
+    .replace(/\r/g, '')
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gis, (_, href, text) => {
+      const t = text.replace(/<[^>]+>/g, '').trim();
+      return t && t !== href ? `${t} (${href})` : href;
+    })
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '\n• ')
+    .replace(/<\/(p|div|h\d|li|tr|ul|ol)>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 let state = load();
@@ -217,6 +236,29 @@ export async function courseFiles(moodleId) {
       }
     }
   }
+  // Exercise sheets are often attached to the assignment itself rather than posted as a file.
+  const assigns = await rest('mod_assign_get_assignments', { courseids: [moodleId] }).catch(() => ({ courses: [] }));
+  for (const c of assigns.courses || []) {
+    for (const a of c.assignments || []) {
+      for (const f of a.introattachments || []) {
+        if (!ACCEPTED.includes(path.extname(f.filename).toLowerCase())) continue;
+        const key = `${moodleId}:assign${a.id}:${f.filepath || '/'}${f.filename}`;
+        out.push({
+          key,
+          filename: f.filename,
+          section: '',
+          module: a.name,
+          fileurl: f.fileurl,
+          size: f.filesize,
+          timemodified: f.timemodified || a.timemodified || 0,
+          // Anything attached to an assignment is homework (unless it's an exam/syllabus).
+          kind: EXCLUDE.test(`${a.name} ${f.filename}`) ? null : 'homework',
+          note: htmlToText(a.intro).slice(0, 600),
+          record: state.files[key] || null,
+        });
+      }
+    }
+  }
   return out;
 }
 
@@ -247,6 +289,7 @@ async function importFile(file, siteCourseId, moodleId) {
     await fsp.rm(path.join(lectureDir(meta.id), 'slides'), { recursive: true, force: true });
     await patchLecture(meta.id, { status: 'processing', stage: 'queued' });
     enqueue(meta.id, { regenerate: true });
+    await announceMaterial(meta, { updated: true }).catch(() => {});
     state.files[file.key] = { ...existingKey, timemodified: file.timemodified, updatedAt: Date.now() };
     return 'updated';
   }
@@ -258,7 +301,7 @@ async function importFile(file, siteCourseId, moodleId) {
     lessonNumber: numberFromName(file.filename) ? undefined : sectionNumber(file.section) || sectionNumber(file.module) || undefined,
     move: true,
     kind: file.kind || undefined,
-    source: { type: 'moodle', courseId: moodleId, section: file.section, module: file.module },
+    source: { type: 'moodle', courseId: moodleId, section: file.section, module: file.module, ...(file.note ? { note: file.note } : {}) },
   });
   await fsp.rm(path.dirname(tmp), { recursive: true, force: true });
   state.files[file.key] = { status: 'imported', lectureId: meta.id, timemodified: file.timemodified, at: Date.now() };
@@ -283,6 +326,77 @@ export async function ignoreOne(key) {
 }
 
 const nfc = (s) => s.normalize('NFC').trim();
+
+/** Course announcements (news forums) and deadlines (assignments, quizzes) for every mapped course. */
+async function syncNews(result) {
+  const mapped = Object.entries(state.map).filter(([, v]) => v).map(([k, v]) => [Number(k), v]);
+  if (!mapped.length) return;
+  const courseids = mapped.map(([m]) => m);
+  const siteOf = Object.fromEntries(mapped);
+
+  try {
+    const forums = await rest('mod_forum_get_forums_by_courses', { courseids });
+    const posts = [];
+    for (const f of forums.filter((x) => x.type === 'news')) {
+      const d = await rest('mod_forum_get_forum_discussions', { forumid: f.id, sortorder: 1, page: 0, perpage: 25 });
+      for (const x of d.discussions || []) {
+        posts.push({
+          id: x.discussion,
+          courseId: siteOf[f.course],
+          subject: x.name || x.subject,
+          body: htmlToText(x.message),
+          author: x.userfullname,
+          created: x.created,
+          url: `${SITE}/mod/forum/discuss.php?d=${x.discussion}`,
+        });
+      }
+    }
+    result.announcements = await addAnnouncements(posts);
+  } catch (e) {
+    result.errors.push(`הודעות: ${e.message}`);
+  }
+
+  try {
+    const deadlines = [];
+    const assigns = await rest('mod_assign_get_assignments', { courseids });
+    for (const c of assigns.courses || []) {
+      for (const a of c.assignments || []) {
+        if (!a.duedate) continue;
+        let submitted = false;
+        try {
+          const st = await rest('mod_assign_get_submission_status', { assignid: a.id });
+          submitted = st.lastattempt?.submission?.status === 'submitted' || st.lastattempt?.teamsubmission?.status === 'submitted';
+        } catch { /* status unavailable – treat as not submitted */ }
+        deadlines.push({
+          moodleKey: `assign:${a.id}`,
+          courseId: siteOf[c.id],
+          title: a.name,
+          dueAt: new Date(a.duedate * 1000).toISOString(),
+          url: `${SITE}/mod/assign/view.php?id=${a.cmid}`,
+          intro: htmlToText(a.intro).slice(0, 600),
+          submitted,
+        });
+      }
+    }
+    const quizzes = await rest('mod_quiz_get_quizzes_by_courses', { courseids }).catch(() => ({ quizzes: [] }));
+    for (const q of quizzes.quizzes || []) {
+      if (!q.timeclose) continue;
+      deadlines.push({
+        moodleKey: `quiz:${q.id}`,
+        courseId: siteOf[q.course],
+        title: `בוחן: ${q.name}`,
+        dueAt: new Date(q.timeclose * 1000).toISOString(),
+        url: `${SITE}/mod/quiz/view.php?id=${q.coursemodule}`,
+        intro: htmlToText(q.intro).slice(0, 400),
+        submitted: false,
+      });
+    }
+    await syncDeadlines(deadlines);
+    result.deadlines = deadlines.length;
+  } catch (e) {
+    result.errors.push(`דדליינים: ${e.message}`);
+  }
+}
 
 export async function sync() {
   if (!state.token || syncing) return state.lastResult;
@@ -330,6 +444,7 @@ export async function sync() {
         await save();
       }
     }
+    await syncNews(result);
   } catch (e) {
     if (e.code === 'invalidtoken') {
       state.token = null;

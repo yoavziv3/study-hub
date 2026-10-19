@@ -8,6 +8,7 @@ import {
 } from './store.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
+import { announceMaterial } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt } from './prompts.js';
 
 export const ACCEPTED = ['.pdf', '.pptx', '.ppt'];
@@ -175,7 +176,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     try {
       content = await generateJSON({
         system: lectureSystem(course),
-        prompt: lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '' }),
+        prompt: lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }),
         schema: LECTURE_SCHEMA,
         effort: 'high',
       });
@@ -200,6 +201,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   }
   await patchLecture(id, patch);
   await stage(id, 'ready');
+  await announceMaterial(getLecture(id)).catch((e) => console.error('[updates]', e.message));
 }
 
 function nextLessonNumber(courseId, kind = 'lecture') {

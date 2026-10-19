@@ -5,6 +5,7 @@ import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Spa
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp, ltr } from '../components/ui.jsx';
+import { UpcomingWidget } from './Updates.jsx';
 
 function greeting() {
   const h = new Date().getHours();
@@ -206,6 +207,7 @@ export default function Home() {
               <PlayCircle size={28} color="var(--c)" />
             </Link>
           )}
+          <UpcomingWidget />
           <DailyCard lectures={list} />
           <Heatmap activity={progress.activity} />
         </div>
