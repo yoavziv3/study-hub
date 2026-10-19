@@ -1,0 +1,34 @@
+[
+  {
+    "id": 3377653,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3377653",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3425748,
+    "type": "syllabus",
+    "name": "סילבוס",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3425748",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
+    "id": 3426786,
+    "type": "activity",
+    "name": "בדיקה נוכחות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/choice/view.php?id=3426786",
+    "section": "הקדמה ומבוא ומודל עקומת התמורה",
+    "ext": ""
+  },
+  {
+    "id": 3438489,
+    "type": "activity",
+    "name": "שאלה עקומת תמורה התחלה",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/choice/view.php?id=3438489",
+    "section": "הקדמה ומבוא ומודל עקומת התמורה",
+    "ext": ""
+  }
+]

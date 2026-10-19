@@ -33,7 +33,11 @@
     ],
     "moodleIds": [
       68380
-    ]
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    }
   },
   {
     "id": "calc",
@@ -65,7 +69,11 @@
     ],
     "moodleIds": [
       67017
-    ]
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    }
   },
   {
     "id": "is",
@@ -99,7 +107,11 @@
     ],
     "moodleIds": [
       68600
-    ]
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    }
   },
   {
     "id": "acc",
@@ -149,7 +161,11 @@
     },
     "moodleIds": [
       68470
-    ]
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    }
   },
   {
     "id": "phys",
@@ -181,6 +197,10 @@
     ],
     "moodleIds": [
       68587
-    ]
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    }
   }
 ]

@@ -1,0 +1,82 @@
+[
+  {
+    "id": 3380827,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3380827",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3397098,
+    "type": "link",
+    "name": "קישור לקבוצת וואטסאפ קורסית",
+    "href": "https://chat.whatsapp.com/CYeSSrIDc5FGsMmQvzgzeg",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3420884,
+    "type": "syllabus",
+    "name": "סילבוס יסודות מערכות מידע - תשפ״ז סמסטר א",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3420884",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
+    "id": 3397119,
+    "type": "link",
+    "name": "סרטון הסבר לעבודה בוורד עם סגנונות ותוכן עניינים",
+    "href": "https://www.dropbox.com/scl/fi/aoctyek3sbfcwhkwrsgo5/.mp4?rlkey=sallgk4vvhsaibjxiavt6ymhn&st=90vi7xls&dl=0",
+    "section": "פרויקט הקורס",
+    "ext": ""
+  },
+  {
+    "id": 3397120,
+    "type": "link",
+    "name": "סרטון הסבר לעבודה בוורד עם איורים וטבלאות",
+    "href": "https://www.dropbox.com/scl/fi/vz355bwkes9koijb9zfrh/.mp4?rlkey=m8hcumk3hepfloj9ziyh8amnr&st=hayag66t&dl=0",
+    "section": "פרויקט הקורס",
+    "ext": ""
+  },
+  {
+    "id": 3397121,
+    "type": "link",
+    "name": "סרטון הסבר על כתיבת השוואת חלופות",
+    "href": "https://www.dropbox.com/scl/fi/k6uemk2r32behma0dazu8/.mp4?rlkey=rdzohncnsaaj5grn2cng957iy&st=7forbe8g&dl=0",
+    "section": "פרויקט הקורס",
+    "ext": ""
+  },
+  {
+    "id": 3397122,
+    "type": "link",
+    "name": "רישום להרצאת כתה",
+    "href": "https://docs.google.com/spreadsheets/d/157yFo5XFTqS2mdmJ1c3KrdQNmZjmLLCEURFaFPbSZRY/edit?usp=sharing",
+    "section": "פינת הבונוס",
+    "ext": ""
+  },
+  {
+    "id": 3397125,
+    "type": "link",
+    "name": "קישור ל- GPT של הקורס",
+    "href": "https://chatgpt.com/g/g-69b96d4c50888191a54294fb5c4c1158-ysvdvt-m-rkvt-myd-smstr-b-tshpv",
+    "section": "הכנה לבחינה",
+    "ext": ""
+  },
+  {
+    "id": 3397126,
+    "type": "link",
+    "name": "קישור ל- NotebookLM  של הקורס",
+    "href": "https://notebooklm.google.com/notebook/1549fd0b-268d-4b7c-b757-546c4a320a06",
+    "section": "הכנה לבחינה",
+    "ext": ""
+  },
+  {
+    "id": 3397127,
+    "type": "link",
+    "name": "קישור לבוט טלגרם",
+    "href": "https://t.me/iemisquestionsbot",
+    "section": "הכנה לבחינה",
+    "ext": ""
+  }
+]

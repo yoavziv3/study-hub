@@ -1,0 +1,26 @@
+[
+  {
+    "id": 3377629,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3377629",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3377630,
+    "type": "online",
+    "name": "פגישות זום נוספות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/lti/view.php?id=3377630",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3383704,
+    "type": "online",
+    "name": "כניסה לשיעור מתוקשב",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/lti/view.php?id=3383704",
+    "section": "יחידת הוראה 7 - הוראה מרחוק",
+    "ext": ""
+  }
+]
