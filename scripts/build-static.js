@@ -37,6 +37,7 @@ const card = (m) => {
 };
 
 await write('status.json', { ai: { provider: 'static', ready: false }, static: true });
+await write('build.json', { commit: process.env.CF_PAGES_COMMIT_SHA || 'local', builtAt: new Date().toISOString() });
 await write('lectures.json', lectures.map(card));
 await write(
   'courses.json',
