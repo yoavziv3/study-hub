@@ -47,3 +47,11 @@ launchctl bootout gui/$(id -u)/com.studyhub.server && rm ~/Library/LaunchAgents/
 ## מודל
 בדף "סנכרון מודל" באתר מתחברים פעם אחת עם שם המשתמש והסיסמה של BGU (נשמר רק מפתח גישה, ב-`data/moodle.json`).
 מצגות הרצאה חדשות בקורסים המשויכים נמשכות אוטומטית כל 30 דקות.
+
+## האתר בענן (Cloudflare Pages)
+- כתובת: https://study-hub-58j.pages.dev
+- כל `git push` של `main` מהמחשב הזה בונה את גרסת הענן מה-commit שנדחף ומעלה ל-Cloudflare ברקע (hook ב-`.githooks/pre-push`, יומן ב-`logs/deploy.log`).
+- הרצאות חדשות (ממודל או מהעלאה) נשמרות ונדחפות אוטומטית כשהעיבוד שלהן מסתיים – ולכן מתעדכנות גם בענן.
+- בגרסת הענן: הרצאות, שקפים, סיכומים, תרגול, כרטיסיות, מעבדות וחיפוש. העלאה, צ'אט וסנכרון מודל – רק במחשב.
+- פריסה ידנית: `scripts/deploy-cloud.sh`
+- אחרי clone חדש: `git config core.hooksPath .githooks` ו-`npx wrangler login`.
