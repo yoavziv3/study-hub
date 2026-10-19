@@ -109,7 +109,16 @@ await fsp.writeFile(
 await fsp.writeFile(path.join(OUT, '_redirects'), '/* /index.html 200\n');
 await fsp.writeFile(
   path.join(OUT, '_headers'),
-  ['/sw.js', '  Cache-Control: no-cache', '/files/*', '  Cache-Control: public, max-age=86400', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', '/data/*', '  Cache-Control: no-cache', ''].join('\n')
+  [
+    // The site can't be framed (clickjacking of the sign-in form), types aren't sniffed, and full URLs
+    // (e.g. the personal calendar link) are never sent to other sites as a referrer.
+    '/*',
+    '  X-Frame-Options: DENY',
+    "  Content-Security-Policy: frame-ancestors 'none'",
+    '  X-Content-Type-Options: nosniff',
+    '  Referrer-Policy: same-origin',
+    '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
+    '/sw.js', '  Cache-Control: no-cache', '/files/*', '  Cache-Control: public, max-age=86400', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', '/data/*', '  Cache-Control: no-cache', ''].join('\n')
 );
 
 const count = (dir) => fs.readdirSync(dir, { recursive: true }).length;

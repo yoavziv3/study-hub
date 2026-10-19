@@ -14,6 +14,7 @@ import Archive from './pages/Archive.jsx';
 import Reports from './pages/Reports.jsx';
 import Review from './pages/Review.jsx';
 import Privacy from './pages/Privacy.jsx';
+import Onboarding from './components/Onboarding.jsx';
 import { SEMESTER_LABEL, studyYearLabel } from './lib/terms.js';
 import { useFetch, STATIC } from './api.js';
 import ChatPanel from './components/ChatPanel.jsx';
@@ -181,7 +182,9 @@ export default function App() {
 }
 
 function Shell() {
-  const { openUpload, setSearchOpen, openChat, chat, uploadOpen, searchOpen, context, unread } = useApp();
+  const { openUpload, setSearchOpen, openChat, chat, uploadOpen, searchOpen, context, unread, me, progress, markOnboarded } = useApp();
+  // First sign-in on the cloud site (progress has loaded – updatesSeenAt is set then): a short tour, once.
+  const showTour = STATIC && !!me && !!progress.updatesSeenAt && !progress.onboardedAt;
   const navigate = useNavigate();
   const [theme, toggleTheme] = useTheme();
   const [menu, setMenu] = useState(false);
@@ -282,6 +285,7 @@ function Shell() {
       <AnimatePresence>{chat.open && <ChatPanel key="chat" />}</AnimatePresence>
       <AnimatePresence>{uploadOpen && <UploadModal key="upload" />}</AnimatePresence>
       <AnimatePresence>{searchOpen && <SearchPalette key="search" />}</AnimatePresence>
+      <AnimatePresence>{showTour && <Onboarding key="tour" name={me?.user?.name?.trim().split(/\s+/)[0]} onDone={markOnboarded} />}</AnimatePresence>
     </div>
   );
 }

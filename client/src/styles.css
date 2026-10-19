@@ -676,6 +676,20 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .login-wrap, .privacy-wrap { grid-template-rows: 1fr auto; }
 .login-wrap .site-footer, .privacy-wrap .site-footer { border-top: 0; padding-bottom: 8px; }
 
+/* First-visit tour */
+.onboarding { width: min(480px, calc(100vw - 32px)); padding: 24px 26px; box-shadow: var(--shadow-lg); }
+.onboarding-top { display: flex; align-items: center; gap: 10px; min-height: 32px; margin-bottom: 8px; }
+.onboarding-top .btn { margin-inline-start: auto; }
+.onboarding-hi { font-weight: 700; color: var(--text-2); }
+.onboarding-icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: var(--c-soft); color: var(--c-strong); margin: 6px 0 14px; }
+.onboarding h2 { font-size: 22px; margin-bottom: 8px; }
+.onboarding p { margin: 0 0 12px; line-height: 1.75; color: var(--text); }
+.onboarding-note { padding: 10px 14px; border-radius: 12px; background: var(--surface-2); color: var(--text-2); font-size: 14px; line-height: 1.65; }
+.onboarding-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.onboarding-dots { display: flex; gap: 6px; }
+.onboarding-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--surface-3); transition: background 0.2s, width 0.2s; }
+.onboarding-dots span.on { width: 22px; border-radius: 6px; background: var(--c); }
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .hero, .two-col { grid-template-columns: 1fr; }

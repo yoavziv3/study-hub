@@ -13,11 +13,29 @@ import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
 import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
 import * as moodle from './lib/moodle.js';
+import { backupNow, backupStatus, startBackups } from './lib/backup.js';
 import { initPublish } from './lib/publish.js';
 import * as updates from './lib/updates.js';
 
 const PORT = Number(process.env.PORT) || 5180;
+// This server holds your Moodle connection, your grades and your Claude login: it only listens on this Mac
+// (set HOST=0.0.0.0 to open it to the network on purpose).
+const HOST = process.env.HOST || '127.0.0.1';
 const app = express();
+
+// Only this Mac's own browser may use the server: requests must be addressed to localhost (stops DNS
+// rebinding), and other websites open in the browser can't make it change anything (stops cross-site requests).
+const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+app.use((req, res, next) => {
+  if (HOST === '127.0.0.1' && !LOCAL_HOST.test(req.headers.host || '')) return res.status(403).send('Forbidden');
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    const origin = req.headers.origin;
+    if (req.headers['sec-fetch-site'] === 'cross-site' || (origin && !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin))) {
+      return res.status(403).json({ error: 'בקשה ממקור לא מורשה' });
+    }
+  }
+  next();
+});
 app.use(express.json({ limit: '4mb' }));
 
 const upload = multer({ dest: path.join(os.tmpdir(), 'study-uploads'), limits: { fileSize: 300 * 1024 * 1024 } });
@@ -141,6 +159,15 @@ app.post('/api/reports/:source/:id/resolve', async (req, res) => {
     if (req.params.source === 'cloud') await moodle.resolveCloudReport(req.params.id);
     else fs.writeFileSync(REPORTS_FILE, JSON.stringify(readReports().map((r) => (String(r.id) === req.params.id ? { ...r, status: 'resolved' } : r)), null, 2));
     res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+app.get('/api/backup', (req, res) => res.json(backupStatus()));
+app.post('/api/backup', async (req, res) => {
+  try {
+    res.json(await backupNow());
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
@@ -418,7 +445,7 @@ if (fs.existsSync(dist)) {
   app.get(/^(?!\/api|\/files).*/, (_req, res) => res.sendFile(path.join(dist, 'index.html')));
 }
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   const ai = aiStatus();
   console.log(`\n  📚 Study Hub פועל: http://localhost:${PORT}`);
   console.log(`  AI: ${ai.provider} (${ai.model})`);
@@ -428,4 +455,5 @@ app.listen(PORT, () => {
   resumePending();
   if (process.env.NO_INBOX !== '1') watchInbox();
   moodle.startMoodle();
+  startBackups();
 });

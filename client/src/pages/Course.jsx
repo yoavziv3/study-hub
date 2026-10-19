@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, shuffle } from '../api.js';
-import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr } from '../components/ui.jsx';
+import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr, safeHref } from '../components/ui.jsx';
 import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
@@ -193,7 +193,7 @@ function Grades({ course }) {
             <div style={{ fontWeight: 800, fontSize: 18 }} dir="ltr">{g.grade || '—'}</div>
             {g.percentage && <div className="faint" style={{ fontSize: 12.5 }} dir="ltr">{g.percentage}</div>}
           </div>
-          {g.url && <a className="btn sm icon ghost" href={g.url} target="_blank" rel="noreferrer" title="במודל"><ExternalLink size={14} /></a>}
+          {safeHref(g.url) && <a className="btn sm icon ghost" href={safeHref(g.url)} target="_blank" rel="noreferrer" title="במודל"><ExternalLink size={14} /></a>}
         </motion.div>
       ))}
       {total?.grade && (

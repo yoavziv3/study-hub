@@ -1,7 +1,7 @@
 // /data/* on the cloud site: course material is served only to signed-in students enrolled in that course.
 // Lists (courses, lectures, updates) are filtered to the student's courses; per-course files are allowed or refused.
 import { json, fail } from './lib/util.js';
-import { currentUser, siteCourses, allowedCourseIds } from './lib/account.js';
+import { currentUser, siteCourses, allowedCourseIds, lectureCourse } from './lib/account.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -24,6 +24,7 @@ export async function gate({ request, env }) {
     const privately = (res) => {
       const headers = new Headers(res.headers);
       headers.set('Cache-Control', 'private, no-cache');
+      headers.set('X-Content-Type-Options', 'nosniff');
       return new Response(res.body, { status: res.status, headers });
     };
 
@@ -48,9 +49,9 @@ export async function gate({ request, env }) {
     let m = path.match(/^\/data\/(courses|bundles|search|links)\/([\w-]+)\.json$/);
     let courseId = m?.[2];
     if (!m) {
-      // Lecture ids start with their course id: acc-9tdsp6zl, m68600-ab12cd.
-      m = path.match(/^\/data\/(lectures\/([\w]+)-[\w]+\.json|orig\/([\w]+)-[\w]+\/[^/]+)$/);
-      courseId = m?.[2] || m?.[3];
+      // A lecture's JSON or original file: allowed by the course the lecture belongs to.
+      m = path.match(/^\/data\/(?:lectures\/([\w]+-[\w]+)\.json|orig\/([\w]+-[\w]+)\/[^/]+)$/);
+      courseId = m ? await lectureCourse(env, request, m[1] || m[2]) : null;
     }
     if (!m) return fail(404, 'לא נמצא');
     if (!allowed.has(courseId)) return fail(403, 'החומר הזה פתוח רק לסטודנטים הרשומים לקורס');

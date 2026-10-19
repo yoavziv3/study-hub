@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
-import { Page, fadeUp, ltr } from '../components/ui.jsx';
+import { Page, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { parseRequired, partsLabel } from '../components/Assignment.jsx';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
@@ -90,7 +90,7 @@ function DeadlineCard({ d, course, i }) {
         <div className="deadline-count" style={{ color: textColor }}>{finished ? '✓' : c.text}</div>
       </div>
       <div className="row wrap" style={{ gap: 6, marginTop: 10 }}>
-        {d.url && <a className="btn sm" href={d.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> להגשה במודל</a>}
+        {safeHref(d.url) && <a className="btn sm" href={safeHref(d.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> להגשה במודל</a>}
         {!d.submitted && (
           <button className="btn sm" onClick={() => act(() => deadlineActions.toggleDone(d))}>
             <Check size={14} /> {d.done ? 'ביטול סימון' : 'סימון כבוצע'}
@@ -173,7 +173,7 @@ function UpdateItem({ item, course, isNew, i }) {
         <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
           {long && <button className="btn sm ghost" onClick={() => setExpanded((x) => !x)}>{expanded ? 'פחות' : 'להודעה המלאה'} <ChevronDown size={14} style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} /></button>}
           {item.lectureId && <Link className="btn sm" to={`/lecture/${item.lectureId}`}>פתיחה באתר</Link>}
-          {item.url && <a className="btn sm" href={item.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
+          {safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
         </div>
       </div>
     </motion.div>

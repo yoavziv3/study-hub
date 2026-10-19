@@ -15,6 +15,15 @@ export async function siteCourses(env, request) {
   return res.json();
 }
 
+/** The course a lecture belongs to, from the published lecture index (ids keep their first course's prefix
+ *  even if a lecture is moved, so the prefix can't be trusted for access checks). */
+export async function lectureCourse(env, request, lectureId) {
+  if (!/^[\w]+-[\w]+$/.test(lectureId)) return null;
+  const res = await env.ASSETS.fetch(new URL('/data/lectures.json', request.url));
+  if (!res.ok || !(res.headers.get('Content-Type') || '').includes('json')) return null;
+  return (await res.json()).find((l) => l.id === lectureId)?.courseId || null;
+}
+
 const enrolled = (user) => {
   try {
     return JSON.parse(user.courses || '[]');

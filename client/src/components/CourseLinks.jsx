@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Video, MonitorPlay, Globe, FileText, Folder, File, ScrollText, ExternalLink } from 'lucide-react';
-import { fadeUp } from './ui.jsx';
+import { fadeUp, safeHref } from './ui.jsx';
 
 const TYPE = {
   zoom: { icon: Video, label: 'זום' },
@@ -22,7 +22,7 @@ const host = (href) => {
 
 /** Everything on the course's Moodle page that isn't a lecture file: Zoom, recordings, links and the syllabus. */
 export default function CourseLinks({ links }) {
-  links = (links || []).filter((l) => TYPE[l.type]);
+  links = (links || []).filter((l) => TYPE[l.type] && safeHref(l.href));
   if (!links.length) {
     return <div className="empty"><div className="empty-icon"><Globe size={28} /></div><h3>אין קישורים בקורס הזה</h3><p>קישורי זום, הקלטות, סילבוס וקישורים חיצוניים מדף הקורס במודל יופיעו כאן.</p></div>;
   }

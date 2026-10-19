@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ClipboardList, ExternalLink, ChevronDown, CalendarClock } from 'lucide-react';
-import { ltr } from './ui.jsx';
+import { ltr, safeHref } from './ui.jsx';
 
 const ALEPH_BET = 'אבגדהוזחטיכלמנסעפצקרשת';
 
@@ -96,7 +96,7 @@ export function AssignmentBox({ assignment }) {
         assignment.instructions && <div className="assign-text">{ltr(assignment.instructions)}</div>
       )}
       <div className="row wrap" style={{ gap: 8, marginTop: 12 }}>
-        {assignment.url && <a className="btn sm" href={assignment.url} target="_blank" rel="noreferrer"><ExternalLink size={14} /> לעמוד ההגשה במודל</a>}
+        {safeHref(assignment.url) && <a className="btn sm" href={safeHref(assignment.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> לעמוד ההגשה במודל</a>}
         {parsed && assignment.instructions && (
           <button className="btn sm ghost" onClick={() => setRaw((x) => !x)}>
             ההנחיה המקורית <ChevronDown size={14} style={{ transform: raw ? 'rotate(180deg)' : 'none' }} />

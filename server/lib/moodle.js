@@ -318,6 +318,7 @@ function courseLinks(sections, importedModules) {
       if (!type || mod.visible === 0 || importedModules.has(mod.id)) continue;
       const external = mod.modname === 'url' ? (mod.contents || [])[0]?.fileurl : null;
       const href = external || mod.url || `${SITE}/mod/${mod.modname}/view.php?id=${mod.id}`;
+      if (!/^https?:\/\//i.test(href)) continue; // never "javascript:" or other schemes
       const file = mod.modname === 'resource' ? (mod.contents || [])[0]?.filename || '' : '';
       links.push({ id: mod.id, type: /syllabus|סילבוס/i.test(`${mod.name} ${file}`) ? 'syllabus' : type, name: mod.name, href, section: sec.name || '', ext: file ? path.extname(file).slice(1).toLowerCase() : '' });
     }

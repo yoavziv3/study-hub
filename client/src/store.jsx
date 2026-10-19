@@ -138,6 +138,12 @@ export function AppProvider({ children }) {
       setNote: (id, text) => update((p) => { p.notes[id] = text; return p; }),
       visit: (lectureId, slide) => update((p) => { p.last = { lectureId, slide, at: Date.now() }; if (slide) p.slidePos[lectureId] = slide; return p; }),
       markUpdatesSeen: () => update((p) => { p.updatesSeenAt = new Date().toISOString(); return p; }),
+      markOnboarded: () =>
+        setProgress((prev) => {
+          const next = { ...prev, onboardedAt: new Date().toISOString() };
+          api.put('/api/progress', next).catch(() => {});
+          return next;
+        }),
     }),
     [update]
   );

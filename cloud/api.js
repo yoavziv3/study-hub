@@ -5,7 +5,7 @@ import { ensureSchema } from './lib/db.js';
 import { rest, tokenFor, moodleSite, isCurrentAcademic, MoodleError } from './lib/moodle.js';
 import {
   requireUser, establish, logout, deleteAccount, throttled, recordFailure, meView, siteCourses, refreshEnrollments,
-  withMoodle, cached, allowedCourseIds, moodleToken,
+  withMoodle, cached, allowedCourseIds, moodleToken, lectureCourse,
 } from './lib/account.js';
 import { calendarFeed } from './lib/ics.js';
 
@@ -27,6 +27,9 @@ async function route({ request, env }) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '');
   const method = request.method;
+  // Defense in depth: no state-changing request from another site (cookies are SameSite=Lax as well).
+  const origin = request.headers.get('Origin');
+  if (!['GET', 'HEAD'].includes(method) && origin && origin !== url.origin) throw new HttpError(403, 'בקשה ממקור לא מורשה');
   await ensureSchema(env.DB);
 
   // ---------- sign in / out ----------
@@ -107,8 +110,8 @@ async function route({ request, env }) {
     const { lectureId = '', section = '', text = '' } = await readJson(request, 6000);
     const body = String(text).trim();
     if (body.length < 3 || body.length > 1000) throw new HttpError(400, 'כתבו בקצרה מה לא נכון (עד 1000 תווים)');
-    const courseId = String(lectureId).slice(0, String(lectureId).lastIndexOf('-'));
-    if (!/^[\w]+-[\w]+$/.test(lectureId) || !allowedCourseIds(user, await siteCourses(env, request)).includes(courseId)) throw new HttpError(403, 'אין גישה לשיעור הזה');
+    const courseId = await lectureCourse(env, request, String(lectureId));
+    if (!courseId || !allowedCourseIds(user, await siteCourses(env, request)).includes(courseId)) throw new HttpError(403, 'אין גישה לשיעור הזה');
     const today = await env.DB.prepare('SELECT COUNT(*) AS n FROM reports WHERE user_id = ? AND created_at > ?').bind(user.id, Date.now() - 86400000).first();
     if (today.n >= 20) throw new HttpError(429, 'הגעת למספר הדיווחים היומי – תודה על העזרה!');
     await env.DB.prepare('INSERT INTO reports (user_id, lecture_id, section, text, created_at) VALUES (?, ?, ?, ?, ?)')
@@ -160,7 +163,7 @@ const siteByMoodle = (courses) => Object.fromEntries(courses.flatMap((c) => (c.m
 
 async function studentDeadlines(env, user, courses, fresh = false) {
   const siteOf = siteByMoodle(courses);
-  const events = await cached(env, user, 'deadlines', fresh ? 0 : 10 * MIN, async () => {
+  const events = await cached(env, user, 'deadlines', fresh ? MIN : 10 * MIN, async () => {
     const now = Math.floor(Date.now() / 1000);
     const r = await withMoodle(env, user, (token) =>
       rest(env, token, 'core_calendar_get_action_events_by_timesort', { timesortfrom: now - 3 * 86400, limitnum: 50 }));
@@ -215,6 +218,19 @@ async function admin({ request, env, url, path, method }) {
     return json([...byId.values()].sort((a, b) => b.students - a.students));
   }
 
+  if (path === '/api/admin/backup' && method === 'GET') {
+    // Weekly backup pulled by the Mac: accounts (Moodle tokens stay encrypted), progress and reports.
+    // Sessions, caches and login attempts are left out – they rebuild themselves.
+    const all = async (sql) => (await env.DB.prepare(sql).all()).results;
+    return json({
+      format: 1,
+      at: new Date().toISOString(),
+      users: await all('SELECT * FROM users'),
+      progress: await all('SELECT * FROM progress'),
+      reports: await all('SELECT * FROM reports'),
+    });
+  }
+
   if (path === '/api/admin/reports' && method === 'GET') {
     // Reporters stay anonymous to the owner: only the lecture, the section and the text.
     const rows = (await env.DB.prepare("SELECT id, lecture_id, section, text, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 200").all()).results;
@@ -236,7 +252,16 @@ async function admin({ request, env, url, path, method }) {
   if (path === '/api/admin/file' && method === 'GET') {
     const course = Number(url.searchParams.get('course'));
     const fileurl = url.searchParams.get('url') || '';
-    if (!fileurl.startsWith(`${moodleSite(env)}/webservice/pluginfile.php/`)) throw new HttpError(400, 'כתובת קובץ לא תקינה');
+    const site = new URL(moodleSite(env));
+    let target;
+    try {
+      target = new URL(fileurl);
+    } catch {
+      throw new HttpError(400, 'כתובת קובץ לא תקינה');
+    }
+    if (target.origin !== site.origin || !target.pathname.startsWith(`${site.pathname}/webservice/pluginfile.php/`) || target.searchParams.has('token')) {
+      throw new HttpError(400, 'כתובת קובץ לא תקינה');
+    }
     return asCourseMember(env, course, async (token) => {
       const res = await fetch(`${fileurl}${fileurl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`);
       if (!res.ok) throw new MoodleError(`הורדה נכשלה (${res.status})`, 'download');

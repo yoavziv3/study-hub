@@ -24,3 +24,6 @@ inbox/*
 # Before/after screenshots for design reviews
 .design-shots/
 data/reports.json
+
+# Weekly backups of student accounts from the cloud – never commit
+backups/

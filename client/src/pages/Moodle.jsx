@@ -137,6 +137,34 @@ function CourseFiles({ moodleId, onChanged }) {
   );
 }
 
+/** Weekly backup of student accounts from the cloud (kept on this Mac). */
+function BackupRow() {
+  const { toast } = useApp();
+  const { data, reload } = useFetch('/api/backup');
+  const [busy, setBusy] = useState(false);
+  if (!data?.enabled) return null;
+  const now = async () => {
+    setBusy(true);
+    try {
+      const r = await api.post('/api/backup');
+      toast(`גובו ${r.users} חשבונות`);
+      reload();
+    } catch (e) {
+      toast(e.message, 'info');
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="card pad row wrap" style={{ marginTop: 14, gap: 10, padding: '14px 18px' }}>
+      <span className="grow muted" style={{ fontSize: 14 }}>
+        גיבוי חשבונות הסטודנטים: {data.last ? `אחרון ${ago(data.last)}` : 'עוד לא בוצע'} · נשמר במחשב הזה, אוטומטית פעם בשבוע
+      </span>
+      <button className="btn sm" onClick={now} disabled={busy}>{busy ? <Loader2 size={14} className="spin" /> : <RefreshCw size={14} />} גיבוי עכשיו</button>
+    </div>
+  );
+}
+
 export default function Moodle() {
   const { courses: siteCourses, toast, refreshCourses, setContext } = useApp();
   const { data: status, setData, reload } = useFetch('/api/moodle', { poll: (d) => d.syncing });
@@ -225,6 +253,8 @@ export default function Moodle() {
           )}
         </div>
       )}
+
+      <BackupRow />
 
       <div className="section-title">
         <h2>הקורסים שלך במודל</h2>

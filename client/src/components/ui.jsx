@@ -137,6 +137,9 @@ export function Highlight({ text = '', q = '' }) {
   );
 }
 
+/** Only http(s) links from Moodle data are opened (never "javascript:" or other schemes). */
+export const safeHref = (href) => (typeof href === 'string' && /^https?:\/\//i.test(href.trim()) ? href.trim() : undefined);
+
 /** Credit line at the bottom of every page. */
 export function SiteFooter() {
   return (
