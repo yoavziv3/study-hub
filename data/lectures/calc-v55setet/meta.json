@@ -1,0 +1,25 @@
+{
+  "id": "calc-v55setet",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "חוברת תרגילים – מספרים ממשיים וסדרות (עם פתרונות מלאים)",
+  "originalName": "booklet.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 7,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-19T06:18:17.871Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "section": "חוברת תרגילים והגשות",
+    "module": "חוברת תרגילים"
+  },
+  "updatedAt": "2026-10-19T06:28:35.549Z",
+  "aiError": null
+}

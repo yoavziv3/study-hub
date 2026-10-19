@@ -1,0 +1,25 @@
+{
+  "id": "acc-v573nds3",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "חוברת תרגילים – מבוא לחשבונאות פיננסית וניהולית (תשפ״ב) – פתרונות מלאים",
+  "originalName": "חוברת תרגילים - תשפב.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 91,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-19T06:18:19.572Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "חוברת תרגילים לקורס"
+  },
+  "updatedAt": "2026-10-19T07:06:05.356Z",
+  "aiError": null
+}

@@ -1,0 +1,25 @@
+{
+  "id": "calc-v562k1mb",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "חוברת תרגילים עם פתרונות – מספרים ממשיים וסדרות",
+  "originalName": "solutions.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 36,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-19T06:18:18.236Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "section": "חוברת תרגילים והגשות",
+    "module": "חוברת תרגילים"
+  },
+  "updatedAt": "2026-10-19T06:34:30.263Z",
+  "aiError": null
+}
