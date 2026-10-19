@@ -10,6 +10,7 @@ import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
 import CourseSummaries from '../components/CourseSummaries.jsx';
 import { LABS } from '../labs/index.js';
+import { AssignmentLine } from '../components/Assignment.jsx';
 
 function LectureCard({ l, course, i }) {
   const { progress } = useApp();
@@ -31,6 +32,7 @@ function LectureCard({ l, course, i }) {
             {studied && <span className="studied-check" title="סומן כנלמד"><Check size={13} /></span>}
           </div>
           <h3>{l.title}</h3>
+          {l.kind === 'homework' && <AssignmentLine assignment={l.source?.assignment} />}
           <p>{ltr(l.overview) || l.originalName}</p>
           <div className="row wrap" style={{ gap: 6 }}>
             {l.topicCount > 0 && <span className="chip">{l.topicCount} נושאים</span>}

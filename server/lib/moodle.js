@@ -299,6 +299,14 @@ export async function courseFiles(moodleId, call = rest) {
           // Anything attached to an assignment is homework (unless it's an exam/syllabus).
           kind: EXCLUDE.test(`${a.name} ${f.filename}`) ? null : 'homework',
           note: htmlToText(a.intro).slice(0, 600),
+          // What the lecturer asked for (e.g. "exercises 1, 2a–c, 4"), the due date and a link – shown on the item.
+          assignment: {
+            id: a.id,
+            name: a.name,
+            dueAt: a.duedate ? new Date(a.duedate * 1000).toISOString() : null,
+            url: `${SITE}/mod/assign/view.php?id=${a.cmid}`,
+            instructions: htmlToText(a.intro).replace(/\n{2,}/g, '\n').trim().slice(0, 1500),
+          },
           record: state.files[key] || null,
         });
       }
@@ -355,6 +363,7 @@ async function importFile(file, siteCourseId, moodleId, { via = null, initial = 
       timemodified: file.timemodified,
       ...(initial ? { initial: true } : {}),
       ...(file.note ? { note: file.note } : {}),
+      ...(file.assignment ? { assignment: file.assignment } : {}),
     },
   });
   await fsp.rm(path.dirname(tmp), { recursive: true, force: true });
@@ -465,6 +474,13 @@ async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial 
   for (const f of files) {
     let rec = state.files[f.key];
     if (rec?.status === 'ignored') continue;
+    // Keep the assignment details of an imported item current (the lecturer may edit the instructions or due date).
+    if (f.assignment && rec?.lectureId) {
+      const meta = getLecture(rec.lectureId);
+      if (meta && JSON.stringify(meta.source?.assignment) !== JSON.stringify(f.assignment)) {
+        await patchLecture(meta.id, { source: { ...meta.source, assignment: f.assignment, note: f.note } });
+      }
+    }
     // Re-check files previously judged "not a lecture" – the rule may have changed.
     if (rec?.status === 'not-lecture') {
       if (!f.kind) continue;

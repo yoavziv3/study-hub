@@ -4,6 +4,10 @@ import { BookMarked, PencilLine, Sigma, Lightbulb, AlertTriangle, ListChecks, Ch
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
 import { Markdown, Tex, ltr } from './ui.jsx';
+import { requiredMap, partsLabel } from './Assignment.jsx';
+
+// "תרגיל 3 – …", "שאלה 3", "3. …" → 3
+const exerciseNo = (title = '') => Number((title.match(/(?:תרגיל|שאלה)\s*(\d{1,2})/) || title.match(/^(\d{1,2})[.)\s]/) || [])[1]) || null;
 
 const BLOCK = {
   definition: { label: 'הגדרה', icon: BookMarked },
@@ -33,6 +37,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
   const { status, toast } = useApp();
   const notes = content.notes;
   const kind = lecture.kind || 'lecture';
+  const required = requiredMap(lecture.source?.assignment);
 
   const sections = useMemo(() => {
     const list = notes?.sections?.length ? notes.sections.map((s) => ({ ...s })) : markdownSections(content.summary);
@@ -89,6 +94,11 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
           <motion.section key={s.id} id={s.id} className="note-section" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
             <div className="note-section-head">
               <h2><span className="note-num">{i + 1}</span>{ltr(s.title)}</h2>
+              {required && exerciseNo(s.title) && (required.has(exerciseNo(s.title)) ? (
+                <span className="chip req-chip">להגשה{required.get(exerciseNo(s.title)).length ? ` · סעיפים ${partsLabel(required.get(exerciseNo(s.title)))}` : ''}</span>
+              ) : (
+                <span className="chip">לא במטלה</span>
+              ))}
               {s.slideStart > 0 && goSlide && (
                 <button className="chip slide-link" onClick={() => goSlide(s.slideStart)} title="מעבר לשקפים">
                   <Presentation size={12} /> {s.slideEnd > s.slideStart ? `שקפים ${s.slideStart}–${s.slideEnd}` : `שקף ${s.slideStart}`}

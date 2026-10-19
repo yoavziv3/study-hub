@@ -11,6 +11,7 @@ import { Markdown, Page, Tabs, fadeUp } from '../components/ui.jsx';
 import SlideViewer from '../components/SlideViewer.jsx';
 import Quiz from '../components/Quiz.jsx';
 import StudySummary from '../components/StudySummary.jsx';
+import { AssignmentBox } from '../components/Assignment.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
 
@@ -341,6 +342,7 @@ export default function Lecture() {
           </div>
         </div>
 
+        {lecture.source?.assignment && <div style={{ marginBottom: 18 }}><AssignmentBox assignment={lecture.source.assignment} /></div>}
         {!ready ? (
           <Processing lecture={lecture} />
         ) : (

@@ -606,6 +606,15 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
   .course-part { break-before: page; }
 }
 
+/* Homework: what the lecturer asked to hand in */
+.assign-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--c-strong); margin: 2px 0 6px; }
+.assign-box { padding: 16px 18px; border-radius: var(--radius); background: var(--c-soft); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); }
+.assign-items { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.assign-item { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; }
+.assign-item span { color: var(--text-2); font-size: 13px; }
+.assign-text { margin-top: 10px; white-space: pre-line; font-size: 14px; line-height: 1.7; color: var(--text-2); }
+.req-chip { background: var(--c-soft); color: var(--c-strong); border-color: transparent; font-weight: 700; }
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .hero, .two-col { grid-template-columns: 1fr; }

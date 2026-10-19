@@ -6,8 +6,9 @@ import {
   Trash2, RefreshCw, ChevronDown, Inbox,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, STATIC } from '../api.js';
+import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, ltr } from '../components/ui.jsx';
+import { parseRequired, partsLabel } from '../components/Assignment.jsx';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
 const oneLine = (t) => t.replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
@@ -79,7 +80,11 @@ function DeadlineCard({ d, course, i }) {
           </div>
           <div style={{ fontWeight: 700, fontSize: 16.5, marginTop: 6 }}>{d.title}</div>
           <div className="muted" style={{ fontSize: 13.5 }}>להגשה עד {fmtDue(d.dueAt)}</div>
-          {d.intro && <div className="faint clamp-3" style={{ fontSize: 13, marginTop: 4 }} title={d.intro}>{ltr(oneLine(d.intro))}</div>}
+          {(() => {
+            const parsed = d.intro && parseRequired(d.intro);
+            if (parsed) return <div className="assign-line" style={{ marginTop: 6 }}>להגשה: {parsed.items.map((it) => (it.parts.length ? `${it.n} (${partsLabel(it.parts)})` : it.n)).join(' · ')}</div>;
+            return d.intro ? <div className="faint clamp-3" style={{ fontSize: 13, marginTop: 4 }} title={d.intro}>{ltr(oneLine(d.intro))}</div> : null;
+          })()}
         </div>
         <div className="deadline-count" style={{ color }}>{finished ? '✓' : c.text}</div>
       </div>
@@ -190,6 +195,13 @@ export default function Updates() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const courseOf = (id) => courses.find((c) => c.id === id);
+  // The lecturer's instructions live on the homework item imported from the assignment; link them by assignment id.
+  const { data: lectureList } = useFetch('/api/lectures');
+  const instructions = useMemo(
+    () => Object.fromEntries((lectureList || []).filter((l) => l.source?.assignment?.instructions).map((l) => [`assign:${l.source.assignment.id}`, l.source.assignment.instructions])),
+    [lectureList]
+  );
+  const withInstructions = (d) => (instructions[d.moodleKey] ? { ...d, intro: instructions[d.moodleKey] } : d);
   const items = updates.items.filter((i) =>
     filter === 'all' ? true : filter === 'deadlines' ? i.type === 'deadline' || i.type === 'reminder' : i.type === filter
   );
@@ -283,7 +295,7 @@ export default function Updates() {
         <div className="card pad muted" style={{ textAlign: 'center' }}>אין הגשות פתוחות כרגע 🎉</div>
       ) : (
         <div className="deadline-grid">
-          {upcoming.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} i={i} />)}
+          {upcoming.map((d, i) => <DeadlineCard key={d.id} d={withInstructions(d)} course={courseOf(d.courseId)} i={i} />)}
         </div>
       )}
       {others.length > 0 && (
@@ -294,7 +306,7 @@ export default function Updates() {
       <AnimatePresence>
         {showDone && (
           <motion.div className="deadline-grid" style={{ marginTop: 10 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {others.map((d, i) => <DeadlineCard key={d.id} d={d} course={courseOf(d.courseId)} i={i} />)}
+            {others.map((d, i) => <DeadlineCard key={d.id} d={withInstructions(d)} course={courseOf(d.courseId)} i={i} />)}
           </motion.div>
         )}
       </AnimatePresence>
