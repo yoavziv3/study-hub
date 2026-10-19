@@ -107,6 +107,15 @@ app.post('/api/lectures/:id/regenerate', async (req, res) => {
   res.json({ ok: true });
 });
 
+app.post('/api/lectures/:id/notes', async (req, res) => {
+  const meta = getLecture(req.params.id);
+  if (!meta) return res.status(404).json({ error: 'הרצאה לא נמצאה' });
+  if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
+  await patchLecture(meta.id, { notesStatus: 'queued', notesError: null });
+  enqueue(meta.id, { notesOnly: true });
+  res.json({ ok: true });
+});
+
 // ---------- upload ----------
 app.post('/api/upload', upload.array('files', 30), async (req, res) => {
   const { courseId = 'auto', lessonNumber, kind } = req.body;

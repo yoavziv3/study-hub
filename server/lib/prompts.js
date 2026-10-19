@@ -108,6 +108,50 @@ ${deck}
 ${KIND_FIELDS[kind] || KIND_FIELDS.lecture}`;
 }
 
+/** Structured study notes: sections in lecture order, each made of typed blocks (definition / example / rule …). */
+const noteBlock = obj({
+  type: { type: 'string', enum: ['text', 'definition', 'example', 'rule', 'important', 'mistake'] },
+  title: str,
+  body: str,
+});
+export const NOTES_SCHEMA = obj({
+  subtitle: str,
+  sections: {
+    type: 'array',
+    items: obj({ title: str, slideStart: { type: 'integer' }, slideEnd: { type: 'integer' }, blocks: { type: 'array', items: noteBlock } }),
+  },
+  takeaways: strArr,
+});
+
+const NOTES_FOCUS = {
+  lecture: 'סדר הסעיפים לפי סדר ההרצאה. כל מושג חדש – בלוק definition; כל דוגמה מהשקפים (במיוחד מספרית) – בלוק example פתור צעד-אחר-צעד.',
+  tutorial: 'סעיף לכל סוג בעיה בתרגול: קודם בלוק rule עם השיטה/האלגוריתם בצעדים, אחר כך כל תרגיל מהתרגול כבלוק example פתור במלואו, ובסוף mistake לטעויות הנפוצות.',
+};
+
+export function notesPrompt({ course, kind = 'lecture', fileName, slides, summary }) {
+  const deck = slides.map((t, i) => `<slide n="${i + 1}">\n${t || '(עמוד ללא טקסט)'}\n</slide>`).join('\n');
+  return `כתוב סיכום לימודי מסודר ל${KIND_INTRO[kind] || KIND_INTRO.lecture} "${fileName}" בקורס ${course.short} – הסיכום שהסטודנט קורא כדי לדעת את כל מה שחשוב לקחת מהשיעור, בלי לפתוח את השקפים.
+
+<deck slides="${slides.length}">
+${deck}
+</deck>
+${summary ? `\nסיכום קודם של אותו חומר (לעיון בלבד – אפשר להיעזר בו, אבל הסיכום החדש צריך להיות מסודר וחד יותר):\n<previous_summary>\n${summary}\n</previous_summary>\n` : ''}
+הפק JSON לפי הסכמה:
+- subtitle: משפט אחד שמונה את מה שהשיעור מכסה (למשל: "טענות, קשרים לוגיים, טבלאות אמת ותבניות הוכחה.").
+- sections: 5–10 סעיפים שמכסים את **כל** החומר. title קצר (2–5 מילים) – הוא מופיע בתפריט הניווט. slideStart/slideEnd – טווח השקפים של הסעיף (0 אם לא ידוע).
+- blocks בכל סעיף, לפי הסדר שבו כדאי ללמוד:
+  - text – הסבר רציף וברור (פסקה או שתיים, אפשר רשימה). title ריק.
+  - definition – הגדרה מדויקת של מושג. title = שם המושג (ובאנגלית בסוגריים אם רלוונטי). body = ההגדרה, עם המונח **מודגש**.
+  - example – דוגמה קונקרטית, ואם יש חישוב – פתורה צעד-אחר-צעד עד התוצאה. title = כותרת קצרה לדוגמה.
+  - rule – משפט, כלל, נוסחה, עיקרון או שיטה. title = שם הכלל. נוסחאות ב-LaTeX בשורה נפרדת ($$...$$).
+  - important – נקודה שחייבים לזכור / תובנה מרכזית. title קצר.
+  - mistake – טעות נפוצה ואיך להימנע ממנה. title קצר.
+  ${NOTES_FOCUS[kind] || NOTES_FOCUS.lecture}
+  כל סעיף מתחיל בבלוק text. בלי חזרות: כל רעיון מופיע פעם אחת, במקום הנכון. ענייני ותמציתי, אבל לא לדלג על שום נושא או הגדרה שמופיעים בחומר.
+- takeaways: 5–8 משפטים – "מה לוקחים מהשיעור": הדברים הכי חשובים שצריך לזכור למבחן.
+אל תשתמש בכותרות Markdown (# / ##) בתוך body.`;
+}
+
 /** Homework-level practice: new problems in the style and difficulty of the course's homework sheets. */
 export const HOMEWORK_PRACTICE_SCHEMA = obj({
   quiz: { type: 'array', items: quizItem },

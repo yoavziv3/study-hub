@@ -1,15 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Presentation, FileText, ListTree, Target, Layers, BookMarked, NotebookPen, Check, Sparkles, MoreHorizontal,
-  RefreshCw, Trash2, Pencil, Loader2, AlertTriangle, Lightbulb, ChevronLeft, Wand2, Eye, Download,
+  RefreshCw, Trash2, Pencil, Loader2, AlertTriangle, ChevronLeft, Wand2, Eye, Download,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STAGE_LABELS, STAGE_ORDER } from '../api.js';
-import { Markdown, Page, Tabs, Tex, fadeUp, ltr } from '../components/ui.jsx';
+import { Markdown, Page, Tabs, fadeUp } from '../components/ui.jsx';
 import SlideViewer from '../components/SlideViewer.jsx';
 import Quiz from '../components/Quiz.jsx';
+import StudySummary from '../components/StudySummary.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
 
@@ -53,71 +54,6 @@ function NoContent({ lecture, onRegenerate }) {
       {lecture.aiError && <p className="chip warn" style={{ height: 'auto', padding: '6px 12px', whiteSpace: 'normal' }}>{lecture.aiError}</p>}
       <p>{status?.ai?.ready ? 'השקפים כבר זמינים. אפשר ליצור עכשיו סיכום, חלוקה לנושאים, שאלות וכרטיסיות.' : 'חברו AI (Claude Code או מפתח API) כדי ליצור סיכום ושאלות.'}</p>
       {status?.ai?.ready && <button className="local-only btn accent" onClick={onRegenerate}><Sparkles size={16} /> יצירת חומרי לימוד</button>}
-    </div>
-  );
-}
-
-function SummaryTab({ content }) {
-  const headings = useMemo(() => [...(content.summary || '').matchAll(/^## (.+)$/gm)].map((m) => m[1].trim()), [content.summary]);
-  const [active, setActive] = useState(null);
-  useEffect(() => {
-    const els = headings.map((h) => document.getElementById(Markdown.slug(h.replace(/[*_`$]/g, '')))).filter(Boolean);
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: '-20% 0px -70% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [headings]);
-
-  return (
-    <div className="summary-layout">
-      <div className="stack" style={{ gap: 18 }}>
-        <motion.div className="callout" variants={fadeUp} initial="hidden" animate="show" style={{ fontSize: 16, lineHeight: 1.75 }}>
-          <b>בקצרה: </b>{ltr(content.overview)}
-        </motion.div>
-        {content.keyPoints?.length > 0 && (
-          <motion.div className="card pad" variants={fadeUp} initial="hidden" animate="show" custom={1}>
-            <h3 style={{ fontSize: 17, marginBottom: 12 }}>הנקודות החשובות</h3>
-            <div className="keypoints">
-              {content.keyPoints.map((k, i) => (
-                <motion.div key={i} className="keypoint" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.04 }}>
-                  <b>{i + 1}</b><span>{ltr(k)}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-        <motion.div className="card pad" style={{ padding: '28px 32px' }} variants={fadeUp} initial="hidden" animate="show" custom={2}>
-          <Markdown>{content.summary}</Markdown>
-        </motion.div>
-        {content.formulas?.length > 0 && (
-          <div className="card pad">
-            <h3 style={{ fontSize: 17, marginBottom: 12 }}>נוסחאות וכללים</h3>
-            <div className="glossary">
-              {content.formulas.map((f, i) => (
-                <div key={i} className="formula" style={{ padding: 0 }}>
-                  <b>{f.name}</b>
-                  <div className="tex"><Tex>{f.latex}</Tex></div>
-                  <div className="muted" style={{ fontSize: 14 }}>{ltr(f.explanation)}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {content.examTips?.length > 0 && (
-          <div className="card pad" style={{ borderColor: 'var(--warn)', background: 'var(--warn-bg)' }}>
-            <h3 style={{ fontSize: 17, marginBottom: 10 }} className="row"><Lightbulb size={19} color="var(--warn)" /> טיפים למבחן</h3>
-            <ul style={{ margin: 0, paddingInlineStart: 22 }}>
-              {content.examTips.map((t, i) => <li key={i} style={{ margin: '6px 0' }}>{ltr(t)}</li>)}
-            </ul>
-          </div>
-        )}
-      </div>
-      <nav className="card toc">
-        <h4>בסיכום הזה</h4>
-        {headings.map((h) => {
-          const id = Markdown.slug(h.replace(/[*_`$]/g, ''));
-          return <a key={h} href={`#${id}`} className={active === id ? 'on' : ''} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{h.replace(/[*_`]/g, '')}</a>;
-        })}
-      </nav>
     </div>
   );
 }
@@ -302,7 +238,7 @@ export default function Lecture() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const { setContext, progress, toggleStudied, visit, openChat, toast, refreshCourses } = useApp();
-  const { data: lecture, reload, error } = useFetch(`/api/lectures/${id}`, { poll: (d) => d.status === 'processing' });
+  const { data: lecture, reload, error } = useFetch(`/api/lectures/${id}`, { poll: (d) => d.status === 'processing' || !!d.notesStatus });
   const [menu, setMenu] = useState(false);
   const [edit, setEdit] = useState(false);
   const tab = params.get('tab') || 'slides';
@@ -408,7 +344,7 @@ export default function Lecture() {
               <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.25 }}>
                 {tab === 'slides' && <SlideViewer lecture={lecture} slide={Math.min(slide, lecture.slideCount || 1)} setSlide={setSlide} />}
                 {tab !== 'slides' && tab !== 'notes' && !content && <NoContent lecture={lecture} onRegenerate={regenerate} />}
-                {tab === 'summary' && content && <SummaryTab content={content} />}
+                {tab === 'summary' && content && <StudySummary lecture={lecture} content={content} goSlide={goSlide} reload={reload} />}
                 {tab === 'topics' && content && <TopicsTab content={content} goSlide={goSlide} />}
                 {tab === 'practice' && content && <PracticeTab lecture={lecture} goSlide={goSlide} reload={reload} />}
                 {tab === 'flashcards' && content && <Flashcards cards={content.flashcards.map((c) => ({ ...c, lectureId: lecture.id }))} />}

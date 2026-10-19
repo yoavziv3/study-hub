@@ -9,7 +9,7 @@ import {
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
 import { announceMaterial } from './updates.js';
-import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt } from './prompts.js';
+import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
 export const ACCEPTED = ['.pdf', '.pptx', '.ppt'];
 
@@ -122,9 +122,10 @@ async function stage(id, s) {
   return patchLecture(id, { stage: s, status: s === 'ready' ? 'ready' : 'processing', error: null });
 }
 
-export async function processLecture(id, { aiOnly = false, content = null, regenerate = false } = {}) {
+export async function processLecture(id, { aiOnly = false, content = null, regenerate = false, notesOnly = false } = {}) {
   let meta = getLecture(id);
   if (!meta) return;
+  if (notesOnly) return generateNotes(id);
   const dir = lectureDir(id);
   const original = path.join(dir, meta.originalFile);
   const pdf = path.join(dir, 'slides.pdf');
@@ -182,6 +183,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       });
       await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: aiStatus().provider });
       await patchLecture(id, { aiError: null });
+      await generateNotes(id);
     } catch (e) {
       // Keep the lecture usable (slides, text, chat); study material can be generated later from the lecture menu.
       console.error(`[ingest] ${id} AI analysis failed:`, e.message.slice(0, 200));
@@ -202,6 +204,37 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   await patchLecture(id, patch);
   await stage(id, 'ready');
   await announceMaterial(getLecture(id)).catch((e) => console.error('[updates]', e.message));
+}
+
+/**
+ * Structured study notes (sections of definition / example / rule blocks) for lectures and tutorials.
+ * Runs as a separate AI call so a failure never costs the rest of the study material.
+ * Homework keeps its exercise-by-exercise markdown summary.
+ */
+export async function generateNotes(id) {
+  const meta = getLecture(id);
+  const content = getContent(id);
+  if (!meta || !content || (meta.kind || 'lecture') === 'homework' || !aiStatus().ready) return null;
+  const slides = getSlides(id).map((s) => s.text);
+  if (!slides.some((s) => s.trim())) return null;
+  const course = getCourse(meta.courseId);
+  await patchLecture(id, { notesStatus: 'writing' });
+  console.log(`[ingest] ${id} → notes`);
+  try {
+    const notes = await generateJSON({
+      system: lectureSystem(course),
+      prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }),
+      schema: NOTES_SCHEMA,
+      effort: 'high',
+    });
+    await saveContent(id, { ...getContent(id), notes: { ...notes, generatedAt: new Date().toISOString() } });
+    await patchLecture(id, { notesStatus: null, notesError: null });
+    return notes;
+  } catch (e) {
+    console.error(`[ingest] ${id} notes failed:`, e.message.slice(0, 200));
+    await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : 'כתיבת הסיכום נכשלה' });
+    return null;
+  }
 }
 
 function nextLessonNumber(courseId, kind = 'lecture') {
