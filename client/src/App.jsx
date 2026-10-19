@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -204,6 +204,7 @@ function Shell() {
 
   useEffect(() => {
     const onKey = (e) => {
+      if (e.key === 'Escape') setMenu(false);
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setSearchOpen(true); }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'j') { e.preventDefault(); openChat(); }
     };
@@ -211,7 +212,7 @@ function Shell() {
     return () => window.removeEventListener('keydown', onKey);
   }, [setSearchOpen, openChat]);
 
-  useEffect(() => { window.scrollTo({ top: 0 }); }, [location.pathname]);
+  useEffect(() => { window.scrollTo({ top: 0 }); setMenu(false); }, [location.pathname]);
 
   // Global drag & drop: dropping files anywhere opens the upload dialog with them.
   useEffect(() => {
@@ -231,13 +232,15 @@ function Shell() {
     <div className="app" data-color={context.color}>
       <a href="#main" className="skip-link" onClick={(e) => { e.preventDefault(); document.getElementById('main')?.focus(); }}>דילוג לתוכן</a>
       <Sidebar open={menu} onNavigate={() => setMenu(false)} />
+      <AnimatePresence>
+        {menu && <motion.div className="sidebar-backdrop" onClick={() => setMenu(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />}
+      </AnimatePresence>
       <main className="main" id="main" tabIndex={-1}>
         <header className={`topbar ${scrolled ? 'scrolled' : ''}`}>
-          <button className="btn icon ghost menu-btn" onClick={() => setMenu((m) => !m)} aria-label="תפריט"><Menu size={20} /></button>
+          <button className="btn icon ghost menu-btn" onClick={() => setMenu((m) => !m)} aria-label={menu ? 'סגירת התפריט' : 'פתיחת התפריט'} aria-expanded={menu}>{menu ? <X size={20} /> : <Menu size={20} />}</button>
           <button className="search-trigger" onClick={() => setSearchOpen(true)}>
             <Search size={17} />
             <span className="grow" style={{ textAlign: 'start' }}>חיפוש בכל החומר – מושגים, שקפים, נושאים…</span>
-            <span className="kbd">⌘K</span>
           </button>
           <div className="spacer" />
           <motion.button className="btn icon ghost bell" onClick={() => navigate('/updates')} aria-label="עדכונים" whileTap={{ scale: 0.9 }}

@@ -172,6 +172,7 @@ button.ai-pill:disabled { cursor: default; opacity: 1; }
 .kbd { font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-3); direction: ltr; }
 .page { padding: 8px 32px 120px; max-width: 1320px; width: 100%; margin: 0 auto; }
 .menu-btn { display: none; }
+.sidebar-backdrop { display: none; }
 
 /* ============ Buttons ============ */
 .btn {
@@ -709,6 +710,7 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
   .app { grid-template-columns: 1fr; }
   .sidebar { position: fixed; inset: 0 0 0 auto; width: 280px; transform: translateX(100%); transition: transform 0.35s var(--ease); background: var(--surface); }
   .sidebar.open { transform: none; box-shadow: var(--shadow-lg); }
+  .sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 19; background: rgba(15, 14, 12, 0.38); backdrop-filter: blur(2px); }
   .menu-btn { display: inline-flex; }
   .topbar, .page { padding-left: 16px; padding-right: 16px; }
   .viewer { grid-template-columns: 1fr; }
