@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Video, MonitorPlay, Globe, FileText, Folder, File, ScrollText, ListChecks, ExternalLink } from 'lucide-react';
+import { Video, MonitorPlay, Globe, FileText, Folder, File, ScrollText, ExternalLink } from 'lucide-react';
 import { fadeUp } from './ui.jsx';
 
 const TYPE = {
@@ -10,7 +10,6 @@ const TYPE = {
   folder: { icon: Folder, label: 'תיקייה' },
   file: { icon: File, label: 'קובץ' },
   syllabus: { icon: ScrollText, label: 'סילבוס' },
-  activity: { icon: ListChecks, label: 'פעילות במודל' },
 };
 
 const host = (href) => {
@@ -21,9 +20,10 @@ const host = (href) => {
   }
 };
 
-/** Everything on the course's Moodle page that isn't a lecture file: Zoom, recordings, links, syllabus, activities. */
+/** Everything on the course's Moodle page that isn't a lecture file: Zoom, recordings, links and the syllabus. */
 export default function CourseLinks({ links }) {
-  if (!links?.length) {
+  links = (links || []).filter((l) => TYPE[l.type]);
+  if (!links.length) {
     return <div className="empty"><div className="empty-icon"><Globe size={28} /></div><h3>אין קישורים בקורס הזה</h3><p>קישורי זום, הקלטות, סילבוס וקישורים חיצוניים מדף הקורס במודל יופיעו כאן.</p></div>;
   }
   const groups = [];

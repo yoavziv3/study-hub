@@ -666,6 +666,16 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .privacy-card ul { margin: 0; padding-inline-start: 22px; color: var(--text-2); }
 .privacy-card li { margin: 5px 0; }
 
+/* Credit line at the bottom of every page */
+.site-footer { margin-top: auto; padding: 22px 32px 30px; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text-2); }
+.site-footer-sub { margin-top: 4px; font-size: 12px; color: var(--text-3); }
+.main > .site-footer { margin-top: -60px; }
+/* On the Mac the floating "ask the tutor" button sits bottom-left: keep the credit clear of it. */
+html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
+@media (max-width: 640px) { html:not(.static) .main > .site-footer { padding-inline-end: 90px; } }
+.login-wrap, .privacy-wrap { grid-template-rows: 1fr auto; }
+.login-wrap .site-footer, .privacy-wrap .site-footer { border-top: 0; padding-bottom: 8px; }
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .hero, .two-col { grid-template-columns: 1fr; }

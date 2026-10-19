@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
 import { useApp } from '../store.jsx';
+import { SiteFooter } from '../components/ui.jsx';
 
 /** What the site keeps about a student, who can see it, and how to remove it. Readable without signing in. */
 export default function Privacy() {
@@ -51,6 +52,7 @@ export default function Privacy() {
 
         <Link to="/" className="btn" style={{ marginTop: 16 }}><ArrowRight size={16} /> {me ? 'חזרה לאתר' : 'חזרה לכניסה'}</Link>
       </div>
+      {!me && <SiteFooter />}
     </div>
   );
 }

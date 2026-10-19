@@ -306,8 +306,9 @@ export async function setOptions({ autoSync, intervalMin }) {
 
 /** All presentation files in a mapped course, with their sync status. */
 // Course page items that aren't lecture files but belong on the site: Zoom, recordings, external links,
-// syllabus, pages and activities. (Forums, assignments and quizzes come in as updates and deadlines.)
-const LINK_TYPES = { url: 'link', zoom: 'zoom', lti: 'online', page: 'page', folder: 'folder', resource: 'file', choice: 'activity', feedback: 'activity', questionnaire: 'activity', h5pactivity: 'activity', book: 'page' };
+// syllabus and pages. Not class-time activities (attendance checks, polls, in-class questions), and not
+// forums, assignments or quizzes (those come in as updates and deadlines).
+const LINK_TYPES = { url: 'link', zoom: 'zoom', lti: 'online', page: 'page', folder: 'folder', resource: 'file', book: 'page' };
 
 function courseLinks(sections, importedModules) {
   const links = [];

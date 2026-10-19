@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Lock, KeyRound, ShieldCheck, Loader2, ChevronDown, LogIn } from 'lucide-react';
 import { api } from '../api.js';
 import { useApp } from '../store.jsx';
+import { SiteFooter } from '../components/ui.jsx';
 
 /** Cloud sign-in: the student signs in with their Moodle (BGU) account; the site only keeps Moodle's access key. */
 export default function Login() {
@@ -94,6 +95,7 @@ export default function Login() {
           </AnimatePresence>
         </div>
       </motion.div>
+      <SiteFooter />
     </div>
   );
 }

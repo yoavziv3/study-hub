@@ -3,7 +3,7 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, motion } from 'motion/react';
 import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck } from 'lucide-react';
 import { useApp } from './store.jsx';
-import { CourseIcon } from './components/ui.jsx';
+import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
 import Course from './pages/Course.jsx';
 import Lecture from './pages/Lecture.jsx';
@@ -268,6 +268,7 @@ function Shell() {
             <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </AnimatePresence>
+        <SiteFooter />
       </main>
 
       <AnimatePresence>

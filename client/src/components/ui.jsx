@@ -136,3 +136,13 @@ export function Highlight({ text = '', q = '' }) {
     </>
   );
 }
+
+/** Credit line at the bottom of every page. */
+export function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <div>© {new Date().getFullYear()} יואב זיו · הנדסת תעשייה וניהול, אוניברסיטת בן־גוריון בנגב</div>
+      <div className="site-footer-sub">כל הזכויות על האתר שמורות · חומרי הקורסים שייכים למרצים ולאוניברסיטה</div>
+    </footer>
+  );
+}

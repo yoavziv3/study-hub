@@ -14,21 +14,5 @@
     "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3425748",
     "section": "מבוא",
     "ext": "pdf"
-  },
-  {
-    "id": 3426786,
-    "type": "activity",
-    "name": "בדיקה נוכחות",
-    "href": "https://moodle.bgu.ac.il/moodle/mod/choice/view.php?id=3426786",
-    "section": "הקדמה ומבוא ומודל עקומת התמורה",
-    "ext": ""
-  },
-  {
-    "id": 3438489,
-    "type": "activity",
-    "name": "שאלה עקומת תמורה התחלה",
-    "href": "https://moodle.bgu.ac.il/moodle/mod/choice/view.php?id=3438489",
-    "section": "הקדמה ומבוא ומודל עקומת התמורה",
-    "ext": ""
   }
 ]
