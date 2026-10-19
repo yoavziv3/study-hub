@@ -44,6 +44,12 @@ export function AppProvider({ children }) {
     () => api.get('/api/me').then(setMe).catch((e) => { if (e.status === 401) setMe(false); }),
     []
   );
+  // On the Mac, the name comes from the connected Moodle account (used in the greeting).
+  useEffect(() => {
+    if (STATIC) return;
+    api.get('/api/moodle').then((m) => m.user && setMe((prev) => ({ ...prev, user: { name: m.user.fullname, username: m.user.username } }))).catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (!STATIC) return undefined;
     refreshMe();

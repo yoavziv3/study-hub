@@ -59,7 +59,9 @@ function Heatmap({ activity, dueCards }) {
 }
 
 export default function Home() {
-  const { courses, progress, openUpload, openChat, setContext } = useApp();
+  const { courses, progress, openUpload, openChat, setContext, me } = useApp();
+  // "ערב טוב, יואב" – the first name from the Moodle account.
+  const firstName = me?.user?.name?.trim().split(/\s+/)[0] || '';
   const { data: lectures = [] } = useFetch('/api/lectures', { poll: (d) => d.some((l) => l.status === 'processing') });
   const list = lectures || [];
 
@@ -93,7 +95,7 @@ export default function Home() {
           <motion.div className="hero-orb" style={{ width: 220, height: 220, background: '#7048e8', bottom: -110, left: 160 }} animate={{ x: [0, -30, 0], y: [0, -15, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
           <div style={{ position: 'relative' }}>
             <div style={{ opacity: 0.6, fontSize: 14 }}>{new Date().toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-            <h1>{greeting()} 👋</h1>
+            <h1>{greeting()}{firstName ? `, ${firstName}` : ''} 👋</h1>
             <p>{STATIC ? 'כל הקורסים שלך במקום אחד – מצגות, תרגולים, הגשות, הודעות מהמודל, סיכומים ותרגול.' : 'כל ההרצאות של הסמסטר במקום אחד – מצגות, סיכומים, נושאים, תרגול ומורה פרטי שמכיר את כל החומר.'}</p>
             <div className="row wrap">
               {last ? (
