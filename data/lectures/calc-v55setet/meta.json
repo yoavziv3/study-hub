@@ -2,7 +2,7 @@
   "id": "calc-v55setet",
   "courseId": "calc",
   "autoCourse": false,
-  "title": "חוברת תרגילים – מספרים ממשיים וסדרות (עם פתרונות מלאים)",
+  "title": "חוברת תרגילים – מספרים ממשיים וסדרות",
   "originalName": "booklet.pdf",
   "kind": "homework",
   "originalFile": "original.pdf",
@@ -20,7 +20,7 @@
     "section": "חוברת תרגילים והגשות",
     "module": "חוברת תרגילים"
   },
-  "updatedAt": "2026-10-19T11:08:07.238Z",
+  "updatedAt": "2026-10-19T17:44:23.246Z",
   "aiError": null,
   "announced": true
 }

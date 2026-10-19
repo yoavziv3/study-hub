@@ -2,7 +2,7 @@
   "id": "econ-5i1pveoh",
   "courseId": "econ",
   "autoCourse": false,
-  "title": "תרגיל 1 – עקומת התמורה (פתרון מלא)",
+  "title": "תרגיל 1 – עקומת התמורה",
   "originalName": "Problem_set_1_26_27.pdf",
   "kind": "homework",
   "originalFile": "original.pdf",
@@ -28,7 +28,7 @@
       "instructions": "תרגילים לעשות מתוך התרגיל:\n1,\n2א,ב,ג\n4\n5 א,ב\n6"
     }
   },
-  "updatedAt": "2026-10-19T17:17:19.376Z",
+  "updatedAt": "2026-10-19T17:44:32.441Z",
   "aiError": null,
   "announced": true
 }

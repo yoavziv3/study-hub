@@ -4,7 +4,7 @@ import path from 'node:path';
 import chokidar from 'chokidar';
 import {
   listCourses, getCourse, getLecture, saveLecture, patchLecture, saveSlides, getSlides, saveContent,
-  lectureDir, newLectureId, INBOX_DIR, getContent,
+  lectureDir, newLectureId, INBOX_DIR, getContent, listLectures,
 } from './store.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
@@ -195,7 +195,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
 
   // Fill in lesson numbering from the content when the user did not set it.
   const patch = {};
-  if (content?.title && meta.title === prettyName(meta.originalName)) patch.title = content.title;
+  if (content?.title && meta.title === prettyName(meta.originalName)) patch.title = (meta.kind || 'lecture') === 'homework' ? homeworkTitle(meta, content.title) : content.title;
   if (!meta.lessonNumber) {
     const unit = meta.unitNumber || content?.lessonNumber || 0;
     const kind = meta.kind || 'lecture';
@@ -237,6 +237,24 @@ export async function generateNotes(id) {
     await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : 'כתיבת הסיכום נכשלה' });
     return null;
   }
+}
+
+/** Titles describe the material, not that it comes with solutions: "(פתרון מלא)", "– פתרונות מלאים" etc. are dropped. */
+export function cleanTitle(title = '') {
+  return title
+    .replace(/\s*\((?:עם\s+)?פתרו(?:ן|נות|נים)(?:\s+מלא(?:ים|ה)?)?\)/g, '')
+    .replace(/\s*[–-]\s*(?:עם\s+)?פתרו(?:ן|נות|נים)(?:\s+מלא(?:ים|ה)?)?\s*$/g, '')
+    .replace(/\s+עם\s+פתרו(?:ן|נות|נים)(?:\s+מלא(?:ים|ה)?)?(?=\s*[–-]|$)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** A file that is itself the solutions gets a distinct title, so it doesn't look like a duplicate of the sheet. */
+function homeworkTitle(meta, title) {
+  const clean = cleanTitle(title);
+  if (!/solution|פתרונ/i.test(meta.originalName || '')) return clean;
+  const twin = listLectures(meta.courseId).some((l) => l.id !== meta.id && l.title === clean);
+  return twin ? `פתרונות – ${clean.replace(/^חוברת תרגילים\s*[–-]\s*/, '')}` : clean;
 }
 
 function nextLessonNumber(courseId, kind = 'lecture') {
