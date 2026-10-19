@@ -34,7 +34,7 @@ export default function Archive() {
       </motion.div>
 
       {!terms.length ? (
-        <div className="empty"><div className="empty-icon"><History size={28} /></div><h3>עוד אין סמסטרים קודמים</h3><p>כשסמסטר חדש יתחיל, הקורסים של הסמסטר הנוכחי יעברו לכאן עם כל החומר שלהם.</p></div>
+        <div className="empty"><div className="empty-icon"><History size={28} /></div><h2>עוד אין סמסטרים קודמים</h2><p>כשסמסטר חדש יתחיל, הקורסים של הסמסטר הנוכחי יעברו לכאן עם כל החומר שלהם.</p></div>
       ) : (
         <>
           <div className="term-picker">
@@ -71,15 +71,17 @@ function TermCourse({ course, lectures, studied, i }) {
   const done = lectures.filter((l) => studied[l.id]).length;
   return (
     <motion.div className="card term-course" data-color={course.color} variants={fadeUp} initial="hidden" animate="show" custom={i}>
-      <button className="term-course-head" onClick={() => setOpen((o) => !o)}>
-        <div className="course-icon" style={{ width: 40, height: 40, borderRadius: 12 }}><CourseIcon name={course.icon} size={19} /></div>
-        <div className="grow" style={{ minWidth: 0, textAlign: 'start' }}>
-          <div style={{ fontWeight: 700, fontSize: 16.5 }}>{course.name}</div>
-          <div className="faint" style={{ fontSize: 13 }}>{course.code} · {lectures.length} פריטים{done ? ` · נלמדו ${done}` : ''}</div>
-        </div>
-        <Link to={`/course/${course.id}`} className="btn sm" onClick={(e) => e.stopPropagation()}>לקורס <ArrowLeft size={14} /></Link>
-        <ChevronDown size={18} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
-      </button>
+      <div className="term-course-row">
+        <button className="term-course-head" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+          <div className="course-icon" style={{ width: 40, height: 40, borderRadius: 12 }}><CourseIcon name={course.icon} size={19} /></div>
+          <div className="grow" style={{ minWidth: 0, textAlign: 'start' }}>
+            <div style={{ fontWeight: 700, fontSize: 16.5 }}>{course.name}</div>
+            <div className="faint" style={{ fontSize: 13 }}>{course.code} · {lectures.length} פריטים{done ? ` · נלמדו ${done}` : ''}</div>
+          </div>
+          <ChevronDown size={18} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
+        </button>
+        <Link to={`/course/${course.id}`} className="btn sm">לקורס <ArrowLeft size={14} /></Link>
+      </div>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>

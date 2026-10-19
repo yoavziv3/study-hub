@@ -106,6 +106,18 @@ async function route({ request, env }) {
     }
   }
 
+  if (path === '/api/feedback' && method === 'POST') {
+    const { text = '', page = '' } = await readJson(request, 6000);
+    const body = String(text).trim();
+    if (body.length < 3 || body.length > 2000) throw new HttpError(400, 'כתבו כמה מילים (עד 2000 תווים)');
+    const today = await env.DB.prepare('SELECT COUNT(*) AS n FROM reports WHERE user_id = ? AND created_at > ?').bind(user.id, Date.now() - 86400000).first();
+    if (today.n >= 20) throw new HttpError(429, 'הגעת למספר ההודעות היומי – תודה!');
+    await env.DB.prepare("INSERT INTO reports (user_id, lecture_id, section, text, created_at) VALUES (?, 'feedback', ?, ?, ?)")
+      .bind(user.id, String(page).slice(0, 200), body, Date.now())
+      .run();
+    return json({ ok: true });
+  }
+
   if (path === '/api/reports' && method === 'POST') {
     const { lectureId = '', section = '', text = '' } = await readJson(request, 6000);
     const body = String(text).trim();

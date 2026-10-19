@@ -1,25 +1,29 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
-import Course from './pages/Course.jsx';
-import Lecture from './pages/Lecture.jsx';
-import Moodle from './pages/Moodle.jsx';
-import Updates from './pages/Updates.jsx';
 import Login from './pages/Login.jsx';
-import Archive from './pages/Archive.jsx';
-import Reports from './pages/Reports.jsx';
-import Review from './pages/Review.jsx';
-import Privacy from './pages/Privacy.jsx';
-import Onboarding from './components/Onboarding.jsx';
+// Everything else is loaded when first opened, so the first screen (home or sign-in) downloads only what it shows.
+const Course = lazy(() => import('./pages/Course.jsx'));
+const Lecture = lazy(() => import('./pages/Lecture.jsx'));
+const Moodle = lazy(() => import('./pages/Moodle.jsx'));
+const Updates = lazy(() => import('./pages/Updates.jsx'));
+const Archive = lazy(() => import('./pages/Archive.jsx'));
+const Reports = lazy(() => import('./pages/Reports.jsx'));
+const Review = lazy(() => import('./pages/Review.jsx'));
+const Privacy = lazy(() => import('./pages/Privacy.jsx'));
+const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
+const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
+const UploadModal = lazy(() => import('./components/UploadModal.jsx'));
+const SearchPalette = lazy(() => import('./components/SearchPalette.jsx'));
+
+const PageLoader = () => <div style={{ padding: 60, textAlign: 'center' }}><Loader2 className="spin" /></div>;
 import { SEMESTER_LABEL, studyYearLabel } from './lib/terms.js';
+import Feedback from './components/Feedback.jsx';
 import { useFetch, STATIC } from './api.js';
-import ChatPanel from './components/ChatPanel.jsx';
-import UploadModal from './components/UploadModal.jsx';
-import SearchPalette from './components/SearchPalette.jsx';
 
 function useTheme() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
@@ -88,8 +92,9 @@ function Sidebar({ open, onNavigate }) {
         count={moodle?.syncing ? <Loader2 size={13} className="spin" /> : <span className={`pulse ${moodle?.connected ? '' : 'off'}`} style={{ display: 'inline-block' }} />}
         onClick={onNavigate}
       />}
-      {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים על טעויות" onClick={onNavigate} />}
+      {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים ומשוב" onClick={onNavigate} />}
       <div className="sidebar-foot">
+        <Feedback />
         <StatusPill
           items={STATIC
             ? [me?.moodleOk === false ? { bad: true, text: 'החיבור למודל פג – התנתקו והתחברו שוב' } : { text: 'מחובר למודל' }]
@@ -175,7 +180,7 @@ export default function App() {
   const { me } = useApp();
   const location = useLocation();
   // The privacy page is readable before signing in.
-  if (STATIC && !me && location.pathname === '/privacy') return <Privacy />;
+  if (STATIC && !me && location.pathname === '/privacy') return <Suspense fallback={<PageLoader />}><Privacy /></Suspense>;
   if (STATIC && me === null) return <div className="login-wrap"><Loader2 className="spin" size={28} /></div>;
   if (STATIC && me === false) return <Login />;
   return <Shell />;
@@ -224,8 +229,9 @@ function Shell() {
 
   return (
     <div className="app" data-color={context.color}>
+      <a href="#main" className="skip-link" onClick={(e) => { e.preventDefault(); document.getElementById('main')?.focus(); }}>דילוג לתוכן</a>
       <Sidebar open={menu} onNavigate={() => setMenu(false)} />
-      <main className="main">
+      <main className="main" id="main" tabIndex={-1}>
         <header className={`topbar ${scrolled ? 'scrolled' : ''}`}>
           <button className="btn icon ghost menu-btn" onClick={() => setMenu((m) => !m)} aria-label="תפריט"><Menu size={20} /></button>
           <button className="search-trigger" onClick={() => setSearchOpen(true)}>
@@ -257,6 +263,7 @@ function Shell() {
           </button>
           <AccountMenu />
         </header>
+        <Suspense fallback={<PageLoader />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
@@ -271,6 +278,7 @@ function Shell() {
             <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </AnimatePresence>
+        </Suspense>
         <SiteFooter />
       </main>
 
@@ -282,10 +290,12 @@ function Shell() {
           </motion.button>
         )}
       </AnimatePresence>
+      <Suspense fallback={null}>
       <AnimatePresence>{chat.open && <ChatPanel key="chat" />}</AnimatePresence>
       <AnimatePresence>{uploadOpen && <UploadModal key="upload" />}</AnimatePresence>
       <AnimatePresence>{searchOpen && <SearchPalette key="search" />}</AnimatePresence>
       <AnimatePresence>{showTour && <Onboarding key="tour" name={me?.user?.name?.trim().split(/\s+/)[0]} onDone={markOnboarded} />}</AnimatePresence>
+      </Suspense>
     </div>
   );
 }

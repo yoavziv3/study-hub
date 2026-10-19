@@ -326,7 +326,7 @@ export default function Updates() {
         ))}
       </div>
       {groups.length === 0 && (
-        <div className="empty"><div className="empty-icon"><Inbox size={28} /></div><h3>אין עדכונים עדיין</h3><p>כשיעלה חומר חדש למודל, הודעה או הגשה – זה יופיע כאן.</p></div>
+        <div className="empty"><div className="empty-icon"><Inbox size={28} /></div><h2>אין עדכונים עדיין</h2><p>כשיעלה חומר חדש למודל, הודעה או הגשה – זה יופיע כאן.</p></div>
       )}
       {groups.map(([label, list]) => (
         <div key={label} style={{ marginBottom: 18 }}>

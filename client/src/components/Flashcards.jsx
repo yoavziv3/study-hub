@@ -81,7 +81,7 @@ export default function Flashcards({ cards }) {
                 exit={(d) => ({ opacity: 0, x: d * -160, rotate: d * -8, transition: { duration: 0.3 } })}
                 transition={{ type: 'spring', stiffness: 300, damping: 28 }}
               >
-                <motion.div className="fc" onClick={() => setFlip((f) => !f)} animate={{ rotateY: flip ? 180 : 0 }} transition={{ type: 'spring', stiffness: 260, damping: 26 }}>
+                <motion.div className="fc" role="button" tabIndex={0} aria-pressed={flip} aria-label={flip ? 'הצגת השאלה' : 'הצגת התשובה'} onClick={() => setFlip((f) => !f)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); setFlip((f) => !f); } }} animate={{ rotateY: flip ? 180 : 0 }} transition={{ type: 'spring', stiffness: 260, damping: 26 }}>
                   <div className="fc-face">
                     <span className="label">שאלה</span>
                     <div className="fc-front-text">{ltr(card.front)}</div>

@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, originalUrl, STAGE_LABELS, STAGE_ORDER } from '../api.js';
-import { Markdown, Page, Tabs, fadeUp } from '../components/ui.jsx';
+import { Page, Tabs, fadeUp } from '../components/ui.jsx';
+import { Markdown } from '../components/markdown.jsx';
 import SlideViewer from '../components/SlideViewer.jsx';
 import Quiz from '../components/Quiz.jsx';
 import StudySummary from '../components/StudySummary.jsx';
@@ -51,7 +52,7 @@ function NoContent({ lecture, onRegenerate }) {
   return (
     <div className="empty">
       <div className="empty-icon"><Wand2 size={28} /></div>
-      <h3>עוד אין תוכן AI להרצאה הזו</h3>
+      <h2>עוד אין תוכן AI להרצאה הזו</h2>
       {lecture.aiError && <p className="chip warn" style={{ height: 'auto', padding: '6px 12px', whiteSpace: 'normal' }}>{lecture.aiError}</p>}
       <p>{status?.ai?.ready ? 'השקפים כבר זמינים. אפשר ליצור עכשיו סיכום, חלוקה לנושאים, שאלות וכרטיסיות.' : 'חברו AI (Claude Code או מפתח API) כדי ליצור סיכום ושאלות.'}</p>
       {status?.ai?.ready && <button className="local-only btn accent" onClick={onRegenerate}><Sparkles size={16} /> יצירת חומרי לימוד</button>}
@@ -202,7 +203,7 @@ function EditDialog({ lecture, onClose, onSaved }) {
   };
   return (
     <motion.div className="overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <motion.div className="modal" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+      <motion.div className="modal" role="dialog" aria-modal="true" aria-label="עריכת פרטים" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
         <h2>עריכת פרטי ההרצאה</h2>
         <div className="stack" style={{ marginTop: 18 }}>
           <label className="field">כותרת<input className="input" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></label>
@@ -260,7 +261,7 @@ export default function Lecture() {
     }
   }, [lecture?.id, lecture?.status, slide, tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (error) return <Page><div className="empty"><h3>{error}</h3><Link className="btn" to="/">לדף הבית</Link></div></Page>;
+  if (error) return <Page><div className="empty"><h2>{error}</h2><Link className="btn" to="/">לדף הבית</Link></div></Page>;
   if (!lecture) return <Page><div style={{ padding: 60, textAlign: 'center' }}><Loader2 className="spin" /></div></Page>;
 
   const { course, content } = lecture;
@@ -327,7 +328,7 @@ export default function Lecture() {
             </motion.button>
             <button className="local-only btn" onClick={() => openChat()}><Sparkles size={16} /> שאלה על ההרצאה</button>
             <div style={{ position: 'relative' }}>
-              <button className="btn icon" onClick={() => setMenu((m) => !m)}><MoreHorizontal size={18} /></button>
+              <button className="btn icon" onClick={() => setMenu((m) => !m)} aria-label="אפשרויות נוספות" aria-expanded={menu} aria-haspopup="menu"><MoreHorizontal size={18} /></button>
               <AnimatePresence>
                 {menu && (
                   <motion.div className="card" style={{ position: 'absolute', top: 46, insetInlineEnd: 0, zIndex: 30, padding: 6, width: 220, boxShadow: 'var(--shadow-lg)' }} initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }}>

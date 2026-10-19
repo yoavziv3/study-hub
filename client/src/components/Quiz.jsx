@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Check, X, ArrowLeft, RotateCcw, Presentation, Sparkles, Trophy } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { hebLetters, shuffle } from '../api.js';
-import { Markdown, Ring, ltr } from './ui.jsx';
+import { Ring, ltr } from './ui.jsx';
+import { Markdown } from './markdown.jsx';
 
 const DIFF = { easy: { label: 'קל', cls: 'good' }, medium: { label: 'בינוני', cls: 'warn' }, hard: { label: 'קשה', cls: 'bad' } };
 

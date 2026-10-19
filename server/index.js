@@ -139,6 +139,14 @@ app.post('/api/reports', (req, res) => {
   fs.writeFileSync(REPORTS_FILE, JSON.stringify(list, null, 2));
   res.json({ ok: true });
 });
+app.post('/api/feedback', (req, res) => {
+  const { text = '', page = '' } = req.body || {};
+  if (String(text).trim().length < 3) return res.status(400).json({ error: 'כתבו כמה מילים' });
+  const list = readReports();
+  list.push({ id: Date.now(), lecture_id: 'feedback', section: String(page).slice(0, 200), text: String(text).trim().slice(0, 2000), created_at: Date.now(), status: 'open' });
+  fs.writeFileSync(REPORTS_FILE, JSON.stringify(list, null, 2));
+  res.json({ ok: true });
+});
 app.get('/api/reports', async (req, res) => {
   const local = readReports().filter((r) => r.status === 'open').map((r) => ({ ...r, source: 'local' }));
   let cloud = [];
@@ -149,6 +157,7 @@ app.get('/api/reports', async (req, res) => {
     cloudError = e.message;
   }
   const withTitle = (r) => {
+    if (r.lecture_id === 'feedback') return { ...r, feedback: true, lectureTitle: 'משוב כללי' };
     const l = getLecture(r.lecture_id);
     return { ...r, lectureTitle: l?.title || r.lecture_id, courseId: l?.courseId, courseShort: getCourse(l?.courseId)?.short };
   };

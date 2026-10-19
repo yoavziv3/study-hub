@@ -24,7 +24,7 @@ const host = (href) => {
 export default function CourseLinks({ links }) {
   links = (links || []).filter((l) => TYPE[l.type] && safeHref(l.href));
   if (!links.length) {
-    return <div className="empty"><div className="empty-icon"><Globe size={28} /></div><h3>אין קישורים בקורס הזה</h3><p>קישורי זום, הקלטות, סילבוס וקישורים חיצוניים מדף הקורס במודל יופיעו כאן.</p></div>;
+    return <div className="empty"><div className="empty-icon"><Globe size={28} /></div><h2>אין קישורים בקורס הזה</h2><p>קישורי זום, הקלטות, סילבוס וקישורים חיצוניים מדף הקורס במודל יופיעו כאן.</p></div>;
   }
   const groups = [];
   for (const l of links) {

@@ -54,7 +54,7 @@ export default function Review() {
       <div style={{ marginTop: 18 }}>
         {!today && <div style={{ padding: 40, textAlign: 'center' }}><Loader2 className="spin" /></div>}
         {today && (today.cards.length ? <Flashcards cards={today.cards} /> : (
-          <div className="empty"><div className="empty-icon"><Layers size={28} /></div><h3>סיימת להיום 🎉</h3><p>אין כרטיסיות שמחכות לחזרה. מחר יחכו לך חדשות.</p></div>
+          <div className="empty"><div className="empty-icon"><Layers size={28} /></div><h2>סיימת להיום 🎉</h2><p>אין כרטיסיות שמחכות לחזרה. מחר יחכו לך חדשות.</p></div>
         ))}
       </div>
     </Page>

@@ -214,13 +214,13 @@ export default function Moodle() {
         <div className="row wrap" style={{ gap: 14 }}>
           <div className="course-icon" style={{ background: 'linear-gradient(135deg,#f98012,#ffb547)' }}><GraduationCap size={22} /></div>
           <div className="grow">
-            <h2 style={{ fontSize: 22 }}>מחובר למודל</h2>
+            <h1 style={{ fontSize: 22 }}>מחובר למודל</h1>
             <div className="muted" style={{ fontSize: 14 }}>{status.user?.fullname} · סנכרון אחרון: {ago(status.lastSync)}</div>
           </div>
           <label className="row" style={{ fontSize: 14, fontWeight: 600, gap: 8 }}>
             <input type="checkbox" checked={status.autoSync} onChange={(e) => options({ autoSync: e.target.checked })} />
             סנכרון אוטומטי כל
-            <select className="input" style={{ width: 'auto', height: 34 }} value={status.intervalMin} onChange={(e) => options({ intervalMin: Number(e.target.value) })}>
+            <select className="input" aria-label="תדירות הסנכרון" style={{ width: 'auto', height: 34 }} value={status.intervalMin} onChange={(e) => options({ intervalMin: Number(e.target.value) })}>
               {[15, 30, 60, 180, 720].map((m) => <option key={m} value={m}>{m < 60 ? `${m} דק׳` : `${m / 60} שע׳`}</option>)}
             </select>
           </label>
@@ -274,7 +274,7 @@ export default function Moodle() {
                   <div className="faint num" style={{ fontSize: 12, textAlign: 'start' }}>{c.shortname}</div>
                 </div>
                 {!c.current && <span className="chip">סמסטר קודם</span>}
-                <select className="input" style={{ width: 220, height: 38, borderColor: site ? 'var(--c)' : undefined }} value={c.siteCourse || ''} onChange={(e) => map(c.id, e.target.value)}>
+                <select className="input" aria-label={`הקורס באתר עבור ${c.fullname}`} style={{ width: 220, height: 38, borderColor: site ? 'var(--c)' : undefined }} value={c.siteCourse || ''} onChange={(e) => map(c.id, e.target.value)}>
                   <option value="">— לא לסנכרן —</option>
                   {siteCourses.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
@@ -294,7 +294,7 @@ export default function Moodle() {
             </motion.div>
           );
         })}
-        {!courses.length && <div className="empty"><h3>לא נמצאו קורסים</h3></div>}
+        {!courses.length && <div className="empty"><h2>לא נמצאו קורסים</h2></div>}
       </div>
       <div className="faint row" style={{ fontSize: 12.5, marginTop: 18, gap: 6 }}><KeyRound size={14} /> הסנכרון רץ כל עוד האתר פועל במחשב.</div>
     </Page>

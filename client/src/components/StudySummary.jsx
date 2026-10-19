@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { BookMarked, PencilLine, Sigma, Lightbulb, AlertTriangle, ListChecks, ChevronDown, Presentation, Loader2, Sparkles, Clock } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
-import { Markdown, Tex, ltr } from './ui.jsx';
+import { ltr } from './ui.jsx';
+import { Markdown, Tex } from './markdown.jsx';
 import { requiredMap, partsLabel } from './Assignment.jsx';
 import ReportButton from './ReportButton.jsx';
 

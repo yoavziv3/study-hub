@@ -267,12 +267,12 @@ button.chip:hover { transform: translateY(-1px); }
 .lecture-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
 .lecture-card:hover .lecture-thumb img { transform: scale(1.05); }
 .lecture-thumb .badge { position: absolute; bottom: 6px; inset-inline-start: 6px; }
-.lecture-card h3 { font-size: 17px; margin-bottom: 4px; }
+.lecture-card h3, .lecture-card .lecture-card-title { font-size: 17px; margin-bottom: 4px; }
 .lecture-card p { margin: 0 0 10px; color: var(--text-2); font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .studied-check { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--good); color: #fff; }
 
 .empty { text-align: center; padding: 56px 24px; border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); color: var(--text-2); background: color-mix(in srgb, var(--surface) 50%, transparent); }
-.empty h3 { font-size: 20px; color: var(--text); margin: 14px 0 6px; }
+.empty h2, .empty h3 { font-size: 20px; color: var(--text); margin: 14px 0 6px; }
 .empty-icon { width: 64px; height: 64px; margin: 0 auto; border-radius: 20px; display: grid; place-items: center; background: var(--c-soft); color: var(--c); }
 
 /* ============ Lecture page ============ */
@@ -635,7 +635,8 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .term-year-label { font-weight: 700; font-size: 14.5px; }
 .term-picker .tab { background: var(--surface-2); border: 1px solid var(--border); }
 .term-course { padding: 0; overflow: hidden; }
-.term-course-head { width: 100%; display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; }
+.term-course-row { display: flex; align-items: center; gap: 8px; padding-inline-end: 18px; }
+.term-course-head { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; }
 .term-lectures { padding: 0 18px 16px; display: grid; gap: 12px; }
 .term-kind { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text-2); margin: 4px 0 6px; }
 .term-lecture { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; font-size: 14.5px; }
@@ -689,6 +690,15 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .onboarding-dots { display: flex; gap: 6px; }
 .onboarding-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--surface-3); transition: background 0.2s, width 0.2s; }
 .onboarding-dots span.on { width: 22px; border-radius: 6px; background: var(--c); }
+
+/* Keyboard users can jump past the sidebar to the page content */
+.skip-link { position: fixed; top: 10px; inset-inline-start: 10px; z-index: 100; padding: 10px 16px; border-radius: 10px; background: var(--ink); color: var(--ink-contrast); font-weight: 700; transform: translateY(-160%); transition: transform 0.2s; }
+.skip-link:focus { transform: none; }
+.main:focus { outline: none; }
+
+/* General feedback */
+.feedback-btn { display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 8px; padding: 9px 12px; border-radius: 12px; border: 1px dashed var(--border-strong); background: none; color: var(--text-2); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.feedback-btn:hover { background: var(--surface-2); color: var(--text); }
 
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {

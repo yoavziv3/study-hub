@@ -64,10 +64,10 @@ export default function UploadModal() {
 
   return (
     <motion.div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && closeUpload()} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div className="modal" initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 34 }}>
+      <motion.div className="modal" role="dialog" aria-modal="true" aria-label="העלאת הרצאה" initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 34 }}>
         <div className="row">
           <h2 className="grow">העלאת הרצאות</h2>
-          <button className="btn sm icon ghost" onClick={closeUpload}><X size={18} /></button>
+          <button className="btn sm icon ghost" onClick={closeUpload} aria-label="סגירה"><X size={18} /></button>
         </div>
 
         {phase === 'pick' && (
@@ -96,7 +96,7 @@ export default function UploadModal() {
                       <div className="file-ext" style={{ background: EXT_COLORS[ext] || '#666' }}>{ext.toUpperCase()}</div>
                       <div className="grow" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</div>
                       <span className="faint num" style={{ fontSize: 12 }}>{(f.size / 1048576).toFixed(1)}MB</span>
-                      <button className="btn sm icon ghost" onClick={() => setFiles(files.filter((_, j) => j !== i))}><X size={15} /></button>
+                      <button className="btn sm icon ghost" aria-label="הסרת הקובץ" onClick={() => setFiles(files.filter((_, j) => j !== i))}><X size={15} /></button>
                     </motion.div>
                   );
                 })}

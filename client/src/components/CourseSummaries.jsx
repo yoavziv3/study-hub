@@ -48,7 +48,7 @@ export default function CourseSummaries({ course, bundle }) {
     return (
       <div className="empty">
         <div className="empty-icon"><FileText size={28} /></div>
-        <h3>עוד אין סיכומים בקורס הזה</h3>
+        <h2>עוד אין סיכומים בקורס הזה</h2>
         <p>כשהמרצה יעלה מצגות למודל, הן ייכנסו לאתר ויסוכמו אוטומטית – וכל הסיכומים יתרכזו כאן.</p>
       </div>
     );

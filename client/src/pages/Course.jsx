@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, slideUrl, useFetch, shuffle } from '../api.js';
-import { CourseIcon, Markdown, Page, Ring, Tabs, fadeUp, Tex, ltr, safeHref } from '../components/ui.jsx';
+import { CourseIcon, Page, Ring, Tabs, fadeUp, ltr, safeHref } from '../components/ui.jsx';
+import { Markdown, Tex } from '../components/markdown.jsx';
 import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
@@ -32,7 +33,7 @@ function LectureCard({ l, course, i }) {
             {l.source?.type === 'moodle' && <span className="chip">ממודל</span>}
             {studied && <span className="studied-check" title="סומן כנלמד"><Check size={13} /></span>}
           </div>
-          <h3>{l.title}</h3>
+          <h2 className="lecture-card-title">{l.title}</h2>
           {l.kind === 'homework' && <AssignmentLine assignment={l.source?.assignment} />}
           <p>{ltr(l.overview) || l.originalName}</p>
           <div className="row wrap" style={{ gap: 6 }}>
@@ -219,7 +220,7 @@ function Empty({ course, text, what = 'הרצאות' }) {
   return (
     <motion.div className="empty" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
       <div className="empty-icon"><CourseIcon name={course.icon} size={30} /></div>
-      <h3>עדיין אין כאן {what}</h3>
+      <h2>עדיין אין כאן {what}</h2>
       <p>{text || 'גררו לכאן מצגת או לחצו להעלאה – היא תומר לשקפים, תסוכם ותחולק לנושאים אוטומטית.'}</p>
       <button className="local-only btn accent" onClick={() => openUpload(course.id)}><Upload size={17} /> העלאת הרצאה ל{course.short}</button>
     </motion.div>

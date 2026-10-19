@@ -46,7 +46,7 @@ export default function SearchPalette() {
 
   return (
     <motion.div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && setSearchOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div className="palette" initial={{ opacity: 0, y: -16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.98 }} transition={{ type: 'spring', stiffness: 450, damping: 36 }}>
+      <motion.div className="palette" role="dialog" aria-modal="true" aria-label="חיפוש בכל החומר" initial={{ opacity: 0, y: -16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.98 }} transition={{ type: 'spring', stiffness: 450, damping: 36 }}>
         <div className="palette-input">
           <Search size={20} color="var(--text-3)" />
           <input ref={inputRef} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey} placeholder="חפשו מושג, נושא או מילה מתוך השקפים…" />

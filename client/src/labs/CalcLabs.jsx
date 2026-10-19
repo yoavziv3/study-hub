@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { Tex } from '../components/ui.jsx';
+import { Tex } from '../components/markdown.jsx';
 
 const PRESETS = [
   { f: 'x^2', tex: 'x^2' },

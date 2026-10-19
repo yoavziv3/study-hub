@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { X, Send, Square, Trash2, Sparkles, Copy } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { streamChat } from '../api.js';
-import { Markdown } from './ui.jsx';
+import { Markdown } from './markdown.jsx';
 
 const SUGGEST = {
   lecture: ['סכם לי את ההרצאה ב-5 נקודות', 'הסבר את השקף הזה בפשטות', 'בחן אותי בשאלה ברמת מבחן', 'מה הכי חשוב לזכור למבחן מההרצאה?'],

@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
 import { motion, animate, useMotionValue, useTransform } from 'motion/react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import katex from 'katex';
 import { TrendingUp, Sigma, Network, Calculator, BookOpen, Atom } from 'lucide-react';
 
 export const COURSE_ICONS = { TrendingUp, Sigma, Network, Calculator, Atom };
@@ -12,20 +7,6 @@ export function CourseIcon({ name, size = 22 }) {
   const I = COURSE_ICONS[name] || BookOpen;
   return <I size={size} strokeWidth={2.1} />;
 }
-
-const slug = (s) => String(s).trim().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '');
-const textOf = (children) => (Array.isArray(children) ? children.map(textOf).join('') : typeof children === 'object' && children ? textOf(children.props?.children) : String(children ?? ''));
-
-// remark-math only treats $$…$$ as display math when the delimiters sit on their own lines.
-const blockMath = (src) => src.replace(/^[ \t]*\$\$([^\n]+?)\$\$[ \t]*$/gm, (_, tex) => `$$\n${tex}\n$$`);
-
-// In GFM tables a bare | ends the cell, which breaks absolute values like $|x|$. Rewrite pipes that
-// sit inside math on table rows to their LaTeX names before markdown parsing.
-const MATH_IN_LINE = /(?<!\\)(\$\$?)(.+?)(?<!\\)\1/g;
-const tablePipes = (src) =>
-  src.replace(/^[ \t]*\|.*$/gm, (row) =>
-    row.replace(MATH_IN_LINE, (_, d, tex) =>
-      d + tex.replace(/\\left\|/g, '\\left\\lvert ').replace(/\\right\|/g, '\\right\\rvert ').replace(/\\\|/g, '\\Vert ').replace(/\|/g, '\\vert ') + d));
 
 // Plain-text arithmetic ("3,000 + 64,000 − 7,000 = 60,000", "−2,000", "18/10/2026") inside Hebrew text gets
 // reordered by the bidi algorithm. Wrap each such run in Unicode isolate marks so it always reads left-to-right.
@@ -39,30 +20,6 @@ const EXPR = new RegExp(
   'gu'
 );
 export const ltr = (text) => (typeof text === 'string' ? text.replace(EXPR, (m) => LRI + m + PDI) : text);
-
-// Apply ltr() to markdown text only, leaving math and code spans untouched.
-const PROTECTED = /(\$\$[\s\S]*?\$\$|(?<!\\)\$[^$\n]+?(?<!\\)\$|`[^`\n]*`)/g;
-const ltrMarkdown = (src) => src.split(PROTECTED).map((part, i) => (i % 2 ? part : ltr(part))).join('');
-
-export function Markdown({ children, className = '' }) {
-  return (
-    <div className={`md ${className}`}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: false }]]}
-        components={{ h2: ({ children }) => <h2 id={slug(textOf(children))}>{children}</h2> }}
-      >
-        {ltrMarkdown(blockMath(tablePipes(children || '')))}
-      </ReactMarkdown>
-    </div>
-  );
-}
-Markdown.slug = slug;
-
-export function Tex({ children, block = true }) {
-  const html = katex.renderToString(children || '', { throwOnError: false, displayMode: block, strict: false });
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
-}
 
 export function Tabs({ tabs, value, onChange, layoutId = 'tab' }) {
   return (
