@@ -6,7 +6,7 @@ import { useApp } from '../store.jsx';
 import { thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
-import { nextExam, daysText, fmtDay, masteryMap, readiness, STRONG } from '../lib/exam.js';
+import { nextEvent, daysText, fmtDay, masteryMap, readiness, STRONG } from '../lib/exam.js';
 
 function greeting() {
   const h = new Date().getHours();
@@ -62,9 +62,10 @@ function Heatmap({ activity, dueCards }) {
 /** Upcoming exams with a countdown and readiness – or, in exam season, a nudge to set the dates. */
 function ExamsWidget({ courses, list, progress }) {
   const exams = courses
-    .map((c) => ({ c, next: nextExam(progress.exams?.[c.id]) }))
+    .map((c) => ({ c, next: nextEvent(c, progress) }))
     .filter((x) => x.next)
-    .sort((a, b) => a.next.days - b.next.days);
+    .sort((a, b) => a.next.days - b.next.days)
+    .slice(0, 4);
   if (!exams.length) {
     const month = new Date().getMonth(); // exam periods: Dec–Feb, Jun–Aug
     if (!courses.length || ![11, 0, 1, 5, 6, 7].includes(month)) return null;
@@ -82,7 +83,7 @@ function ExamsWidget({ courses, list, progress }) {
   return (
     <div className="card pad">
       <div className="row" style={{ marginBottom: 10 }}>
-        <h3 style={{ fontSize: 16 }} className="grow">המבחנים הקרובים</h3>
+        <h3 style={{ fontSize: 16 }} className="grow">מבחנים ובחנים קרובים</h3>
       </div>
       <div className="home-exams">
         {exams.map(({ c, next }) => {
@@ -91,8 +92,8 @@ function ExamsWidget({ courses, list, progress }) {
             <Link key={c.id} to={`/course/${c.id}/prep`} className="home-exam" data-color={c.color}>
               <Ring value={ready} size={42} stroke={5} color={ready >= STRONG ? 'var(--good)' : ready >= 0.45 ? 'var(--warn)' : 'var(--bad)'} />
               <div className="grow" style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 650 }}>{c.short} · מועד {next.moed}׳</div>
-                <div className="faint" style={{ fontSize: 12.5 }}>{fmtDay(next.date)} · מוכנות {Math.round(ready * 100)}%</div>
+                <div style={{ fontWeight: 650 }}>{c.short} · {next.label}</div>
+                <div className="faint" style={{ fontSize: 12.5 }}>{fmtDay(next.date)}{next.time ? ` · ${next.time}` : ''} · מוכנות {Math.round(ready * 100)}%</div>
               </div>
               <span className={`chip ${next.days <= 3 ? 'bad' : next.days <= 10 ? 'warn' : 'c'}`}>{daysText(next.days)}</span>
             </Link>
@@ -183,8 +184,8 @@ export default function Home() {
                   <Ring value={ls.length ? studied / ls.length : 0} size={50} />
                 </div>
                 {(() => {
-                  const ex = nextExam(progress.exams?.[c.id]);
-                  return ex && <span className={`chip ${ex.days <= 3 ? 'bad' : 'warn'}`} style={{ width: 'fit-content' }}>🎯 מבחן {daysText(ex.days)}</span>;
+                  const ex = nextEvent(c, progress);
+                  return ex && <span className={`chip ${ex.days <= 3 ? 'bad' : 'warn'}`} style={{ width: 'fit-content' }}>🎯 {ex.label} {daysText(ex.days)}</span>;
                 })()}
                 <div>
                   <h3>{c.short}</h3>

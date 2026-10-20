@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText,
+  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
@@ -19,6 +19,7 @@ const TYPE = {
   announcement: { label: 'הודעה מהקורס', icon: Megaphone },
   deadline: { label: 'הגשה חדשה', icon: CalendarClock },
   reminder: { label: 'תזכורת', icon: AlarmClock },
+  exam: { label: 'מבחנים', icon: GraduationCap },
 };
 const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler, exam: ScrollText };
 
@@ -173,6 +174,7 @@ function UpdateItem({ item, course, isNew, i }) {
         <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
           {long && <button className="btn sm ghost" onClick={() => setExpanded((x) => !x)}>{expanded ? 'פחות' : 'להודעה המלאה'} <ChevronDown size={14} style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} /></button>}
           {item.lectureId && <Link className="btn sm" to={`/lecture/${item.lectureId}`}>פתיחה באתר</Link>}
+          {item.type === 'exam' && <Link className="btn sm" to={`/course/${item.courseId}/prep`}>להכנה למבחן</Link>}
           {safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
         </div>
       </div>

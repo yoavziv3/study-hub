@@ -149,6 +149,7 @@ export function AppProvider({ children }) {
         else p.exams[courseId] = { a: dates.a || '', b: dates.b || '' };
         return p;
       }, { quiet: true }),
+      setExamGroup: (courseId, group) => update((p) => { p.examGroup = { ...p.examGroup, [courseId]: group }; return p; }, { quiet: true }),
       updatePrep: (courseId, fn, opts) => update((p) => {
         p.prep ||= {};
         p.prep[courseId] = fn({ checks: {}, custom: [], sims: [], ...(p.prep[courseId] || {}) });

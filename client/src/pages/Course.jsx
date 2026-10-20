@@ -14,7 +14,7 @@ import CourseLinks from '../components/CourseLinks.jsx';
 import { LABS } from '../labs/index.js';
 import { AssignmentLine } from '../components/Assignment.jsx';
 import ExamPrep from '../components/ExamPrep.jsx';
-import { nextExam, daysText } from '../lib/exam.js';
+import { nextEvent, daysText } from '../lib/exam.js';
 
 function LectureCard({ l, course, i }) {
   const { progress } = useApp();
@@ -281,7 +281,7 @@ export default function Course() {
   const quizTotal = course.lectures.reduce((s, l) => s + l.quizCount, 0);
   // Courses built for other students have no AI material: files, the lecturer's exercises and grades only.
   const ai = course.ai !== false;
-  const exam = nextExam(progress.exams?.[course.id]);
+  const exam = nextEvent(course, progress);
   const tabs = [
     { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
     ...(ai ? [{ id: 'summaries', label: 'סיכומים', icon: <FileText size={16} />, count: course.lectures.filter((l) => kindOf(l) !== 'homework' && l.hasContent).length || null }] : []),
@@ -320,7 +320,7 @@ export default function Course() {
               <div className="course-code">{course.code}</div>
               <h1>{course.name}</h1>
               <div className="meta">
-                {exam && <Link to={`/course/${course.id}/prep`} className="chip warn">🎯 מבחן {daysText(exam.days)}</Link>}
+                {exam && <Link to={`/course/${course.id}/prep`} className="chip warn">🎯 {exam.label} {daysText(exam.days)}</Link>}
                 {course.staff.length > 0 && <span className="chip"><Users size={13} /> {course.staff.join(' · ')}</span>}
                 <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'lecture').length} {course.unitLabel === 'יחידה' ? 'יחידות' : 'הרצאות'}</span>
                 {course.lectures.some((l) => kindOf(l) === 'tutorial') && <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'tutorial').length} תרגולים</span>}

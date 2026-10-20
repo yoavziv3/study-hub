@@ -98,12 +98,35 @@ export const daysUntil = (s, now = new Date()) => {
 export const fmtDay = (s) => parseDay(s)?.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' }) || '';
 export const fmtShortDay = (s) => parseDay(s)?.toLocaleDateString('he-IL', { weekday: 'short', day: 'numeric', month: 'numeric' }) || '';
 
-/** The next exam of a course that hasn't passed yet: { moed: 'א'|'ב', date, days } or null. */
-export function nextExam(exam) {
-  if (!exam) return null;
-  for (const [moed, date] of [['א', exam.a], ['ב', exam.b]]) {
-    const days = daysUntil(date);
-    if (days != null && days >= 0) return { moed, date, days };
+/**
+ * A course's exam sittings for this student, by date: the official ones from the university's course catalog
+ * (מועדים and midterm quizzes, for the student's group), where dates the student entered replace מועד א׳/ב׳.
+ * Returns { events: [{ key, label, quiz, date, time, place[], official }], group, groups, differ, own }.
+ */
+export function examEvents(course, progress) {
+  const all = course?.exams?.groups || {};
+  const groups = Object.keys(all).sort((a, b) => Number(a) - Number(b));
+  const picked = progress.examGroup?.[course?.id];
+  const group = picked && all[picked] ? picked : groups[0] || null;
+  const strip = (list) => JSON.stringify(list.map(({ date, time, place, key }) => [key, date, time, place]));
+  const differ = groups.some((g) => strip(all[g]) !== strip(all[groups[0]]));
+  let events = (all[group] || []).map((e) => ({ ...e, official: true }));
+  const own = progress.exams?.[course?.id];
+  if (own && (own.a || own.b)) {
+    events = events.filter((e) => e.quiz);
+    for (const [key, date] of [['a', own.a], ['b', own.b]]) {
+      if (date) events.push({ key, label: `מועד ${key === 'a' ? 'א' : 'ב'}׳`, quiz: false, date, time: '', place: [], official: false });
+    }
+    events.sort((a, b) => a.date.localeCompare(b.date));
+  }
+  return { events, group, groups, differ, own: !!(own && (own.a || own.b)) };
+}
+
+/** The next sitting (exam or quiz) that hasn't passed yet, with days left – or null. */
+export function nextEvent(course, progress) {
+  for (const e of examEvents(course, progress).events) {
+    const days = daysUntil(e.date);
+    if (days != null && days >= 0) return { ...e, days };
   }
   return null;
 }

@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   CalendarDays, Pencil, Target, Flame, Timer, Bookmark, Layers, Sigma, ScrollText, ListChecks, Lightbulb, NotebookPen,
-  Check, Plus, Trash2, ArrowLeft, ChevronDown, BookOpen, Crosshair, PartyPopper, Info, X,
+  Check, Plus, Trash2, ArrowLeft, ChevronDown, BookOpen, Crosshair, PartyPopper, Info, X, MapPin,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { Ring, fadeUp, ltr } from './ui.jsx';
 import { Markdown } from './markdown.jsx';
 import Quiz from './Quiz.jsx';
 import {
-  STRONG, LEVELS, levelOf, reasonOf, masteryMap, readiness, priorities, nextExam, daysText, fmtDay, fmtShortDay, todayKey,
+  STRONG, LEVELS, levelOf, reasonOf, masteryMap, readiness, priorities, examEvents, nextEvent, fmtDay, fmtShortDay, todayKey,
   buildPlan, courseQuestions, mistakesOf, weakSet, daysUntil, questionKey,
 } from '../lib/exam.js';
 
@@ -19,11 +19,11 @@ const SIM_SECONDS_PER_QUESTION = 90;
 const pct = (x) => `${Math.round(x * 100)}%`;
 const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((x) => x[1]);
 
-/** Exam dates: entered once by the student (Moodle doesn't publish them). */
-function ExamDates({ course, exam, onDone }) {
+/** The student's own exam dates – when the university hasn't published them, or to replace them. */
+function ExamDates({ course, initial, onDone }) {
   const { setExam, toast } = useApp();
-  const [a, setA] = useState(exam?.a || '');
-  const [b, setB] = useState(exam?.b || '');
+  const [a, setA] = useState(initial?.a || '');
+  const [b, setB] = useState(initial?.b || '');
   const save = (e) => {
     e.preventDefault();
     if (a && b && b < a) return toast('מועד ב׳ צריך להיות אחרי מועד א׳', 'info');
@@ -36,14 +36,18 @@ function ExamDates({ course, exam, onDone }) {
       <label className="field">מועד א׳<input className="input" type="date" value={a} onChange={(e) => setA(e.target.value)} /></label>
       <label className="field"><span>מועד ב׳ <span className="faint" style={{ fontWeight: 500 }}>(לא חובה)</span></span><input className="input" type="date" value={b} onChange={(e) => setB(e.target.value)} /></label>
       <button className="btn accent" type="submit">שמירה</button>
-      {onDone && exam && <button className="btn ghost" type="button" onClick={onDone}>ביטול</button>}
+      {onDone && <button className="btn ghost" type="button" onClick={onDone}>ביטול</button>}
     </form>
   );
 }
 
-function Header({ course, exam, next, map, ready, stats, onPractice }) {
+function Header({ course, sched, next, map, ready, stats, onPractice }) {
+  const { setExam, setExamGroup, toast } = useApp();
   const [editing, setEditing] = useState(false);
   const level = ready >= STRONG ? 'good' : ready >= 0.45 ? 'warn' : 'bad';
+  const official = sched.events.filter((e) => e.official);
+  const byKey = (k) => sched.events.find((e) => e.key === k && !e.quiz)?.date || '';
+  const resetOfficial = () => { setExam(course.id, {}); toast('חזרה לתאריכים של לוח הבחינות'); };
   return (
     <motion.div className="card pad prep-hero" variants={fadeUp} initial="hidden" animate="show">
       <div className="prep-hero-main">
@@ -51,36 +55,67 @@ function Header({ course, exam, next, map, ready, stats, onPractice }) {
           <>
             <div className="prep-count">
               <span className="prep-count-num">{next.days === 0 ? '🎯' : next.days}</span>
-              <span className="prep-count-label">{next.days === 0 ? 'המבחן היום' : next.days === 1 ? 'יום למבחן' : 'ימים למבחן'}</span>
+              <span className="prep-count-label">{next.days === 0 ? `${next.quiz ? 'הבוחן' : 'המבחן'} היום` : next.days === 1 ? `יום ל${next.quiz ? 'בוחן' : 'מבחן'}` : `ימים ל${next.quiz ? 'בוחן' : 'מבחן'}`}</span>
             </div>
             <div className="grow" style={{ minWidth: 200 }}>
-              <h2 style={{ fontSize: 22 }}>מועד {next.moed}׳ · {fmtDay(next.date)}</h2>
-              <p className="muted" style={{ margin: '4px 0 0' }}>
+              <h2 style={{ fontSize: 22 }}>{next.label} · {fmtDay(next.date)}{next.time ? ` · ${next.time}` : ''}</h2>
+              {next.place?.length > 0 && (
+                <div className="exam-place"><MapPin size={14} /><div>{next.place.map((p) => <div key={p}>{ltr(p)}</div>)}</div></div>
+              )}
+              <p className="muted" style={{ margin: '6px 0 0' }}>
                 {next.days === 0 ? 'בהצלחה! עברו על הצ׳קליסט והנוסחאות – ובלי חומר חדש היום.' : ready >= STRONG ? 'את/ה במצב טוב. עכשיו – סימולציות וחזרה על הטעויות.' : 'התוכנית למטה מתעדכנת לפי ההתקדמות שלך, כל יום מחדש.'}
               </p>
-              <button className="btn sm ghost" style={{ marginTop: 8 }} onClick={() => setEditing(!editing)}><Pencil size={13} /> עריכת תאריכים</button>
             </div>
           </>
         ) : (
           <div className="grow">
             <div className="row" style={{ gap: 10 }}>
               <div className="course-icon"><CalendarDays size={20} /></div>
-              <h2 style={{ fontSize: 22 }}>{exam ? 'המבחנים בקורס הזה כבר עברו' : 'מתי המבחן?'}</h2>
+              <h2 style={{ fontSize: 22 }}>{sched.events.length ? 'המבחנים בקורס הזה כבר עברו' : 'מתי המבחן?'}</h2>
             </div>
             <p className="muted" style={{ margin: '8px 0 12px' }}>
-              {exam
-                ? 'אפשר לעדכן תאריך חדש (למשל מועד מיוחד), ותיבנה תוכנית חדשה.'
-                : 'המודל לא מפרסם את תאריכי המבחנים – הם בלוח הבחינות של האוניברסיטה. מזינים פעם אחת, ומקבלים ספירה לאחור ותוכנית יומית עד המבחן.'}
+              {sched.events.length
+                ? 'אפשר להזין תאריך חדש (למשל מועד מיוחד), ותיבנה תוכנית חדשה.'
+                : 'התאריכים נמשכים אוטומטית מלוח הבחינות של האוניברסיטה, אבל לקורס הזה עוד לא פורסמו. אפשר להזין אותם בינתיים:'}
             </p>
-            <ExamDates course={course} exam={exam} />
+            <ExamDates course={course} initial={{ a: byKey('a'), b: byKey('b') }} />
           </div>
         )}
         <div className="prep-ready">
           <Ring value={ready} size={96} stroke={9} color={`var(--${level})`} />
-          <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>מוכנות למבחן</div>
+          <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>מוכנות</div>
         </div>
       </div>
-      {editing && next && <div style={{ marginTop: 16 }}><ExamDates course={course} exam={exam} onDone={() => setEditing(false)} /></div>}
+
+      {sched.events.length > 0 && (
+        <div className="exam-sched">
+          <div className="row wrap" style={{ gap: 6 }}>
+            {sched.events.map((e) => {
+              const past = daysUntil(e.date) < 0;
+              return (
+                <span key={e.key} className={`chip ${e.key === next?.key ? 'warn' : past ? 'faded' : ''}`}>
+                  {e.label} · {fmtShortDay(e.date)}{e.time ? ` ${e.time}` : ''}
+                </span>
+              );
+            })}
+          </div>
+          <div className="row wrap faint" style={{ gap: 10, fontSize: 12.5, marginTop: 8 }}>
+            <span>{sched.own ? 'מועד א׳/ב׳ – לפי התאריכים שהזנת' : official.length ? 'מלוח הבחינות של האוניברסיטה · מתעדכן אוטומטית' : ''}</span>
+            {sched.differ && (
+              <label className="row" style={{ gap: 6 }}>
+                הקבוצה שלי:
+                <select className="input sm" value={sched.group || ''} onChange={(e) => setExamGroup(course.id, e.target.value)}>
+                  {sched.groups.map((g) => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </label>
+            )}
+            <button className="linklike" onClick={() => setEditing(!editing)}><Pencil size={12} /> {sched.own ? 'עריכת התאריכים שלי' : 'להזין תאריכים אחרים'}</button>
+            {sched.own && (course.exams?.groups?.[sched.group] || []).some((e) => !e.quiz) && <button className="linklike" onClick={resetOfficial}>חזרה ללוח הבחינות</button>}
+          </div>
+          {editing && <div style={{ marginTop: 12 }}><ExamDates course={course} initial={{ a: byKey('a'), b: byKey('b') }} onDone={() => setEditing(false)} /></div>}
+        </div>
+      )}
+
       <div className="prep-stats">
         <div><b>{stats.studied}/{map.length}</b><span>שיעורים נלמדו</span></div>
         {stats.quizTotal > 0 && <div><b>{stats.answered ? pct(stats.right / stats.answered) : '—'}</b><span>תשובות נכונות ({stats.answered}/{stats.quizTotal})</span></div>}
@@ -184,7 +219,7 @@ function Today({ course, ai, map, today, future, info, onPractice, onDone, exam 
               ))}
               <div className="plan-day">
                 <div className="plan-date">{fmtShortDay(exam.date)}</div>
-                <span className="chip warn">🎯 מבחן – מועד {exam.moed}׳</span>
+                <span className="chip warn">🎯 {exam.label}</span>
               </div>
             </div>
           )}
@@ -429,8 +464,8 @@ function MyNotes({ course, progress }) {
 export default function ExamPrep({ course, bundle }) {
   const { progress, progressLoaded, updatePrep } = useApp();
   const ai = course.ai !== false;
-  const exam = progress.exams?.[course.id];
-  const next = nextExam(exam);
+  const sched = useMemo(() => examEvents(course, progress), [course, progress]);
+  const next = useMemo(() => nextEvent(course, progress), [course, progress]);
   const prep = progress.prep?.[course.id] || { checks: {}, custom: [], sims: [] };
   const [run, setRun] = useState(null);
   const today = todayKey();
@@ -560,7 +595,7 @@ export default function ExamPrep({ course, bundle }) {
 
   return (
     <div className="prep">
-      <Header course={course} exam={exam} next={next} map={map} ready={ready} stats={stats} onPractice={startPractice} />
+      <Header course={course} sched={sched} next={next} map={map} ready={ready} stats={stats} onPractice={startPractice} />
       {!ai && (
         <div className="callout row" style={{ gap: 8, marginTop: 14 }}>
           <Info size={16} /> בקורס הזה אין שאלות תרגול אוטומטיות, אז המוכנות מחושבת לפי השיעורים, התרגולים והתרגילים שסימנת כ"נלמד".

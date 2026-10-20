@@ -179,6 +179,23 @@ export async function syncDeadlines(list) {
   await checkReminders();
 }
 
+/** Exam dates were published (or changed) in the university's course catalog. */
+export async function announceExamDates(courseId, { first, text }) {
+  if (!state) return;
+  const course = getCourse(courseId);
+  push({
+    id: newId(),
+    key: `exams:${courseId}:${text}`,
+    type: 'exam',
+    courseId,
+    title: `${first ? 'פורסמו תאריכי המבחנים' : 'עודכנו תאריכי המבחנים'} ב${course?.short || ''}`,
+    body: text,
+    createdAt: iso(),
+    addedAt: iso(),
+  });
+  await save();
+}
+
 export async function addManualDeadline({ courseId, title, dueAt, note }) {
   if (!title?.trim() || !dueAt || Number.isNaN(new Date(dueAt).getTime())) throw new Error('צריך כותרת ותאריך');
   const d = { id: newId(), source: 'manual', courseId: courseId || null, title: title.trim(), dueAt: new Date(dueAt).toISOString(), intro: note || '', submitted: false, done: false };

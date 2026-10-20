@@ -1,6 +1,7 @@
 // Personal calendar feed (iCalendar): pending Moodle submissions + the student's own deadlines,
 // each with alarms N days before (the student's reminder setting, default 3 and 1 days),
-// and the exam dates the student entered (all-day events, reminders a week and a day before).
+// and the exam sittings – the university's official dates (מועדים and quizzes, for the student's group) or the
+// dates the student entered – with reminders a week and a day before.
 
 const esc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 const stamp = (iso) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -19,6 +20,21 @@ function fold(line) {
   }
   out.push(cur);
   return out.join('\r\n ');
+}
+
+/** A course's sittings for this student: official dates of their group, own dates replacing מועד א׳/ב׳. */
+function examSittings(course, progress) {
+  const all = course.exams?.groups || {};
+  const groups = Object.keys(all).sort((a, b) => Number(a) - Number(b));
+  const picked = progress.examGroup?.[course.id];
+  let list = all[picked && all[picked] ? picked : groups[0]] || [];
+  const own = progress.exams?.[course.id];
+  if (own && (own.a || own.b)) {
+    list = list.filter((e) => e.quiz);
+    if (own.a) list.push({ key: 'a', label: 'מועד א׳', date: own.a });
+    if (own.b) list.push({ key: 'b', label: 'מועד ב׳', date: own.b });
+  }
+  return list;
 }
 
 export function calendarFeed({ user, deadlines, progress, courses }) {
@@ -74,21 +90,25 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
     }
     lines.push('END:VEVENT');
   }
-  for (const [courseId, exam] of Object.entries(progress.exams || {})) {
-    if (!short[courseId]) continue;
-    for (const [moed, date] of [['א', exam?.a], ['ב', exam?.b]]) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) continue;
-      const day = date.replace(/-/g, '');
-      const end = new Date(`${date}T12:00:00Z`);
+  for (const c of courses) {
+    for (const ev of examSittings(c, progress)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(ev.date || '')) continue;
+      const day = ev.date.replace(/-/g, '');
+      const end = new Date(`${ev.date}T12:00:00Z`);
       end.setUTCDate(end.getUTCDate() + 1);
-      const summary = `מבחן: ${short[courseId]} – מועד ${moed}׳`;
+      const summary = `${ev.quiz ? 'בוחן' : 'מבחן'}: ${c.short} – ${ev.label}`;
+      // With a published start time: a 3-hour event in Israel time; otherwise an all-day event.
+      const timed = /^\d{1,2}:\d{2}$/.test(ev.time || '');
+      const [hh, mm] = timed ? ev.time.split(':') : [];
       lines.push(
         'BEGIN:VEVENT',
-        `UID:${esc(`exam-${courseId}-${moed === 'א' ? 'a' : 'b'}@study-hub`)}`,
+        `UID:${esc(`exam-${c.id}-${ev.key}@study-hub`)}`,
         `DTSTAMP:${now}`,
-        `DTSTART;VALUE=DATE:${day}`,
-        `DTEND;VALUE=DATE:${end.toISOString().slice(0, 10).replace(/-/g, '')}`,
+        ...(timed
+          ? [`DTSTART;TZID=Asia/Jerusalem:${day}T${hh.padStart(2, '0')}${mm}00`, `DURATION:PT3H`]
+          : [`DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${end.toISOString().slice(0, 10).replace(/-/g, '')}`]),
         `SUMMARY:${esc(summary)}`,
+        ...(ev.place?.length ? [`LOCATION:${esc(ev.place.join(' · '))}`] : []),
         'TRANSP:TRANSPARENT'
       );
       for (const [d, text] of [[7, 'בעוד שבוע'], [1, 'מחר']]) {

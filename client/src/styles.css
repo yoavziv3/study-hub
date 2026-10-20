@@ -721,6 +721,11 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .prep-stats b { font-family: var(--font-display); font-size: 20px; }
 .prep-stats span { font-size: 13px; color: var(--text-2); }
 .linklike { background: none; border: 0; padding: 0; font: inherit; color: var(--c-strong); text-decoration: underline; cursor: pointer; }
+.exam-place { display: flex; gap: 6px; align-items: baseline; font-size: 13.5px; color: var(--text-2); margin-top: 4px; }
+.exam-place svg { flex: none; position: relative; top: 2px; }
+.exam-sched { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+.chip.faded { opacity: 0.5; text-decoration: line-through; }
+.input.sm { height: 30px; padding: 0 8px; font-size: 13px; width: auto; min-width: 64px; }
 .exam-dates { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
 .exam-dates .field { width: 180px; }
 .prep-grid > * { min-width: 0; }
