@@ -8,7 +8,7 @@ import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
 import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission } from './updates.js';
-import { syncExamDates } from './exams.js';
+import { syncCatalog } from './catalog.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
@@ -728,9 +728,9 @@ export async function sync() {
     await syncNews(result);
     await linkCourses();
     if (cloudEnabled()) await syncRemote(result);
-    // Official exam dates from the university's course catalog (every 12 hours per course).
-    const exams = await syncExamDates();
-    result.errors.push(...exams.errors.map((x) => `תאריכי מבחנים – ${x}`));
+    // Exam dates and class times from the university's course catalog (every 12 hours per course).
+    const catalog = await syncCatalog();
+    result.errors.push(...catalog.errors.map((x) => `קובץ הקורסים – ${x}`));
   } catch (e) {
     if (e.code === 'invalidtoken') {
       state.token = null;
@@ -759,8 +759,8 @@ export function schedule() {
 export function startMoodle() {
   linkCourses().catch((e) => console.error('[moodle] link courses:', e.message));
   if (!state.token) {
-    // Exam dates come from the public course catalog, so they update even without a Moodle connection.
-    setTimeout(() => syncExamDates().catch((e) => console.error('[exams]', e.message)), 30000);
+    // Exam dates and class times come from the public course catalog, so they update even without Moodle.
+    setTimeout(() => syncCatalog().catch((e) => console.error('[catalog]', e.message)), 30000);
     return;
   }
   schedule();

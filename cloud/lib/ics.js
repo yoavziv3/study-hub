@@ -1,7 +1,8 @@
 // Personal calendar feed (iCalendar): pending Moodle submissions + the student's own deadlines,
 // each with alarms N days before (the student's reminder setting, default 3 and 1 days),
 // and the exam sittings – the university's official dates (מועדים and quizzes, for the student's group) or the
-// dates the student entered – with reminders a week and a day before.
+// dates the student entered – with reminders a week and a day before, and the weekly classes of the student's
+// chosen groups (from the course catalog).
 
 const esc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 const stamp = (iso) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -26,7 +27,7 @@ function fold(line) {
 function examSittings(course, progress) {
   const all = course.exams?.groups || {};
   const groups = Object.keys(all).sort((a, b) => Number(a) - Number(b));
-  const picked = progress.examGroup?.[course.id];
+  const picked = progress.examGroup?.[course.id] || progress.classGroups?.[course.id]?.['שעור'];
   let list = all[picked && all[picked] ? picked : groups[0]] || [];
   const own = progress.exams?.[course.id];
   if (own && (own.a || own.b)) {
@@ -66,7 +67,7 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
     'PRODID:-//Study Hub//Deadlines//HE',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:הגשות ומבחנים – מחברת',
+    'X-WR-CALNAME:מחברת – הגשות, מבחנים ושיעורים',
     'X-WR-TIMEZONE:Asia/Jerusalem',
     'REFRESH-INTERVAL;VALUE=DURATION:PT2H',
     'X-PUBLISHED-TTL:PT2H',
@@ -115,6 +116,35 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
         lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', `TRIGGER:-P${d}D`, `DESCRIPTION:${esc(`${text}: ${summary}`)}`, 'END:VALARM');
       }
       lines.push('END:VEVENT');
+    }
+  }
+  // Weekly classes of the student's chosen groups, from this week until the course's first exam.
+  for (const c of courses) {
+    const pick = progress.classGroups?.[c.id] || {};
+    const firstExam = examSittings(c, progress).filter((e) => !e.quiz).map((e) => e.date).sort()[0];
+    const until = firstExam ? `${firstExam.replace(/-/g, '')}T000000Z` : null;
+    for (const g of c.classes || []) {
+      if (pick[g.type] !== g.group) continue;
+      for (const sl of g.slots || []) {
+        const first = new Date();
+        first.setUTCDate(first.getUTCDate() - 7 + ((sl.day - first.getUTCDay() + 7) % 7));
+        const day = first.toISOString().slice(0, 10).replace(/-/g, '');
+        const t = (x) => x.replace(':', '') + '00';
+        const label = g.type === 'שעור' ? 'שיעור' : g.type;
+        lines.push(
+          'BEGIN:VEVENT',
+          `UID:${esc(`class-${c.id}-${g.group}-${sl.day}-${sl.start}@study-hub`)}`,
+          `DTSTAMP:${now}`,
+          `DTSTART;TZID=Asia/Jerusalem:${day}T${t(sl.start)}`,
+          `DTEND;TZID=Asia/Jerusalem:${day}T${t(sl.end)}`,
+          `RRULE:FREQ=WEEKLY${until ? `;UNTIL=${until}` : ';COUNT=16'}`,
+          `SUMMARY:${esc(`${c.short} · ${label}`)}`,
+          ...(sl.place || sl.mode ? [`LOCATION:${esc(sl.place || sl.mode)}`] : []),
+          `DESCRIPTION:${esc(`${label} ${g.group}${g.lecturer ? ` · ${g.lecturer}` : ''}`)}`,
+          'TRANSP:OPAQUE',
+          'END:VEVENT'
+        );
+      }
     }
   }
   lines.push('END:VCALENDAR');

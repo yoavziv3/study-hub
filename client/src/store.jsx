@@ -163,6 +163,15 @@ export function AppProvider({ children }) {
         else p.exams[courseId] = { a: dates.a || '', b: dates.b || '' };
         return p;
       }, { quiet: true }),
+      // The student's class groups per course (lecture, tutorial…), for the timetable.
+      setClassGroup: (courseId, type, group) => update((p) => {
+        p.classGroups ||= {};
+        const mine = { ...p.classGroups[courseId] };
+        if (group) mine[type] = group;
+        else delete mine[type];
+        p.classGroups[courseId] = mine;
+        return p;
+      }, { quiet: true }),
       setExamGroup: (courseId, group) => update((p) => { p.examGroup = { ...p.examGroup, [courseId]: group }; return p; }, { quiet: true }),
       updatePrep: (courseId, fn, opts) => update((p) => {
         p.prep ||= {};

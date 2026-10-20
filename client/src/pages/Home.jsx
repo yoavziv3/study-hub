@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap, CalendarRange, MapPin } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 import { nextEvent, daysText, fmtDay, masteryMap, readiness, STRONG } from '../lib/exam.js';
+import { mySlots, upcoming, whenLabel, typeLabel, missingGroups } from '../lib/schedule.js';
 
 function greeting() {
   const h = new Date().getHours();
@@ -54,6 +55,45 @@ function Heatmap({ activity, dueCards }) {
       <div className="heat-foot">
         <span className="muted">למדת ב־{week} מתוך 7 הימים האחרונים</span>
         <Link to="/review" className="btn sm accent"><Layers size={15} /> {dueCards ? `חזרה להיום · ${dueCards} כרטיסיות` : 'חזרה על כרטיסיות'}</Link>
+      </div>
+    </div>
+  );
+}
+
+/** The next classes this week (from the timetable), or a nudge to pick class groups. */
+function ClassesWidget({ courses, progress }) {
+  const slots = mySlots(courses, progress);
+  if (!slots.length) {
+    if (!courses.some((c) => c.classes?.length && missingGroups(c, progress).length)) return null;
+    return (
+      <Link to="/schedule" className="card hover pad row" style={{ gap: 12 }}>
+        <div className="course-icon"><CalendarRange size={20} /></div>
+        <div className="grow">
+          <div style={{ fontWeight: 700 }}>מערכת שעות אוטומטית</div>
+          <div className="faint" style={{ fontSize: 13 }}>בוחרים קבוצה בכל קורס, ומקבלים ימים, שעות וחדרים – מעודכנים מקובץ הקורסים.</div>
+        </div>
+        <ArrowLeft size={16} className="faint" />
+      </Link>
+    );
+  }
+  const next = upcoming(slots, new Date(), 3);
+  return (
+    <div className="card pad">
+      <div className="row" style={{ marginBottom: 10 }}>
+        <h3 style={{ fontSize: 16 }} className="grow">השיעורים הבאים</h3>
+        <Link to="/schedule" className="faint" style={{ fontSize: 13 }}>למערכת השעות</Link>
+      </div>
+      <div className="stack" style={{ gap: 8 }}>
+        {next.map((s) => (
+          <Link key={s.key} to={`/course/${s.course.id}`} className="row" data-color={s.course.color} style={{ padding: '8px 10px', borderRadius: 12, background: 'var(--surface-2)', gap: 10 }}>
+            <MapPin size={16} color="var(--c)" />
+            <div className="grow" style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 600 }}>{s.course.short} · {typeLabel(s.type)}</div>
+              <div className="faint" style={{ fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.start}–{s.end}{s.place ? ` · ${s.place}` : s.mode ? ` · ${s.mode}` : ''}</div>
+            </div>
+            <span className={`chip ${s.live ? 'good' : s.days === 0 ? 'warn' : ''}`}>{whenLabel(s)}</span>
+          </Link>
+        ))}
       </div>
     </div>
   );
@@ -226,6 +266,7 @@ export default function Home() {
               <PlayCircle size={28} color="var(--c)" />
             </Link>
           )}
+          <ClassesWidget courses={courses} progress={progress} />
           <ExamsWidget courses={courses} list={list} progress={progress} />
           <UpcomingWidget />
           <Heatmap activity={progress.activity} dueCards={dueCards} />

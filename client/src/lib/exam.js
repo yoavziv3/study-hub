@@ -106,7 +106,8 @@ export const fmtShortDay = (s) => parseDay(s)?.toLocaleDateString('he-IL', { wee
 export function examEvents(course, progress) {
   const all = course?.exams?.groups || {};
   const groups = Object.keys(all).sort((a, b) => Number(a) - Number(b));
-  const picked = progress.examGroup?.[course?.id];
+  // Exam groups follow the lecture group, unless the student picked an exam group explicitly.
+  const picked = progress.examGroup?.[course?.id] || progress.classGroups?.[course?.id]?.['שעור'];
   const group = picked && all[picked] ? picked : groups[0] || null;
   const strip = (list) => JSON.stringify(list.map(({ date, time, place, key }) => [key, date, time, place]));
   const differ = groups.some((g) => strip(all[g]) !== strip(all[groups[0]]));

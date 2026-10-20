@@ -1,7 +1,7 @@
-// Official exam dates from BGU's public course catalog (bgu4u "קובץ הקורסים"): for every course with a code
-// and a term, the course page lists each group's מועד א׳/ב׳ and midterm quizzes (בוחן) with date, start time
-// (once published) and place.
-// Stored on the course as `exams` and published with courses.json, so every student sees them.
+// BGU's public course catalog (bgu4u "קובץ הקורסים"): for every course with a code and a term, the course page
+// lists the class groups (lecture / tutorial / lab, lecturer, weekly times and rooms) and each group's exam
+// sittings (מועד א׳/ב׳ and midterm quizzes, with date, start time once published, and place).
+// Stored on the course as `classes` and `exams` and published with courses.json, so every student sees them.
 import { listCourses, patchCourse } from './store.js';
 import { announceExamDates } from './updates.js';
 
@@ -54,8 +54,41 @@ export function parseExams(html) {
   return groups;
 }
 
-/** Fetches one course page: code "142-1-3141", term { year, semester }. */
-export async function fetchExams(code, term) {
+const DAYS = { א: 0, ב: 1, ג: 2, ד: 3, ה: 4, ו: 5, ש: 6 };
+
+/**
+ * The class-groups table → [{ group, type, lecturer, slots: [{ day (0 = Sunday), start, end, place, mode }] }].
+ * A group that meets more than once a week continues on rows without a group number.
+ */
+export function parseClasses(html) {
+  const start = html.indexOf('פרטי קבוצות לימוד');
+  if (start < 0) return [];
+  const end = html.indexOf('פרטי בחינה', start);
+  const table = html.slice(start, end > 0 ? end : undefined);
+  const groups = [];
+  for (const row of table.split(/<tr[^>]*>/i).slice(1)) {
+    const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((m) => m[1]);
+    const details = cells.find((c) => c.includes('זמני לימוד'));
+    let g = groups[groups.length - 1];
+    if (/^\s*\d+\s*$/.test(clean(cells[0] || ''))) {
+      g = { group: clean(cells[0]), type: clean(cells[1] || ''), lecturer: clean(cells[2] || ''), slots: [] };
+      groups.push(g);
+    }
+    if (!g || !details) continue;
+    for (const part of details.split(/<span[^>]*>\s*זמני לימוד:\s*<\/span>/i).slice(1)) {
+      const text = clean(part.replace(/<br\s*\/?>/gi, ' | '));
+      const t = text.match(/יום\s*([א-ש])['׳]?\s*\|?\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+      if (!t || DAYS[t[1]] == null) continue;
+      const place = (text.match(/מקום לימוד:\s*([^|]*)/)?.[1] || '').replace(/\s+\[/, ' [').trim();
+      const mode = (text.match(/אופן לימוד:\s*([^|]*)/)?.[1] || '').replace(/\s*החל משבוע 1 כל שבוע\s*$/, '').trim();
+      g.slots.push({ day: DAYS[t[1]], start: t[2].padStart(5, '0'), end: t[3].padStart(5, '0'), place, mode });
+    }
+  }
+  return groups.filter((g) => g.slots.length);
+}
+
+/** Fetches one course page (code "142-1-3141", term { year, semester }) → { exams, classes } or null. */
+export async function fetchCatalog(code, term) {
   const m = String(code).match(/^(\d{3})-(\d)-(\d{4})$/);
   if (!m || !term?.year || !term?.semester) return null;
   const body = new URLSearchParams({
@@ -67,32 +100,36 @@ export async function fetchExams(code, term) {
   // The catalog is served in ISO-8859-8 (Hebrew).
   const html = new TextDecoder('iso-8859-8').decode(await res.arrayBuffer());
   if (!html.includes('פרטי קורס')) return null; // course not in the catalog for this term
-  return parseExams(html);
+  return { exams: parseExams(html), classes: parseClasses(html) };
 }
 
 const fmt = (iso) => iso.split('-').reverse().join('/');
 const summary = (groups) => (Object.values(groups)[0] || []).map((x) => `${x.label}: ${fmt(x.date)}${x.time ? ` ${x.time}` : ''}`).join(' · ');
 
 /**
- * Refreshes the exam dates of current courses (at most every 12 hours per course, or now with force).
- * A course whose dates appear or change gets an item in the updates feed.
+ * Refreshes exam dates and class times of current courses (at most every 12 hours per course, or now with
+ * force). A course whose exam dates appear or change gets an item in the updates feed.
  */
-export async function syncExamDates({ force = false } = {}) {
+export async function syncCatalog({ force = false } = {}) {
   if (running) return { checked: 0, changed: 0, errors: [] };
   running = true;
   const result = { checked: 0, changed: 0, errors: [] };
   try {
     for (const c of listCourses()) {
       if (!c.code || !c.term) continue;
-      if (!force && c.exams?.checkedAt && Date.now() - Date.parse(c.exams.checkedAt) < REFRESH_MS) continue;
+      const fresh = c.exams?.checkedAt && Date.now() - Date.parse(c.exams.checkedAt) < REFRESH_MS;
+      if (!force && fresh && c.classes) continue;
       try {
-        const groups = await fetchExams(c.code, c.term);
+        const page = await fetchCatalog(c.code, c.term);
         result.checked++;
-        if (!groups) continue;
+        if (!page) continue;
+        const groups = page.exams;
         const before = JSON.stringify(c.exams?.groups || {});
         const now = new Date().toISOString();
         const changed = before !== JSON.stringify(groups);
-        await patchCourse(c.id, { exams: { groups, checkedAt: now, updatedAt: changed ? now : c.exams?.updatedAt || now } });
+        const patch = { exams: { groups, checkedAt: now, updatedAt: changed ? now : c.exams?.updatedAt || now } };
+        if (page.classes.length) patch.classes = page.classes;
+        await patchCourse(c.id, patch);
         if (changed && Object.keys(groups).length) {
           result.changed++;
           await announceExamDates(c.id, { first: before === '{}', text: summary(groups) });
