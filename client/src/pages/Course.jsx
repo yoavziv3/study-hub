@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText } from 'lucide-react';
+import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText, GraduationCap, Printer } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, thumbUrl, useFetch, shuffle } from '../api.js';
 import { CourseIcon, Page, Ring, Tabs, fadeUp, ltr, safeHref } from '../components/ui.jsx';
@@ -13,6 +13,8 @@ import CourseSummaries from '../components/CourseSummaries.jsx';
 import CourseLinks from '../components/CourseLinks.jsx';
 import { LABS } from '../labs/index.js';
 import { AssignmentLine } from '../components/Assignment.jsx';
+import ExamPrep from '../components/ExamPrep.jsx';
+import { nextExam, daysText } from '../lib/exam.js';
 
 function LectureCard({ l, course, i }) {
   const { progress } = useApp();
@@ -48,24 +50,40 @@ function LectureCard({ l, course, i }) {
   );
 }
 
-function ExamMode({ bundle }) {
+function ExamMode({ bundle, courseId }) {
+  const { updatePrep } = useApp();
   const [count, setCount] = useState(12);
   const [source, setSource] = useState('all');
+  const [mode, setMode] = useState('practice');
   const [run, setRun] = useState(null);
   const ready = bundle.lectures.filter((l) => l.content?.quiz?.length);
   const start = () => {
     const pool = ready
       .filter((l) => source === 'all' || l.id === source)
       .flatMap((l) => [...(l.content.quiz || []), ...(l.content.extraQuiz || [])].map((q) => ({ ...q, lectureId: l.id, lectureTitle: l.title })));
-    setRun({ key: Math.random(), questions: shuffle(pool).slice(0, count) });
+    const questions = shuffle(pool).slice(0, count);
+    setRun({ key: Math.random(), questions, sim: mode === 'sim', timeLimit: mode === 'sim' ? questions.length * 90 : 0 });
+  };
+  const finishSim = (r) => {
+    if (r.total) updatePrep(courseId, (p) => ({ ...p, sims: [...(p.sims || []), { at: Date.now(), correct: r.correct, total: r.total }].slice(-12) }));
   };
   if (!ready.length) return <Empty course={bundle} text="מבחן התרגול ייבנה מהשאלות של ההרצאות שיועלו." />;
-  if (run) return <Quiz key={run.key} questions={run.questions} lectureId={null} exam onExit={() => setRun(null)} />;
+  if (run) return <Quiz key={run.key} questions={run.questions} lectureId={null} exam sim={run.sim} timeLimit={run.timeLimit} onFinish={run.sim ? finishSim : undefined} onExit={() => setRun(null)} />;
   return (
     <div className="card pad" style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
       <div className="empty-icon" style={{ marginBottom: 14 }}><Target size={30} /></div>
       <h2 style={{ fontSize: 24 }}>מבחן תרגול – {bundle.short}</h2>
-      <p className="muted">שאלות מעורבבות מכל ההרצאות, עם משוב והסבר אחרי כל תשובה וציון בסוף.</p>
+      <p className="muted">{mode === 'sim' ? 'כמו במבחן: שעון רץ (דקה וחצי לשאלה) ובלי משוב בזמן הפתרון – התשובות וההסברים בסוף.' : 'שאלות מעורבבות מכל ההרצאות, עם משוב והסבר אחרי כל תשובה וציון בסוף.'}</p>
+      <div className="row" style={{ justifyContent: 'center', marginTop: 14 }}>
+        <div className="tabs">
+          {[['practice', 'תרגול עם משוב'], ['sim', 'סימולציה בזמן']].map(([id, label]) => (
+            <button key={id} className={`tab ${mode === id ? 'active' : ''}`} onClick={() => setMode(id)} aria-pressed={mode === id}>
+              {mode === id && <motion.span layoutId="exam-mode" className="tab-bg" />}
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="row" style={{ justifyContent: 'center', marginTop: 18, gap: 12, flexWrap: 'wrap' }}>
         <label className="field" style={{ width: 220 }}>
           חומר
@@ -263,9 +281,11 @@ export default function Course() {
   const quizTotal = course.lectures.reduce((s, l) => s + l.quizCount, 0);
   // Courses built for other students have no AI material: files, the lecturer's exercises and grades only.
   const ai = course.ai !== false;
+  const exam = nextExam(progress.exams?.[course.id]);
   const tabs = [
     { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
     ...(ai ? [{ id: 'summaries', label: 'סיכומים', icon: <FileText size={16} />, count: course.lectures.filter((l) => kindOf(l) !== 'homework' && l.hasContent).length || null }] : []),
+    { id: 'prep', label: 'הכנה למבחן', icon: <GraduationCap size={16} /> },
     { id: 'tutorials', label: 'תרגולים', icon: <Presentation size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'tutorial').length || null },
     { id: 'homework', label: ai ? 'שיעורי בית ותרגילים' : 'תרגול מהמרצה', icon: <PencilRuler size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'homework').length || null },
     ...(ai
@@ -300,6 +320,7 @@ export default function Course() {
               <div className="course-code">{course.code}</div>
               <h1>{course.name}</h1>
               <div className="meta">
+                {exam && <Link to={`/course/${course.id}/prep`} className="chip warn">🎯 מבחן {daysText(exam.days)}</Link>}
                 {course.staff.length > 0 && <span className="chip"><Users size={13} /> {course.staff.join(' · ')}</span>}
                 <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'lecture').length} {course.unitLabel === 'יחידה' ? 'יחידות' : 'הרצאות'}</span>
                 {course.lectures.some((l) => kindOf(l) === 'tutorial') && <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'tutorial').length} תרגולים</span>}
@@ -348,12 +369,19 @@ export default function Course() {
           {tab === 'grades' && <Grades course={course} />}
           {tab === 'links' && <CourseLinks links={links} />}
           {tab === 'summaries' && bundle && <CourseSummaries course={course} bundle={bundle} />}
-          {tab === 'exam' && bundle && <ExamMode bundle={bundle} />}
+          {tab === 'prep' && bundle && <ExamPrep course={course} bundle={bundle} />}
+          {tab === 'exam' && bundle && <ExamMode bundle={bundle} courseId={course.id} />}
           {tab === 'flashcards' && bundle && (allCards.length ? <Flashcards cards={allCards} /> : <Empty course={course} />)}
           {tab === 'glossary' && bundle && (allTerms.length ? <Glossary terms={allTerms} showSource /> : <Empty course={course} />)}
           {tab === 'formulas' && bundle && (
             allFormulas.length ? (
-              <div className="glossary">
+              <>
+              <div className="row no-print" style={{ marginBottom: 14, gap: 10 }}>
+                <span className="muted grow" style={{ fontSize: 14 }}>{allFormulas.length} נוסחאות מכל השיעורים – דף נוסחאות מוכן לחזרה לפני המבחן.</span>
+                <button className="btn sm" onClick={() => window.print()}><Printer size={14} /> הדפסה / PDF</button>
+              </div>
+              <h1 className="print-only" style={{ fontSize: 20, marginBottom: 12 }}>דף נוסחאות – {course.name}</h1>
+              <div className="glossary formula-sheet">
                 {allFormulas.map((f, i) => (
                   <motion.div key={i} className="card formula" variants={fadeUp} initial="hidden" animate="show" custom={i % 12}>
                     <h4 style={{ fontSize: 16 }}>{f.name}</h4>
@@ -363,6 +391,7 @@ export default function Course() {
                   </motion.div>
                 ))}
               </div>
+              </>
             ) : <Empty course={course} text="נוסחאות יופיעו כאן אחרי שיועלו הרצאות עם חישובים." />
           )}
           {tab === 'labs' && !Lab && (

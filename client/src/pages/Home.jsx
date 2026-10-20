@@ -1,11 +1,12 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame } from 'lucide-react';
+import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
+import { nextExam, daysText, fmtDay, masteryMap, readiness, STRONG } from '../lib/exam.js';
 
 function greeting() {
   const h = new Date().getHours();
@@ -53,6 +54,50 @@ function Heatmap({ activity, dueCards }) {
       <div className="heat-foot">
         <span className="muted">למדת ב־{week} מתוך 7 הימים האחרונים</span>
         <Link to="/review" className="btn sm accent"><Layers size={15} /> {dueCards ? `חזרה להיום · ${dueCards} כרטיסיות` : 'חזרה על כרטיסיות'}</Link>
+      </div>
+    </div>
+  );
+}
+
+/** Upcoming exams with a countdown and readiness – or, in exam season, a nudge to set the dates. */
+function ExamsWidget({ courses, list, progress }) {
+  const exams = courses
+    .map((c) => ({ c, next: nextExam(progress.exams?.[c.id]) }))
+    .filter((x) => x.next)
+    .sort((a, b) => a.next.days - b.next.days);
+  if (!exams.length) {
+    const month = new Date().getMonth(); // exam periods: Dec–Feb, Jun–Aug
+    if (!courses.length || ![11, 0, 1, 5, 6, 7].includes(month)) return null;
+    return (
+      <Link to={`/course/${courses[0].id}/prep`} className="card hover pad row" style={{ gap: 12 }}>
+        <div className="course-icon"><GraduationCap size={20} /></div>
+        <div className="grow">
+          <div style={{ fontWeight: 700 }}>תקופת מבחנים מתקרבת?</div>
+          <div className="faint" style={{ fontSize: 13 }}>מזינים תאריך מבחן בלשונית "הכנה למבחן" של כל קורס, ומקבלים תוכנית יומית עד המבחן.</div>
+        </div>
+        <ArrowLeft size={16} className="faint" />
+      </Link>
+    );
+  }
+  return (
+    <div className="card pad">
+      <div className="row" style={{ marginBottom: 10 }}>
+        <h3 style={{ fontSize: 16 }} className="grow">המבחנים הקרובים</h3>
+      </div>
+      <div className="home-exams">
+        {exams.map(({ c, next }) => {
+          const ready = readiness(masteryMap({ lectures: list.filter((l) => l.courseId === c.id) }, progress));
+          return (
+            <Link key={c.id} to={`/course/${c.id}/prep`} className="home-exam" data-color={c.color}>
+              <Ring value={ready} size={42} stroke={5} color={ready >= STRONG ? 'var(--good)' : ready >= 0.45 ? 'var(--warn)' : 'var(--bad)'} />
+              <div className="grow" style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 650 }}>{c.short} · מועד {next.moed}׳</div>
+                <div className="faint" style={{ fontSize: 12.5 }}>{fmtDay(next.date)} · מוכנות {Math.round(ready * 100)}%</div>
+              </div>
+              <span className={`chip ${next.days <= 3 ? 'bad' : next.days <= 10 ? 'warn' : 'c'}`}>{daysText(next.days)}</span>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
@@ -137,6 +182,10 @@ export default function Home() {
                   <div className="spacer" />
                   <Ring value={ls.length ? studied / ls.length : 0} size={50} />
                 </div>
+                {(() => {
+                  const ex = nextExam(progress.exams?.[c.id]);
+                  return ex && <span className={`chip ${ex.days <= 3 ? 'bad' : 'warn'}`} style={{ width: 'fit-content' }}>🎯 מבחן {daysText(ex.days)}</span>;
+                })()}
                 <div>
                   <h3>{c.short}</h3>
                   <div className="course-code">{c.code}</div>
@@ -176,6 +225,7 @@ export default function Home() {
               <PlayCircle size={28} color="var(--c)" />
             </Link>
           )}
+          <ExamsWidget courses={courses} list={list} progress={progress} />
           <UpcomingWidget />
           <Heatmap activity={progress.activity} dueCards={dueCards} />
         </div>

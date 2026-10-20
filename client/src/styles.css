@@ -709,6 +709,90 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .feedback-btn { display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 8px; padding: 9px 12px; border-radius: 12px; border: 1px dashed var(--border-strong); background: none; color: var(--text-2); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s; }
 .feedback-btn:hover { background: var(--surface-2); color: var(--text); }
 
+/* ============ Exam preparation ============ */
+.prep-hero { padding: 24px; }
+.prep-hero-main { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.prep-count { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 108px; height: 108px; border-radius: 26px; background: var(--c-soft); color: var(--c-strong); flex: none; text-align: center; }
+.prep-count-num { font-family: var(--font-display); font-size: 44px; font-weight: 800; line-height: 1; }
+.prep-count-label { font-size: 13px; font-weight: 700; }
+.prep-ready { display: grid; justify-items: center; flex: none; margin-inline-start: auto; }
+.prep-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+.prep-stats > div { display: flex; flex-direction: column; gap: 2px; }
+.prep-stats b { font-family: var(--font-display); font-size: 20px; }
+.prep-stats span { font-size: 13px; color: var(--text-2); }
+.linklike { background: none; border: 0; padding: 0; font: inherit; color: var(--c-strong); text-decoration: underline; cursor: pointer; }
+.exam-dates { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+.exam-dates .field { width: 180px; }
+.prep-grid > * { min-width: 0; }
+.prep-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; margin-top: 18px; align-items: start; }
+
+.plan-task { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); flex-wrap: wrap; }
+.plan-check { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; flex: none; background: var(--c-soft); color: var(--c-strong); }
+.plan-task.done .plan-check { background: var(--good); color: #fff; }
+.plan-task.done .plan-title { text-decoration: line-through; color: var(--text-2); }
+.plan-title { font-weight: 650; }
+.plan-days { display: grid; gap: 6px; margin-top: 10px; }
+.plan-day { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); }
+.plan-date { font-size: 13px; font-weight: 700; color: var(--text-2); }
+
+.priority-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); transition: background 0.2s; }
+.priority-row:hover { background: var(--surface-3); }
+.priority-num { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none; background: var(--c); color: #fff; font-weight: 800; font-size: 13px; }
+
+.mastery-row { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 10px; font-size: 14px; }
+.mastery-row:hover { background: var(--surface-2); }
+.mastery-kind { width: 62px; flex: none; font-size: 12.5px; }
+.mastery-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mastery-bar { width: 120px; height: 8px; border-radius: 99px; background: var(--surface-3); overflow: hidden; flex: none; }
+.mastery-bar span { display: block; height: 100%; border-radius: 99px; }
+.mastery-pct { width: 40px; text-align: end; font-weight: 700; font-size: 13px; flex: none; }
+
+.practice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.practice-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 16px; text-align: start; font: inherit; color: inherit; cursor: pointer; }
+.card.hover.practice-tile:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+.keypoint.tip p { margin: 0 0 2px; }
+
+.review-item { border-radius: 12px; background: var(--surface-2); overflow: hidden; }
+.review-q { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 12px 14px; background: none; border: 0; font: inherit; color: inherit; text-align: start; cursor: pointer; }
+.review-q b { flex: none; width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-size: 12.5px; }
+.review-a { padding: 0 14px 14px 14px; padding-inline-start: 50px; }
+.flag-btn { margin-inline-start: auto; }
+.flag-btn.on { color: var(--warn-text); background: var(--warn-bg); }
+
+.check-row { display: flex; align-items: center; gap: 10px; padding: 7px 6px; border-radius: 10px; font-size: 14.5px; }
+.check-row:not(.auto) .grow { cursor: pointer; }
+.check-box { width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--border-strong); display: grid; place-items: center; flex: none; background: var(--surface); color: #fff; padding: 0; cursor: pointer; }
+.check-row.auto .check-box { border-style: dashed; cursor: default; }
+.check-row.done .check-box { background: var(--good); border-color: var(--good); border-style: solid; }
+.check-row.done .grow { color: var(--text-2); text-decoration: line-through; }
+
+.note-snippet { display: block; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.note-text { white-space: pre-line; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+.home-exams { display: grid; gap: 8px; }
+.home-exam { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }
+
+.print-only { display: none; }
+@media print {
+  .print-only { display: block; }
+  .formula-sheet { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .formula-sheet .formula { box-shadow: none; border: 1px solid #ccc; padding: 10px 12px; break-inside: avoid; }
+  .formula-sheet .formula a { display: none; }
+}
+@media (max-width: 1100px) {
+  .prep-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .prep-hero { padding: 18px; }
+  .prep-count { width: 84px; height: 84px; border-radius: 20px; }
+  .prep-count-num { font-size: 34px; }
+  .prep-ready { margin-inline-start: 0; }
+  .exam-dates .field { width: 100%; }
+  .mastery-bar { width: 64px; }
+  .mastery-kind { display: none; }
+  .plan-day { grid-template-columns: 1fr; gap: 4px; }
+}
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .hero, .two-col { grid-template-columns: 1fr; }

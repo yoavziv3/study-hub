@@ -28,6 +28,7 @@ export function AppProvider({ children }) {
   // Cloud: null = checking, false = signed out, object = the student. Locally there is always a "user".
   const [me, setMe] = useState(STATIC ? null : { local: true });
   const [progress, setProgress] = useState(EMPTY);
+  const [progressLoaded, setProgressLoaded] = useState(false); // automatic writes wait for the saved progress
   const [allCourses, setCourses] = useState([]);
   const [status, setStatus] = useState(null);
   const [toasts, setToasts] = useState([]);
@@ -92,17 +93,21 @@ export function AppProvider({ children }) {
           api.put('/api/progress', next).catch(() => {});
         }
         setProgress(next);
+        setProgressLoaded(true);
       })
       .catch(() => {});
     api.get('/api/status').then(setStatus).catch(() => {});
     refreshCourses();
   }, [signedIn, refreshCourses]);
 
-  const update = useCallback((fn) => {
+  // quiet: bookkeeping that isn't studying (e.g. fixing today's plan) doesn't count as activity for the streak.
+  const update = useCallback((fn, { quiet = false } = {}) => {
     setProgress((prev) => {
       const next = fn(structuredClone(prev));
-      const day = new Date().toISOString().slice(0, 10);
-      next.activity = { ...next.activity, [day]: (next.activity?.[day] || 0) + 1 };
+      if (!quiet) {
+        const day = new Date().toISOString().slice(0, 10);
+        next.activity = { ...next.activity, [day]: (next.activity?.[day] || 0) + 1 };
+      }
       clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => api.put('/api/progress', next).catch(() => {}), 600);
       return next;
@@ -136,6 +141,25 @@ export function AppProvider({ children }) {
           return p;
         }),
       setNote: (id, text) => update((p) => { p.notes[id] = text; return p; }),
+      // Exam preparation: exam dates per course ({ a, b } as YYYY-MM-DD), flagged questions, simulations,
+      // the pre-exam checklist and today's plan.
+      setExam: (courseId, dates) => update((p) => {
+        p.exams ||= {};
+        if (!dates.a && !dates.b) delete p.exams[courseId];
+        else p.exams[courseId] = { a: dates.a || '', b: dates.b || '' };
+        return p;
+      }, { quiet: true }),
+      updatePrep: (courseId, fn, opts) => update((p) => {
+        p.prep ||= {};
+        p.prep[courseId] = fn({ checks: {}, custom: [], sims: [], ...(p.prep[courseId] || {}) });
+        return p;
+      }, opts),
+      toggleFlag: (key) => update((p) => {
+        p.flagged ||= {};
+        if (p.flagged[key]) delete p.flagged[key];
+        else p.flagged[key] = Date.now();
+        return p;
+      }, { quiet: true }),
       visit: (lectureId, slide) => update((p) => { p.last = { lectureId, slide, at: Date.now() }; if (slide) p.slidePos[lectureId] = slide; return p; }),
       markUpdatesSeen: () => update((p) => { p.updatesSeenAt = new Date().toISOString(); return p; }),
       markOnboarded: () =>
@@ -233,6 +257,7 @@ export function AppProvider({ children }) {
     forgetCachedData();
     setMe(false);
     setProgress(EMPTY);
+    setProgressLoaded(false);
     setCourses([]);
     setPersonal([]);
     setFeed({ items: [], deadlines: [], since: null, settings: {} });
@@ -268,7 +293,7 @@ export function AppProvider({ children }) {
   const value = {
     me, refreshMe, signOut, deleteAccount,
     updates, refreshUpdates, unread, seenAt, deadlineActions,
-    progress, courses, otherCourses, allCourses: mine, pastCourses, terms, term, refreshCourses, status, toast, ...actions,
+    progress, progressLoaded, courses, otherCourses, allCourses: mine, pastCourses, terms, term, refreshCourses, status, toast, ...actions,
     chat, openChat, closeChat,
     uploadOpen, openUpload: (courseId = 'auto') => (STATIC ? toast('העלאת הרצאות זמינה באתר שרץ במחשב שלך', 'info') : setUploadOpen({ courseId })), closeUpload: () => setUploadOpen(null),
     searchOpen, setSearchOpen,

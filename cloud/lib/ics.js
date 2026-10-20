@@ -1,5 +1,6 @@
 // Personal calendar feed (iCalendar): pending Moodle submissions + the student's own deadlines,
-// each with alarms N days before (the student's reminder setting, default 3 and 1 days).
+// each with alarms N days before (the student's reminder setting, default 3 and 1 days),
+// and the exam dates the student entered (all-day events, reminders a week and a day before).
 
 const esc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 const stamp = (iso) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -49,7 +50,7 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
     'PRODID:-//Study Hub//Deadlines//HE',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:הגשות – מחברת',
+    'X-WR-CALNAME:הגשות ומבחנים – מחברת',
     'X-WR-TIMEZONE:Asia/Jerusalem',
     'REFRESH-INTERVAL;VALUE=DURATION:PT2H',
     'X-PUBLISHED-TTL:PT2H',
@@ -72,6 +73,29 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
       lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', `TRIGGER:-P${d}D`, `DESCRIPTION:${esc(`בעוד ${d === 1 ? 'יום' : d === 2 ? 'יומיים' : `${d} ימים`}: ${summary}`)}`, 'END:VALARM');
     }
     lines.push('END:VEVENT');
+  }
+  for (const [courseId, exam] of Object.entries(progress.exams || {})) {
+    if (!short[courseId]) continue;
+    for (const [moed, date] of [['א', exam?.a], ['ב', exam?.b]]) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) continue;
+      const day = date.replace(/-/g, '');
+      const end = new Date(`${date}T12:00:00Z`);
+      end.setUTCDate(end.getUTCDate() + 1);
+      const summary = `מבחן: ${short[courseId]} – מועד ${moed}׳`;
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:${esc(`exam-${courseId}-${moed === 'א' ? 'a' : 'b'}@study-hub`)}`,
+        `DTSTAMP:${now}`,
+        `DTSTART;VALUE=DATE:${day}`,
+        `DTEND;VALUE=DATE:${end.toISOString().slice(0, 10).replace(/-/g, '')}`,
+        `SUMMARY:${esc(summary)}`,
+        'TRANSP:TRANSPARENT'
+      );
+      for (const [d, text] of [[7, 'בעוד שבוע'], [1, 'מחר']]) {
+        lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', `TRIGGER:-P${d}D`, `DESCRIPTION:${esc(`${text}: ${summary}`)}`, 'END:VALARM');
+      }
+      lines.push('END:VEVENT');
+    }
   }
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n') + '\r\n';
