@@ -112,12 +112,14 @@ export async function logout(env, request) {
   return json({ ok: true }, 200, { 'Set-Cookie': sessionCookie('', 0) });
 }
 
-/** "Disconnect and delete everything": the encrypted token, progress, cache and all sessions. */
+/** "Disconnect and delete everything": the encrypted token, progress, cache, phone notifications and all sessions. */
 export async function deleteAccount(env, user) {
   await env.DB.batch([
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM progress WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM cache WHERE user_id = ?').bind(user.id),
+    env.DB.prepare('DELETE FROM push_subs WHERE user_id = ?').bind(user.id),
+    env.DB.prepare('DELETE FROM push_sent WHERE user_id = ?').bind(user.id),
     env.DB.prepare('UPDATE reports SET user_id = NULL WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(user.id),
   ]);

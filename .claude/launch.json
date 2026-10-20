@@ -13,6 +13,28 @@
         "scripts/serve-cloud.js"
       ],
       "port": 5190
+    },
+    {
+      "name": "mock-moodle",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/mock-moodle.mjs",
+        "9911"
+      ],
+      "port": 9911
+    },
+    {
+      "name": "cloud-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "wrangler",
+        "pages",
+        "dev",
+        "dist-cloud",
+        "--port",
+        "8788"
+      ],
+      "port": 8788
     }
   ]
 }

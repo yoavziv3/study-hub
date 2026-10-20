@@ -2,12 +2,15 @@
 # Secrets are set with `wrangler pages secret put` and never committed:
 #   TOKEN_KEY    – base64 32-byte key that encrypts students' Moodle tokens
 #   ADMIN_SECRET – shared with the Mac (STUDY_ADMIN_SECRET in .env) for /api/admin/*
+#   VAPID_PRIVATE_KEY – phone notifications (Web Push); pair of VAPID_PUBLIC_KEY below (scripts/vapid-keys.js)
 name = "study-hub-git"
 pages_build_output_dir = "dist-cloud"
 compatibility_date = "2026-06-01"
 
 [vars]
 MOODLE_URL = "https://moodle.bgu.ac.il/moodle"
+VAPID_PUBLIC_KEY = "BI2AENEpqnYK6IlT7dnEA6UxjnANYXow3zJ5OnNYj-nkr1SGiGM6UEFXaioeC_ALidr5HlgmyUSYRqkNsm7V10Q"
+VAPID_SUBJECT = "https://study-hub-git.pages.dev"
 
 [[d1_databases]]
 binding = "DB"

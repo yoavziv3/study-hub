@@ -15,6 +15,7 @@ import { toolsStatus } from './lib/extract.js';
 import * as moodle from './lib/moodle.js';
 import { backupNow, backupStatus, startBackups } from './lib/backup.js';
 import { initPublish } from './lib/publish.js';
+import { startPushTicks } from './lib/push-tick.js';
 import * as updates from './lib/updates.js';
 
 const PORT = Number(process.env.PORT) || 5180;
@@ -467,4 +468,5 @@ app.listen(PORT, HOST, () => {
   if (process.env.NO_INBOX !== '1') watchInbox();
   moodle.startMoodle();
   startBackups();
+  startPushTicks();
 });

@@ -45,7 +45,7 @@ export default function Review() {
           <div className="grow">
             <h1 style={{ fontSize: 26 }}>חזרה להיום</h1>
             <div className="muted" style={{ fontSize: 14 }}>
-              כרטיסיות מכל הקורסים: מה שהגיע הזמן לחזור עליו, ועוד {NEW_PER_DAY} חדשות ביום. כרטיסייה שידעת חוזרת אחרי יותר ימים, וכזו שלא – מחר.
+              כרטיסיות מכל הקורסים: מה שהגיע הזמן לחזור עליו, ועוד {NEW_PER_DAY} חדשות ביום. דרגו כל כרטיסייה – שוב, קשה, טוב או קל – והיא תחזור בדיוק כשמתחילים לשכוח אותה.
             </div>
           </div>
           {today && <div className="row" style={{ gap: 6 }}><span className="chip warn">{today.due} לחזרה</span><span className="chip c">{today.fresh} חדשות</span></div>}

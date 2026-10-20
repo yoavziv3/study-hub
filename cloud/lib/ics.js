@@ -24,7 +24,7 @@ function fold(line) {
 }
 
 /** A course's sittings for this student: official dates of their group, own dates replacing מועד א׳/ב׳. */
-function examSittings(course, progress) {
+export function examSittings(course, progress) {
   const all = course.exams?.groups || {};
   const groups = Object.keys(all).sort((a, b) => Number(a) - Number(b));
   const picked = progress.examGroup?.[course.id] || progress.classGroups?.[course.id]?.['שעור'];

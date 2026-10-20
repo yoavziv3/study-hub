@@ -54,6 +54,43 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
+// Phone notifications (Web Push from the cloud – see cloud/lib/notify.js): { title, body, url, tag }.
+self.addEventListener('push', (e) => {
+  let data = {};
+  try {
+    data = e.data ? e.data.json() : {};
+  } catch {
+    data = { body: e.data?.text() || '' };
+  }
+  e.waitUntil(
+    self.registration.showNotification(data.title || 'מחברת', {
+      body: data.body || '',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: data.tag,
+      lang: 'he',
+      dir: 'rtl',
+      data: { url: data.url || '/' },
+    })
+  );
+});
+
+// Tapping a notification opens its page – in the site's open window if there is one.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const target = new URL(e.notification.data?.url || '/', location.origin);
+  const url = target.origin === location.origin ? target.href : location.origin;
+  e.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const win = wins.find((w) => new URL(w.url).origin === location.origin);
+    if (win) {
+      await win.focus();
+      return win.navigate(url).catch(() => self.clients.openWindow(url));
+    }
+    return self.clients.openWindow(url);
+  })());
+});
+
 // Signing out clears everything personal that was cached on this device.
 self.addEventListener('message', (e) => {
   if (e.data === 'clear-data') e.waitUntil(caches.delete(DATA));

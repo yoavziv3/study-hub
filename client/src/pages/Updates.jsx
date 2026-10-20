@@ -8,6 +8,7 @@ import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { parseRequired, partsLabel } from '../components/Assignment.jsx';
+import PhoneNotifications from '../components/PhoneNotifications.jsx';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
 const oneLine = (t) => t.replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
@@ -291,6 +292,7 @@ export default function Updates() {
               );
             })}
         </div>
+        {STATIC && me && <PhoneNotifications />}
         {STATIC && me?.calendarPath && <CalendarCard path={me.calendarPath} />}
         {STATIC && me && me.moodleOk === false && (
           <div className="callout row" style={{ marginTop: 14, background: 'var(--warn-bg)' }}>

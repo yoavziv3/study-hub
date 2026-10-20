@@ -23,6 +23,10 @@ const SCHEMA = [
   // "Report a mistake" on a summary section; read by the site owner through the admin channel.
   `CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, lecture_id TEXT NOT NULL, section TEXT, text TEXT NOT NULL, created_at INTEGER, status TEXT NOT NULL DEFAULT 'open')`,
   `CREATE INDEX IF NOT EXISTS reports_status ON reports(status, created_at)`,
+  // Phone notifications: each device's Web Push subscription, and which notifications were already sent.
+  `CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, user_id INTEGER NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, ua TEXT, created_at INTEGER)`,
+  `CREATE INDEX IF NOT EXISTS push_subs_user ON push_subs(user_id)`,
+  `CREATE TABLE IF NOT EXISTS push_sent (user_id INTEGER NOT NULL, key TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (user_id, key))`,
 ];
 
 let ready = null;

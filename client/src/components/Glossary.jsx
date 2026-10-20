@@ -1,11 +1,29 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles, List, Puzzle } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { Highlight, ltr } from './ui.jsx';
+import MatchGame from './MatchGame.jsx';
 
 export default function Glossary({ terms, showSource = false }) {
+  const [mode, setMode] = useState('list'); // list | match
+  return (
+    <div>
+      <div className="tabs" style={{ marginBottom: 16 }}>
+        {[['list', 'רשימת מושגים', List], ['match', 'משחק התאמה', Puzzle]].map(([id, label, Icon]) => (
+          <button key={id} className={`tab ${mode === id ? 'active' : ''}`} onClick={() => setMode(id)}>
+            {mode === id && <motion.span layoutId="gl-mode" className="tab-bg" />}
+            <Icon size={14} /> {label}
+          </button>
+        ))}
+      </div>
+      {mode === 'match' ? <MatchGame terms={terms} /> : <TermList terms={terms} showSource={showSource} />}
+    </div>
+  );
+}
+
+function TermList({ terms, showSource }) {
   const { openChat } = useApp();
   const [q, setQ] = useState('');
   const sorted = useMemo(() => [...terms].sort((a, b) => a.term.localeCompare(b.term, 'he')), [terms]);

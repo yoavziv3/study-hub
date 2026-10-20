@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Info } from 'lucide-react';
 import { api, hash, STATIC, AUTH_EVENT, resetSearchIndex } from './api.js';
 import { termsOf, currentTerm, inTerm } from './lib/terms.js';
+import { schedule } from './lib/srs.js';
+import { resyncPush } from './lib/push.js';
 
 /* App-wide state: the signed-in student (cloud), study progress, courses, updates & deadlines, toasts,
    chat + upload + search controls. Locally (on the Mac) there is no sign-in and data comes from the server. */
@@ -10,7 +12,6 @@ const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
 
 const EMPTY = { studied: {}, quiz: {}, cards: {}, notes: {}, slidePos: {}, last: null, activity: {} };
-const LEITNER_DAYS = [0, 1, 2, 4, 8, 16];
 const DAY = 86400000;
 const OLD_LOCAL_PROGRESS = 'study-progress'; // progress kept in the browser before accounts existed
 
@@ -112,6 +113,7 @@ export function AppProvider({ children }) {
       .catch(() => {});
     api.get('/api/status').then(setStatus).catch(() => {});
     refreshCourses();
+    if (STATIC) resyncPush().catch(() => {});
   }, [signedIn, refreshCourses]);
 
   // quiet: bookkeeping that isn't studying (e.g. fixing today's plan) doesn't count as activity for the streak.
@@ -145,16 +147,23 @@ export function AppProvider({ children }) {
           q.items[hash(question)] = correct;
           return p;
         }),
-      gradeCard: (key, known) =>
+      // grade: again | hard | good | easy (see lib/srs.js)
+      gradeCard: (key, grade) =>
         update((p) => {
-          const c = p.cards[key] || { box: 0 };
-          c.box = known ? Math.min(c.box + 1, 5) : 0;
-          c.due = Date.now() + LEITNER_DAYS[c.box] * 86400000;
-          c.seen = Date.now();
-          p.cards[key] = c;
+          p.cards[key] = schedule(p.cards[key], grade).card;
           return p;
         }),
       setNote: (id, text) => update((p) => { p.notes[id] = text; return p; }),
+      // Grades page: per course { final, pass, credits, components: [{id, name, weight, grade}], target, minExam },
+      // plus courses that aren't on the site (earlier studies) in extraCourses.
+      updateGrades: (fn) => update((p) => {
+        p.grades ||= {};
+        p.extraCourses ||= [];
+        fn(p);
+        return p;
+      }, { quiet: true }),
+      // Phone notifications (cloud): which kinds the student wants; read by the cloud when it sends them.
+      setNotify: (patch) => update((p) => { p.notify = { ...p.notify, ...patch }; return p; }, { quiet: true }),
       // Exam preparation: exam dates per course ({ a, b } as YYYY-MM-DD), flagged questions, simulations,
       // the pre-exam checklist and today's plan.
       setExam: (courseId, dates) => update((p) => {

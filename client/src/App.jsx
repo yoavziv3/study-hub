@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -15,6 +15,7 @@ const Archive = lazy(() => import('./pages/Archive.jsx'));
 const Reports = lazy(() => import('./pages/Reports.jsx'));
 const Review = lazy(() => import('./pages/Review.jsx'));
 const Schedule = lazy(() => import('./pages/Schedule.jsx'));
+const Grades = lazy(() => import('./pages/Grades.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
 const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
@@ -69,6 +70,7 @@ function Sidebar({ open, onNavigate }) {
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
       <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <NavItem to="/schedule" icon={<CalendarRange size={17} />} label="מערכת שעות" onClick={onNavigate} />
+      <NavItem to="/grades" icon={<Calculator size={17} />} label="ציונים וממוצע" onClick={onNavigate} />
       <div className="nav-label">הקורסים שלי</div>
       {courses.map((c) => <CourseNav key={c.id} c={c} progress={progress} onNavigate={onNavigate} />)}
       {STATIC && me?.pending?.length > 0 && (
@@ -281,6 +283,7 @@ function Shell() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/review" element={<Review />} />
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </AnimatePresence>
