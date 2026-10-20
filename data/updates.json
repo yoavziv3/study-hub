@@ -281,6 +281,18 @@
       "source": "moodle",
       "createdAt": "2026-10-19T11:08:15.284Z",
       "addedAt": "2026-10-19T11:16:19.620Z"
+    },
+    {
+      "id": "mvgkrgjvwtnd",
+      "key": "announcement:893255",
+      "type": "announcement",
+      "courseId": "econ",
+      "title": "מחר לא יתקיימו תרגולים",
+      "body": "שלום לכולם,\n\nמחר (21.10) לא יתקיימו תרגולים\n\nמשבוע הבא התרגולים יתקיימו כרגיל,פרט לתרגולים של איברהים שיועברו בזום\n\nהמשך שבוע טוב",
+      "author": "מאור רפאילוב",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893255",
+      "createdAt": "2026-10-20T10:58:41.000Z",
+      "addedAt": "2026-10-20T11:03:14.827Z"
     }
   ],
   "deadlines": [
