@@ -24,6 +24,30 @@
     "ext": "pdf"
   },
   {
+    "id": 3454952,
+    "type": "file",
+    "name": "הנחיות לעבודה ביסודות מערכות מידע - תשפז סמסטר א",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3454952",
+    "section": "פרויקט הקורס",
+    "ext": "html"
+  },
+  {
+    "id": 3454951,
+    "type": "file",
+    "name": "תבנית לדוח - חלק א - יסודות מערכות מידע",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3454951",
+    "section": "פרויקט הקורס",
+    "ext": "html"
+  },
+  {
+    "id": 3454953,
+    "type": "file",
+    "name": "תבנית לדוח - חלק ב - יסודות מערכות מידע",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3454953",
+    "section": "פרויקט הקורס",
+    "ext": "html"
+  },
+  {
     "id": 3397119,
     "type": "link",
     "name": "סרטון הסבר לעבודה בוורד עם סגנונות ותוכן עניינים",
@@ -36,14 +60,6 @@
     "type": "link",
     "name": "סרטון הסבר לעבודה בוורד עם איורים וטבלאות",
     "href": "https://www.dropbox.com/scl/fi/vz355bwkes9koijb9zfrh/.mp4?rlkey=m8hcumk3hepfloj9ziyh8amnr&st=hayag66t&dl=0",
-    "section": "פרויקט הקורס",
-    "ext": ""
-  },
-  {
-    "id": 3397121,
-    "type": "link",
-    "name": "סרטון הסבר על כתיבת השוואת חלופות",
-    "href": "https://www.dropbox.com/scl/fi/k6uemk2r32behma0dazu8/.mp4?rlkey=rdzohncnsaaj5grn2cng957iy&st=7forbe8g&dl=0",
     "section": "פרויקט הקורס",
     "ext": ""
   },
