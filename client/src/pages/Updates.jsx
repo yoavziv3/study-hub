@@ -78,6 +78,7 @@ function DeadlineCard({ d, course, i }) {
             {course ? <span className="chip c">{course.short}</span> : d.courseName && <span className="chip">{d.courseName}</span>}
             {d.source === 'manual' && <span className="chip">הוספתי בעצמי</span>}
             {d.submitted && <span className="chip good">הוגש במודל</span>}
+            {d.draft && !d.submitted && <span className="chip warn" title="הקבצים הועלו, אבל ההגשה לא נשלחה סופית">טיוטה – עוד לא נשלחה</span>}
             {d.done && !d.submitted && <span className="chip good">סומן כבוצע</span>}
           </div>
           <div style={{ fontWeight: 700, fontSize: 16.5, marginTop: 6 }}>{d.title}</div>

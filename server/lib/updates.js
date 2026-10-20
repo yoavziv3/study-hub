@@ -148,7 +148,7 @@ export async function syncDeadlines(list) {
   for (const d of list) {
     const existing = state.deadlines.find((x) => x.source === 'moodle' && x.moodleKey === d.moodleKey);
     if (existing) {
-      const next = { ...existing, title: d.title, dueAt: d.dueAt, url: d.url, intro: d.intro, submitted: d.submitted, courseId: d.courseId };
+      const next = { ...existing, title: d.title, dueAt: d.dueAt, url: d.url, intro: d.intro, submitted: d.submitted, draft: !!d.draft, courseId: d.courseId };
       if (JSON.stringify(next) !== JSON.stringify(existing)) {
         if (existing.dueAt !== d.dueAt) state.reminded[existing.id] = [];
         Object.assign(existing, next);
@@ -194,6 +194,23 @@ export async function announceExamDates(courseId, { first, text }) {
     addedAt: iso(),
   });
   await save();
+}
+
+/** Moodle assignments still waiting for a submission (due from 3 days ago on) – for the quick status check. */
+export function pendingAssignments() {
+  if (!state) return [];
+  const from = Date.now() - 3 * DAY;
+  return state.deadlines.filter((d) => d.source === 'moodle' && d.moodleKey?.startsWith('assign:') && !d.submitted && new Date(d.dueAt).getTime() > from);
+}
+
+/** The submission status of one assignment changed in Moodle (submitted, or a draft that wasn't sent yet). */
+export async function setSubmission(moodleKey, { submitted, draft }) {
+  const d = state?.deadlines.find((x) => x.source === 'moodle' && x.moodleKey === moodleKey);
+  if (!d || (d.submitted === submitted && !!d.draft === draft)) return false;
+  d.submitted = submitted;
+  d.draft = draft;
+  await save();
+  return true;
 }
 
 export async function addManualDeadline({ courseId, title, dueAt, note }) {

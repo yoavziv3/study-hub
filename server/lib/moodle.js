@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
 import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
-import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert } from './updates.js';
+import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission } from './updates.js';
 import { syncExamDates } from './exams.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
@@ -498,10 +498,9 @@ async function syncNews(result) {
     for (const c of assigns.courses || []) {
       for (const a of c.assignments || []) {
         if (!a.duedate) continue;
-        let submitted = false;
+        let status = { submitted: false, draft: false };
         try {
-          const st = await rest('mod_assign_get_submission_status', { assignid: a.id });
-          submitted = st.lastattempt?.submission?.status === 'submitted' || st.lastattempt?.teamsubmission?.status === 'submitted';
+          status = submissionOf(await rest('mod_assign_get_submission_status', { assignid: a.id }));
         } catch { /* status unavailable – treat as not submitted */ }
         deadlines.push({
           moodleKey: `assign:${a.id}`,
@@ -510,7 +509,7 @@ async function syncNews(result) {
           dueAt: new Date(a.duedate * 1000).toISOString(),
           url: `${SITE}/mod/assign/view.php?id=${a.cmid}`,
           intro: htmlToText(a.intro).slice(0, 600),
-          submitted,
+          ...status,
         });
       }
     }
@@ -581,6 +580,33 @@ async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial 
     }
     await save();
   }
+}
+
+// ---------- submission status ----------
+/** Moodle's submission status → submitted, or a draft (files uploaded but "submit" not pressed yet). */
+export function submissionOf(st) {
+  const s = st?.lastattempt?.submission?.status || st?.lastattempt?.teamsubmission?.status;
+  return { submitted: s === 'submitted', draft: s === 'draft' };
+}
+
+let lastCheck = 0;
+/**
+ * Quick check of assignments still waiting for a submission – every few minutes, and right away when you come
+ * back to the site (so homework you just submitted stops counting down).
+ */
+export async function checkSubmissions({ minGapMs = 20000 } = {}) {
+  if (!state.token || Date.now() - lastCheck < minGapMs) return 0;
+  lastCheck = Date.now();
+  let changed = 0;
+  for (const d of pendingAssignments()) {
+    try {
+      const st = submissionOf(await rest('mod_assign_get_submission_status', { assignid: Number(d.moodleKey.split(':')[1]) }));
+      if (await setSubmission(d.moodleKey, st)) changed++;
+    } catch (e) {
+      if (e.code === 'invalidtoken') throw e;
+    }
+  }
+  return changed;
 }
 
 // ---------- courses of other students (through the cloud) ----------
@@ -721,10 +747,13 @@ export async function sync() {
   return result;
 }
 
+let submissionTimer = null;
 export function schedule() {
   clearInterval(timer);
+  clearInterval(submissionTimer);
   if (!state.token || !state.autoSync) return;
   timer = setInterval(() => sync().catch((e) => console.error('[moodle]', e.message)), state.intervalMin * 60000);
+  submissionTimer = setInterval(() => checkSubmissions().catch((e) => console.error('[moodle] submissions:', e.message)), 5 * 60000);
 }
 
 export function startMoodle() {

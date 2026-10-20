@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { ClipboardList, ExternalLink, ChevronDown, CalendarClock } from 'lucide-react';
+import { ClipboardList, ExternalLink, ChevronDown, CalendarClock, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { ltr, safeHref } from './ui.jsx';
+import { useApp } from '../store.jsx';
+
+/** The student's own submission status for an assignment, from their Moodle deadlines: 'submitted' | 'draft' | null. */
+function useSubmission(assignment) {
+  const { updates } = useApp();
+  const d = assignment?.id && updates.deadlines.find((x) => x.moodleKey === `assign:${assignment.id}`);
+  return d?.submitted ? 'submitted' : d?.draft ? 'draft' : null;
+}
 
 const ALEPH_BET = 'אבגדהוזחטיכלמנסעפצקרשת';
 
@@ -53,6 +61,7 @@ const fmtDue = (iso) => new Date(iso).toLocaleString('he-IL', { weekday: 'long',
 
 /** One line for a homework card: the required exercises and the due date. */
 export function AssignmentLine({ assignment }) {
+  const status = useSubmission(assignment);
   if (!assignment) return null;
   const parsed = parseRequired(assignment.instructions);
   if (!parsed && !assignment.dueAt) return null;
@@ -60,7 +69,9 @@ export function AssignmentLine({ assignment }) {
     <div className="assign-line">
       <ClipboardList size={14} />
       {parsed ? <span>להגשה: {parsed.items.map(itemLabel).join(' · ')}</span> : <span>להגשה במודל</span>}
-      {assignment.dueAt && <span className="faint">· עד {fmtDue(assignment.dueAt)}</span>}
+      {status === 'submitted' ? <span className="assign-done"><CheckCircle2 size={13} /> הוגש</span>
+        : status === 'draft' ? <span className="assign-draft"><AlertTriangle size={13} /> טיוטה – עוד לא נשלחה</span>
+        : assignment.dueAt && <span className="faint">· עד {fmtDue(assignment.dueAt)}</span>}
     </div>
   );
 }
@@ -68,6 +79,7 @@ export function AssignmentLine({ assignment }) {
 /** Full box on the homework page: what to hand in, by when, the lecturer's own words, and a link to Moodle. */
 export function AssignmentBox({ assignment }) {
   const [raw, setRaw] = useState(false);
+  const status = useSubmission(assignment);
   if (!assignment) return null;
   const parsed = parseRequired(assignment.instructions);
   const past = assignment.dueAt && new Date(assignment.dueAt) < new Date();
@@ -76,7 +88,11 @@ export function AssignmentBox({ assignment }) {
       <div className="row wrap" style={{ gap: 10 }}>
         <ClipboardList size={18} />
         <b className="grow">מה צריך להגיש{assignment.name ? ` – ${assignment.name}` : ''}</b>
-        {assignment.dueAt && (
+        {status === 'submitted' ? (
+          <span className="chip good"><CheckCircle2 size={13} /> הוגש במודל</span>
+        ) : status === 'draft' ? (
+          <span className="chip warn" title="הקבצים הועלו, אבל ההגשה לא נשלחה סופית – צריך ללחוץ על 'הגשה' במודל"><AlertTriangle size={13} /> טיוטה – עוד לא נשלחה</span>
+        ) : assignment.dueAt && (
           <span className={`chip ${past ? '' : 'warn'}`}><CalendarClock size={13} /> {past ? 'ההגשה נסגרה' : `עד ${fmtDue(assignment.dueAt)}`}</span>
         )}
       </div>

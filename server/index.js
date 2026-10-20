@@ -433,6 +433,8 @@ app.post('/api/moodle/ignore', wrap(async (req) => { await moodle.ignoreOne(req.
 // ---------- updates & deadlines ----------
 app.get('/api/updates', (_req, res) => res.json(updates.updatesView()));
 app.post('/api/updates/deadlines', wrap((req) => updates.addManualDeadline(req.body)));
+// Re-reads the submission status of pending assignments now (e.g. when you return to the site from Moodle).
+app.post('/api/updates/deadlines/check', wrap(async () => ({ changed: await moodle.checkSubmissions() })));
 app.patch('/api/updates/deadlines/:id', wrap((req) => updates.patchDeadline(req.params.id, req.body)));
 app.delete('/api/updates/deadlines/:id', wrap(async (req) => { await updates.deleteDeadline(req.params.id); return { ok: true }; }));
 app.put('/api/updates/settings', wrap((req) => updates.setSettings(req.body)));

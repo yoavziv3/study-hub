@@ -60,10 +60,10 @@ export function AppProvider({ children }) {
   }, [refreshMe]);
 
   const refreshCourses = useCallback(() => api.get('/api/courses').then(setCourses).catch(() => {}), []);
-  const refreshUpdates = useCallback(() => {
+  const refreshUpdates = useCallback((fresh = false) => {
     api.get('/api/updates').then(setFeed).catch(() => {});
     if (STATIC) {
-      api.get('/api/me/deadlines').then(setPersonal).catch((e) => {
+      api.get(`/api/me/deadlines${fresh ? '?fresh' : ''}`).then(setPersonal).catch((e) => {
         if (e.relogin) setMe((m) => (m ? { ...m, moodleOk: false } : m));
       });
     }
@@ -72,8 +72,22 @@ export function AppProvider({ children }) {
   useEffect(() => {
     if (!signedIn) return undefined;
     refreshUpdates();
-    const t = setInterval(refreshUpdates, STATIC ? 5 * 60000 : 60000);
-    return () => clearInterval(t);
+    const t = setInterval(() => refreshUpdates(), STATIC ? 5 * 60000 : 60000);
+    // Coming back to the site (e.g. after submitting in Moodle's tab): re-read submission statuses right away.
+    let last = 0;
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible' || Date.now() - last < 30000) return;
+      last = Date.now();
+      if (STATIC) refreshUpdates(true);
+      else api.post('/api/updates/deadlines/check', {}).catch(() => {}).finally(() => refreshUpdates());
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
   }, [signedIn, refreshUpdates]);
 
   useEffect(() => {
@@ -215,7 +229,7 @@ export function AppProvider({ children }) {
     if (!STATIC) return feed;
     const done = progress.deadlinesDone || {};
     const deadlines = [
-      ...personal.map((d) => ({ ...d, source: 'moodle', intro: d.action || '', submitted: false, done: !!done[d.moodleKey] })),
+      ...personal.map((d) => ({ ...d, source: 'moodle', intro: d.action || '', submitted: !!d.submitted, draft: !!d.draft, done: !!done[d.moodleKey] })),
       ...(progress.manualDeadlines || []).map((d) => ({ ...d, source: 'manual' })),
     ].sort((a, b) => a.dueAt.localeCompare(b.dueAt));
     // Reminders: one per deadline, for the closest threshold already crossed (default 3 days and 1 day before).
@@ -224,7 +238,7 @@ export function AppProvider({ children }) {
     const reminders = [];
     for (const d of deadlines) {
       const due = Date.parse(d.dueAt);
-      if (d.done || due <= now) continue;
+      if (d.done || d.submitted || due <= now) continue;
       const crossed = days.filter((x) => due - x * DAY <= now);
       if (!crossed.length) continue;
       const x = Math.min(...crossed);

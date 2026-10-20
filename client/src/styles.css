@@ -636,6 +636,8 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .assign-item { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; }
 .assign-item span { color: var(--text-2); font-size: 13px; }
 .assign-text { margin-top: 10px; white-space: pre-line; font-size: 14px; line-height: 1.7; color: var(--text-2); }
+.assign-done { display: inline-flex; align-items: center; gap: 4px; color: var(--good-text); }
+.assign-draft { display: inline-flex; align-items: center; gap: 4px; color: var(--warn-text); }
 .req-chip { background: var(--c-soft); color: var(--c-strong); border-color: transparent; font-weight: 700; }
 
 /* Past studies: pick a year and semester */
