@@ -1,18 +1,98 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarRange, MapPin, ChevronDown, Info, Clock } from 'lucide-react';
+import { CalendarRange, MapPin, ChevronDown, Info, Clock, Search, Share2, Check, Users } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { CourseIcon, Page, fadeUp } from '../components/ui.jsx';
-import { DAY_NAMES, typeLabel, minutes, classTypes, groupsOf, chosen, missingGroups, mySlots, upcoming, whenLabel } from '../lib/schedule.js';
+import {
+  DAY_NAMES, typeLabel, minutes, classTypes, groupsOf, chosen, missingGroups, mySlots, upcoming, whenLabel,
+  groupRooms, matchRoom, soleMatch, shareableGroups, validShared,
+} from '../lib/schedule.js';
 
 const HOUR_PX = 58;
 const dayShort = (d) => `יום ${'אבגדהוש'[d]}׳`;
 const slotText = (g) => g.slots.map((s) => `${dayShort(s.day)} ${s.start}–${s.end}`).join(', ');
+const groupOption = (g) => `${g.group} · ${g.lecturer || ''} · ${slotText(g)}${groupRooms(g) ? ` · ${groupRooms(g)}` : ''}`;
+
+/** One course's groups: a room search, then a dropdown per type (lecture, tutorial…). */
+function CourseGroups({ c }) {
+  const { progress, setClassGroup, setClassGroups } = useApp();
+  const [q, setQ] = useState('');
+  const types = classTypes(c);
+  const pick = chosen(c, progress);
+
+  // Picking a lecture also picks its only matching tutorial/lab, so most courses need one choice.
+  const choose = (type, group) => {
+    setClassGroup(c.id, type, group);
+    if (type === 'שעור' && group) {
+      const extra = {};
+      for (const t of types) { if (t === 'שעור') continue; const only = soleMatch(c, t, group); if (only && !pick[t]) extra[t] = only; }
+      if (Object.keys(extra).length) setClassGroups({ [c.id]: extra });
+    }
+  };
+  // A room/building search that picks the matching group in every type it appears in.
+  const hits = q ? types.flatMap((t) => matchRoom(c, t, q).map((g) => ({ t, g }))) : [];
+  const applyHit = (t, group) => { choose(t, group); setQ(''); };
+
+  return (
+    <div className="group-course" data-color={c.color}>
+      <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+        <span className="nav-dot"><CourseIcon name={c.icon} size={14} /></span>
+        <b className="grow">{c.short}</b>
+      </div>
+      {!types.length ? (
+        <div className="faint" style={{ fontSize: 13 }}>אין לקורס הזה זמני לימוד בקובץ הקורסים.</div>
+      ) : (
+        <>
+          <div className="group-search">
+            <Search size={14} />
+            <input className="input" placeholder="חיפוש לפי חדר או בניין…" value={q} onChange={(e) => setQ(e.target.value)} />
+          </div>
+          {q && (
+            <div className="group-hits">
+              {hits.length ? hits.slice(0, 6).map(({ t, g }) => (
+                <button key={`${t}-${g.group}`} className="group-hit" onClick={() => applyHit(t, g.group)}>
+                  <b>{typeLabel(t)} {g.group}</b><span>{groupRooms(g)} · {slotText(g)}</span>
+                </button>
+              )) : <div className="faint" style={{ fontSize: 12.5, padding: '4px 2px' }}>אין קבוצה עם החדר הזה.</div>}
+            </div>
+          )}
+          {types.map((t) => (
+            <label key={t} className="field" style={{ marginBottom: 8 }}>
+              {typeLabel(t)}
+              <select className="input" value={pick[t] || ''} onChange={(e) => choose(t, e.target.value)}>
+                <option value="">בחירת קבוצה…</option>
+                {groupsOf(c, t, pick['שעור']).map((g) => <option key={g.group} value={g.group}>{groupOption(g)}</option>)}
+              </select>
+            </label>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Copy a link that fills these same groups for a friend. */
+function ShareButton({ courses }) {
+  const { progress, toast } = useApp();
+  const [copied, setCopied] = useState(false);
+  const picks = shareableGroups(courses, progress);
+  if (!Object.keys(picks).length) return null;
+  const share = async () => {
+    const url = `${location.origin}/schedule?groups=${encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(picks)))))}`;
+    try {
+      if (navigator.share) await navigator.share({ title: 'מערכת השעות שלי', url });
+      else { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2500); }
+    } catch { toast('לא הצלחתי ליצור קישור', 'info'); }
+  };
+  return (
+    <button className="btn sm" onClick={share}>{copied ? <><Check size={14} /> הקישור הועתק</> : <><Share2 size={14} /> שיתוף הקבוצות</>}</button>
+  );
+}
 
 /** Pick your lecture / tutorial group in each course (once per semester). */
 function GroupPicker({ courses }) {
-  const { progress, setClassGroup } = useApp();
+  const { progress } = useApp();
   const anyMissing = courses.some((c) => missingGroups(c, progress).length);
   const [open, setOpen] = useState(anyMissing);
   useEffect(() => { if (anyMissing) setOpen(true); }, [anyMissing]);
@@ -25,38 +105,48 @@ function GroupPicker({ courses }) {
       </button>
       {open && (
         <>
-          <p className="faint" style={{ fontSize: 13, margin: '6px 0 14px' }}>
-            בוחרים פעם אחת בכל קורס את הקבוצה שלכם (כמו במערכת השעות של האוניברסיטה). הימים, השעות והחדרים מתעדכנים לבד מקובץ הקורסים.
-          </p>
+          <div className="row wrap" style={{ gap: 8, margin: '6px 0 14px' }}>
+            <p className="faint grow" style={{ fontSize: 13, margin: 0, minWidth: 180 }}>
+              בוחרים פעם אחת בכל קורס את הקבוצה שלכם. אפשר לחפש לפי חדר, ובחירת שיעור בוחרת לבד את התרגול שמתאים לו. הימים, השעות והחדרים מתעדכנים מקובץ הקורסים.
+            </p>
+            <ShareButton courses={courses} />
+          </div>
           <div className="group-picker">
-            {courses.map((c) => {
-              const types = classTypes(c);
-              const pick = chosen(c, progress);
-              return (
-                <div key={c.id} className="group-course" data-color={c.color}>
-                  <div className="row" style={{ gap: 8, marginBottom: 8 }}>
-                    <span className="nav-dot"><CourseIcon name={c.icon} size={14} /></span>
-                    <b className="grow">{c.short}</b>
-                  </div>
-                  {!types.length && <div className="faint" style={{ fontSize: 13 }}>אין לקורס הזה זמני לימוד בקובץ הקורסים.</div>}
-                  {types.map((t) => (
-                    <label key={t} className="field" style={{ marginBottom: 8 }}>
-                      {typeLabel(t)}
-                      <select className="input" value={pick[t] || ''} onChange={(e) => setClassGroup(c.id, t, e.target.value)}>
-                        <option value="">בחירת קבוצה…</option>
-                        {groupsOf(c, t, pick['שעור']).map((g) => (
-                          <option key={g.group} value={g.group}>{g.group} · {g.lecturer} · {slotText(g)}</option>
-                        ))}
-                      </select>
-                    </label>
-                  ))}
-                </div>
-              );
-            })}
+            {courses.map((c) => <CourseGroups key={c.id} c={c} />)}
           </div>
         </>
       )}
     </div>
+  );
+}
+
+/** When opened with ?groups=… (a friend's share link), offer to apply those groups. */
+function SharedBanner({ courses }) {
+  const { setClassGroups, toast } = useApp();
+  const [params, setParams] = useSearchParams();
+  const shared = useMemo(() => {
+    const raw = params.get('groups');
+    if (!raw) return null;
+    try { return validShared(courses, JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(raw)))))); } catch { return null; }
+  }, [params, courses]);
+  if (!shared || !Object.keys(shared).length) return null;
+  const n = Object.keys(shared).length;
+  const apply = () => {
+    setClassGroups(shared);
+    toast('הקבוצות שובצו במערכת השעות שלך');
+    params.delete('groups');
+    setParams(params, { replace: true });
+  };
+  return (
+    <motion.div className="card pad row wrap" style={{ gap: 12, marginTop: 16, borderInlineStart: '4px solid var(--c)' }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+      <Users size={20} />
+      <div className="grow" style={{ minWidth: 200 }}>
+        <b>חבר/ה שיתפו איתך מערכת שעות</b>
+        <div className="faint" style={{ fontSize: 13 }}>אפשר לשבץ את הקבוצות שלהם ב־{n} קורסים. זה יחליף רק את הקבוצות, לא שום דבר אחר.</div>
+      </div>
+      <button className="btn accent" onClick={apply}><Check size={15} /> שיבוץ הקבוצות</button>
+      <button className="btn ghost" onClick={() => { params.delete('groups'); setParams(params, { replace: true }); }}>לא עכשיו</button>
+    </motion.div>
   );
 }
 
@@ -163,6 +253,7 @@ export default function Schedule() {
         </div>
       </motion.div>
 
+      <SharedBanner courses={withClasses} />
       <div style={{ marginTop: 16 }}><GroupPicker courses={withClasses} /></div>
 
       {clashes.length > 0 && (

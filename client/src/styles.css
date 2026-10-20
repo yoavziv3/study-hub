@@ -805,6 +805,14 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .group-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
 .group-course { padding: 14px; border-radius: 14px; background: var(--surface-2); border-inline-start: 4px solid var(--c); }
 .group-course select { font-size: 13.5px; }
+.group-search { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; padding-inline-start: 8px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); }
+.group-search svg { flex: none; color: var(--text-3); }
+.group-search .input { border: 0; background: none; padding-inline: 2px; }
+.group-hits { display: grid; gap: 4px; margin-bottom: 10px; }
+.group-hit { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: start; padding: 7px 9px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font: inherit; }
+.group-hit:hover { background: var(--c-soft); border-color: transparent; }
+.group-hit b { font-size: 13px; color: var(--c-strong); }
+.group-hit span { font-size: 12px; color: var(--text-2); }
 .next-class { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: 14px; background: var(--c-soft); color: var(--c-strong); }
 .week { display: grid; gap: 0 6px; }
 .week-day { text-align: center; font-weight: 700; font-size: 13.5px; padding: 6px 0 10px; color: var(--text-2); }

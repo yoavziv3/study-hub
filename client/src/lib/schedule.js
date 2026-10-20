@@ -31,6 +31,57 @@ export function groupsOf(course, type, lectureGroup) {
 /** The student's chosen group per type: { 'שעור': '1', 'תרגיל': '11' }. */
 export const chosen = (course, progress) => progress.classGroups?.[course.id] || {};
 
+/** A room as the portal writes it, e.g. "גוטמן [32], חדר 307" → "[32] גוטמן, 307"; "" when online. */
+export function roomLabel(slot) {
+  if (!slot?.place) return slot?.mode || '';
+  const m = slot.place.match(/^(.*?)\s*\[(\d+)\]\s*(?:חדר\s*)?(.*)$/);
+  return m ? `[${m[2]}] ${m[1].trim()}${m[3] ? `, ${m[3].trim()}` : ''}` : slot.place;
+}
+
+/** A group's rooms across its weekly meetings, portal-style, de-duplicated. */
+export const groupRooms = (g) => [...new Set(g.slots.map(roomLabel).filter(Boolean))].join(' · ');
+
+/** Which groups of a type match a free-text room/building query (e.g. "307", "גוטמן"). */
+export function matchRoom(course, type, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return (course?.classes || []).filter((g) => g.type === type && g.slots.some((sl) => (sl.place || '').toLowerCase().includes(q)));
+}
+
+/** After a lecture group is chosen, its one matching tutorial/lab (BGU numbers it 21, 22… under lecture 2). */
+export function soleMatch(course, type, lectureGroup) {
+  if (!lectureGroup || type === 'שעור') return null;
+  const mine = (course?.classes || []).filter((g) => g.type === type && g.group.length > lectureGroup.length && g.group.startsWith(lectureGroup));
+  return mine.length === 1 ? mine[0].group : null;
+}
+
+/** Everything the share link needs: { [courseId]: { [type]: group } } for courses with a full pick. */
+export function shareableGroups(courses, progress) {
+  const out = {};
+  for (const c of courses) {
+    const pick = chosen(c, progress);
+    const types = classTypes(c);
+    if (types.length && types.every((t) => pick[t])) out[c.id] = Object.fromEntries(types.map((t) => [t, pick[t]]));
+  }
+  return out;
+}
+
+/** A share payload → only picks that still fit the current catalog (groups can change between semesters). */
+export function validShared(courses, shared) {
+  const byId = Object.fromEntries(courses.map((c) => [c.id, c]));
+  const out = {};
+  for (const [cid, picks] of Object.entries(shared || {})) {
+    const c = byId[cid];
+    if (!c) continue;
+    const ok = {};
+    for (const [type, group] of Object.entries(picks)) {
+      if ((c.classes || []).some((g) => g.type === type && g.group === String(group))) ok[type] = String(group);
+    }
+    if (Object.keys(ok).length) out[cid] = ok;
+  }
+  return out;
+}
+
 /** Whether the student still has a group to pick in this course. */
 export const missingGroups = (course, progress) => classTypes(course).filter((t) => !chosen(course, progress)[t]);
 

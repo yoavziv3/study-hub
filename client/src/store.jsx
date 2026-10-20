@@ -172,6 +172,12 @@ export function AppProvider({ children }) {
         p.classGroups[courseId] = mine;
         return p;
       }, { quiet: true }),
+      // Set several courses' groups at once (a friend's shared picks, or importing a whole timetable).
+      setClassGroups: (byCourse) => update((p) => {
+        p.classGroups ||= {};
+        for (const [courseId, picks] of Object.entries(byCourse)) p.classGroups[courseId] = { ...p.classGroups[courseId], ...picks };
+        return p;
+      }, { quiet: true }),
       setExamGroup: (courseId, group) => update((p) => { p.examGroup = { ...p.examGroup, [courseId]: group }; return p; }, { quiet: true }),
       updatePrep: (courseId, fn, opts) => update((p) => {
         p.prep ||= {};
