@@ -1,5 +1,13 @@
 [
   {
+    "id": 3454987,
+    "type": "syllabus",
+    "name": "סילבוס יסודות מערכות מידע - תשפ״ז סמסטר א",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3454987",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
     "id": 3380827,
     "type": "zoom",
     "name": "כניסה לשיעורים מקוונים",
@@ -14,14 +22,6 @@
     "href": "https://chat.whatsapp.com/CYeSSrIDc5FGsMmQvzgzeg",
     "section": "מבוא",
     "ext": ""
-  },
-  {
-    "id": 3420884,
-    "type": "syllabus",
-    "name": "סילבוס יסודות מערכות מידע - תשפ״ז סמסטר א",
-    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3420884",
-    "section": "מבוא",
-    "ext": "pdf"
   },
   {
     "id": 3454952,
