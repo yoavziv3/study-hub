@@ -3,7 +3,7 @@
 // sittings (מועד א׳/ב׳ and midterm quizzes, with date, start time once published, and place).
 // Stored on the course as `classes` and `exams` and published with courses.json, so every student sees them.
 import { listCourses, patchCourse } from './store.js';
-import { announceExamDates } from './updates.js';
+import { announceExamDates, announceClassChange } from './updates.js';
 
 const CATALOG = 'https://bgu4u.bgu.ac.il/pls/scwp/!app.ann';
 const REFRESH_MS = 12 * 3600000;
@@ -87,7 +87,36 @@ export function parseClasses(html) {
   return groups.filter((g) => g.slots.length);
 }
 
-/** Fetches one course page (code "142-1-3141", term { year, semester }) → { exams, classes } or null. */
+/** Credit points and the passing grade from the course details ("נקודות זכות: 3.50", "ציון מעבר: 56"). */
+export function parseDetails(html) {
+  const val = (label) => {
+    const i = html.indexOf(label);
+    if (i < 0) return null;
+    const m = html.slice(i, i + 400).match(/class="val">\s*([\d.]+)/);
+    return m ? Number(m[1]) : null;
+  };
+  return { credits: val('נקודות זכות'), passGrade: val('ציון מעבר') };
+}
+
+const DAY_LETTER = 'אבגדהוש';
+const slotLine = (s) => `יום ${DAY_LETTER[s.day]}׳ ${s.start}–${s.end}${s.place ? ` · ${s.place}` : s.mode ? ` · ${s.mode}` : ''}`;
+
+/** Groups whose weekly times or rooms changed between two catalog reads. */
+export function classChanges(before = [], after = []) {
+  const key = (g) => `${g.type}|${g.group}`;
+  const old = new Map(before.map((g) => [key(g), g]));
+  const out = [];
+  for (const g of after) {
+    const o = old.get(key(g));
+    if (!o) continue;
+    const a = o.slots.map(slotLine).join(' / ');
+    const b = g.slots.map(slotLine).join(' / ');
+    if (a !== b) out.push({ type: g.type, group: g.group, before: a, after: b });
+  }
+  return out;
+}
+
+/** Fetches one course page (code "142-1-3141", term { year, semester }) → { exams, classes, details } or null. */
 export async function fetchCatalog(code, term) {
   const m = String(code).match(/^(\d{3})-(\d)-(\d{4})$/);
   if (!m || !term?.year || !term?.semester) return null;
@@ -100,7 +129,7 @@ export async function fetchCatalog(code, term) {
   // The catalog is served in ISO-8859-8 (Hebrew).
   const html = new TextDecoder('iso-8859-8').decode(await res.arrayBuffer());
   if (!html.includes('פרטי קורס')) return null; // course not in the catalog for this term
-  return { exams: parseExams(html), classes: parseClasses(html) };
+  return { exams: parseExams(html), classes: parseClasses(html), details: parseDetails(html) };
 }
 
 const fmt = (iso) => iso.split('-').reverse().join('/');
@@ -118,7 +147,7 @@ export async function syncCatalog({ force = false } = {}) {
     for (const c of listCourses()) {
       if (!c.code || !c.term) continue;
       const fresh = c.exams?.checkedAt && Date.now() - Date.parse(c.exams.checkedAt) < REFRESH_MS;
-      if (!force && fresh && c.classes) continue;
+      if (!force && fresh && c.classes && c.credits != null) continue;
       try {
         const page = await fetchCatalog(c.code, c.term);
         result.checked++;
@@ -129,7 +158,13 @@ export async function syncCatalog({ force = false } = {}) {
         const changed = before !== JSON.stringify(groups);
         const patch = { exams: { groups, checkedAt: now, updatedAt: changed ? now : c.exams?.updatedAt || now } };
         if (page.classes.length) patch.classes = page.classes;
+        if (page.details.credits != null) patch.credits = page.details.credits;
+        if (page.details.passGrade != null) patch.passGrade = page.details.passGrade;
         await patchCourse(c.id, patch);
+        // A room or time of an existing group moved: tell the students (they see it if it's their group).
+        if (c.classes?.length && page.classes.length) {
+          for (const ch of classChanges(c.classes, page.classes)) await announceClassChange(c.id, ch);
+        }
         if (changed && Object.keys(groups).length) {
           result.changed++;
           await announceExamDates(c.id, { first: before === '{}', text: summary(groups) });

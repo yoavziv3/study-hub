@@ -196,6 +196,26 @@ export async function announceExamDates(courseId, { first, text }) {
   await save();
 }
 
+/** A class group's weekly time or room changed in the course catalog. */
+export async function announceClassChange(courseId, { type, group, before, after }) {
+  if (!state) return;
+  const course = getCourse(courseId);
+  const label = type === 'שעור' ? 'שיעור' : type;
+  push({
+    id: newId(),
+    key: `class:${courseId}:${type}:${group}:${after}`,
+    type: 'class-change',
+    courseId,
+    classType: type,
+    group,
+    title: `שינוי ב${course?.short || ''}: ${label} ${group}`,
+    body: `לפני: ${before}\nעכשיו: ${after}`,
+    createdAt: iso(),
+    addedAt: iso(),
+  }, { silent: !!course?.remote });
+  await save();
+}
+
 /** Moodle assignments still waiting for a submission (due from 3 days ago on) – for the quick status check. */
 export function pendingAssignments() {
   if (!state) return [];

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap,
+  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap, MapPinned,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
@@ -20,6 +20,7 @@ const TYPE = {
   deadline: { label: 'הגשה חדשה', icon: CalendarClock },
   reminder: { label: 'תזכורת', icon: AlarmClock },
   exam: { label: 'מבחנים', icon: GraduationCap },
+  'class-change': { label: 'שינוי במערכת', icon: MapPinned },
 };
 const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler, exam: ScrollText };
 
@@ -153,7 +154,9 @@ function AddDeadline({ courses }) {
 }
 
 function UpdateItem({ item, course, isNew, i }) {
+  const { progress } = useApp();
   const [expanded, setExpanded] = useState(false);
+  const mine = item.type === 'class-change' && progress.classGroups?.[item.courseId]?.[item.classType] === item.group;
   const T = TYPE[item.type] || TYPE.announcement;
   const Icon = item.type === 'material' ? MATERIAL_ICON[item.kind] || BookOpen : T.icon;
   const text = item.type === 'deadline' ? oneLine(item.body || '') : (item.body || '').replace(/\r/g, '').replace(/\n\s*\n+/g, '\n').trim();
@@ -167,6 +170,7 @@ function UpdateItem({ item, course, isNew, i }) {
           {isNew && <span className="chip bad" style={{ fontWeight: 700 }}>חדש</span>}
           <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם' }[item.kind] || T.label : T.label}</span>
           {course && <span className="chip c">{course.short}</span>}
+          {mine && <span className="chip warn">הקבוצה שלך</span>}
           <span className="faint" style={{ fontSize: 12.5, marginInlineStart: 'auto' }}>{timeOf(item.addedAt)}</span>
         </div>
         <div style={{ fontWeight: 700, fontSize: 16, marginTop: 6 }}>{item.title}</div>
@@ -176,6 +180,7 @@ function UpdateItem({ item, course, isNew, i }) {
           {long && <button className="btn sm ghost" onClick={() => setExpanded((x) => !x)}>{expanded ? 'פחות' : 'להודעה המלאה'} <ChevronDown size={14} style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} /></button>}
           {item.lectureId && <Link className="btn sm" to={`/lecture/${item.lectureId}`}>פתיחה באתר</Link>}
           {item.type === 'exam' && <Link className="btn sm" to={`/course/${item.courseId}/prep`}>להכנה למבחן</Link>}
+          {item.type === 'class-change' && <Link className="btn sm" to="/schedule">למערכת השעות</Link>}
           {safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
         </div>
       </div>
