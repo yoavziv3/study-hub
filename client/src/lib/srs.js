@@ -102,3 +102,6 @@ export function stageOf(stored) {
 
 export const STAGE_LABEL = { new: 'חדשות', learning: 'בלמידה', young: 'צעירות', mature: 'מושרשות' };
 export const STAGE_ONE = { new: 'חדשה', learning: 'בלמידה', young: 'צעירה', mature: 'מושרשת' };
+
+/** Cards the student keeps forgetting: lapsed twice or more, or answered "again" / "hard" enough to drop the ease. */
+export const isHard = (stored) => !!stored?.ease && (stored.lapses >= 2 || stored.ease <= 2.05);

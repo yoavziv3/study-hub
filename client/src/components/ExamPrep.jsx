@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { Ring, fadeUp, ltr } from './ui.jsx';
+import { isHard } from '../lib/srs.js';
 import { Markdown } from './markdown.jsx';
 import Quiz from './Quiz.jsx';
 import {
@@ -316,6 +317,13 @@ function PracticeCards({ course, counts, onPractice }) {
         <div style={{ fontWeight: 700 }}>כרטיסיות</div>
         <div className="faint" style={{ fontSize: 13 }}>{counts.dueCards ? `${counts.dueCards} מחכות לחזרה` : 'חזרה מהירה על המושגים'}</div>
       </Link>
+      {counts.hardCards > 0 && (
+        <Link className="card hover practice-tile" to={`/course/${course.id}/flashcards?cards=hard`}>
+          <div className="course-icon"><Flame size={19} /></div>
+          <div style={{ fontWeight: 700 }}>הכרטיסיות שקשות לי</div>
+          <div className="faint" style={{ fontSize: 13 }}>{counts.hardCards} כרטיסיות שנשכחות שוב ושוב</div>
+        </Link>
+      )}
     </div>
   );
 }
@@ -499,6 +507,10 @@ export default function ExamPrep({ course, bundle }) {
     const ids = new Set(course.lectures.map((l) => `${l.id}:`));
     return Object.entries(progress.cards || {}).filter(([k, c]) => c.due <= Date.now() && ids.has(k.slice(0, k.indexOf(':') + 1))).length;
   }, [course.lectures, progress.cards]);
+  const hardCards = useMemo(() => {
+    const ids = new Set(course.lectures.map((l) => `${l.id}:`));
+    return Object.entries(progress.cards || {}).filter(([k, c]) => isHard(c) && ids.has(k.slice(0, k.indexOf(':') + 1))).length;
+  }, [course.lectures, progress.cards]);
 
   // Today's tasks are fixed when the day starts (so finishing one doesn't pull tomorrow's in); the rest of
   // the plan is recomputed from the current progress.
@@ -605,7 +617,7 @@ export default function ExamPrep({ course, bundle }) {
         <div className="stack" style={{ gap: 18 }}>
           {next && <Today course={course} ai={ai} map={map} today={todayPlan} future={future} info={info} onPractice={startPractice} onDone={logToday} exam={next} />}
           <Priorities ai={ai} list={prio} />
-          {hasQuiz && <PracticeCards course={course} counts={{ questions: questions.length, mistakes: mistakes.length, dueCards }} onPractice={startPractice} />}
+          {hasQuiz && <PracticeCards course={course} counts={{ questions: questions.length, mistakes: mistakes.length, dueCards, hardCards }} onPractice={startPractice} />}
           <Mistakes list={mistakes} onPractice={startPractice} />
           <MasteryMap map={map} />
         </div>

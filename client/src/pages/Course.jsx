@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText, GraduationCap, Printer } from 'lucide-react';
 import { useApp } from '../store.jsx';
@@ -247,6 +247,7 @@ function Empty({ course, text, what = 'הרצאות' }) {
 
 export default function Course() {
   const { id, tab = 'lessons' } = useParams();
+  const [search] = useSearchParams();
   const navigate = useNavigate();
   const { setContext, openUpload, openChat, progress } = useApp();
   const { data: course } = useFetch(`/api/courses/${id}`, { poll: (d) => d.lectures.some((l) => l.status === 'processing') });
@@ -303,6 +304,7 @@ export default function Course() {
   ];
 
   const allCards = bundle?.lectures.flatMap((l) => (l.content?.flashcards || []).map((c) => ({ ...c, lectureId: l.id, lectureTitle: l.title }))) || [];
+  const cardLectures = bundle?.lectures.filter((l) => l.kind !== 'exam' && l.content).map((l) => ({ id: l.id, title: l.title })) || [];
   const allTerms = bundle?.lectures.flatMap((l) => (l.content?.glossary || []).map((g) => ({ ...g, lectureId: l.id, lectureTitle: l.title }))) || [];
   const allFormulas = bundle?.lectures.flatMap((l) => (l.content?.formulas || []).map((f) => ({ ...f, lectureId: l.id, lectureTitle: l.title }))) || [];
   const Lab = labOpen && labs.find((x) => x.id === labOpen);
@@ -371,7 +373,7 @@ export default function Course() {
           {tab === 'summaries' && bundle && <CourseSummaries course={course} bundle={bundle} />}
           {tab === 'prep' && bundle && <ExamPrep course={course} bundle={bundle} />}
           {tab === 'exam' && bundle && <ExamMode bundle={bundle} courseId={course.id} />}
-          {tab === 'flashcards' && bundle && (allCards.length ? <Flashcards cards={allCards} /> : <Empty course={course} />)}
+          {tab === 'flashcards' && bundle && (allCards.length || cardLectures.length ? <Flashcards cards={allCards} lectures={cardLectures} initialMode={search.get('cards') || 'due'} /> : <Empty course={course} />)}
           {tab === 'glossary' && bundle && (allTerms.length ? <Glossary terms={allTerms} showSource /> : <Empty course={course} />)}
           {tab === 'formulas' && bundle && (
             allFormulas.length ? (

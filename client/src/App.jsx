@@ -21,6 +21,7 @@ const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
 const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
 const UploadModal = lazy(() => import('./components/UploadModal.jsx'));
 const SearchPalette = lazy(() => import('./components/SearchPalette.jsx'));
+import StudyTimer from './components/StudyTimer.jsx';
 
 const PageLoader = () => <div style={{ padding: 60, textAlign: 'center' }}><Loader2 className="spin" /></div>;
 import { SEMESTER_LABEL, studyYearLabel } from './lib/terms.js';
@@ -247,6 +248,7 @@ function Shell() {
             <span className="grow" style={{ textAlign: 'start' }}>חיפוש בכל החומר – מושגים, שקפים, נושאים…</span>
           </button>
           <div className="spacer" />
+          <StudyTimer />
           <motion.button className="btn icon ghost bell" onClick={() => navigate('/updates')} aria-label="עדכונים" whileTap={{ scale: 0.9 }}
             animate={unread ? { rotate: [0, -14, 12, -8, 6, 0] } : { rotate: 0 }} transition={{ duration: 0.8, repeat: unread ? Infinity : 0, repeatDelay: 6 }}>
             <Bell size={19} />

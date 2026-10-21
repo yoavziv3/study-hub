@@ -73,6 +73,8 @@ Web Push is implemented with plain WebCrypto in `cloud/lib/webpush.js` (VAPID + 
 ### Client notes
 
 - Flashcards use Anki-style SM-2 scheduling in `client/src/lib/srs.js`; old Leitner cards (`{box, due}`) are converted on read, and `box` is still written because `lib/exam.js` and `Home.jsx` count it.
+- The deck a student sees is built by `deckOf` in `client/src/lib/cards.js`: AI cards keep the key of their original question even when edited (`progress.cardEdits`), hidden ones are dropped (`cardHidden`), and the student's own cards (`customCards`) are keyed `${lectureId}:c-${id}`. Anything that looks up a card's progress must go through these keys.
+- `progress` is one blob saved whole on every change: anything that writes automatically (timers, effects) must wait for `progressLoaded`, or it overwrites the saved progress with the empty default.
 
 - `client/src/store.jsx` holds app-wide state (signed-in student in the cloud, progress with Leitner flashcard scheduling, courses, updates, toasts). Progress is one JSON blob: `PUT /api/progress` locally, per-user D1 row in the cloud.
 - Interactive per-course "labs" are registered in `client/src/labs/index.js`.

@@ -432,6 +432,7 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .fc-grade.c b { color: var(--c-strong); }
 .fc-grade.suggested { border-color: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
 .fc-hint { text-align: center; font-size: 12px; margin-top: 10px; }
+.card-form { display: grid; gap: 10px; margin-top: 14px; text-align: start; }
 .fc-type { position: relative; min-height: 330px; padding: 46px 30px 26px; text-align: center; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
 .fc-type > .label, .fc-compare .label { font-size: 12px; font-weight: 600; color: var(--text-3); }
 .fc-type > .label { position: absolute; top: 18px; inset-inline-start: 22px; }
@@ -453,6 +454,7 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .calc-head { font-size: 11.5px; font-weight: 600; }
 .calc-row .input { width: 100% !important; height: 32px; }
 .calc-result { margin-top: 14px; font-size: 15px; }
+.moodle-grades { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
 .calc-need { font-size: 22px; color: var(--c-strong); }
 .add-course .input { width: auto; }
 
@@ -603,6 +605,7 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .read-aloud-progress { width: 90px; height: 4px; border-radius: 4px; background: var(--surface-3); overflow: hidden; margin-inline: 6px; }
 .read-aloud-progress span { display: block; height: 100%; background: var(--c); transition: width 0.4s; }
 .read-aloud-rate { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.read-aloud-now { flex-basis: 100%; font-size: 13px; font-weight: 600; color: var(--c-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note-section-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .note-section-head h2 { font-size: 24px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
 .note-num { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; font-size: 14px; font-weight: 800; color: var(--c-strong); background: var(--c-soft); }
@@ -931,3 +934,17 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 }
 
 .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ============ Study timer (top bar) ============ */
+.study-timer { position: relative; }
+.timer-btn { height: 40px; padding: 0 10px; gap: 6px; }
+.timer-btn .num { font-size: 13.5px; font-weight: 700; }
+.timer-btn.on { color: var(--c-strong); background: var(--c-soft); }
+.timer-btn.on.rest { color: var(--good-text); background: var(--good-bg); }
+.timer-pop { position: absolute; top: 48px; inset-inline-end: 0; z-index: 60; width: 290px; padding: 16px; box-shadow: var(--shadow-lg); }
+.timer-clock { font-family: var(--font-display); font-size: 46px; font-weight: 700; text-align: center; margin-top: 10px; letter-spacing: 1px; }
+.timer-bar { height: 5px; border-radius: 5px; background: var(--surface-3); overflow: hidden; }
+.timer-bar span { display: block; height: 100%; background: var(--c); transition: width 1s linear; }
+@media (max-width: 640px) {
+  .timer-pop { position: fixed; top: 64px; inset-inline: 16px; width: auto; }
+}

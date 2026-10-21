@@ -71,3 +71,24 @@ export function needed(components, target, minExam = null) {
 
 export const fmtAvg = (v) => (v == null ? '—' : v.toFixed(2));
 export const ceil1 = (v) => Math.ceil(v * 10 - 1e-9) / 10;
+
+/** A Moodle grade item as a 0–100 score: its percentage, or the grade scaled by its range ("0–10"). */
+export function moodlePercent(item) {
+  const pct = num(String(item.percentage || '').replace(/[%\s]/g, ''));
+  if (pct != null) return pct;
+  const grade = num(String(item.grade || '').replace(/,/g, ''));
+  const max = num((String(item.range || '').match(/[\d.]+\s*$/) || [])[0]);
+  if (grade == null) return null;
+  return max && max !== 100 ? (grade / max) * 100 : grade;
+}
+
+const sameName = (a, b) => String(a).replace(/\s+/g, ' ').trim() === String(b).replace(/\s+/g, ' ').trim();
+
+/** Puts a Moodle grade into the components: the one with the same name gets it, otherwise a new one (weight 0). */
+export function withMoodleGrade(components, item, newId) {
+  const grade = Math.round(moodlePercent(item) * 10) / 10;
+  if (components.some((c) => sameName(c.name, item.name))) return components.map((c) => (sameName(c.name, item.name) ? { ...c, grade } : c));
+  return [...components, { id: newId(), name: item.name, weight: 0, grade }];
+}
+export const usesMoodleGrade = (components, item) =>
+  components.some((c) => sameName(c.name, item.name) && num(c.grade) === Math.round(moodlePercent(item) * 10) / 10);

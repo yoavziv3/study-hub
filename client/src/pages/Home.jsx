@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap, CalendarRange, MapPin } from 'lucide-react';
+import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap, CalendarRange, MapPin, Timer } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
@@ -19,7 +19,7 @@ function greeting() {
 }
 
 /** Study activity of the last 12 weeks, the current streak, and today's flashcard review. */
-function Heatmap({ activity, dueCards }) {
+function Heatmap({ activity, dueCards, focus }) {
   const days = 7 * 12;
   const today = new Date();
   const cells = [...Array(days)].map((_, i) => {
@@ -38,6 +38,7 @@ function Heatmap({ activity, dueCards }) {
     <div className="card pad heat-card">
       <div className="row" style={{ marginBottom: 14 }}>
         <h3 style={{ fontSize: 16 }} className="grow">פעילות למידה</h3>
+        {focus?.[today.toISOString().slice(0, 10)] > 0 && <span className="chip c"><Timer size={13} /> {focus[today.toISOString().slice(0, 10)]} דק׳ ריכוז היום</span>}
         <span className="chip warn"><Flame size={13} /> {streak === 0 ? 'מתחילים רצף היום' : streak === 1 ? 'יום אחד ברצף' : `${streak} ימים ברצף`}</span>
       </div>
       <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gap: 4, direction: 'ltr' }}>
@@ -269,7 +270,7 @@ export default function Home() {
           <ClassesWidget courses={courses} progress={progress} />
           <ExamsWidget courses={courses} list={list} progress={progress} />
           <UpcomingWidget />
-          <Heatmap activity={progress.activity} dueCards={dueCards} />
+          <Heatmap activity={progress.activity} dueCards={dueCards} focus={progress.focus} />
         </div>
         <div className="card pad">
           <div className="row" style={{ marginBottom: 12 }}>

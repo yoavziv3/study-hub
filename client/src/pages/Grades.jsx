@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Calculator, Plus, Trash2, Target, ChevronDown, FileText, Award } from 'lucide-react';
+import { Calculator, Plus, Trash2, Target, ChevronDown, FileText, Award, Download, Check } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, CourseIcon, safeHref } from '../components/ui.jsx';
 import { termsOf, termLabel, termKey, SEMESTER_LABEL, hebrewYear } from '../lib/terms.js';
-import { gradeRows, average, needed, num, fmtAvg, ceil1 } from '../lib/grades.js';
+import { gradeRows, average, needed, num, fmtAvg, ceil1, moodlePercent, withMoodleGrade, usesMoodleGrade } from '../lib/grades.js';
 
 const OWN = ['name', 'credits', 'final', 'pass'];
 const newId = () => `x-${Math.random().toString(36).slice(2, 9)}`;
@@ -189,6 +189,9 @@ function ExamCalculator({ row, onChange }) {
   const target = num(e.target) ?? pass;
   const { data: links } = useFetch(c ? `/api/courses/${c.id}/links` : null);
   const syllabus = (links || []).find((l) => l.type === 'syllabus');
+  // Grades already in Moodle (homework, quizzes…) fill the matching components, or are added as new ones.
+  const { data: moodle } = useFetch(c ? `/api/me/grades/${c.id}` : null);
+  const graded = (moodle?.items || []).filter((g) => !g.total && moodlePercent(g) != null);
 
   const setComponents = (list) => onChange({ components: list });
   const edit = (id, patch) => setComponents(components.map((x) => (x.id === id ? { ...x, ...patch } : x)));
@@ -213,6 +216,24 @@ function ExamCalculator({ row, onChange }) {
         ))}
       </div>
       <button className="btn sm ghost" style={{ marginTop: 6 }} onClick={() => setComponents([...components, { id: newId(), name: 'רכיב נוסף', weight: 0, grade: null }])}><Plus size={14} /> רכיב</button>
+      {graded.length > 0 && (
+        <div className="moodle-grades">
+          <div className="row wrap" style={{ gap: 8 }}>
+            <span className="faint grow" style={{ fontSize: 13 }}>ציונים שכבר במודל – לחיצה מכניסה אותם לרכיב באותו שם (או מוסיפה רכיב, ואז משלימים משקל):</span>
+            <button className="btn sm ghost" onClick={() => setComponents(graded.reduce((list, g) => withMoodleGrade(list, g, newId), components))}><Download size={14} /> הכנסת כולם</button>
+          </div>
+          <div className="row wrap" style={{ gap: 6, marginTop: 6 }}>
+            {graded.map((g) => {
+              const used = usesMoodleGrade(components, g);
+              return (
+                <button key={g.name} className={`chip ${used ? 'good' : ''}`} onClick={() => setComponents(withMoodleGrade(components, g, newId))}>
+                  {used && <Check size={12} />} {g.name} · <b className="num">{ceil1(moodlePercent(g))}</b>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {r.total !== 100 && <div className="chip warn" style={{ marginTop: 8 }}>סכום המשקלות {r.total}% – צריך להגיע ל־100%</div>}
 
       <div className="row wrap" style={{ gap: 14, marginTop: 14 }}>

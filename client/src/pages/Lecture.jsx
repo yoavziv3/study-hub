@@ -357,7 +357,7 @@ export default function Lecture() {
                 {view === 'summary' && content && <StudySummary lecture={lecture} content={content} goSlide={goSlide} reload={reload} />}
                 {view === 'topics' && content && <TopicsTab content={content} goSlide={goSlide} />}
                 {view === 'practice' && content && <PracticeTab lecture={lecture} goSlide={goSlide} reload={reload} />}
-                {view === 'flashcards' && content && <Flashcards cards={content.flashcards.map((c) => ({ ...c, lectureId: lecture.id }))} />}
+                {view === 'flashcards' && content && <Flashcards cards={content.flashcards.map((c) => ({ ...c, lectureId: lecture.id }))} lectures={[{ id: lecture.id, title: lecture.title }]} />}
                 {view === 'glossary' && content && <Glossary terms={content.glossary} />}
                 {view === 'notes' && <NotesTab lecture={lecture} />}
               </motion.div>

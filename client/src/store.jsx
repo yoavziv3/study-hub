@@ -154,6 +154,28 @@ export function AppProvider({ children }) {
           return p;
         }),
       setNote: (id, text) => update((p) => { p.notes[id] = text; return p; }),
+      // A finished focus block of the study timer: minutes per day (it also counts as activity for the streak).
+      addFocus: (minutes) => update((p) => { const day = new Date().toISOString().slice(0, 10); p.focus = { ...p.focus, [day]: (p.focus?.[day] || 0) + minutes }; return p; }),
+      // Flashcards the student wrote ({ id, lectureId, front, back }), edits of the AI's cards and hidden ones (see lib/cards.js).
+      saveOwnCard: (card) => update((p) => {
+        p.customCards ||= [];
+        const i = p.customCards.findIndex((c) => c.id === card.id);
+        if (i >= 0) p.customCards[i] = { ...p.customCards[i], ...card };
+        else p.customCards.push({ ...card, at: Date.now() });
+        return p;
+      }, { quiet: true }),
+      removeOwnCard: (id, key) => update((p) => {
+        p.customCards = (p.customCards || []).filter((c) => c.id !== id);
+        delete p.cards[key];
+        return p;
+      }, { quiet: true }),
+      editCard: (key, front, back) => update((p) => { p.cardEdits = { ...p.cardEdits, [key]: { front, back } }; return p; }, { quiet: true }),
+      hideCard: (key, hide = true) => update((p) => {
+        p.cardHidden ||= {};
+        if (hide) p.cardHidden[key] = Date.now();
+        else delete p.cardHidden[key];
+        return p;
+      }, { quiet: true }),
       // Grades page: per course { final, pass, credits, components: [{id, name, weight, grade}], target, minExam },
       // plus courses that aren't on the site (earlier studies) in extraCourses.
       updateGrades: (fn) => update((p) => {

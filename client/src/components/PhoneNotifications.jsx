@@ -10,6 +10,8 @@ const KINDS = [
   ['cards', 'כרטיסיות לחזרה'],
   ['classes', 'שיעור בעוד רבע שעה'],
   ['rooms', 'שינוי חדר או שעה בקבוצה שלי'],
+  ['material', 'חומר חדש בקורס'],
+  ['announcements', 'הודעות מהקורס'],
 ];
 
 /** Cloud site: turn phone notifications on for this device and choose which kinds arrive. */

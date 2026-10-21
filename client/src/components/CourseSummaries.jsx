@@ -5,6 +5,7 @@ import { ChevronDown, ListChecks, Presentation, Clock, Printer, FileText } from 
 import { ltr } from './ui.jsx';
 import { Block, markdownSections, useActiveSection } from './StudySummary.jsx';
 import ReportButton from './ReportButton.jsx';
+import ReadAloud from './ReadAloud.jsx';
 
 const words = (s) => (s ? String(s).split(/\s+/).length : 0);
 
@@ -36,6 +37,15 @@ export default function CourseSummaries({ course, bundle }) {
     () => Math.max(1, Math.round(parts.reduce((n, p) => n + p.sections.reduce((a, s) => a + (s.blocks || []).reduce((b, x) => b + words(x.body), 0) + (s.items || []).reduce((b, x) => b + words(x), 0), 0), 0) / 180)),
     [parts]
   );
+  // The whole course as one playlist: each lecture opens with its name, then its sections.
+  const playlist = useMemo(
+    () => parts.flatMap((p) => [
+      { id: p.id, title: `${p.label}: ${p.lecture.title}`, blocks: p.subtitle ? [{ type: 'text', body: p.subtitle }] : [], label: `${p.label} · ${p.lecture.title}` },
+      ...p.sections.map((s) => ({ ...s, label: `${p.label} · ${s.title}` })),
+    ]),
+    [parts]
+  );
+  const [speaking, setSpeaking] = useState(null);
   // Smooth scrolling across a very long document gets cut off midway: far jumps are instant.
   const go = (id) => {
     const el = document.getElementById(id);
@@ -63,6 +73,9 @@ export default function CourseSummaries({ course, bundle }) {
           </div>
           <p className="notes-lead">כל השיעורים של {course.short} במסמך אחד, לפי הסדר – ההגדרות, הדוגמאות, הכללים ומה שחשוב לזכור מכל שיעור.</p>
           <button className="btn sm ghost no-print" style={{ marginTop: 10 }} onClick={() => window.print()}><Printer size={15} /> הדפסה / שמירה כ-PDF</button>
+          <div className="no-print">
+            <ReadAloud sections={playlist} label="האזנה לכל הקורס" showNow onSection={(id) => setSpeaking((prev) => { if (id && id !== prev) go(id); return id; })} />
+          </div>
         </header>
 
         <CourseMobileToc parts={parts} current={current} active={active} go={go} />
@@ -79,7 +92,7 @@ export default function CourseSummaries({ course, bundle }) {
               <Link className="btn sm no-print" to={`/lecture/${p.lecture.id}?tab=summary`}>לשיעור</Link>
             </div>
             {p.sections.map((s, i) => (
-              <section key={s.id} id={s.id} className="note-section">
+              <section key={s.id} id={s.id} className={`note-section ${speaking === s.id ? 'speaking' : ''}`}>
                 <div className="note-section-head">
                   <h3 className="note-section-title"><span className="note-num">{i + 1}</span>{ltr(s.title)}</h3>
                   {!s.special && <ReportButton lectureId={p.lecture.id} section={s.title} />}

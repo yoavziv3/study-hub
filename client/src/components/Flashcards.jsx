@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Shuffle, RotateCcw, Layers, Keyboard, MousePointerClick } from 'lucide-react';
-import { useApp, cardKey } from '../store.jsx';
+import { Shuffle, RotateCcw, Layers, Keyboard, MousePointerClick, Pencil, Plus, Flame } from 'lucide-react';
+import { useApp } from '../store.jsx';
 import { shuffle } from '../api.js';
-import { GRADES, previews, schedule, stageOf, STAGE_LABEL, STAGE_ONE } from '../lib/srs.js';
+import { GRADES, previews, schedule, stageOf, isHard, STAGE_LABEL, STAGE_ONE } from '../lib/srs.js';
+import { deckOf, ownKey } from '../lib/cards.js';
 import { ltr } from './ui.jsx';
 
 // Typing mode: how much of the right answer the student wrote (shared words, ignoring niqqud and punctuation).
@@ -19,10 +20,16 @@ function overlap(typed, answer) {
 }
 const suggestion = (score) => (score >= 0.75 ? 'good' : score >= 0.4 ? 'hard' : 'again');
 
-/** Spaced-repetition flashcards (Anki-style). cards: [{front, back, lectureId, lectureTitle?}] */
-export default function Flashcards({ cards }) {
-  const { progress, gradeCard } = useApp();
-  const [mode, setMode] = useState('due'); // due | all
+const MODES = [['due', 'לחזרה עכשיו'], ['all', 'כל הכרטיסיות'], ['hard', 'קשות לי']];
+
+/**
+ * Spaced-repetition flashcards (Anki-style). cards: the AI's [{front, back, lectureId, lectureTitle?}];
+ * lectures: [{id, title}] – where the student's own cards come from and can be added to (omit for a fixed deck).
+ */
+export default function Flashcards({ cards, lectures = null, initialMode = 'due' }) {
+  const { progress, gradeCard, saveOwnCard, removeOwnCard, editCard, hideCard, toast } = useApp();
+  const [mode, setMode] = useState(MODES.some(([m]) => m === initialMode) ? initialMode : 'due'); // due | all | hard
+  const [form, setForm] = useState(null); // { card? } while adding (no card) or editing a card
   const [style, setStyle] = useState(() => {
     try { return localStorage.getItem('fc-style') || 'flip'; } catch { return 'flip'; }
   }); // flip | type
@@ -33,7 +40,8 @@ export default function Flashcards({ cards }) {
   const [exit, setExit] = useState(0);
   const input = useRef(null);
 
-  const withKeys = useMemo(() => cards.map((c) => ({ ...c, key: cardKey(c.lectureId, c.front) })), [cards]);
+  const withKeys = useMemo(() => deckOf(cards, progress, lectures || []), [cards, lectures, progress.customCards, progress.cardEdits, progress.cardHidden]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hardCount = useMemo(() => withKeys.filter((c) => isHard(progress.cards[c.key])).length, [withKeys, progress.cards]);
   const stages = useMemo(() => {
     const s = { new: 0, learning: 0, young: 0, mature: 0 };
     withKeys.forEach((c) => s[stageOf(progress.cards[c.key])]++);
@@ -42,13 +50,21 @@ export default function Flashcards({ cards }) {
 
   const build = (m = mode) => {
     const now = Date.now();
-    const list = m === 'due' ? withKeys.filter((c) => !progress.cards[c.key] || progress.cards[c.key].due <= now) : withKeys;
-    setDeck(shuffle(list));
+    // "Hard for me": the cards forgotten most often, worst first.
+    const list = m === 'due' ? shuffle(withKeys.filter((c) => !progress.cards[c.key] || progress.cards[c.key].due <= now))
+      : m === 'hard' ? withKeys.filter((c) => isHard(progress.cards[c.key])).sort((a, b) => (progress.cards[b.key].lapses || 0) - (progress.cards[a.key].lapses || 0))
+      : shuffle(withKeys);
+    setDeck(list);
     setI(0);
     setFlip(false);
     setTyped('');
   };
   useEffect(() => { build(); }, [cards.length, mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  // An edited card changes in place; a hidden or deleted one leaves the round.
+  useEffect(() => {
+    const byKey = new Map(withKeys.map((c) => [c.key, c]));
+    setDeck((d) => d.filter((c) => byKey.has(c.key)).map((c) => byKey.get(c.key)));
+  }, [withKeys]);
   useEffect(() => {
     try { localStorage.setItem('fc-style', style); } catch { /* storage unavailable */ }
   }, [style]);
@@ -79,7 +95,7 @@ export default function Flashcards({ cards }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (!card) return;
+      if (!card || form) return;
       const typing = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
       if (typing) return;
       if (e.key === ' ') { e.preventDefault(); setFlip((f) => !f); }
@@ -102,10 +118,11 @@ export default function Flashcards({ cards }) {
     <div>
       <div className="row" style={{ justifyContent: 'center', marginBottom: 18, flexWrap: 'wrap' }}>
         <div className="tabs">
-          {[['due', 'לחזרה עכשיו'], ['all', 'כל הכרטיסיות']].map(([id, label]) => (
+          {MODES.filter(([id]) => id !== 'hard' || hardCount || mode === 'hard').map(([id, label]) => (
             <button key={id} className={`tab ${mode === id ? 'active' : ''}`} onClick={() => setMode(id)}>
               {mode === id && <motion.span layoutId="fc-mode" className="tab-bg" />}
-              {label}
+              {id === 'hard' && <Flame size={14} />} {label}
+              {id === 'hard' && <span className="count">{hardCount}</span>}
             </button>
           ))}
         </div>
@@ -126,9 +143,31 @@ export default function Flashcards({ cards }) {
             <div className="row" style={{ marginBottom: 10 }}>
               <span className="chip num">{i + 1}/{deck.length}</span>
               {card.lectureTitle && <span className="chip">{card.lectureTitle}</span>}
+              {card.customId && <span className="chip c">שלי</span>}
+              {card.edited && <span className="chip">נערכה</span>}
               <div className="spacer" />
               <span className="faint" style={{ fontSize: 12.5 }}>{STAGE_ONE[stageOf(stored)]}</span>
+              {lectures && <button className="btn sm icon ghost" onClick={() => setForm({ card })} aria-label="עריכת הכרטיסייה"><Pencil size={14} /></button>}
             </div>
+            {form?.card?.key === card.key ? (
+              <CardForm
+                card={card}
+                onCancel={() => setForm(null)}
+                onSave={({ front, back }) => {
+                  if (card.customId) saveOwnCard({ id: card.customId, front, back });
+                  else editCard(card.key, front, back);
+                  setForm(null);
+                  toast('הכרטיסייה עודכנה');
+                }}
+                onRemove={() => {
+                  if (card.customId) removeOwnCard(card.customId, card.key);
+                  else hideCard(card.key);
+                  setForm(null);
+                  toast(card.customId ? 'הכרטיסייה נמחקה' : 'הכרטיסייה הוסתרה');
+                }}
+                removeLabel={card.customId ? 'מחיקה' : 'הסתרה מהחפיסה'}
+              />
+            ) : (
             <AnimatePresence mode="wait" custom={exit}>
               <motion.div
                 key={card.key + i}
@@ -191,9 +230,10 @@ export default function Flashcards({ cards }) {
                 )}
               </motion.div>
             </AnimatePresence>
+            )}
             <div className="fc-actions">
               <AnimatePresence>
-                {flip && GRADES.map((g, j) => (
+                {flip && !form && GRADES.map((g, j) => (
                   <motion.button
                     key={g.id}
                     className={`btn fc-grade ${g.cls} ${suggested === g.id ? 'suggested' : ''}`}
@@ -210,12 +250,12 @@ export default function Flashcards({ cards }) {
                 ))}
               </AnimatePresence>
             </div>
-            {flip && <div className="faint fc-hint">מקשים 1–4 · שוב = לא זכרתי · קשה = בקושי · טוב = זכרתי · קל = בלי לחשוב</div>}
+            {flip && !form && <div className="faint fc-hint">מקשים 1–4 · שוב = לא זכרתי · קשה = בקושי · טוב = זכרתי · קל = בלי לחשוב</div>}
           </>
         ) : (
           <motion.div className="card result-hero" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="empty-icon" style={{ marginBottom: 12 }}><Layers size={28} /></div>
-            <h3 style={{ fontSize: 22 }}>{deck.length ? 'סיימתם את הסבב! 🎉' : 'אין כרטיסיות לחזרה כרגע'}</h3>
+            <h3 style={{ fontSize: 22 }}>{deck.length ? 'סיימתם את הסבב! 🎉' : mode === 'hard' ? 'אין כרטיסיות קשות כרגע 💪' : 'אין כרטיסיות לחזרה כרגע'}</h3>
             <p className="muted">כל כרטיסייה חוזרת לפי מה שעניתם: "קל" מרחיק אותה בהרבה, "שוב" מחזיר אותה עוד כמה דקות – כך הזיכרון מתקבע לטווח ארוך.</p>
             <div className="row" style={{ justifyContent: 'center' }}>
               <button className="btn accent" onClick={() => { setMode('all'); build('all'); }}><RotateCcw size={16} /> חזרה על כל הכרטיסיות</button>
@@ -227,7 +267,59 @@ export default function Flashcards({ cards }) {
             <div key={s}><b>{n}</b>{STAGE_LABEL[s]}</div>
           ))}
         </div>
+        {lectures?.length > 0 && (
+          form && !form.card ? (
+            <CardForm
+              lectures={lectures}
+              onCancel={() => setForm(null)}
+              onSave={({ front, back, lectureId }) => {
+                const own = { id: Math.random().toString(36).slice(2, 10), lectureId, front, back };
+                saveOwnCard(own);
+                // New cards are due right away: they join this round too.
+                setDeck((d) => [...d, { front, back, lectureId, key: ownKey(own), customId: own.id, lectureTitle: card?.lectureTitle && lectures.find((l) => l.id === lectureId)?.title }]);
+                setForm(null);
+                toast('הכרטיסייה נוספה');
+              }}
+            />
+          ) : (
+            <div style={{ textAlign: 'center', marginTop: 14 }}>
+              <button className="btn sm ghost" onClick={() => setForm({})}><Plus size={14} /> כרטיסייה משלי</button>
+            </div>
+          )
+        )}
       </div>
     </div>
+  );
+}
+
+/** Add a card of your own, or edit one (the AI's edits are kept separately, so its review history stays). */
+function CardForm({ card, lectures, onSave, onCancel, onRemove, removeLabel }) {
+  const [front, setFront] = useState(card?.front || '');
+  const [back, setBack] = useState(card?.back || '');
+  const [lectureId, setLectureId] = useState(lectures?.[0]?.id);
+  const ok = front.trim() && back.trim();
+  return (
+    <form className="card pad card-form" onSubmit={(e) => { e.preventDefault(); if (ok) onSave({ front: front.trim(), back: back.trim(), lectureId }); }}>
+      <b>{card ? 'עריכת כרטיסייה' : 'כרטיסייה חדשה'}</b>
+      {!card && lectures.length > 1 && (
+        <select className="input" value={lectureId} onChange={(e) => setLectureId(e.target.value)} aria-label="השיעור">
+          {lectures.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
+        </select>
+      )}
+      <label className="stack" style={{ gap: 4 }}>
+        <span className="faint" style={{ fontSize: 12.5 }}>שאלה</span>
+        <textarea className="input fc-answer" rows={2} value={front} onChange={(e) => setFront(e.target.value)} autoFocus />
+      </label>
+      <label className="stack" style={{ gap: 4 }}>
+        <span className="faint" style={{ fontSize: 12.5 }}>תשובה</span>
+        <textarea className="input fc-answer" rows={3} value={back} onChange={(e) => setBack(e.target.value)} />
+      </label>
+      <div className="row wrap" style={{ gap: 8 }}>
+        <button className="btn accent sm" type="submit" disabled={!ok}>שמירה</button>
+        <button className="btn ghost sm" type="button" onClick={onCancel}>ביטול</button>
+        <div className="spacer" />
+        {onRemove && <button className="btn ghost sm danger" type="button" onClick={onRemove}>{removeLabel}</button>}
+      </div>
+    </form>
   );
 }

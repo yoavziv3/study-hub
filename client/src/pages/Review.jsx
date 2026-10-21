@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Layers, Loader2 } from 'lucide-react';
-import { useApp, cardKey } from '../store.jsx';
+import { useApp } from '../store.jsx';
+import { deckOf } from '../lib/cards.js';
 import { api } from '../api.js';
 import { Page, fadeUp } from '../components/ui.jsx';
 import Flashcards from '../components/Flashcards.jsx';
@@ -20,10 +21,14 @@ export default function Review() {
       .then((bundles) => {
         if (!alive) return;
         const cards = [];
+        const lectures = [];
         for (const b of bundles.filter(Boolean)) {
-          for (const l of b.lectures) for (const f of l.content?.flashcards || []) cards.push({ ...f, lectureId: l.id, lectureTitle: `${b.short} · ${l.title}` });
+          for (const l of b.lectures) {
+            lectures.push({ id: l.id, title: `${b.short} · ${l.title}` });
+            for (const f of l.content?.flashcards || []) cards.push({ ...f, lectureId: l.id, lectureTitle: `${b.short} · ${l.title}` });
+          }
         }
-        setAll(cards);
+        setAll({ cards, lectures });
       });
     return () => { alive = false; };
   }, [courses]);
@@ -32,8 +37,10 @@ export default function Review() {
   const today = useMemo(() => {
     if (!all) return null;
     const now = Date.now();
-    const due = all.filter((c) => progress.cards[cardKey(c.lectureId, c.front)]?.due <= now);
-    const fresh = all.filter((c) => !progress.cards[cardKey(c.lectureId, c.front)]).slice(0, NEW_PER_DAY);
+    // With the student's own cards and edits; keyed once here, so Flashcards gets the deck as is.
+    const deck = deckOf(all.cards, progress, all.lectures);
+    const due = deck.filter((c) => progress.cards[c.key]?.due <= now);
+    const fresh = deck.filter((c) => !progress.cards[c.key]).slice(0, NEW_PER_DAY);
     return { due: due.length, fresh: fresh.length, cards: [...due, ...fresh] };
   }, [all]); // eslint-disable-line react-hooks/exhaustive-deps
 

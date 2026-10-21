@@ -76,8 +76,11 @@ function useHebrewVoice() {
   return voice;
 }
 
-/** "השמע" for a summary: play/pause, previous/next section, stop, speed. sections: [{id, title, blocks?, items?}] */
-export default function ReadAloud({ intro, sections, onSection }) {
+/**
+ * "השמע" for a summary: play/pause, previous/next section, stop, speed. sections: [{id, title, blocks?, items?, label?}].
+ * A whole course reads as one playlist: `label` names the button and each section's `label` shows what is playing.
+ */
+export default function ReadAloud({ intro, sections, onSection, label = 'השמע', showNow = false }) {
   const supported = typeof window !== 'undefined' && 'speechSynthesis' in window;
   const voice = useHebrewVoice();
   const [state, setState] = useState('idle'); // idle | playing | paused
@@ -90,8 +93,8 @@ export default function ReadAloud({ intro, sections, onSection }) {
 
   const chunks = useMemo(() => {
     const out = [];
-    if (intro) for (const text of chunk(speakable(intro))) out.push({ text, section: sections[0]?.id });
-    for (const s of sections) for (const text of chunk(sectionText(s))) out.push({ text, section: s.id });
+    if (intro) for (const text of chunk(speakable(intro))) out.push({ text, section: sections[0]?.id, label: sections[0]?.label });
+    for (const s of sections) for (const text of chunk(sectionText(s))) out.push({ text, section: s.id, label: s.label || s.title });
     return out;
   }, [intro, sections]);
 
@@ -158,7 +161,7 @@ export default function ReadAloud({ intro, sections, onSection }) {
   return (
     <div className={`read-aloud ${state}`}>
       {state === 'idle' ? (
-        <button className="btn sm" onClick={() => speakFrom(0)}><Headphones size={15} /> השמע</button>
+        <button className="btn sm" onClick={() => speakFrom(0)}><Headphones size={15} /> {label}</button>
       ) : (
         <motion.div className="read-aloud-bar" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
           <button className="btn sm icon ghost" onClick={() => jump(-1)} aria-label="לקטע הקודם"><SkipForward size={15} /></button>
@@ -171,12 +174,14 @@ export default function ReadAloud({ intro, sections, onSection }) {
           <span className="faint num" style={{ fontSize: 12 }}>{pct}%</span>
         </motion.div>
       )}
+      {showNow && state !== 'idle' && chunks[pos]?.label && <span className="read-aloud-now">{chunks[pos].label}</span>}
       <label className="read-aloud-rate">
         <span className="faint">מהירות</span>
         <select className="input sm" value={rate} onChange={(e) => changeRate(Number(e.target.value))} aria-label="מהירות ההקראה">
           {RATES.map((r) => <option key={r} value={r}>×{r}</option>)}
         </select>
       </label>
+      {showNow && state === 'idle' && <span className="faint" style={{ fontSize: 12.5 }}>בטלפון ההקראה נעצרת כשהמסך ננעל – השאירו אותו דולק.</span>}
       {voice === null && <span className="faint" style={{ fontSize: 12.5 }}>לא נמצא במכשיר קול בעברית – ההקראה עלולה להישמע לא טוב</span>}
     </div>
   );

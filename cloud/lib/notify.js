@@ -1,7 +1,8 @@
 // Phone notifications for students of the cloud site (Web Push): a deadline coming up, an exam or quiz tomorrow,
-// flashcards waiting for review, a class starting in a quarter of an hour, and a room / time change in the
-// student's own group. Pages Functions have no timer, so the Mac that builds the site calls the admin "tick"
-// every few minutes; each tick works out what is due and sends what hasn't been sent yet (push_sent).
+// flashcards waiting for review, a class starting in a quarter of an hour, a room / time change in the student's
+// own group, and new material or announcements in their courses. Pages Functions have no timer, so a cron Worker
+// (workers/push-cron, with the Mac as backup) calls the admin "tick" every 5 minutes; each tick works out what is
+// due and sends what hasn't been sent yet (push_sent).
 import { HttpError, json } from './util.js';
 import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
@@ -13,7 +14,7 @@ const MAX_SUBS = 5;
 const MAX_SENDS = 30; // push requests per tick (Cloudflare limits outgoing requests per invocation)
 const DEADLINES_FRESH = 3 * 3600000; // deadline reminders only from a recent Moodle answer (submitted work drops off)
 
-export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms'];
+export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms', 'material', 'announcements'];
 const prefsOf = (progress) => ({ ...Object.fromEntries(KINDS.map((k) => [k, true])), ...(progress.notify || {}) });
 
 // ---------- subscriptions ----------
@@ -84,7 +85,14 @@ function whenText(ms) {
 }
 
 // ---------- what each student should hear about now ----------
-export function dueNotifications({ user, progress, courses, deadlines, updates, now }) {
+// Moodle posts arrive as many short lines; a notification gets one compact line.
+const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
+
+/**
+ * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
+ * `isSent(key)`: what they already got.
+ */
+export function dueNotifications({ user, progress, courses, deadlines, updates, now, since = 0, isSent = () => false }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   const daytime = il.hour >= 8 && il.hour < 22;
@@ -177,6 +185,40 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
       out.push({ key: `room:${it.id}`, title: it.title, body: it.body, url: '/schedule' });
     }
   }
+  // 6. New material and course announcements in the student's courses (from the site's published updates feed).
+  //    A burst – the start of a semester, a big Moodle sync – becomes one notification per course and type.
+  if ((prefs.material || prefs.announcements) && daytime) {
+    const groups = new Map();
+    for (const it of updates) {
+      const wanted = (it.type === 'material' && prefs.material) || (it.type === 'announcement' && prefs.announcements);
+      const at = Date.parse(it.addedAt);
+      if (!wanted || now - at > 2 * DAY || at < since || isSent(`upd:${it.id}`) || !short[it.courseId]) continue;
+      const k = `${it.type}:${it.courseId}`;
+      groups.set(k, [...(groups.get(k) || []), it]);
+    }
+    for (const list of groups.values()) {
+      const [it] = list;
+      const material = it.type === 'material';
+      if (list.length === 1) {
+        out.push({
+          key: `upd:${it.id}`,
+          title: material ? it.title : `הודעה ב${short[it.courseId]}: ${it.title}`,
+          body: material
+            ? courses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
+            : oneLine(it.body).slice(0, 180),
+          url: material && it.lectureId ? `/lecture/${it.lectureId}` : '/updates',
+        });
+      } else {
+        out.push({
+          key: `upd:${it.id}`,
+          keys: list.map((x) => `upd:${x.id}`),
+          title: `${list.length} ${material ? 'חומרים חדשים' : 'הודעות חדשות'} ב${short[it.courseId]}`,
+          body: list.slice(0, 3).map((x) => (material ? x.title.replace(/^[^:]*:\s*/, '') : x.title)).join(' · '),
+          url: material ? `/course/${it.courseId}` : '/updates',
+        });
+      }
+    }
+  }
   return out;
 }
 
@@ -237,15 +279,17 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     } else if (row && now - row.at <= DEADLINES_FRESH) {
       try { deadlines = JSON.parse(row.data).map((e) => ({ ...e, courseId: siteOf[e.moodleCourseId] || e.siteCourseId || null })); } catch { /* skip */ }
     }
-    const due = dueNotifications({ user, progress, courses: mine, deadlines, updates, now }).filter((n) => !sent.has(`${user.id}|${n.key}`));
-    if (!due.length) continue;
     const devices = subs.filter((s) => s.user_id === user.id);
+    const isSent = (key) => sent.has(`${user.id}|${key}`);
+    const since = Math.min(...devices.map((d) => d.created_at || 0));
+    const due = dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent }).filter((n) => !isSent(n.key));
+    if (!due.length) continue;
     for (const n of due) {
       if (budget < devices.length) break;
       budget -= devices.length;
       const ok = await deliver(env, devices, { title: n.title, body: n.body, url: n.url, tag: n.key }, { ttl: n.ttl, urgency: n.urgency });
       // Marked as sent even when every device refused it, so a broken device doesn't get retried forever.
-      marks.push(db.prepare('INSERT OR IGNORE INTO push_sent (user_id, key, at) VALUES (?, ?, ?)').bind(user.id, n.key, now));
+      for (const key of n.keys || [n.key]) marks.push(db.prepare('INSERT OR IGNORE INTO push_sent (user_id, key, at) VALUES (?, ?, ?)').bind(user.id, key, now));
       total += ok;
     }
   }
