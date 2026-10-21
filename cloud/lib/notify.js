@@ -10,7 +10,7 @@ import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
 import { parseJson } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
-import { saveHeartbeat, ownerUserId, systemStatus, publishedItems } from './health.js';
+import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
 
 const DAY = 86400000;
@@ -353,7 +353,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   let alerts = [];
   const owner = await ownerUserId(env);
   if (owner && subs.some((s) => s.user_id === owner)) {
-    const status = await systemStatus(env, { courses, macItems, now }).catch((e) => { console.error('[health]', e?.message); return null; });
+    const status = await systemStatus(env, { courses, macItems, build: await buildInfo(env, request).catch(() => null), now }).catch((e) => { console.error('[health]', e?.message); return null; });
     const il = israel(now);
     if (status && il.hour >= 8 && il.hour < 23) {
       alerts = status.checks.flatMap((c) => (c.alerts || []).map((a) => ({

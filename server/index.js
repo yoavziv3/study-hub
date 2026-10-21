@@ -8,7 +8,7 @@ import {
   ROOT, listCourses, getCourse, listLectures, getLecture, patchLecture, getContent, saveContent, getSlides,
   deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice, getLinks,
 } from './lib/store.js';
-import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, ACCEPTED, KINDS } from './lib/ingest.js';
+import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, retryFailedAI, ACCEPTED, KINDS } from './lib/ingest.js';
 import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
 import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
@@ -16,7 +16,7 @@ import * as moodle from './lib/moodle.js';
 import { backupNow, backupStatus, startBackups } from './lib/backup.js';
 import { initPublish } from './lib/publish.js';
 import { startPushTicks } from './lib/push-tick.js';
-import { systemStatus } from './lib/health.js';
+import { systemStatus, startAIWatch } from './lib/health.js';
 import { startRun, listRuns, PROCESSES } from './lib/runlog.js';
 import { checkQuiz, checkProblems } from './lib/checks.js';
 import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
@@ -192,20 +192,7 @@ app.post('/api/backup', async (req, res) => {
 /** "Try again" for everything that came in without AI material (e.g. after the usage limit reset). */
 app.post('/api/maintenance/retry-ai', async (req, res) => {
   if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
-  let n = 0;
-  for (const l of listLectures()) {
-    if (l.status !== 'ready' || l.noAi) continue;
-    if (l.aiError) {
-      await patchLecture(l.id, { status: 'processing', stage: 'queued' });
-      enqueue(l.id, { aiOnly: true });
-      n++;
-    } else if (l.notesError) {
-      await patchLecture(l.id, { notesStatus: 'queued', notesError: null });
-      enqueue(l.id, { notesOnly: true });
-      n++;
-    }
-  }
-  res.json({ queued: n });
+  res.json({ queued: await retryFailedAI() });
 });
 
 app.get('/api/me/grades/:courseId', async (req, res) => {
@@ -528,5 +515,6 @@ app.listen(PORT, HOST, () => {
   startBackups();
   startPushTicks();
   startWeekly();
+  startAIWatch();
   startPortalRelay().catch((e) => console.error('[portal]', e.message));
 });

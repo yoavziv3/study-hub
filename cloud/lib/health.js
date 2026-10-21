@@ -31,6 +31,13 @@ export async function ownerUserId(env) {
   return r?.id || null;
 }
 
+/** What this deployment was built from (data/build.json: commit and time). */
+export async function buildInfo(env, request) {
+  const res = await env.ASSETS.fetch(new URL('/data/build.json', request.url));
+  if (!res.ok || !(res.headers.get('Content-Type') || '').includes('json')) return null;
+  return res.json();
+}
+
 /** The Mac's published feed (data/updates.json in the static build). */
 export async function publishedItems(env, request) {
   const res = await env.ASSETS.fetch(new URL('/data/updates.json', request.url));
@@ -42,7 +49,7 @@ const parse = (s) => {
   try { return JSON.parse(s || 'null'); } catch { return null; }
 };
 
-export async function systemStatus(env, { courses, macItems, now = Date.now() }) {
+export async function systemStatus(env, { courses, macItems, build = null, now = Date.now() }) {
   const db = env.DB;
   const [meta, watch, users, subs, links, portalFails, health, cloudItems] = await Promise.all([
     db.prepare('SELECT key, value FROM push_meta').all(),
@@ -137,7 +144,25 @@ export async function systemStatus(env, { courses, macItems, now = Date.now() })
 
   // ---------- the Mac and its publishing ----------
   const mac = healthOf.get('mac');
-  checks.push(...macChecks(parse(mac?.data), mac?.at || 0, now));
+  const macData = parse(mac?.data);
+  checks.push(...macChecks(macData, mac?.at || 0, now));
+
+  // ---------- is this deployment the latest? ----------
+  // The Mac reports the commit it last pushed (origin/main). A Cloudflare build that fails leaves the old site up,
+  // quietly – this notices when the live build stays behind that commit.
+  const git = macData?.git;
+  if (git?.head && build?.commit && build.commit !== 'local') {
+    const behind = build.commit !== git.head;
+    const late = behind && now - git.headAt > 30 * MIN;
+    checks.push({
+      id: 'deploy',
+      title: 'עדכון האתר בענן',
+      state: late ? 'bad' : behind ? 'warn' : 'ok',
+      text: !behind ? `מעודכן · נבנה ${ago(Date.parse(build.builtAt), now)}` : late ? `האתר תקוע על גרסה מ${ago(Date.parse(build.builtAt), now)}` : 'עדכון בדרך',
+      detail: behind ? [`באתר: ${build.commit.slice(0, 7)} · ב git: ${git.head.slice(0, 7)}`, ...(late ? ['כנראה שהבנייה ב Cloudflare נכשלה – הסיבה מופיעה בלוח הבקרה של Cloudflare Pages'] : [])] : [],
+      alerts: late ? [{ key: `deploy:${git.head.slice(0, 7)}`, text: 'העדכון של האתר בענן נכשל – הסטודנטים רואים גרסה ישנה' }] : [],
+    });
+  }
 
   // ---------- new Moodle files the Mac hasn't summarised and published yet ----------
   const waiting = mergeUpdates(macItems, cloudItems).slice(macItems.length).filter((i) => i.type === 'material');

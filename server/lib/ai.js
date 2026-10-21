@@ -124,6 +124,30 @@ export async function generateJSON({ system, prompt, schema, effort = 'high', ma
   throw new Error(NO_AI);
 }
 
+// ---------- is Claude answering? ----------
+// A tiny request on the smallest model, so an expired sign-in or a used-up limit shows before the next file
+// needs a summary (health.js runs it regularly and alerts the owner).
+const PROBE_MODEL = process.env.AI_PROBE_MODEL || 'claude-haiku-5-5';
+export async function probeAI() {
+  const { provider } = aiStatus();
+  if (provider === 'none') return { ok: false, reason: NO_AI };
+  try {
+    if (provider === 'api') {
+      await sdk().messages.create({ model: PROBE_MODEL, max_tokens: 5, messages: [{ role: 'user', content: 'Reply with OK' }] });
+    } else {
+      const args = cliArgs({ system: 'Reply with OK.', extra: ['--output-format', 'json'] });
+      args[args.indexOf('--model') + 1] = PROBE_MODEL;
+      const res = JSON.parse(await spawnCli(args, 'Reply with OK'));
+      if (res.is_error) throw new Error(res.result || 'CLI error');
+    }
+    return { ok: true };
+  } catch (e) {
+    const m = String(e.message || e);
+    const kind = /authenticate|login|OAuth|401/i.test(m) ? 'signed-out' : /429|usage_limit|rate.?limit|credit/i.test(m) ? 'limit' : 'error';
+    return { ok: false, kind, reason: m.replace(/^claude exited \d+: /, '').slice(0, 200) };
+  }
+}
+
 // ---------- streaming chat ----------
 // messages: [{role:'user'|'assistant', content:string}]
 export async function chatStream({ system, messages, onText, signal, effort = 'low' }) {

@@ -11,7 +11,7 @@ import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult } from './lib/portal.js';
-import { saveHeartbeat, ownerUserId, systemStatus, publishedItems } from './lib/health.js';
+import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
 const MIN = 60000;
 
@@ -95,7 +95,7 @@ async function route({ request, env }) {
   // The site owner's system status (health.js); other students get a plain 404.
   if (path === '/api/system' && method === 'GET') {
     if ((await ownerUserId(env)) !== user.id) return fail(404, 'לא נמצא');
-    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request) }));
+    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request), build: await buildInfo(env, request) }));
   }
   if (path === '/api/me' && method === 'DELETE') return deleteAccount(env, user);
 
@@ -238,7 +238,7 @@ async function admin({ request, env, url, path, method }) {
     // The Mac's own status page: it sends a fresh heartbeat and gets the whole picture back.
     const { mac } = await readJson(request, 30_000);
     if (mac && typeof mac === 'object') await saveHeartbeat(env, mac);
-    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request) }));
+    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request), build: await buildInfo(env, request) }));
   }
 
   if (path === '/api/admin/backup' && method === 'GET') {

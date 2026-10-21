@@ -61,6 +61,26 @@ export function macChecks(mac, at, now = Date.now()) {
     alerts: away ? [] : alerts,
   }];
 
+  // Claude on the Mac, from its half-hourly check (server/lib/health.js checkAI).
+  const w = mac.aiWatch;
+  if (w?.checkedAt) {
+    const text = w.ok ? `עונה · נבדק ${ago(w.checkedAt, now)}`
+      : w.kind === 'signed-out' ? 'מנותק – צריך להתחבר מחדש'
+      : w.kind === 'limit' ? 'הגעת למגבלת השימוש'
+      : 'לא עונה';
+    checks.push({
+      id: 'ai',
+      title: 'ה AI במחשב (Claude)',
+      state: w.ok ? 'ok' : away ? 'off' : 'bad',
+      text: away && !w.ok ? `${text} (בבדיקה האחרונה)` : text,
+      detail: w.ok ? [] : [
+        ...(w.kind === 'signed-out' ? ['בטרמינל: claude, ואז /login. אחרי זה מה שחיכה יעובד לבד.'] : w.kind === 'limit' ? ['כשהמגבלה תתאפס, מה שחיכה יעובד לבד.'] : [w.reason]),
+        ...(w.since ? [`כך ${ago(w.since, now).replace('לפני', 'כבר')}`] : []),
+      ].filter(Boolean),
+      alerts: !w.ok && !away ? [{ key: `ai:${w.kind || 'error'}`, text: w.kind === 'signed-out' ? 'ה Claude במחשב מנותק – הסיכומים לא נוצרים. בטרמינל: claude, ואז /login' : w.kind === 'limit' ? 'הגעת למגבלת השימוש ב Claude – הסיכומים יחכו עד שהיא תתאפס' : `ה Claude במחשב לא עונה: ${w.reason}` }] : [],
+    });
+  }
+
   const pub = mac.publish || {};
   const failedLast = pub.lastError && pub.lastError.at > (pub.lastOk || 0);
   checks.push({

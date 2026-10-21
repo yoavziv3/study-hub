@@ -135,6 +135,32 @@ export async function addPrepItem({ courseId, lesson, semester, slidesText, tran
   return meta;
 }
 
+const AUTO_RETRIES = 3; // automatic retries per item before it waits for a manual one
+
+/**
+ * "Try again" for everything that came in without AI material (usage limit, expired sign-in, a rejected output).
+ * auto: the AI watch (health.js) calling once Claude answers again – each item at most AUTO_RETRIES times, and only
+ * while nothing else is being processed. Returns how many were queued.
+ */
+export async function retryFailedAI({ auto = false } = {}) {
+  if (auto && (running || queue.length)) return 0;
+  let n = 0;
+  for (const l of listLectures()) {
+    if (l.status !== 'ready' || l.noAi || (!l.aiError && !l.notesError)) continue;
+    if (auto && (l.aiRetries || 0) >= AUTO_RETRIES) continue;
+    const tries = auto ? (l.aiRetries || 0) + 1 : 0;
+    if (l.aiError) {
+      await patchLecture(l.id, { status: 'processing', stage: 'queued', aiRetries: tries });
+      enqueue(l.id, { aiOnly: true });
+    } else {
+      await patchLecture(l.id, { notesStatus: 'queued', notesError: null, aiRetries: tries });
+      enqueue(l.id, { notesOnly: true });
+    }
+    n++;
+  }
+  return n;
+}
+
 export function enqueue(id, opts = {}) {
   queue.push({ id, opts });
   return pump();
@@ -246,7 +272,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       checks = assertUsable(checked.checks);
       content = checked.value;
       await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: aiStatus().provider });
-      await patchLecture(id, { aiError: null, checks: { at: new Date().toISOString(), found: checks.length } });
+      await patchLecture(id, { aiError: null, aiRetries: 0, checks: { at: new Date().toISOString(), found: checks.length } });
       run.ok({ title: content.title, summaryChars: content.summary.length, quiz: content.quiz.length, flashcards: content.flashcards.length, glossary: content.glossary.length, topics: content.topics.length }, checks);
       await generateNotes(id);
     } catch (e) {

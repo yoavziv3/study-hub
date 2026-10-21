@@ -1,15 +1,55 @@
 // The Mac's heartbeat for the owner's system status: sent to the cloud with every notification tick (push-tick.js)
 // and when the status page is opened here. The cloud keeps the last one (cloud/lib/health.js); the checks built from
 // it are shared/system-checks.js.
-import { listLectures } from './store.js';
-import { queueState } from './ingest.js';
+import { execFileSync } from 'node:child_process';
+import { ROOT, listLectures } from './store.js';
+import { queueState, retryFailedAI } from './ingest.js';
 import { moodleStatus } from './moodle.js';
 import { publishState } from './publish.js';
-import { aiStatus } from './ai.js';
+import { aiStatus, probeAI } from './ai.js';
+import { adminAlert } from './updates.js';
 import { macChecks, worst } from '../../shared/system-checks.js';
 
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
 const SECRET = process.env.STUDY_ADMIN_SECRET || '';
+
+// ---------- is Claude answering? (checked every half hour) ----------
+// An expired sign-in or a used-up limit makes every new file come in without a summary. This finds out before the
+// next file does, alerts the owner (here and, through the heartbeat, on the phone), and once Claude answers again
+// re-queues what failed meanwhile (retryFailedAI, a few tries per item).
+const AI_EVERY = 30 * 60000;
+let aiWatch = { ok: null, kind: null, reason: null, checkedAt: null, since: null };
+
+export async function checkAI() {
+  const r = await probeAI();
+  const changed = r.ok !== aiWatch.ok;
+  aiWatch = { ok: r.ok, kind: r.kind || null, reason: r.reason || null, checkedAt: Date.now(), since: changed ? Date.now() : aiWatch.since };
+  if (!r.ok) {
+    console.error('[ai] not answering:', r.reason);
+    adminAlert(r.kind === 'signed-out' ? 'ה-Claude במחשב מנותק – צריך להתחבר מחדש (claude, ואז /login)' : r.kind === 'limit' ? 'הגעת למגבלת השימוש ב-Claude – הסיכומים יחכו עד שהיא תתאפס' : `ה-Claude במחשב לא עונה: ${r.reason}`);
+    return aiWatch;
+  }
+  if (changed && aiWatch.since) console.log('[ai] answering again');
+  const n = await retryFailedAI({ auto: true }).catch(() => 0);
+  if (n) console.log(`[ai] re-queued ${n} items that came in without AI material`);
+  return aiWatch;
+}
+
+export function startAIWatch() {
+  if (process.env.AI_WATCH === '0') return;
+  setTimeout(() => checkAI().catch(() => {}), 2 * 60000).unref?.();
+  setInterval(() => checkAI().catch(() => {}), AI_EVERY).unref?.();
+}
+
+/** The commit this Mac last pushed or pulled (origin/main) and its time – the cloud compares it with its build. */
+function originHead() {
+  try {
+    const [head, at] = execFileSync('git', ['log', '-1', '--format=%H %ct', 'origin/main'], { cwd: ROOT, timeout: 5000 }).toString().trim().split(' ');
+    return { head, headAt: Number(at) * 1000 };
+  } catch {
+    return null;
+  }
+}
 
 export function macHealth() {
   const m = moodleStatus();
@@ -27,6 +67,8 @@ export function macHealth() {
       .slice(0, 10),
     publish: publishState(),
     ai: aiStatus().ready,
+    aiWatch,
+    git: originHead(),
   };
 }
 
