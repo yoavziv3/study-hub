@@ -230,8 +230,17 @@ export async function disconnectPortal(env, user) {
 /** Admin check from Cloudflare's network: can the cloud reach the portal at all (no sign-in involved)? */
 export async function portalPing(env) {
   const t0 = Date.now();
-  const { status } = await post(env, '/umbraco/api/PortalGeneralSettingsApi/GetPortalAppSettings', { cultureCode: CULTURE }).catch((e) => ({ status: `error: ${e.message}` }));
-  return json({ status, ms: Date.now() - t0 });
+  try {
+    const res = await fetch(`${PORTAL(env)}/umbraco/api/PortalGeneralSettingsApi/GetPortalAppSettings`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ cultureCode: CULTURE }), signal: AbortSignal.timeout(30000),
+    });
+    const text = await res.text();
+    // Who answered and why (a firewall's block page names itself) – no personal data involved.
+    const headers = Object.fromEntries(['server', 'via', 'x-cache', 'x-amz-cf-pop'].map((h) => [h, res.headers.get(h)]));
+    return json({ status: res.status, ms: Date.now() - t0, headers, body: text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 300), colo: env.CF_COLO || null });
+  } catch (e) {
+    return json({ status: `error: ${e.message}`, ms: Date.now() - t0 });
+  }
 }
 
 export { PortalError };
