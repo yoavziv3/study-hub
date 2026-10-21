@@ -180,11 +180,20 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
   return out;
 }
 
-/** Called by the Mac every few minutes (admin channel). */
-export async function notifyTick(env, request) {
+const BACKUP_AFTER = 8 * 60000; // the Mac steps in only when the cron Worker hasn't ticked for this long
+
+/**
+ * Called every 5 minutes through the admin channel: by the cron Worker (workers/push-cron) and, as a backup, by
+ * the Mac. The Mac's ticks ({ backup: true }) are skipped while the Worker is running, so the two never race.
+ */
+export async function notifyTick(env, request, { source = 'unknown', backup = false } = {}) {
   if (!pushConfigured(env)) return json({ ok: false, reason: 'not configured' });
   const now = Date.now();
   const db = env.DB;
+  const last = await db.prepare("SELECT value FROM push_meta WHERE key = 'last_tick'").first();
+  if (backup && last && now - last.value < BACKUP_AFTER) return json({ ok: true, skipped: true });
+  const mark = (key) => db.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, now);
+  await db.batch([mark('last_tick'), mark(`last_tick:${String(source).slice(0, 20)}`)]);
   const subs = (await db.prepare('SELECT * FROM push_subs').all()).results;
   if (!subs.length) return json({ ok: true, users: 0, sent: 0 });
   const ids = [...new Set(subs.map((s) => s.user_id))];

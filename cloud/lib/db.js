@@ -27,6 +27,8 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, user_id INTEGER NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, ua TEXT, created_at INTEGER)`,
   `CREATE INDEX IF NOT EXISTS push_subs_user ON push_subs(user_id)`,
   `CREATE TABLE IF NOT EXISTS push_sent (user_id INTEGER NOT NULL, key TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (user_id, key))`,
+  // When the notification tick last ran (and from where: the cron Worker or the Mac).
+  `CREATE TABLE IF NOT EXISTS push_meta (key TEXT PRIMARY KEY, value INTEGER)`,
 ];
 
 let ready = null;

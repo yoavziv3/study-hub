@@ -207,7 +207,10 @@ async function admin({ request, env, url, path, method }) {
     return json([...byId.values()].sort((a, b) => b.students - a.students));
   }
 
-  if (path === '/api/admin/push/tick' && method === 'POST') return notifyTick(env, request);
+  if (path === '/api/admin/push/tick' && method === 'POST') {
+    const { source, backup } = await readJson(request, 1000);
+    return notifyTick(env, request, { source, backup: !!backup });
+  }
 
   if (path === '/api/admin/backup' && method === 'GET') {
     // Weekly backup pulled by the Mac: accounts (Moodle tokens stay encrypted), progress and reports.

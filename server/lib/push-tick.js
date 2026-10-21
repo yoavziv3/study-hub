@@ -1,5 +1,5 @@
-// Phone notifications are sent by the cloud site, but Cloudflare Pages has no timer of its own: this Mac (always on)
-// asks the cloud every 5 minutes to send whatever is due (an exam tomorrow, a class in a quarter of an hour…).
+// Phone notifications are sent by the cloud site, triggered every 5 minutes by a Cloudflare cron Worker
+// (workers/push-cron). This Mac is the backup: it knocks too, and the cloud skips its ticks while the Worker runs.
 // Needs CLOUD_URL and STUDY_ADMIN_SECRET in .env, like the rest of the admin channel.
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
 const SECRET = process.env.STUDY_ADMIN_SECRET || '';
@@ -12,14 +12,14 @@ async function tick() {
     const res = await fetch(`${CLOUD}/api/admin/push/tick`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${SECRET}`, 'Content-Type': 'application/json' },
-      body: '{}',
+      body: JSON.stringify({ source: 'mac', backup: true }),
       signal: AbortSignal.timeout(60000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const r = await res.json();
     if (failing) console.log('[push] back to normal');
     failing = false;
-    if (r.sent) console.log(`[push] sent ${r.sent} notifications`);
+    if (r.sent) console.log(`[push] sent ${r.sent} notifications (the cron Worker was not running)`);
   } catch (e) {
     // One line when it starts failing (cloud down, no network), not one every 5 minutes.
     if (!failing) console.error('[push] tick failed:', e.message);

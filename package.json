@@ -10,7 +10,8 @@
     "start": "vite build && node server/index.js",
     "serve": "node server/index.js",
     "seed": "node scripts/seed.js",
-    "build:static": "node scripts/build-static.js"
+    "build:static": "node scripts/build-static.js",
+    "deploy:cron": "npx wrangler deploy --config workers/push-cron/wrangler.toml"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

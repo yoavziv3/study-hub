@@ -1,0 +1,13 @@
+# Cron Worker that triggers the phone notifications of the cloud site (see index.js).
+# Secret (never committed): wrangler secret put ADMIN_SECRET --config workers/push-cron/wrangler.toml
+name = "study-hub-push-cron"
+main = "index.js"
+compatibility_date = "2026-06-01"
+workers_dev = false
+preview_urls = false
+
+[vars]
+SITE_URL = "https://study-hub-git.pages.dev"
+
+[triggers]
+crons = ["*/5 * * * *"]
