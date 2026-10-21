@@ -11,6 +11,8 @@ compatibility_date = "2026-06-01"
 MOODLE_URL = "https://moodle.bgu.ac.il/moodle"
 VAPID_PUBLIC_KEY = "BI2AENEpqnYK6IlT7dnEA6UxjnANYXow3zJ5OnNYj-nkr1SGiGM6UEFXaioeC_ALidr5HlgmyUSYRqkNsm7V10Q"
 VAPID_SUBJECT = "https://study-hub-git.pages.dev"
+# The Mac's public key that students' browsers seal their portal sign-in with (scripts/portal-key.js)
+PORTAL_PUBLIC_KEY = '{"kty":"RSA","n":"m4rzgLfqtsHuz2vU_DFTrNKOIgBfon0Qi4BJrHjx630scDOWoj3zhHVDOwll5v5zIeL69egXuqN9dCo4pUS7kQxe-dnsITbRNGFwcd0DuQhn1qFfDKhRPFCLoOtLxIKPb1QzJOarLbjEGLxs9Ga7gHwt72j_Z1__KFcqV-lynha2iGCNQ1Qkk6IVMK862KdQo8pYwIaya0rPI48jn6TjGWaN6qZNHBMHs1hxQwIhy7Lybo4vbqmmpKN7IihnGsN7O-H2GHCnEhZ44QD1BnUlr5M-a-ocj5AHl7OC99-Wac9KpKaJrYHgE79lGP7teia9SQkT0d9zYHPpgZZiIX5x6w","e":"AQAB","alg":"RSA-OAEP-256"}'
 
 [[d1_databases]]
 binding = "DB"

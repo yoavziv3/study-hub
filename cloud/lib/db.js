@@ -29,8 +29,9 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS push_sent (user_id INTEGER NOT NULL, key TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (user_id, key))`,
   // When the notification tick last ran (and from where: the cron Worker or the Mac).
   `CREATE TABLE IF NOT EXISTS push_meta (key TEXT PRIMARY KEY, value INTEGER)`,
-  // The student's BGU portal sign-in (encrypted, kept at their request) and the schedule read from it (portal.js).
-  `CREATE TABLE IF NOT EXISTS portal_accounts (user_id INTEGER PRIMARY KEY, username TEXT, creds TEXT NOT NULL, token TEXT, ok INTEGER NOT NULL DEFAULT 1, error TEXT, data TEXT, synced_at INTEGER, created_at INTEGER)`,
+  // The student's link to the BGU portal: their sign-in sealed for the Mac (the cloud can't open it), and the
+  // schedule and groups the Mac read from it (portal.js).
+  `CREATE TABLE IF NOT EXISTS portal_links (user_id INTEGER PRIMARY KEY, username TEXT, sealed TEXT NOT NULL, ok INTEGER NOT NULL DEFAULT 1, error TEXT, data TEXT, groups TEXT, synced_at INTEGER, requested_at INTEGER, created_at INTEGER)`,
 ];
 
 let ready = null;

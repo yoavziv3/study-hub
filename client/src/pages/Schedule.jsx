@@ -220,7 +220,7 @@ function DayList({ slots, now }) {
 }
 
 export default function Schedule() {
-  const { courses, progress, setContext } = useApp();
+  const { courses, progress, setContext, setClassGroups, progressLoaded } = useApp();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => { setContext({}); }, [setContext]);
   useEffect(() => {
@@ -231,6 +231,13 @@ export default function Schedule() {
   // Cloud: with the portal connected, its rooms and cancellations are laid over the catalog's timetable.
   const [portal, setPortal] = useState(null);
   useEffect(() => { if (STATIC) api.get('/api/portal').then(setPortal).catch(() => {}); }, []);
+  // The groups the portal shows are the student's real registration: they replace hand-picked ones.
+  const portalGroups = portal?.ok ? portal.groups || {} : {};
+  useEffect(() => {
+    if (!progressLoaded) return;
+    const changed = Object.fromEntries(Object.entries(portalGroups).filter(([cid, picks]) => Object.entries(picks).some(([t, g]) => progress.classGroups?.[cid]?.[t] !== g)));
+    if (Object.keys(changed).length) setClassGroups(changed);
+  }, [progressLoaded, JSON.stringify(portalGroups)]); // eslint-disable-line react-hooks/exhaustive-deps
   const slots = useMemo(() => withPortal(mySlots(courses, progress), portal?.ok ? portal.lessons : null), [courses, progress, portal]);
   const next = upcoming(slots, now, 1)[0];
   // Two chosen groups at the same time – usually a wrong pick.
@@ -245,7 +252,7 @@ export default function Schedule() {
           <div className="course-icon"><CalendarRange size={22} /></div>
           <div className="grow">
             <h1 style={{ fontSize: 26 }}>מערכת שעות</h1>
-            <div className="muted" style={{ fontSize: 14 }}>{portal?.ok ? 'הימים והשעות מקובץ הקורסים, והחדרים והביטולים מהמערכת שלך בפורטל.' : 'הימים, השעות והחדרים מקובץ הקורסים של האוניברסיטה – מתעדכן אוטומטית אם משהו משתנה.'}</div>
+            <div className="muted" style={{ fontSize: 14 }}>{portal?.ok ? `הקבוצות${Object.keys(portalGroups).length ? '' : ' (כשהן מזוהות)'}, החדרים והביטולים מהמערכת שלך בפורטל; הימים והשעות מקובץ הקורסים.` : 'הימים, השעות והחדרים מקובץ הקורסים של האוניברסיטה – מתעדכן אוטומטית אם משהו משתנה.'}</div>
           </div>
           {next && (
             <div className="next-class" data-color={next.course.color}>

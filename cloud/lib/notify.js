@@ -3,12 +3,13 @@
 // own group, and new material or announcements in their courses. Pages Functions have no timer, so a cron Worker
 // (workers/push-cron, with the Mac as backup) calls the admin "tick" every 5 minutes; each tick works out what is
 // due and sends what hasn't been sent yet (push_sent).
-import { HttpError, json } from './util.js';
+import { HttpError, json, israel } from './util.js';
 import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
-import { syncPortal, portalFresh, portalLessons } from './portal.js';
+import { parseJson } from './portal.js';
+import { forOtherGroups } from '../../shared/groups.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
@@ -65,12 +66,6 @@ export async function sendTest(env, user) {
 }
 
 // ---------- Israel time ----------
-const IL = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' });
-const WEEKDAY = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-export function israel(ms) {
-  const p = Object.fromEntries(IL.formatToParts(new Date(ms)).map((x) => [x.type, x.value]));
-  return { date: `${p.year}-${p.month}-${p.day}`, day: WEEKDAY[p.weekday], hour: Number(p.hour), min: Number(p.hour) * 60 + Number(p.minute) };
-}
 const minutes = (hhmm) => {
   const [h, m] = String(hhmm).split(':').map(Number);
   return h * 60 + (m || 0);
@@ -249,6 +244,9 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
       const wanted = (it.type === 'material' && prefs.material) || (it.type === 'announcement' && prefs.announcements);
       const at = Date.parse(it.addedAt);
       if (!wanted || now - at > 2 * DAY || at < since || isSent(`upd:${it.id}`) || !short[it.courseId]) continue;
+      // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
+      const course = courses.find((c) => c.id === it.courseId);
+      if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId])) continue;
       const k = `${it.type}:${it.courseId}`;
       groups.set(k, [...(groups.get(k) || []), it]);
     }
@@ -301,7 +299,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     db.prepare(`SELECT user_id, data FROM progress WHERE user_id IN ${inIds}`).bind(...ids).all(),
     db.prepare(`SELECT user_id, key FROM push_sent WHERE user_id IN ${inIds}`).bind(...ids).all(),
     db.prepare(`SELECT user_id, data, at FROM cache WHERE key = 'deadlines' AND user_id IN ${inIds}`).bind(...ids).all(),
-    db.prepare(`SELECT * FROM portal_accounts WHERE user_id IN ${inIds}`).bind(...ids).all(),
+    db.prepare(`SELECT user_id, ok, data, groups FROM portal_links WHERE user_id IN ${inIds}`).bind(...ids).all(),
   ]);
   const portalOf = new Map(portalRows.results.map((r) => [r.user_id, r]));
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
@@ -322,7 +320,6 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const refresh = stale[0]?.id;
 
   let budget = MAX_SENDS;
-  let portalBudget = 3; // portal reads per tick (each is one or two requests)
   let total = 0;
   const marks = [];
   for (const user of users.results) {
@@ -331,16 +328,15 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     try { progress = JSON.parse(progressOf.get(user.id) || '{}'); } catch { /* keep empty */ }
     const allowed = new Set(allowedCourseIds(user, courses));
     const mine = courses.filter((c) => allowed.has(c.id));
-    // The portal schedule: re-read every half hour, and within 10 minutes of a class of theirs (rooms change late).
-    const account = portalOf.get(user.id);
-    let portal = account?.ok ? portalLessons(account) : null;
-    if (account?.ok && portalBudget > 0) {
-      const il = israel(now);
-      const soon = mySlots(mine, progress, il.date).some(({ sl }) => sl.day === il.day && minutes(sl.start) - il.min > 0 && minutes(sl.start) - il.min <= 25);
-      if (!portalFresh(account, soon ? 10 * 60000 : 30 * 60000)) {
-        portalBudget--;
-        portal = await syncPortal(env, account).catch(() => portal);
-      }
+    // The portal schedule the Mac read (portal.js): its lessons, and the groups they show – which win over the ones
+    // the student picked by hand, so classes, exams and group announcements follow their real registration.
+    const link = portalOf.get(user.id);
+    const portal = link?.ok && link.data ? parseJson(link.data, null) : null;
+    const portalGroups = link?.ok ? parseJson(link.groups, {}) : {};
+    if (Object.keys(portalGroups).length) {
+      const merged = { ...progress.classGroups };
+      for (const [cid, picks] of Object.entries(portalGroups)) merged[cid] = { ...merged[cid], ...picks };
+      progress = { ...progress, classGroups: merged };
     }
     let deadlines = null;
     const row = deadlineCache.get(user.id);

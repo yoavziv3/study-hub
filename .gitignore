@@ -32,3 +32,7 @@ data/reports.json
 # Weekly backups of student accounts from the cloud – never commit
 backups/
 .playwright-mcp/
+
+# The Mac's key for students' sealed portal sign-ins, and its portal sessions – never commit
+portal-key.json
+portal-sessions.json

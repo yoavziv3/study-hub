@@ -9,6 +9,7 @@ import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { parseRequired, partsLabel } from '../components/Assignment.jsx';
 import PhoneNotifications from '../components/PhoneNotifications.jsx';
+import { forOtherGroups } from '../../../shared/groups.js';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
 const oneLine = (t) => t.replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
@@ -190,7 +191,7 @@ function UpdateItem({ item, course, isNew, i }) {
 }
 
 export default function Updates() {
-  const { updates, refreshUpdates, seenAt, markUpdatesSeen, courses, setContext, toast, deadlineActions, me } = useApp();
+  const { updates, refreshUpdates, seenAt, markUpdatesSeen, courses, setContext, toast, deadlineActions, me, progress } = useApp();
   const [filter, setFilter] = useState('all');
   const [syncing, setSyncing] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -212,8 +213,12 @@ export default function Updates() {
     [lectureList]
   );
   const withInstructions = (d) => (instructions[d.moodleKey] ? { ...d, intro: instructions[d.moodleKey] } : d);
+  // Course announcements meant for other groups ("no tutorial in group 22") are hidden unless asked for.
+  const [showOthers, setShowOthers] = useState(false);
+  const otherGroups = (i) => i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId]);
+  const hiddenCount = updates.items.filter(otherGroups).length;
   const items = updates.items.filter((i) =>
-    filter === 'all' ? true : filter === 'deadlines' ? i.type === 'deadline' || i.type === 'reminder' : i.type === filter
+    (showOthers || !otherGroups(i)) && (filter === 'all' ? true : filter === 'deadlines' ? i.type === 'deadline' || i.type === 'reminder' : i.type === filter)
   );
   const groups = useMemo(() => {
     const g = [];
@@ -335,6 +340,11 @@ export default function Updates() {
           </button>
         ))}
       </div>
+      {hiddenCount > 0 && (
+        <button className="btn sm ghost" style={{ marginBottom: 12 }} onClick={() => setShowOthers((x) => !x)}>
+          {showOthers ? 'הסתרת' : 'הצגת'} {hiddenCount === 1 ? 'הודעה אחת' : `${hiddenCount} הודעות`} לקבוצות אחרות
+        </button>
+      )}
       {groups.length === 0 && (
         <div className="empty"><div className="empty-icon"><Inbox size={28} /></div><h2>אין עדכונים עדיין</h2><p>כשיעלה חומר חדש למודל, הודעה או הגשה – זה יופיע כאן.</p></div>
       )}

@@ -16,6 +16,7 @@ import * as moodle from './lib/moodle.js';
 import { backupNow, backupStatus, startBackups } from './lib/backup.js';
 import { initPublish } from './lib/publish.js';
 import { startPushTicks } from './lib/push-tick.js';
+import { startPortalRelay } from './lib/portal-relay.js';
 import * as updates from './lib/updates.js';
 
 const PORT = Number(process.env.PORT) || 5180;
@@ -469,4 +470,5 @@ app.listen(PORT, HOST, () => {
   moodle.startMoodle();
   startBackups();
   startPushTicks();
+  startPortalRelay().catch((e) => console.error('[portal]', e.message));
 });

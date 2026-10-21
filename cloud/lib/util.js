@@ -72,3 +72,11 @@ export class HttpError extends Error {
     this.extra = extra;
   }
 }
+
+// ---------- Israel time (the cloud runs in UTC) ----------
+const IL = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' });
+const WEEKDAY = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+export function israel(ms) {
+  const p = Object.fromEntries(IL.formatToParts(new Date(ms)).map((x) => [x.type, x.value]));
+  return { date: `${p.year}-${p.month}-${p.day}`, day: WEEKDAY[p.weekday], hour: Number(p.hour), min: Number(p.hour) * 60 + Number(p.minute) };
+}

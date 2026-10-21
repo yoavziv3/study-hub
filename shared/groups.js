@@ -1,0 +1,87 @@
+// Which class groups a student is in, and which announcements are meant for them – shared by the site (client)
+// and the cloud's phone notifications, so both show the same things.
+
+const minutes = (hhmm) => {
+  const [h, m] = String(hhmm).split(':').map(Number);
+  return h * 60 + (m || 0);
+};
+const sameTime = (a, b) => Math.abs(minutes(a) - minutes(b)) <= 15;
+const num = (g) => String(Number(g));
+
+// The portal names kinds its own way ("הרצאה", "תרגול"); the catalog writes "שעור", "תרגיל", "מעבדה".
+const KIND = (t = '') => (/תרג/.test(t) ? 'תרגיל' : /מעבד/.test(t) ? 'מעבדה' : /שעור|שיעור|הרצא/.test(t) ? 'שעור' : null);
+const roomNumbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
+const words = (s) => String(s || '').replace(/["'׳״()\-–]/g, ' ').split(/\s+/).filter((w) => w.length >= 3);
+// A portal lesson of this course: their names share a word (or the lesson has no name to tell).
+const sameCourse = (l, c) => !l.name || words(l.name).some((w) => words(`${c.name} ${c.short}`).includes(w)) || (c.code && l.name.includes(c.code.replace(/-/g, '')));
+
+/**
+ * The student's groups read off their portal schedule: a catalog group is theirs when every one of its weekly
+ * meetings is a lesson of that course in their portal schedule (same day, about the same start, same kind).
+ * Several groups often meet at the same time in different rooms: the room, then BGU's numbering (tutorial 21
+ * belongs to lecture 2) decides. Returns { [courseId]: { [type]: group } } for what it could tell for sure.
+ */
+export function groupsFromPortal(courses, lessons) {
+  const out = {};
+  if (!lessons?.length) return out;
+  for (const c of courses) {
+    const own = lessons.filter((l) => sameCourse(l, c));
+    const byType = {};
+    for (const g of c.classes || []) {
+      if (!g.slots?.length) continue;
+      const matches = g.slots.map((sl) => own.find((l) => l.day === sl.day && sameTime(l.start, sl.start) && (!KIND(l.type) || KIND(l.type) === KIND(g.type))));
+      if (matches.some((m) => !m)) continue;
+      const rooms = g.slots.filter((sl, i) => roomNumbers(sl.place) && roomNumbers(sl.place) === roomNumbers(matches[i].location)).length;
+      (byType[g.type] ||= []).push({ g, rooms });
+    }
+    const picks = {};
+    const unsure = {};
+    for (const [type, list] of Object.entries(byType)) {
+      const best = Math.max(...list.map((x) => x.rooms));
+      const top = list.filter((x) => x.rooms === best);
+      if (top.length === 1) picks[type] = top[0].g.group;
+      else unsure[type] = top.map((x) => x.g.group);
+    }
+    // BGU numbers tutorials after their lecture: lecture 2 → tutorials 21, 22…
+    const lecture = picks['שעור'];
+    for (const [type, groups] of Object.entries(unsure)) {
+      const tutorial = Object.entries(picks).find(([t]) => t !== 'שעור')?.[1];
+      const narrowed = type === 'שעור'
+        ? groups.filter((g) => tutorial && tutorial.length > g.length && tutorial.startsWith(g))
+        : groups.filter((g) => lecture && g.length > lecture.length && g.startsWith(lecture));
+      if (narrowed.length === 1) picks[type] = narrowed[0];
+    }
+    if (Object.keys(picks).length) out[c.id] = picks;
+  }
+  return out;
+}
+
+// "קבוצה 21", "קבוצת תרגול 11", "תרגול 12", "קב' 2" – the number of a group, and what kind the words say it is.
+const GROUP_RE = /(קבוצ(?:ה|ת)(?:\s+(?:תרגול|לימוד|שיעור))?|תרגול|תרגיל|שיעור|קב['׳])\s*(?:מס['׳]?\s*)?(\d{1,3})(?!\d)/g;
+const kindOf = (word) => (/תרגול|תרגיל/.test(word) ? 'תרגיל' : /שיעור/.test(word) ? 'שעור' : null);
+// "מר מ. רפאילוב" → ["רפאילוב"]; "ד"ר א. גורן, גב' ש. כהן" → ["גורן", "כהן"]
+const surnames = (lecturer = '') => String(lecturer).split(/[,;]/).map((p) => p.trim().split(/\s+/).at(-1)).filter((n) => n && n.length >= 3 && !/[.'"׳״]$/.test(n));
+const mentions = (text, name) => new RegExp(`(?:^|[^\\u0590-\\u05FF\\w])[ולבהמשכ]?${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\u0590-\\u05FF\\w])`).test(text);
+
+/**
+ * True when a course announcement is clearly meant for other groups than the student's: it names group numbers of
+ * the course and none is theirs, or it names only staff of other groups. Unclear posts count as relevant.
+ * mine: the student's groups in this course, { [type]: group }.
+ */
+export function forOtherGroups(text, course, mine) {
+  const classes = course?.classes || [];
+  if (!classes.length || !mine || !Object.keys(mine).length) return false;
+  const t = String(text || '');
+  const named = [];
+  for (const m of t.matchAll(GROUP_RE)) {
+    const kind = kindOf(m[1]);
+    const n = num(m[2]);
+    if (classes.some((g) => num(g.group) === n && (!kind || g.type === kind))) named.push({ kind, n });
+  }
+  if (named.length) return !named.some(({ kind, n }) => Object.entries(mine).some(([type, g]) => num(g) === n && (!kind || type === kind)));
+  const own = new Set();
+  const others = new Set();
+  for (const g of classes) for (const name of surnames(g.lecturer)) (mine[g.type] === g.group ? own : others).add(name);
+  const staff = [...new Set([...own, ...others])].filter((name) => mentions(t, name));
+  return staff.length > 0 && !staff.some((name) => own.has(name));
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Building2, RefreshCw, Loader2, ShieldCheck, Unplug, BellRing } from 'lucide-react';
 import { useApp } from '../store.jsx';
@@ -9,10 +9,17 @@ const ago = (iso) => {
   return m < 1 ? 'עכשיו' : m < 60 ? `לפני ${m} דק׳` : m < 1440 ? `לפני ${Math.round(m / 60)} שע׳` : new Date(iso).toLocaleDateString('he-IL');
 };
 
-/**
- * Cloud: connect the BGU portal so room changes and cancellations come from the student's own portal schedule.
- * The sign-in is sent once to the site's server, checked with the portal, and kept there encrypted.
- */
+// The sign-in is sealed here, in the browser, with the public key of the Mac that reads the portal (the portal only
+// answers from Israel). The cloud stores the sealed text but can't open it.
+async function seal(publicJwk, creds) {
+  const text = new TextEncoder().encode(JSON.stringify(creds));
+  if (text.length > 190) throw new Error('שם המשתמש או הסיסמה ארוכים מדי');
+  const key = await crypto.subtle.importKey('jwk', publicJwk, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['encrypt']);
+  const sealed = new Uint8Array(await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, key, text));
+  return btoa(String.fromCharCode(...sealed));
+}
+
+/** Cloud: connect the BGU portal so groups, rooms and cancellations come from the student's own portal schedule. */
 export default function PortalConnect({ status, onChange }) {
   const { me, toast } = useApp();
   const [open, setOpen] = useState(false);
@@ -25,13 +32,26 @@ export default function PortalConnect({ status, onChange }) {
     try { await fn(); } catch (err) { toast(err.message, 'info'); } finally { setBusy(false); }
   };
   const connect = run(async () => {
-    const r = await api.post('/api/portal/connect', form);
+    if (!status?.key) throw new Error('החיבור לפורטל עוד לא הוגדר באתר');
+    const sealed = await seal(JSON.parse(status.key), { username: form.username.trim(), password: form.password, id: form.id.replace(/\D/g, '') });
+    const r = await api.post('/api/portal/connect', { username: form.username.trim(), sealed });
     setForm((f) => ({ ...f, password: '', id: '' }));
     setOpen(false);
     onChange(r);
-    toast(r.error ? `מחובר לפורטל, אבל: ${r.error}` : 'הפורטל מחובר – מערכת השעות מתעדכנת ממנו');
+    toast('מתחבר לפורטל – זה לוקח עד דקה או שתיים');
   });
-  const sync = run(async () => onChange(await api.post('/api/portal/sync', {})));
+  const sync = run(async () => {
+    onChange(await api.post('/api/portal/sync', {}));
+    toast('הפורטל ייקרא שוב בדקה הקרובה');
+  });
+
+  // While the Mac hasn't read it yet (new link, or "refresh"), check back every few seconds.
+  const waiting = status?.pending;
+  useEffect(() => {
+    if (!waiting) return undefined;
+    const t = setInterval(() => api.get('/api/portal').then(onChange).catch(() => {}), 8000);
+    return () => clearInterval(t);
+  }, [waiting]); // eslint-disable-line react-hooks/exhaustive-deps
   const disconnect = run(async () => {
     if (!confirm('לנתק את הפורטל? פרטי ההתחברות יימחקו מהאתר.')) return;
     onChange(await api.del('/api/portal'));
@@ -47,7 +67,9 @@ export default function PortalConnect({ status, onChange }) {
         <b className="grow">הפורטל הבן־גוריוני</b>
         {connected ? (
           <>
-            <span className={`chip ${status.ok ? 'good' : 'warn'}`}>{status.ok ? `מחובר · עודכן ${status.syncedAt ? ago(status.syncedAt) : '—'}` : 'צריך להתחבר שוב'}</span>
+            <span className={`chip ${status.ok && !status.pending ? 'good' : 'warn'}`}>
+              {!status.ok ? 'צריך להתחבר שוב' : status.pending ? <><Loader2 size={12} className="spin" /> מתחבר…</> : `מחובר · עודכן ${ago(status.syncedAt)}`}
+            </span>
             {status.ok && <button className="btn sm" onClick={sync} disabled={busy}><RefreshCw size={14} className={busy ? 'spin' : ''} /> רענון</button>}
             {!status.ok && <button className="btn sm accent" onClick={() => setOpen(true)}>התחברות מחדש</button>}
             <button className="btn sm ghost" onClick={disconnect} disabled={busy}><Unplug size={14} /> ניתוק</button>
@@ -58,9 +80,12 @@ export default function PortalConnect({ status, onChange }) {
       </div>
       <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>
         {connected
-          ? status.error || 'החדרים, הביטולים וההודעות על השיעורים נלקחים מהמערכת שלך בפורטל, וההתראות לטלפון לפיה.'
-          : 'שינויי חדרים וביטולים מתפרסמים בפורטל לפני שהם מגיעים לקובץ הקורסים. חברו אותו, והמערכת וההתראות יתעדכנו ממנו.'}
+          ? status.error || (status.pending
+            ? 'המחשב שקורא את הפורטל מתחבר אליו עכשיו – בדרך כלל תוך דקה.'
+            : 'הקבוצות, החדרים, הביטולים וההודעות על השיעורים נלקחים מהמערכת שלך בפורטל – וההתראות לטלפון רק לפיהם.')
+          : 'הקבוצות שלך, שינויי חדרים וביטולים מופיעים בפורטל לפני קובץ הקורסים. חברו אותו, והמערכת וההתראות יהיו רק לשיעורים ולתרגולים שלך.'}
       </div>
+      {connected && !status.relayOnline && <div className="chip warn" style={{ marginTop: 8 }}>המחשב שקורא את הפורטל לא מחובר כרגע – העדכון יחכה עד שיחזור</div>}
 
       <AnimatePresence>
         {open && (
@@ -68,7 +93,8 @@ export default function PortalConnect({ status, onChange }) {
             <div className="callout row" style={{ gap: 8, alignItems: 'flex-start' }}>
               <ShieldCheck size={16} style={{ flex: 'none', marginTop: 3 }} />
               <span style={{ fontSize: 13.5 }}>
-                לפורטל אין מפתח גישה כמו למודל, אז כדי לבדוק שינויים לבד האתר שומר את פרטי ההתחברות – <b>מוצפנים</b>, רק בשרת, ורק כדי להתחבר שוב לפורטל כשהחיבור פג.
+                לפורטל אין מפתח גישה כמו למודל, אז האתר שומר את פרטי ההתחברות כדי להתחבר שוב כשהחיבור פג. הם <b>מוצפנים כבר כאן בדפדפן</b> במפתח
+                שרק המחשב של מנהל האתר יכול לפתוח – הפורטל חוסם שרתים מחוץ לישראל, ולכן הקריאה ממנו נעשית משם. בשרת הענן אי אפשר לקרוא אותם.
                 התחברות שנכשלת לא מנוסה שוב אוטומטית. ניתוק (או מחיקת החשבון) מוחק אותם לגמרי.
               </span>
             </div>

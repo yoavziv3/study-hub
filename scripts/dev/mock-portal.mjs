@@ -10,15 +10,15 @@ const tokens = new Set();
 const lesson = (name, type, timeStart, timeEnd, location, extra = {}) => ({ name, type, timeStart, timeEnd, location, online: false, hybrid: true, canceled: false, notifications: [], ...extra });
 const schedule = () => [
   { dayName: 'יום ראשון', ranges: [] },
-  { dayName: 'יום שני', ranges: [{ slots: [lesson('חדו"א 1 להנדסה', 'שעור', 10, 12, 'בניין כתות לימוד [35] חדר 115')] }] },
+  { dayName: 'יום שני', ranges: [{ slots: [lesson('חדו"א 1 להנדסה', 'שעור', 10, 12, 'בניין כתות לימוד [35] חדר 115'), lesson('חדו"א 1 להנדסה', 'תרגיל', 14, 16, 'ביה"ס אילנות [97] חדר 205')] }] },
   { dayName: 'יום שלישי', ranges: [] },
   {
     dayName: 'יום רביעי',
     ranges: [{
       slots: [
         // The room moved: the catalog still says NIBN [41] חדר 001.
-        lesson('חדו"א 1 להנדסה', 'שעור', 10, 12, 'בניין אולמות להרצאות [92] חדר 002', {
-          notifications: [{ date: new Date(Date.now() - 3600e3).toISOString(), title: 'שינוי חדר', content: 'השיעור יתקיים בבניין 92 חדר 002 במקום בניין 41 חדר 001.' }],
+        lesson('חדו"א 1 להנדסה', 'שעור', 10, 12, 'בניין אולמות להרצאות [92] חדר 105', {
+          notifications: [{ date: new Date(Date.now() - 3600e3).toISOString(), title: 'שינוי חדר', content: 'השיעור יתקיים בבניין 92 חדר 105 במקום בניין 41 חדר 001.' }],
         }),
         lesson('מבוא לכלכלה להנדסת תעשייה וניהול', 'תרגיל', 16, 18, 'צוקר, גולדשטיין-גורן [72] חדר 217', { canceled: true }),
       ],

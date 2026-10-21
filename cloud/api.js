@@ -10,7 +10,7 @@ import {
 import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
-import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing } from './lib/portal.js';
+import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult } from './lib/portal.js';
 
 const MIN = 60000;
 
@@ -139,14 +139,10 @@ async function route({ request, env }) {
   if (path === '/api/portal' && method === 'GET') return portalStatus(env, user);
   if (path === '/api/portal' && method === 'DELETE') return disconnectPortal(env, user);
   if (path === '/api/portal/connect' && method === 'POST') {
-    // Same throttle as the site's sign-in: a wrong portal password must not be tried again and again.
+    // Each attempt reaches the portal (through the Mac): a few per quarter of an hour, like the site's sign-in.
     if (await throttled(env, request, `portal:${user.id}`)) throw new HttpError(429, 'יותר מדי ניסיונות. נסו שוב בעוד רבע שעה.');
-    try {
-      return await connectPortal(env, user, await readJson(request, 2000));
-    } catch (e) {
-      if (e instanceof HttpError && e.extra?.badLogin) await recordFailure(env, request, `portal:${user.id}`);
-      throw e;
-    }
+    await recordFailure(env, request, `portal:${user.id}`);
+    return connectPortal(env, user, await readJson(request, 4000));
   }
   if (path === '/api/portal/sync' && method === 'POST') return refreshPortal(env, user);
 
@@ -224,6 +220,8 @@ async function admin({ request, env, url, path, method }) {
   }
 
   if (path === '/api/admin/portal/ping' && method === 'GET') return portalPing(env);
+  if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env);
+  if (path === '/api/admin/portal/result' && method === 'POST') return portalResult(env, request, await readJson(request, 200_000));
   if (path === '/api/admin/push/tick' && method === 'POST') {
     const { source, backup } = await readJson(request, 1000);
     return notifyTick(env, request, { source, backup: !!backup });

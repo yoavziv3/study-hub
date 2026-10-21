@@ -120,7 +120,7 @@ export async function deleteAccount(env, user) {
     env.DB.prepare('DELETE FROM cache WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM push_subs WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM push_sent WHERE user_id = ?').bind(user.id),
-    env.DB.prepare('DELETE FROM portal_accounts WHERE user_id = ?').bind(user.id),
+    env.DB.prepare('DELETE FROM portal_links WHERE user_id = ?').bind(user.id),
     env.DB.prepare('UPDATE reports SET user_id = NULL WHERE user_id = ?').bind(user.id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(user.id),
   ]);
