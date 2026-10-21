@@ -1,7 +1,7 @@
 // /data/* on the cloud site: course material is served only to signed-in students enrolled in that course.
 // Lists (courses, lectures, updates) are filtered to the student's courses; per-course files are allowed or refused.
 import { json, fail } from './lib/util.js';
-import { currentUser, siteCourses, allowedCourseIds, lectureCourse } from './lib/account.js';
+import { currentUser, siteCourses, allowedCourseIds, visibleCourseIds, lectureCourse } from './lib/account.js';
 import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
 import { forCourses } from '../shared/weekly-load.js';
 
@@ -15,7 +15,9 @@ export async function gate({ request, env }) {
     const user = await currentUser(env, request);
     if (!user) return fail(401, 'צריך להתחבר');
     const courses = await siteCourses(env, request);
-    const allowed = new Set(allowedCourseIds(user, courses));
+    // Enrolled courses, and what the student may see: the same, except for the site's owner, who sees every course.
+    const enrolled = new Set(allowedCourseIds(user, courses));
+    const allowed = new Set(await visibleCourseIds(env, user, courses));
 
     // The SPA fallback answers unknown paths with index.html – treat that as "not found".
     const asset = async () => {
@@ -30,7 +32,8 @@ export async function gate({ request, env }) {
       return new Response(res.body, { status: res.status, headers });
     };
 
-    if (path === '/data/courses.json') return json(courses.filter((c) => allowed.has(c.id)));
+    // Courses the owner sees but isn't enrolled in are marked, so the site lists them apart from "my courses".
+    if (path === '/data/courses.json') return json(courses.filter((c) => allowed.has(c.id)).map((c) => (enrolled.has(c.id) ? c : { ...c, other: true })));
     if (path === '/data/lectures.json') {
       const res = await asset();
       return json(res ? (await res.json()).filter((l) => allowed.has(l.courseId)) : []);

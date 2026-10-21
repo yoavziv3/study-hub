@@ -344,12 +344,13 @@ export function AppProvider({ children }) {
 
   // "My courses" are this semester's; earlier semesters live under "לימודי עבר".
   // On the Mac, courses built for other students (no AI material) are listed separately from yours.
-  const mine = useMemo(() => (STATIC ? allCourses : allCourses.filter((c) => !c.remote)), [allCourses]);
+  // In the cloud the site's owner also gets courses they aren't enrolled in (marked "other" by cloud/gate.js).
+  const mine = useMemo(() => allCourses.filter((c) => (STATIC ? !c.other : !c.remote)), [allCourses]);
   const terms = useMemo(() => termsOf(mine), [mine]);
   const term = useMemo(() => currentTerm(mine), [mine]);
   const courses = useMemo(() => mine.filter((c) => inTerm(c, term)), [mine, term]);
   const pastCourses = useMemo(() => mine.filter((c) => !inTerm(c, term)), [mine, term]);
-  const otherCourses = useMemo(() => (STATIC ? [] : allCourses.filter((c) => c.remote && inTerm(c, term))), [allCourses, term]);
+  const otherCourses = useMemo(() => allCourses.filter((c) => (STATIC ? c.other : c.remote) && inTerm(c, term)), [allCourses, term]);
 
   const value = {
     me, refreshMe, signOut, deleteAccount,

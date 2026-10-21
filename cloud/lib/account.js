@@ -38,6 +38,15 @@ export function allowedCourseIds(user, courses) {
   return courses.filter((c) => (c.moodleIds || []).some((m) => ids.has(m))).map((c) => c.id);
 }
 
+/**
+ * Courses whose updates and material the student sees: their own (allowedCourseIds) – and, for the site's owner
+ * (the Moodle user the Mac is signed in as, health.js), every course, also ones they aren't enrolled in.
+ */
+export async function visibleCourseIds(env, user, courses) {
+  const owner = await env.DB.prepare("SELECT value FROM push_meta WHERE key = 'owner'").first();
+  return owner && owner.value === user.moodle_userid ? courses.map((c) => c.id) : allowedCourseIds(user, courses);
+}
+
 export function meView(user, courses) {
   const allowed = allowedCourseIds(user, courses);
   const linked = new Set(courses.flatMap((c) => c.moodleIds || []));

@@ -117,7 +117,7 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null }) {
+export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   const daytime = il.hour >= 8 && il.hour < 22;
@@ -262,6 +262,8 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
   //    cloud spotted in Moodle itself (moodle-watch.js) while the Mac hasn't processed it yet. A burst – the start
   //    of a semester, a big Moodle sync – becomes one notification per course and type.
   if ((prefs.material || prefs.announcements) && daytime) {
+    // These follow the courses whose feed the student sees (the owner: all of them).
+    const short = Object.fromEntries(feedCourses.map((c) => [c.id, c.short]));
     const groups = new Map();
     // An item is "sent" by its own id or by its Moodle key (the cloud and the Mac name the same post alike).
     const sentKeys = (it) => [`upd:${it.id}`, ...(it.key && it.key !== it.id ? [`upd:${it.key}`] : [])];
@@ -272,7 +274,7 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
       // A file the cloud spotted waits half an hour for the Mac, whose notice comes with the summary.
       if (it.cloud && it.type === 'material' && now - at < CLOUD_WAIT) continue;
       // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
-      const course = courses.find((c) => c.id === it.courseId);
+      const course = feedCourses.find((c) => c.id === it.courseId);
       if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId])) continue;
       const k = `${it.type}:${it.courseId}`;
       groups.set(k, [...(groups.get(k) || []), it]);
@@ -289,7 +291,7 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
           title: material ? (ready(it) ? `מוכן באתר: ${it.title.replace(/^[^:]*:\s*/, '')}` : it.title) : `הודעה ב${short[it.courseId]}: ${it.title}`,
           body: material
             ? it.cloud ? it.body
-              : courses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
+              : feedCourses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
             : oneLine(it.body).slice(0, 180),
           url: material ? (it.lectureId ? `/lecture/${it.lectureId}` : it.cloud ? it.url : '/updates') : '/updates',
         });
@@ -379,6 +381,9 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     try { progress = JSON.parse(progressOf.get(user.id) || '{}'); } catch { /* keep empty */ }
     const allowed = new Set(allowedCourseIds(user, courses));
     const mine = courses.filter((c) => allowed.has(c.id));
+    // New material and announcements: the owner hears about every course, everyone else about their own.
+    const visible = new Set(user.id === owner ? courses.map((c) => c.id) : allowed);
+    const feedCourses = courses.filter((c) => visible.has(c.id));
     // The portal schedule the Mac read (portal.js): its lessons, and the groups they show – which win over the ones
     // the student picked by hand, so classes, exams and group announcements follow their real registration.
     const link = portalOf.get(user.id);
@@ -401,7 +406,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const since = Math.min(...devices.map((d) => d.created_at || 0));
     const due = [
       ...(user.id === owner ? alerts : []),
-      ...dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent, portal }),
+      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal }),
     ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {
