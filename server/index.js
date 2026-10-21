@@ -17,6 +17,9 @@ import { backupNow, backupStatus, startBackups } from './lib/backup.js';
 import { initPublish } from './lib/publish.js';
 import { startPushTicks } from './lib/push-tick.js';
 import { systemStatus } from './lib/health.js';
+import { startRun, listRuns, PROCESSES } from './lib/runlog.js';
+import { checkQuiz, checkProblems } from './lib/checks.js';
+import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
 import { startPortalRelay } from './lib/portal-relay.js';
 import * as updates from './lib/updates.js';
 
@@ -259,14 +262,27 @@ app.post('/api/practice', async (req, res) => {
       material = ls.map((l) => `## ${l.title}\n${getContent(l.id)?.summary || ''}`).join('\n\n');
       avoid = [];
     }
-    const out = await generateJSON({
-      system: `אתה כותב שאלות מבחן מקצועי בקורס ${course.name}. הקפד על נכונות מלאה של התשובה המסומנת.`,
-      prompt: practicePrompt({ course, title, material: material.slice(0, 180000), count, difficulty, avoid: avoid.slice(0, 60) }),
-      schema: PRACTICE_SCHEMA,
-      effort: 'medium',
-      maxTokens: 16000,
-    });
-    const quiz = out.quiz.map((q) => ({ ...q, generated: true }));
+    const run = startRun('practice', { trigger: 'manual', input: { lectureId: lectureId || null, course: course.short, title, count, difficulty } });
+    let out;
+    try {
+      out = await generateJSON({
+        system: `אתה כותב שאלות מבחן מקצועי בקורס ${course.name}. הקפד על נכונות מלאה של התשובה המסומנת.`,
+        prompt: practicePrompt({ course, title, material: material.slice(0, 180000), count, difficulty, avoid: avoid.slice(0, 60) }),
+        schema: PRACTICE_SCHEMA,
+        effort: 'medium',
+        maxTokens: 16000,
+      });
+    } catch (e) {
+      run.fail(e);
+      throw e;
+    }
+    const checked = checkQuiz(out.quiz, { slideCount: lectureId ? getSlides(lectureId).length : 0 });
+    // Questions the student already has are not added again.
+    const known = new Set(avoid);
+    const fresh = checked.value.filter((q) => !known.has(q.question));
+    const checks = [...checked.checks, ...(fresh.length < checked.value.length ? [{ rule: 'practice.duplicate', level: 'fixed', detail: `הוסרו ${checked.value.length - fresh.length} שאלות שכבר קיימות` }] : [])];
+    run.ok({ asked: count, kept: fresh.length }, checks);
+    const quiz = fresh.map((q) => ({ ...q, generated: true }));
     if (lectureId) {
       const content = getContent(lectureId) || {};
       await saveContent(lectureId, { ...content, extraQuiz: [...(content.extraQuiz || []), ...quiz] });
@@ -305,20 +321,30 @@ app.post('/api/courses/:id/practice', async (req, res) => {
       .slice(0, 250000);
     const lecText = items.filter((l) => (l.kind || 'lecture') === 'lecture').map((l) => `## ${l.title}\n${getContent(l.id)?.overview || ''}`).join('\n');
     const saved = getPractice(course.id);
-    const out = await generateJSON({
-      system: `${lectureSystem(course)}\nבמשימה הזו אתה המתרגל של הקורס: כותב תרגילים ופתרונות רשמיים ברמה של שיעורי הבית.`,
-      prompt: homeworkPracticePrompt({ course, homework: hwText, lectures: lecText, count: Math.min(10, Number(count) || 5), topic, avoid: saved.problems.map((p) => p.question.slice(0, 120)).slice(-40) }),
-      schema: HOMEWORK_PRACTICE_SCHEMA,
-      effort: 'high',
-      maxTokens: 32000,
-    });
+    const run = startRun('homework', { trigger: 'manual', input: { course: course.short, count: Number(count) || 5, topic, homework: homework.length } });
+    let out;
+    try {
+      out = await generateJSON({
+        system: `${lectureSystem(course)}\nבמשימה הזו אתה המתרגל של הקורס: כותב תרגילים ופתרונות רשמיים ברמה של שיעורי הבית.`,
+        prompt: homeworkPracticePrompt({ course, homework: hwText, lectures: lecText, count: Math.min(10, Number(count) || 5), topic, avoid: saved.problems.map((p) => p.question.slice(0, 120)).slice(-40) }),
+        schema: HOMEWORK_PRACTICE_SCHEMA,
+        effort: 'high',
+        maxTokens: 32000,
+      });
+    } catch (e) {
+      run.fail(e);
+      throw e;
+    }
+    const quizChecked = checkQuiz(out.quiz, { label: 'homework.quiz' });
+    const problemsChecked = checkProblems(out.problems);
+    run.ok({ problems: problemsChecked.value.length, quiz: quizChecked.value.length }, [...quizChecked.checks, ...problemsChecked.checks]);
     const stamp = new Date().toISOString();
     const next = {
-      quiz: [...saved.quiz, ...out.quiz.map((q) => ({ ...q, generated: true, at: stamp }))],
-      problems: [...saved.problems, ...out.problems.map((p) => ({ ...p, at: stamp }))],
+      quiz: [...saved.quiz, ...quizChecked.value.map((q) => ({ ...q, generated: true, at: stamp }))],
+      problems: [...saved.problems, ...problemsChecked.value.map((p) => ({ ...p, at: stamp }))],
     };
     await savePractice(course.id, next);
-    res.json({ added: { quiz: out.quiz.length, problems: out.problems.length }, practice: next });
+    res.json({ added: { quiz: quizChecked.value.length, problems: problemsChecked.value.length }, practice: next });
   } catch (e) {
     console.error('[homework-practice]', e.message);
     res.status(500).json({ error: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : e.message });
@@ -435,12 +461,23 @@ const wrap = (fn) => async (req, res) => {
 };
 app.get('/api/moodle', (_req, res) => res.json(moodle.moodleStatus()));
 app.get('/api/system', async (_req, res) => res.json(await systemStatus()));
+
+// ---------- run log and weekly report ----------
+app.get('/api/runs', (req, res) => res.json({ processes: PROCESSES, runs: listRuns({ process: req.query.process || null, limit: Math.min(1000, Number(req.query.limit) || 300) }) }));
+app.get('/api/weekly', (_req, res) => res.json(weeklyReports()));
+app.post('/api/weekly/run', async (_req, res) => {
+  try {
+    res.json(await runWeekly({ trigger: 'manual' }));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 app.post('/api/moodle/connect', wrap((req) => moodle.connect(req.body)));
 app.post('/api/moodle/disconnect', wrap(() => moodle.disconnect()));
 app.post('/api/moodle/refresh', wrap(async () => { await moodle.refreshCourses(); return moodle.moodleStatus(); }));
 app.put('/api/moodle/map', wrap((req) => moodle.mapCourse(req.body.moodleId, req.body.siteCourseId)));
 app.put('/api/moodle/options', wrap((req) => moodle.setOptions(req.body)));
-app.post('/api/moodle/sync', wrap(async () => ({ result: await moodle.sync(), status: moodle.moodleStatus() })));
+app.post('/api/moodle/sync', wrap(async () => ({ result: await moodle.sync({ trigger: 'manual' }), status: moodle.moodleStatus() })));
 app.get('/api/moodle/courses/:id/files', wrap((req) => moodle.courseFiles(req.params.id)));
 app.post('/api/moodle/import', wrap(async (req) => ({ result: await moodle.importOne(req.body.moodleId, req.body.key) })));
 app.post('/api/moodle/ignore', wrap(async (req) => { await moodle.ignoreOne(req.body.key); return { ok: true }; }));
@@ -483,5 +520,6 @@ app.listen(PORT, HOST, () => {
   moodle.startMoodle();
   startBackups();
   startPushTicks();
+  startWeekly();
   startPortalRelay().catch((e) => console.error('[portal]', e.message));
 });

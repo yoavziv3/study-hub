@@ -11,6 +11,8 @@ import { aiStatus, generateJSON } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
+import { startRun } from './runlog.js';
+import { checkLecture, checkNotes, assertUsable, CheckError } from './checks.js';
 import { ACCEPTED, EXAM_RE, detectKind } from '../../shared/moodle-kind.js';
 
 export { ACCEPTED, EXAM_RE, detectKind };
@@ -222,9 +224,12 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   } else if (aiStatus().ready && course?.ai !== false && meta.kind !== 'exam' && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
+    const trigger = meta.kind === 'prep' ? 'import' : aiOnly || regenerate ? 'retry' : meta.source?.fileKey || meta.source?.moodleId ? 'moodle' : 'upload';
+    const run = startRun('lecture', { trigger, input: { lectureId: id, course: course.short, kind: meta.kind || 'lecture', file: meta.originalName, slides: slides.length } });
+    let checks = [];
     try {
       const transcriptFile = path.join(dir, 'transcript.txt');
-      content = await generateJSON({
+      const raw = await generateJSON({
         system: lectureSystem(course),
         prompt: meta.kind === 'prep'
           ? prepPrompt({ course, lesson: meta.lessonNumber, semester: meta.source?.semester || 'סמסטר קודם', slides, transcript: fs.existsSync(transcriptFile) ? fs.readFileSync(transcriptFile, 'utf8').slice(0, 90000) : '' })
@@ -232,15 +237,23 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
         schema: LECTURE_SCHEMA,
         effort: 'high',
       });
+      // Fixed checks on the model's output before anything is saved (checks.js).
+      const checked = checkLecture(raw, { slideCount: slides.length });
+      checks = assertUsable(checked.checks);
+      content = checked.value;
       await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: aiStatus().provider });
-      await patchLecture(id, { aiError: null });
+      await patchLecture(id, { aiError: null, checks: { at: new Date().toISOString(), found: checks.length } });
+      run.ok({ title: content.title, summaryChars: content.summary.length, quiz: content.quiz.length, flashcards: content.flashcards.length, glossary: content.glossary.length, topics: content.topics.length }, checks);
       await generateNotes(id);
     } catch (e) {
       // Keep the lecture usable (slides, text, chat); study material can be generated later from the lecture menu.
       console.error(`[ingest] ${id} AI analysis failed:`, e.message.slice(0, 200));
+      run.fail(e, e instanceof CheckError ? e.checks : checks);
       content = null;
-      await patchLecture(id, { aiError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו "יצירת סיכום מחדש" מאוחר יותר' : 'יצירת הסיכום נכשלה' });
-      adminAlert(/429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – חומר חדש נכנס בלי סיכום' : 'יצירת סיכום נכשלה');
+      const limit = /429|usage_limit/.test(e.message);
+      const signedOut = /authenticate|login|OAuth/i.test(e.message);
+      await patchLecture(id, { aiError: limit ? 'הגעת למגבלת השימוש ב-Claude – נסו "יצירת סיכום מחדש" מאוחר יותר' : signedOut ? 'החיבור ל-Claude במחשב פג – צריך להתחבר מחדש (claude, ואז /login)' : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
+      adminAlert(limit ? 'הגעת למגבלת השימוש ב-Claude – חומר חדש נכנס בלי סיכום' : signedOut ? 'החיבור ל-Claude במחשב פג – חומר חדש נכנס בלי סיכום' : 'יצירת סיכום נכשלה');
     }
   }
 
@@ -274,18 +287,24 @@ export async function generateNotes(id) {
   const course = getCourse(meta.courseId);
   await patchLecture(id, { notesStatus: 'writing' });
   console.log(`[ingest] ${id} → notes`);
+  const run = startRun('notes', { trigger: 'after-lecture', input: { lectureId: id, course: course.short, slides: slides.length, summaryChars: content.summary?.length || 0 } });
   try {
-    const notes = await generateJSON({
+    const raw = await generateJSON({
       system: lectureSystem(course),
       prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }),
       schema: NOTES_SCHEMA,
       effort: 'high',
     });
+    const checked = checkNotes(raw, { slideCount: slides.length });
+    const checks = assertUsable(checked.checks);
+    const notes = checked.value;
     await saveContent(id, { ...getContent(id), notes: { ...notes, generatedAt: new Date().toISOString() } });
     await patchLecture(id, { notesStatus: null, notesError: null });
+    run.ok({ sections: notes.sections.length, blocks: notes.sections.reduce((s, x) => s + x.blocks.length, 0) }, checks);
     return notes;
   } catch (e) {
     console.error(`[ingest] ${id} notes failed:`, e.message.slice(0, 200));
+    run.fail(e, e instanceof CheckError ? e.checks : []);
     await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : 'כתיבת הסיכום נכשלה' });
     return null;
   }

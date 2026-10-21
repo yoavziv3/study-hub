@@ -79,8 +79,11 @@ function spawnCli(args, input, { onLine, signal } = {}) {
     child.on('error', reject);
     child.on('close', (code) => {
       if (onLine && buf.trim()) onLine(buf.trim());
-      if (code === 0 || signal?.aborted) resolve(out);
-      else reject(new Error(`claude exited ${code}: ${(err || out).slice(-600)}`));
+      if (code === 0 || signal?.aborted) return resolve(out);
+      // With --output-format json the reason is in the reply's "result" (e.g. an expired sign-in), not in stderr.
+      let reason = '';
+      try { reason = JSON.parse(out).result || ''; } catch { /* not JSON */ }
+      reject(new Error(`claude exited ${code}: ${reason || (err || out).slice(-600)}`));
     });
     signal?.addEventListener('abort', () => child.kill('SIGTERM'));
     child.stdin.end(input);

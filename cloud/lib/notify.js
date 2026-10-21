@@ -250,6 +250,14 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
     }
   }
 
+  // 8. The weekly load report is out (Sunday morning, from the Mac's weekly.js) – once, with its headline.
+  if (prefs.announcements && daytime) {
+    for (const it of updates) {
+      if (it.type !== 'report' || now - Date.parse(it.addedAt) > DAY || Date.parse(it.addedAt) < since || isSent(`upd:${it.id}`)) continue;
+      out.push({ key: `upd:${it.id}`, title: it.title, body: it.body, url: '/weekly' });
+    }
+  }
+
   // 6. New material and course announcements in the student's courses: the Mac's published feed, plus what the
   //    cloud spotted in Moodle itself (moodle-watch.js) while the Mac hasn't processed it yet. A burst – the start
   //    of a semester, a big Moodle sync – becomes one notification per course and type.

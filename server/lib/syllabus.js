@@ -11,6 +11,8 @@ import { listCourses, patchCourse, listLectures, getSlides } from './store.js';
 import { pdfTextPerPage } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
 import { GRADING_SCHEMA, gradingPrompt } from './prompts.js';
+import { startRun } from './runlog.js';
+import { checkGrading } from './checks.js';
 
 const RECHECK_MS = 7 * 86400000;
 const MAX_TEXT = 24000;
@@ -88,15 +90,24 @@ export async function syncGrading(course, { force = false } = {}) {
     await patchCourse(course.id, { grading: { ...g, checkedAt } });
     return false;
   }
-  const r = await generateJSON({ system: 'אתה עוזר שמחלץ מידע מדויק מסילבוסים של קורסים באוניברסיטה.', prompt: gradingPrompt({ course, text, fromLecture: src.source === 'lecture' }), schema: GRADING_SCHEMA, effort: 'medium', maxTokens: 4000 });
-  const components = (r.found ? r.components : []).filter((c) => c.name && c.weight > 0).map((c) => ({ name: c.name.trim(), weight: round(c.weight), kind: c.kind, shield: !!c.shield }));
-  const total = components.reduce((s, c) => s + c.weight, 0);
+  const run = startRun('syllabus', { trigger: force ? 'manual' : 'schedule', input: { course: course.short, source: src.source, url: url || null, chars: text.length } });
+  let r;
+  try {
+    r = await generateJSON({ system: 'אתה עוזר שמחלץ מידע מדויק מסילבוסים של קורסים באוניברסיטה.', prompt: gradingPrompt({ course, text, fromLecture: src.source === 'lecture' }), schema: GRADING_SCHEMA, effort: 'medium', maxTokens: 4000 });
+  } catch (e) {
+    run.fail(e);
+    throw e;
+  }
+  // The model only reads the syllabus; the rules decide what's a valid weight (checks.js), and the calculator does the math.
+  const checked = checkGrading(r);
+  const components = checked.components.map((c) => ({ name: c.name.trim(), weight: round(c.weight), kind: c.kind, shield: !!c.shield }));
+  run.ok({ found: !!r.found, components: components.map((c) => `${c.name} ${c.weight}%`), complete: checked.complete, minExam: checked.minExam }, checked.checks);
   await patchCourse(course.id, {
     grading: {
       components,
       // Weights that don't add up to 100 are kept but flagged, so the calculator says so.
-      complete: Math.abs(total - 100) < 0.5,
-      minExam: r.minExamGrade > 0 ? round(r.minExamGrade) : null,
+      complete: checked.complete,
+      minExam: checked.minExam ? round(checked.minExam) : null,
       passGrade: r.passGrade > 0 ? round(r.passGrade) : null,
       notes: (r.notes || []).slice(0, 4),
       source: src.source,

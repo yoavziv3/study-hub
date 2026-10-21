@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap, MapPinned,
+  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap, MapPinned, Gauge,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
@@ -23,6 +23,7 @@ const TYPE = {
   reminder: { label: 'תזכורת', icon: AlarmClock },
   exam: { label: 'מבחנים', icon: GraduationCap },
   'class-change': { label: 'שינוי במערכת', icon: MapPinned },
+  report: { label: 'דוח שבועי', icon: Gauge },
 };
 const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler, exam: ScrollText };
 
@@ -183,7 +184,8 @@ function UpdateItem({ item, course, isNew, i }) {
           {item.lectureId && <Link className="btn sm" to={`/lecture/${item.lectureId}`}>פתיחה באתר</Link>}
           {item.type === 'exam' && <Link className="btn sm" to={`/course/${item.courseId}/prep`}>להכנה למבחן</Link>}
           {item.type === 'class-change' && <Link className="btn sm" to="/schedule">למערכת השעות</Link>}
-          {safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
+          {item.type === 'report' && <Link className="btn sm" to="/weekly">לדוח המלא</Link>}
+          {item.type !== 'report' && safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
         </div>
       </div>
     </motion.div>

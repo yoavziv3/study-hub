@@ -104,6 +104,23 @@ function push(item, { silent = false } = {}) {
   return true;
 }
 
+/** The weekly load report is out (weekly.js): one feed item per week; a rerun of the same week doesn't add another. */
+export async function announceWeekly(report) {
+  if (!state) return;
+  push({
+    id: newId(),
+    key: `weekly:${report.week}`,
+    type: 'report',
+    courseId: null,
+    title: `דוח העומס השבועי (${report.range}): ${report.levelLabel}`,
+    body: report.headline,
+    url: '/weekly',
+    createdAt: report.generatedAt,
+    addedAt: report.generatedAt,
+  });
+  await save();
+}
+
 /** A lecture / tutorial / homework finished processing for the first time (or was replaced by a newer version). */
 export async function announceMaterial(meta, { updated = false } = {}) {
   if (!state || (!updated && meta.announced)) return;

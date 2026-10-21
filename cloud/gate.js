@@ -3,6 +3,7 @@
 import { json, fail } from './lib/util.js';
 import { currentUser, siteCourses, allowedCourseIds, lectureCourse } from './lib/account.js';
 import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
+import { forCourses } from '../shared/weekly-load.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -40,7 +41,8 @@ export async function gate({ request, env }) {
       // Shared feed: new material and course announcements of the student's courses – the Mac's, plus what the
       // cloud spotted in Moodle that the Mac hasn't processed yet. Deadlines and reminders are personal and come
       // from /api/me/deadlines.
-      const mine = (upd.items || []).filter((i) => allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement'));
+      // The weekly load report's item names no course, so every student gets it (the report itself is filtered below).
+      const mine = (upd.items || []).filter((i) => (allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement')) || i.type === 'report');
       const fresh = await cloudUpdates(env, [...allowed]).catch(() => []);
       return json({
         since: upd.since,
@@ -48,6 +50,13 @@ export async function gate({ request, env }) {
         deadlines: [],
         settings: {},
       });
+    }
+
+    if (path === '/data/weekly.json') {
+      // Weekly load reports, each limited to the student's own courses (totals recomputed).
+      const res = await asset();
+      const reports = res ? await res.json() : [];
+      return json(reports.map((r) => forCourses(r, allowed)).filter((r) => r.courses.length));
     }
 
     let m = path.match(/^\/data\/(courses|bundles|search|links)\/([\w-]+)\.json$/);

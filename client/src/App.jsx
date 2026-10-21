@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -18,6 +18,8 @@ const Schedule = lazy(() => import('./pages/Schedule.jsx'));
 const Grades = lazy(() => import('./pages/Grades.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 const System = lazy(() => import('./pages/System.jsx'));
+const Weekly = lazy(() => import('./pages/Weekly.jsx'));
+const Runs = lazy(() => import('./pages/Runs.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
 const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
 const UploadModal = lazy(() => import('./components/UploadModal.jsx'));
@@ -72,6 +74,7 @@ function Sidebar({ open, onNavigate }) {
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
       <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <NavItem to="/schedule" icon={<CalendarRange size={17} />} label="מערכת שעות" onClick={onNavigate} />
+      <NavItem to="/weekly" icon={<Gauge size={17} />} label="דוח עומס שבועי" onClick={onNavigate} />
       <NavItem to="/grades" icon={<Calculator size={17} />} label="ציונים וממוצע" onClick={onNavigate} />
       <div className="nav-label">הקורסים שלי</div>
       {courses.map((c) => <CourseNav key={c.id} c={c} progress={progress} onNavigate={onNavigate} />)}
@@ -99,6 +102,7 @@ function Sidebar({ open, onNavigate }) {
         onClick={onNavigate}
       />}
       {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים ומשוב" onClick={onNavigate} />}
+      {!STATIC && <NavItem to="/runs" icon={<ListChecks size={17} />} label="יומן הרצות" onClick={onNavigate} />}
       {(!STATIC || me?.owner) && <NavItem to="/system" icon={<Activity size={17} />} label="מצב המערכת" onClick={onNavigate} />}
       <div className="sidebar-foot">
         <Feedback />
@@ -305,6 +309,8 @@ function Shell() {
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/system" element={<System />} />
+            <Route path="/weekly" element={<Weekly />} />
+            <Route path="/runs" element={<Runs />} />
           </Routes>
         </AnimatePresence>
         </Suspense>

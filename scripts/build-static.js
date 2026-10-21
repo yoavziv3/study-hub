@@ -60,6 +60,12 @@ const card = (m) => {
   };
 };
 
+// Weekly load reports (server/lib/weekly.js), newest first; cloud/gate.js limits each to the student's courses.
+{
+  const dir = path.join(DATA_DIR, 'weekly');
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().reverse().slice(0, 26) : [];
+  await write('weekly.json', files.map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))));
+}
 await write('status.json', { ai: { provider: 'static', ready: false }, static: true, accounts: true });
 // Updates feed & deadlines (read state lives in each visitor's browser).
 {

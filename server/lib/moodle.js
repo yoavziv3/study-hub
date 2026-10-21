@@ -10,6 +10,7 @@ import { addLectureFile, enqueue, numberFromName, ACCEPTED } from './ingest.js';
 import { classify, EXCLUDE } from '../../shared/moodle-kind.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission } from './updates.js';
 import { syncCatalog } from './catalog.js';
+import { startRun } from './runlog.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
@@ -718,10 +719,11 @@ async function remoteNews(moodleId, siteId, call, initial, result) {
   }
 }
 
-export async function sync() {
+export async function sync({ trigger = 'schedule' } = {}) {
   if (!state.token || syncing) return state.lastResult;
   syncing = true;
   const result = { imported: [], updated: [], skipped: 0, errors: [] };
+  const run = startRun('moodle-sync', { trigger, input: { courses: Object.values(state.map).filter(Boolean).length, remote: Object.keys(state.remote || {}).length } });
   try {
     await refreshCourses().catch(() => {});
     for (const [mid, siteCourseId] of Object.entries(state.map)) {
@@ -743,6 +745,7 @@ export async function sync() {
     state.lastSync = new Date().toISOString();
     state.lastResult = result;
     await save();
+    run.ok({ imported: result.imported.length, updated: result.updated.length, skipped: result.skipped, errors: result.errors.slice(0, 10) });
   }
   if (result.imported.length || result.updated.length) console.log(`[moodle] imported ${result.imported.length}, updated ${result.updated.length}`);
   for (const p of healthProblems()) adminAlert(p);
