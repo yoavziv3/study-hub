@@ -1,6 +1,6 @@
 // The student's BGU portal schedule (room changes, cancellations, notices – before the public course catalog has
-// them). The portal's firewall only answers from Israel, so a reader there does the reading: the AWS Lambda in Tel
-// Aviv (aws/portal-relay), with the Mac as backup (shared/portal-relay-core.js). The cloud keeps each student's
+// them). The portal's firewall only answers from Israel, so a reader there does the reading: a small always-on VM
+// in Israel (oracle/portal-relay), with the Mac as backup (shared/portal-relay-core.js). The cloud keeps each student's
 // link, the reader's (encrypted) portal session and what was read.
 //
 // The sign-in (username, password, ID number) is sealed in the student's browser with the Mac's public key
@@ -17,7 +17,7 @@ const STALE = 30 * MIN; // re-read every half hour,
 const STALE_SOON = 10 * MIN; // and every 10 minutes when a lesson of theirs starts within 25 minutes
 const RELAY_SEEN = 'portal_relay';
 const BACKOFF = 20 * MIN; // after a failed read, that student waits (unless they ask to refresh)
-const MAIN_FRESH = 3 * MIN; // a backup reader gets nothing while the main one was seen this recently
+const MAIN_FRESH = 3 * MIN; // a backup reader (the Mac) gets nothing while any main reader was seen this recently
 
 const row = (env, userId) => env.DB.prepare('SELECT * FROM portal_links WHERE user_id = ?').bind(userId).first();
 export const parseJson = (s, fallback) => {
@@ -85,7 +85,7 @@ export async function disconnectPortal(env, user) {
 // ---------- the Mac's side (admin channel) ----------
 /**
  * Links due for a read: new, asked for, half an hour old – or 10 minutes old with a lesson starting soon; not ones
- * that failed in the last 20 minutes. ?source=lambda|mac, &backup=1 for the Mac: it gets nothing while the Lambda runs.
+ * that failed in the last 20 minutes. ?source=<reader name>, &backup=1 for the Mac: it gets nothing while a main reader runs.
  */
 export async function portalJobs(env, url) {
   const now = Date.now();
@@ -93,8 +93,8 @@ export async function portalJobs(env, url) {
   const mark = (key) => env.DB.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, now);
   await env.DB.batch([mark(RELAY_SEEN), mark(`${RELAY_SEEN}:${source}`)]);
   if (url.searchParams.has('backup')) {
-    const main = await env.DB.prepare("SELECT value FROM push_meta WHERE key = 'portal_relay:lambda'").first();
-    if (main && now - main.value < MAIN_FRESH) return json([]);
+    const main = await env.DB.prepare("SELECT MAX(value) AS value FROM push_meta WHERE key LIKE 'portal_relay:%' AND key != 'portal_relay:mac'").first();
+    if (main?.value && now - main.value < MAIN_FRESH) return json([]);
   }
   const il = israel(now);
   const rows = (await env.DB.prepare(
