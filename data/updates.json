@@ -532,7 +532,7 @@
       "dueAt": "2026-10-25T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3450717",
       "intro": "תרגילים לעשות מתוך התרגיל:\n\n1,\n\n2א,ב,ג\n\n4\n\n5 א,ב\n\n6",
-      "submitted": false,
+      "submitted": true,
       "done": false,
       "draft": false
     }
