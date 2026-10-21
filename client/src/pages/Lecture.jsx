@@ -341,7 +341,7 @@ export default function Lecture() {
                 {menu && (
                   <motion.div className="card" style={{ position: 'absolute', top: 46, insetInlineEnd: 0, zIndex: 30, padding: 6, width: 220, boxShadow: 'var(--shadow-lg)' }} initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }}>
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setMenu(false); setEdit(true); }}><Pencil size={15} /> עריכת פרטים</button>
-                    {!textOnly && <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={originalUrl(lecture)} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>}
+                    {!textOnly && !lecture.noOriginal && <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={originalUrl(lecture)} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>}
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={regenerate}><RefreshCw size={15} /> יצירת סיכום מחדש (AI)</button>
                     <button className="local-only btn ghost sm danger" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={remove}><Trash2 size={15} /> מחיקה</button>
                   </motion.div>

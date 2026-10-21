@@ -43,9 +43,10 @@ for (const m of lectures) {
     pdf: fits ? (isPdf ? `/data/orig/${m.id}/${m.originalFile}` : `/data/pdf/${m.id}.pdf`) : null,
     pdfSource: fits && !isPdf ? src : null,
     thumb: fs.existsSync(path.join(dir, 'slides', 't001.jpg')) ? `/data/thumb/${m.id}.jpg` : null,
+    noOriginal: fs.existsSync(original) && fs.statSync(original).size > MAX_ASSET,
   });
 }
-const withSlides = (m) => ({ ...m, pdf: slideAssets.get(m.id)?.pdf || null, thumb: slideAssets.get(m.id)?.thumb || null });
+const withSlides = (m) => ({ ...m, pdf: slideAssets.get(m.id)?.pdf || null, thumb: slideAssets.get(m.id)?.thumb || null, ...(slideAssets.get(m.id)?.noOriginal ? { noOriginal: true } : {}) });
 const courses = listCourses();
 
 const card = (m) => {
@@ -131,7 +132,9 @@ for (const m of lectures) {
     const images = ['fallback', 'slides'].map((d) => path.join(src, d)).find((d) => fs.existsSync(d) && fs.readdirSync(d).length > 1);
     if (images) await fsp.cp(images, path.join(OUT, 'files', m.id, 'slides'), { recursive: true });
   }
-  if (m.originalFile && fs.existsSync(path.join(src, m.originalFile))) {
+  // The original deck for download – unless it's over Cloudflare's per-file limit, which fails the whole deploy
+  // (its slides are still shown, from the fallback images).
+  if (m.originalFile && fs.existsSync(path.join(src, m.originalFile)) && fs.statSync(path.join(src, m.originalFile)).size <= MAX_ASSET) {
     await fsp.mkdir(path.join(OUT, 'data', 'orig', m.id), { recursive: true });
     await fsp.copyFile(path.join(src, m.originalFile), path.join(OUT, 'data', 'orig', m.id, m.originalFile));
   }
