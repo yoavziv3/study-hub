@@ -1,0 +1,25 @@
+{
+  "id": "is-43lezdkk",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "שיעור 11",
+  "originalName": "שיעור 11 – סמסטר ב תשפ\"ו",
+  "kind": "prep",
+  "originalFile": null,
+  "lessonNumber": 11,
+  "unitNumber": 11,
+  "slideCount": 0,
+  "hasPdf": false,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T12:52:19.884Z",
+  "source": {
+    "type": "prep",
+    "semester": "סמסטר ב תשפ\"ו",
+    "lesson": 11
+  },
+  "updatedAt": "2026-10-21T12:59:12.079Z",
+  "aiError": "הגעת למגבלת השימוש ב-Claude – נסו \"יצירת סיכום מחדש\" מאוחר יותר",
+  "announced": true
+}

@@ -1,0 +1,27 @@
+{
+  "id": "is-43ldi7hm",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "תשתיות IT: זיכרון, אחסון, קלט/פלט, תקשורת ואינטרנט",
+  "originalName": "שיעור 4 – סמסטר ב תשפ\"ו",
+  "kind": "prep",
+  "originalFile": null,
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 0,
+  "hasPdf": false,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T12:52:19.834Z",
+  "source": {
+    "type": "prep",
+    "semester": "סמסטר ב תשפ\"ו",
+    "lesson": 4
+  },
+  "updatedAt": "2026-10-21T12:58:55.860Z",
+  "aiError": null,
+  "notesStatus": null,
+  "notesError": "הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר",
+  "announced": true
+}

@@ -1,0 +1,27 @@
+{
+  "id": "is-3rnlbxvs",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "תשתיות IT: חומרה – ייצוג נתונים, מעבד (CPU/GPU/NPU) וזיכרון",
+  "originalName": "שיעור 3 – סמסטר ב תשפ\"ו",
+  "kind": "prep",
+  "originalFile": null,
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 0,
+  "hasPdf": false,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T12:43:02.833Z",
+  "source": {
+    "type": "prep",
+    "semester": "סמסטר ב תשפ\"ו",
+    "lesson": 3
+  },
+  "updatedAt": "2026-10-21T12:51:51.686Z",
+  "aiError": null,
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

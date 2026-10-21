@@ -1,0 +1,25 @@
+{
+  "id": "is-43le6t8z",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "שיעור 6",
+  "originalName": "שיעור 6 – סמסטר ב תשפ\"ו",
+  "kind": "prep",
+  "originalFile": null,
+  "lessonNumber": 6,
+  "unitNumber": 6,
+  "slideCount": 0,
+  "hasPdf": false,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T12:52:19.855Z",
+  "source": {
+    "type": "prep",
+    "semester": "סמסטר ב תשפ\"ו",
+    "lesson": 6
+  },
+  "updatedAt": "2026-10-21T12:59:00.089Z",
+  "aiError": "הגעת למגבלת השימוש ב-Claude – נסו \"יצירת סיכום מחדש\" מאוחר יותר",
+  "announced": true
+}
