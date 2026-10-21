@@ -220,7 +220,7 @@ async function admin({ request, env, url, path, method }) {
   }
 
   if (path === '/api/admin/portal/ping' && method === 'GET') return portalPing(env);
-  if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env);
+  if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env, url);
   if (path === '/api/admin/portal/result' && method === 'POST') return portalResult(env, request, await readJson(request, 200_000));
   if (path === '/api/admin/push/tick' && method === 'POST') {
     const { source, backup } = await readJson(request, 1000);

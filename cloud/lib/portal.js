@@ -1,6 +1,7 @@
 // The student's BGU portal schedule (room changes, cancellations, notices – before the public course catalog has
-// them). The portal's firewall only answers from Israel, so the Mac that builds the site does the reading
-// (server/lib/portal-relay.js); the cloud keeps each student's link and what was read.
+// them). The portal's firewall only answers from Israel, so a reader there does the reading: the AWS Lambda in Tel
+// Aviv (aws/portal-relay), with the Mac as backup (shared/portal-relay-core.js). The cloud keeps each student's
+// link, the reader's (encrypted) portal session and what was read.
 //
 // The sign-in (username, password, ID number) is sealed in the student's browser with the Mac's public key
 // (RSA-OAEP, PORTAL_PUBLIC_KEY): the cloud stores it but can't open it, and neither can anyone holding the admin
@@ -15,6 +16,8 @@ const MIN = 60000;
 const STALE = 30 * MIN; // re-read every half hour,
 const STALE_SOON = 10 * MIN; // and every 10 minutes when a lesson of theirs starts within 25 minutes
 const RELAY_SEEN = 'portal_relay';
+const BACKOFF = 20 * MIN; // after a failed read, that student waits (unless they ask to refresh)
+const MAIN_FRESH = 3 * MIN; // a backup reader gets nothing while the main one was seen this recently
 
 const row = (env, userId) => env.DB.prepare('SELECT * FROM portal_links WHERE user_id = ?').bind(userId).first();
 export const parseJson = (s, fallback) => {
@@ -72,25 +75,41 @@ export async function refreshPortal(env, user) {
 }
 
 export async function disconnectPortal(env, user) {
-  await env.DB.prepare('DELETE FROM portal_links WHERE user_id = ?').bind(user.id).run();
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM portal_links WHERE user_id = ?').bind(user.id),
+    env.DB.prepare('DELETE FROM portal_state WHERE user_id = ?').bind(user.id),
+  ]);
   return json({ connected: false, key: env.PORTAL_PUBLIC_KEY || null });
 }
 
 // ---------- the Mac's side (admin channel) ----------
-/** Links due for a read: new, asked for, half an hour old – or 10 minutes old with a lesson starting soon. */
-export async function portalJobs(env) {
+/**
+ * Links due for a read: new, asked for, half an hour old – or 10 minutes old with a lesson starting soon; not ones
+ * that failed in the last 20 minutes. ?source=lambda|mac, &backup=1 for the Mac: it gets nothing while the Lambda runs.
+ */
+export async function portalJobs(env, url) {
   const now = Date.now();
-  await env.DB.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(RELAY_SEEN, now).run();
+  const source = (url.searchParams.get('source') || 'mac').replace(/\W/g, '').slice(0, 12);
+  const mark = (key) => env.DB.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, now);
+  await env.DB.batch([mark(RELAY_SEEN), mark(`${RELAY_SEEN}:${source}`)]);
+  if (url.searchParams.has('backup')) {
+    const main = await env.DB.prepare("SELECT value FROM push_meta WHERE key = 'portal_relay:lambda'").first();
+    if (main && now - main.value < MAIN_FRESH) return json([]);
+  }
   const il = israel(now);
-  const rows = (await env.DB.prepare('SELECT user_id, sealed, data, synced_at, requested_at FROM portal_links WHERE ok = 1').all()).results;
+  const rows = (await env.DB.prepare(
+    `SELECT l.user_id, l.sealed, l.data, l.synced_at, l.requested_at, s.session, s.failed_at
+     FROM portal_links l LEFT JOIN portal_state s ON s.user_id = l.user_id WHERE l.ok = 1`
+  ).all()).results;
   const due = rows.filter((r) => {
+    if (r.failed_at && now - r.failed_at < BACKOFF && !((r.requested_at || 0) > r.failed_at)) return false;
     if (!r.synced_at || (r.requested_at || 0) > r.synced_at) return true;
     const age = now - r.synced_at;
     if (age > STALE) return true;
     const soon = parseJson(r.data, []).some((l) => l.day === il.day && !l.canceled && minutesOf(l.start) - il.min > 0 && minutesOf(l.start) - il.min <= 25);
     return soon && age > STALE_SOON;
   });
-  return json(due.slice(0, 10).map((r) => ({ userId: r.user_id, sealed: r.sealed })));
+  return json(due.slice(0, 10).map((r) => ({ userId: r.user_id, sealed: r.sealed, session: r.session || null })));
 }
 
 /** What the Mac read for one student: their lessons (and the groups they show), or why it couldn't. */
@@ -98,18 +117,28 @@ export async function portalResult(env, request, body) {
   const userId = Number(body?.userId);
   const account = await row(env, userId);
   if (!account) return json({ ok: false, reason: 'no such link' });
+  const state = (session, failedAt) => env.DB.prepare(
+    'INSERT INTO portal_state (user_id, session, failed_at) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET session = excluded.session, failed_at = excluded.failed_at'
+  ).bind(userId, session, failedAt);
   if (!body.ok) {
     const error = String(body.error || 'הקריאה מהפורטל נכשלה').slice(0, 200);
-    await env.DB.prepare(`UPDATE portal_links SET error = ?${body.badLogin ? ', ok = 0' : ''} WHERE user_id = ?`).bind(error, userId).run();
+    await env.DB.batch([
+      env.DB.prepare(`UPDATE portal_links SET error = ?${body.badLogin ? ', ok = 0' : ''} WHERE user_id = ?`).bind(error, userId),
+      // A wrong sign-in also drops the session; other failures keep it for the next try.
+      body.badLogin ? state(null, Date.now()) : env.DB.prepare('INSERT INTO portal_state (user_id, failed_at) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET failed_at = excluded.failed_at').bind(userId, Date.now()),
+    ]);
     return json({ ok: true });
   }
+  const session = typeof body.session === 'string' && body.session.length < 8000 ? body.session : null;
   const lessons = (Array.isArray(body.lessons) ? body.lessons : []).slice(0, 80);
   const user = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first();
   const courses = await siteCourses(env, request);
   const allowed = new Set(user ? allowedCourseIds(user, courses) : []);
   const groups = groupsFromPortal(courses.filter((c) => allowed.has(c.id)), lessons);
-  await env.DB.prepare('UPDATE portal_links SET data = ?, groups = ?, synced_at = ?, error = NULL WHERE user_id = ?')
-    .bind(JSON.stringify(lessons), JSON.stringify(groups), Date.now(), userId).run();
+  await env.DB.batch([
+    env.DB.prepare('UPDATE portal_links SET data = ?, groups = ?, synced_at = ?, error = NULL WHERE user_id = ?').bind(JSON.stringify(lessons), JSON.stringify(groups), Date.now(), userId),
+    state(session, null),
+  ]);
   return json({ ok: true, groups });
 }
 

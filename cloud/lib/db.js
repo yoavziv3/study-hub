@@ -32,6 +32,8 @@ const SCHEMA = [
   // The student's link to the BGU portal: their sign-in sealed for the Mac (the cloud can't open it), and the
   // schedule and groups the Mac read from it (portal.js).
   `CREATE TABLE IF NOT EXISTS portal_links (user_id INTEGER PRIMARY KEY, username TEXT, sealed TEXT NOT NULL, ok INTEGER NOT NULL DEFAULT 1, error TEXT, data TEXT, groups TEXT, synced_at INTEGER, requested_at INTEGER, created_at INTEGER)`,
+  // The reader's portal session per student (encrypted by the reader, opaque here) and when a read last failed.
+  `CREATE TABLE IF NOT EXISTS portal_state (user_id INTEGER PRIMARY KEY, session TEXT, failed_at INTEGER)`,
 ];
 
 let ready = null;
