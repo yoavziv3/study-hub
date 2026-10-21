@@ -7,7 +7,7 @@ export const STRONG = 0.75;
 
 /** Lessons that count towards readiness (past exams are practice material, not a topic of their own). */
 export const prepUnits = (course) =>
-  (course?.lectures || []).filter((l) => l.kind !== 'exam' && l.status !== 'processing' && l.status !== 'error');
+  (course?.lectures || []).filter((l) => l.kind !== 'exam' && l.status !== 'processing' && l.status !== 'error' && (l.kind !== 'prep' || l.hasContent));
 
 /**
  * How well one lesson is mastered, 0..1: marked as studied, share of its practice questions answered correctly

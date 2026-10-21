@@ -471,7 +471,8 @@ function MyNotes({ course, progress }) {
 /** Lessons from an earlier semester that this one hasn't reached yet (kind 'prep', e.g. from the course's NotebookLM). */
 function PrepUnits({ course }) {
   const { progress } = useApp();
-  const units = course.lectures.filter((l) => l.kind === 'prep').sort((a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
+  // A unit whose material failed (e.g. the AI usage limit) waits for the retry instead of showing empty.
+  const units = course.lectures.filter((l) => l.kind === 'prep' && (l.hasContent || l.status === 'processing')).sort((a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
   if (!units.length) return null;
   return (
     <div className="card pad">

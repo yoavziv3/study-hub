@@ -356,10 +356,10 @@ export default function Course() {
                 </div>
               ))
             )}
-            {kind === 'lecture' && course.lectures.some((l) => l.kind === 'prep') && (
+            {kind === 'lecture' && course.lectures.some((l) => l.kind === 'prep' && l.hasContent) && (
               <Link to={`/course/${course.id}/prep`} className="callout row" style={{ marginTop: 18, gap: 10 }}>
                 <GraduationCap size={17} />
-                <span className="grow">השיעורים הבאים מהסמסטר הקודם ({course.lectures.filter((l) => l.kind === 'prep').length}), עם סיכומים ושאלות, נמצאים ב"הכנה למבחן".</span>
+                <span className="grow">השיעורים הבאים מהסמסטר הקודם ({course.lectures.filter((l) => l.kind === 'prep' && l.hasContent).length}), עם סיכומים ושאלות, נמצאים ב"הכנה למבחן".</span>
               </Link>
             )}
             {kind === 'homework' && course.ai === false && (
