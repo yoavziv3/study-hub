@@ -12,7 +12,10 @@
       "lectureId": "calc-v55setet",
       "source": "moodle",
       "createdAt": "2026-10-19T06:18:17.871Z",
-      "addedAt": "2026-10-19T06:18:17.871Z"
+      "addedAt": "2026-10-19T06:18:17.871Z",
+      "fileKeys": [
+        "67017:3459906:/booklet.pdf"
+      ]
     },
     {
       "id": "mvf5hvij86ki",
@@ -38,7 +41,10 @@
       "lectureId": "econ-9tds8sqj",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.425Z",
-      "addedAt": "2026-10-18T20:21:16.425Z"
+      "addedAt": "2026-10-18T20:21:16.425Z",
+      "fileKeys": [
+        "68380:3438473:/הרצאה 1  2026_2027.pdf"
+      ]
     },
     {
       "id": "mvf5hvik1w6r",
@@ -51,7 +57,10 @@
       "lectureId": "is-9tdsb7tn",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.432Z",
-      "addedAt": "2026-10-18T20:21:16.432Z"
+      "addedAt": "2026-10-18T20:21:16.432Z",
+      "fileKeys": [
+        "68600:3445108:/יסודות מערכות מידע - שיעור 01.pdf"
+      ]
     },
     {
       "id": "mvf5hvikhxpx",
@@ -64,7 +73,10 @@
       "lectureId": "acc-9tdsp6zl",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.443Z",
-      "addedAt": "2026-10-18T20:21:16.443Z"
+      "addedAt": "2026-10-18T20:21:16.443Z",
+      "fileKeys": [
+        "68470:3442197:/יחידה 1 - פתיחת הקורס.pptx"
+      ]
     },
     {
       "id": "mvf5hvikwq4s",
@@ -77,7 +89,10 @@
       "lectureId": "acc-9tdst4sr",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.446Z",
-      "addedAt": "2026-10-18T20:21:16.446Z"
+      "addedAt": "2026-10-18T20:21:16.446Z",
+      "fileKeys": [
+        "68470:3442290:/יחידה 2 - מבוא לחשבונאות פיננסית.pptx"
+      ]
     },
     {
       "id": "mvf5hvikrazc",
@@ -90,7 +105,10 @@
       "lectureId": "acc-9tdswoo7",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.449Z",
-      "addedAt": "2026-10-18T20:21:16.449Z"
+      "addedAt": "2026-10-18T20:21:16.449Z",
+      "fileKeys": [
+        "68470:3442302:/יחידה 4- הזהות החשבונאית.pptx"
+      ]
     },
     {
       "id": "mvf5hvilt5yq",
@@ -103,7 +121,10 @@
       "lectureId": "calc-v562k1mb",
       "source": "moodle",
       "createdAt": "2026-10-19T06:18:18.236Z",
-      "addedAt": "2026-10-19T06:18:18.236Z"
+      "addedAt": "2026-10-19T06:18:18.236Z",
+      "fileKeys": [
+        "67017:3459906:/solutions.pdf"
+      ]
     },
     {
       "id": "mvf5hvilsun9",
@@ -116,7 +137,10 @@
       "lectureId": "is-9tdsi8mn",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.440Z",
-      "addedAt": "2026-10-18T20:21:16.440Z"
+      "addedAt": "2026-10-18T20:21:16.440Z",
+      "fileKeys": [
+        "68600:3420892:/יסודות מערכות מידע - שיעור 02.pdf"
+      ]
     },
     {
       "id": "mvf5hvil88hr",
@@ -129,7 +153,10 @@
       "lectureId": "acc-9tdsvxlh",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.447Z",
-      "addedAt": "2026-10-18T20:21:16.447Z"
+      "addedAt": "2026-10-18T20:21:16.447Z",
+      "fileKeys": [
+        "68470:3442298:/יחידה 3- הנחות יסוד ועקרונות.pptx"
+      ]
     },
     {
       "id": "mvf5hvilayvm",
@@ -155,7 +182,10 @@
       "lectureId": "acc-9tdsypg4",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.451Z",
-      "addedAt": "2026-10-18T20:21:16.451Z"
+      "addedAt": "2026-10-18T20:21:16.451Z",
+      "fileKeys": [
+        "68470:3442325:/יחידה 6- התהליך החשבונאי.pptx"
+      ]
     },
     {
       "id": "mvf5hvim73of",
@@ -168,7 +198,10 @@
       "lectureId": "acc-9tdt04w4",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.452Z",
-      "addedAt": "2026-10-18T20:21:16.452Z"
+      "addedAt": "2026-10-18T20:21:16.452Z",
+      "fileKeys": [
+        "68470:3442326:/יחידה 7- רישומי התאמה.pptx"
+      ]
     },
     {
       "id": "mvf5hvim1o03",
@@ -181,7 +214,10 @@
       "lectureId": "acc-9tdt1h7d",
       "source": "upload",
       "createdAt": "2026-10-18T20:21:16.454Z",
-      "addedAt": "2026-10-18T20:21:16.454Z"
+      "addedAt": "2026-10-18T20:21:16.454Z",
+      "fileKeys": [
+        "68470:3442327:/יחידה 8- רכוש קבוע.pptx"
+      ]
     },
     {
       "id": "mvf5hvimifwe",
@@ -194,7 +230,10 @@
       "lectureId": "acc-b50pgfkb",
       "source": "upload",
       "createdAt": "2026-10-18T20:58:18.965Z",
-      "addedAt": "2026-10-18T20:58:18.965Z"
+      "addedAt": "2026-10-18T20:58:18.965Z",
+      "fileKeys": [
+        "68470:3442331:/יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון.pptx"
+      ]
     },
     {
       "id": "mvf5i4r4x5uh",

@@ -13,8 +13,13 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.449Z",
-  "updatedAt": "2026-10-19T12:38:31.275Z",
+  "updatedAt": "2026-10-21T21:48:58.890Z",
   "announced": true,
   "notesStatus": null,
-  "notesError": null
+  "notesError": null,
+  "source": {
+    "linkedKeys": [
+      "68470:3442302:/יחידה 4- הזהות החשבונאית.pptx"
+    ]
+  }
 }

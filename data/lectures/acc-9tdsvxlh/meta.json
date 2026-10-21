@@ -13,8 +13,13 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.447Z",
-  "updatedAt": "2026-10-19T11:49:11.099Z",
+  "updatedAt": "2026-10-21T21:48:58.871Z",
   "announced": true,
   "notesStatus": null,
-  "notesError": null
+  "notesError": null,
+  "source": {
+    "linkedKeys": [
+      "68470:3442298:/יחידה 3- הנחות יסוד ועקרונות.pptx"
+    ]
+  }
 }

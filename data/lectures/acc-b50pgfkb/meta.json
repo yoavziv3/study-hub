@@ -13,8 +13,13 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:58:18.965Z",
-  "updatedAt": "2026-10-19T12:46:07.237Z",
+  "updatedAt": "2026-10-21T21:48:59.006Z",
   "announced": true,
   "notesStatus": null,
-  "notesError": null
+  "notesError": null,
+  "source": {
+    "linkedKeys": [
+      "68470:3442331:/יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון.pptx"
+    ]
+  }
 }

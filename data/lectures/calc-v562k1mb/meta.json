@@ -18,9 +18,12 @@
     "type": "moodle",
     "courseId": 67017,
     "section": "חוברת תרגילים והגשות",
-    "module": "חוברת תרגילים"
+    "module": "חוברת תרגילים",
+    "linkedKeys": [
+      "67017:3459906:/solutions.pdf"
+    ]
   },
-  "updatedAt": "2026-10-19T17:44:32.442Z",
+  "updatedAt": "2026-10-21T21:48:59.036Z",
   "aiError": null,
   "announced": true
 }

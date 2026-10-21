@@ -124,6 +124,7 @@ export async function cloudUpdates(env, courseIds, { since = Date.now() - 30 * D
 /** The Mac's feed plus the watcher's items it hasn't caught up with yet (same file, same post = one item). */
 export function mergeUpdates(macItems, cloudItems) {
   const keys = new Set(macItems.map((i) => i.key).filter(Boolean));
-  const files = new Set(macItems.map((i) => i.fileKey).filter(Boolean));
+  // A file uploaded again under another module is linked by the Mac to the item it already has (fileKeys).
+  const files = new Set(macItems.flatMap((i) => [i.fileKey, ...(i.fileKeys || [])]).filter(Boolean));
   return [...macItems, ...cloudItems.filter((i) => !keys.has(i.key) && !(i.fileKey && files.has(i.fileKey)))];
 }

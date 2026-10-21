@@ -13,8 +13,13 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.452Z",
-  "updatedAt": "2026-10-19T12:42:23.809Z",
+  "updatedAt": "2026-10-21T21:48:58.965Z",
   "announced": true,
   "notesStatus": null,
-  "notesError": null
+  "notesError": null,
+  "source": {
+    "linkedKeys": [
+      "68470:3442326:/יחידה 7- רישומי התאמה.pptx"
+    ]
+  }
 }

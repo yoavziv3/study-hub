@@ -90,6 +90,7 @@ function materialItem(l, { addedAt, updated = false } = {}) {
     lectureId: l.id,
     source: l.source?.type || 'upload',
     ...(l.source?.fileKey ? { fileKey: l.source.fileKey } : {}),
+    ...(l.source?.linkedKeys?.length ? { fileKeys: [l.source.fileKey, ...l.source.linkedKeys].filter(Boolean) } : {}),
     createdAt: l.createdAt || iso(),
     addedAt: addedAt || (l.source?.initial && l.source?.timemodified ? iso(l.source.timemodified * 1000) : iso()),
   };
@@ -102,6 +103,24 @@ function push(item, { silent = false } = {}) {
   const course = getCourse(item.courseId);
   if (!silent && !course?.remote) notify('מחברת', item.title, course?.short || '');
   return true;
+}
+
+/**
+ * A Moodle file that turned out to be one the site already has (the same file uploaded again under another module):
+ * its key joins the item's, so the cloud's Moodle watcher – which spotted it as new – knows it's already here.
+ */
+export async function linkFileKey(lectureId, fileKey) {
+  if (!state) return;
+  let changed = false;
+  for (const it of state.items) {
+    if (it.type !== 'material' || it.lectureId !== lectureId) continue;
+    const keys = new Set([...(it.fileKeys || []), ...(it.fileKey ? [it.fileKey] : [])]);
+    if (keys.has(fileKey)) continue;
+    keys.add(fileKey);
+    it.fileKeys = [...keys];
+    changed = true;
+  }
+  if (changed) await save();
 }
 
 /** The weekly load report is out (weekly.js): one feed item per week; a rerun of the same week doesn't add another. */

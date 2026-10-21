@@ -13,8 +13,13 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-18T20:21:16.454Z",
-  "updatedAt": "2026-10-19T12:44:05.883Z",
+  "updatedAt": "2026-10-21T21:48:58.980Z",
   "announced": true,
   "notesStatus": null,
-  "notesError": null
+  "notesError": null,
+  "source": {
+    "linkedKeys": [
+      "68470:3442327:/יחידה 8- רכוש קבוע.pptx"
+    ]
+  }
 }

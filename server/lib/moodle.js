@@ -8,7 +8,7 @@ import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
 import { addLectureFile, enqueue, numberFromName, ACCEPTED } from './ingest.js';
 import { classify, EXCLUDE } from '../../shared/moodle-kind.js';
-import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission } from './updates.js';
+import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission, linkFileKey } from './updates.js';
 import { syncCatalog } from './catalog.js';
 import { startRun } from './runlog.js';
 
@@ -573,6 +573,7 @@ async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial 
     if (!rec && existingNames.has(nfc(f.filename))) {
       const lec = listLectures(siteCourseId).find((l) => nfc(l.originalName) === nfc(f.filename));
       state.files[f.key] = { status: 'imported', lectureId: lec.id, timemodified: f.timemodified, at: Date.now(), linked: true };
+      await linkKey(lec.id, f.key);
       continue;
     }
     try {
@@ -583,6 +584,15 @@ async function syncCourse(mid, siteCourseId, { call = rest, via = null, initial 
     }
     await save();
   }
+}
+
+/** Records that Moodle file `key` is the same as the lecture's own (kept on the lecture and on its feed item). */
+async function linkKey(lectureId, key) {
+  const meta = getLecture(lectureId);
+  if (!meta || meta.source?.fileKey === key) return;
+  const linkedKeys = [...new Set([...(meta.source?.linkedKeys || []), key])];
+  if (linkedKeys.length !== (meta.source?.linkedKeys || []).length) await patchLecture(lectureId, { source: { ...meta.source, linkedKeys } });
+  await linkFileKey(lectureId, key);
 }
 
 // ---------- submission status ----------
@@ -762,6 +772,10 @@ export function schedule() {
 }
 
 export function startMoodle() {
+  // Files linked before linked keys were recorded (once; cheap when nothing is missing).
+  setTimeout(async () => {
+    for (const [key, rec] of Object.entries(state.files || {})) if (rec.linked && rec.lectureId) await linkKey(rec.lectureId, key).catch(() => {});
+  }, 15000).unref?.();
   linkCourses().catch((e) => console.error('[moodle] link courses:', e.message));
   if (!state.token) {
     // Exam dates and class times come from the public course catalog, so they update even without Moodle.
