@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarRange, MapPin, ChevronDown, Info, Clock, Search, Share2, Check, Users } from 'lucide-react';
+import { CalendarRange, MapPin, ChevronDown, Info, Clock, Search, Share2, Check, Users, Ban, RefreshCcw } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { CourseIcon, Page, fadeUp } from '../components/ui.jsx';
+import { api, STATIC } from '../api.js';
+import PortalConnect from '../components/PortalConnect.jsx';
 import {
   DAY_NAMES, typeLabel, minutes, classTypes, groupsOf, chosen, missingGroups, mySlots, upcoming, whenLabel,
-  groupRooms, matchRoom, soleMatch, shareableGroups, validShared,
+  groupRooms, matchRoom, soleMatch, shareableGroups, validShared, withPortal,
 } from '../lib/schedule.js';
 
 const HOUR_PX = 58;
@@ -152,11 +154,11 @@ function SharedBanner({ courses }) {
 
 function SlotBlock({ s, style, compact, narrow }) {
   return (
-    <Link to={`/course/${s.course.id}`} className={`slot ${narrow ? 'narrow' : ''}`} data-color={s.course.color} style={style} title={`${s.course.short} · ${typeLabel(s.type)} ${s.group} · ${s.lecturer}`}>
+    <Link to={`/course/${s.course.id}`} className={`slot ${narrow ? 'narrow' : ''} ${s.canceled ? 'canceled' : ''}`} data-color={s.course.color} style={style} title={`${s.course.short} · ${typeLabel(s.type)} ${s.group} · ${s.lecturer}${s.moved ? ` · בקובץ הקורסים: ${s.catalogPlace}` : ''}`}>
       <b>{s.course.short}</b>
-      <span>{typeLabel(s.type)}</span>
+      <span>{s.canceled ? 'בוטל' : typeLabel(s.type)}</span>
       {!narrow && <span className="slot-time">{s.start}–{s.end}</span>}
-      {!compact && (s.place || s.mode) && <span className="slot-place">{s.place || s.mode}</span>}
+      {!compact && (s.place || s.mode) && <span className={`slot-place ${s.moved ? 'moved' : ''}`}>{s.moved && <RefreshCcw size={10} />} {s.place || s.mode}</span>}
     </Link>
   );
 }
@@ -204,8 +206,9 @@ function DayList({ slots, now }) {
               <Link key={s.key} to={`/course/${s.course.id}`} className="agenda-row" data-color={s.course.color}>
                 <div className="agenda-time"><b>{s.start}</b><span>{s.end}</span></div>
                 <div className="grow" style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 700 }}>{s.course.short} · {typeLabel(s.type)}</div>
-                  <div className="faint" style={{ fontSize: 13 }}>{s.place || s.mode}{s.lecturer ? ` · ${s.lecturer}` : ''}</div>
+                  <div style={{ fontWeight: 700 }}>{s.course.short} · {typeLabel(s.type)}{s.canceled && <span className="chip bad" style={{ marginInlineStart: 6 }}><Ban size={11} /> בוטל</span>}</div>
+                  <div className={s.moved ? 'slot-moved' : 'faint'} style={{ fontSize: 13 }}>{s.moved && <RefreshCcw size={11} />} {s.place || s.mode}{s.lecturer ? ` · ${s.lecturer}` : ''}</div>
+                  {s.moved && <div className="faint" style={{ fontSize: 12 }}>החדר עודכן בפורטל (בקובץ הקורסים: {s.catalogPlace})</div>}
                 </div>
               </Link>
             ))}
@@ -225,7 +228,10 @@ export default function Schedule() {
     return () => clearInterval(t);
   }, []);
   const withClasses = courses.filter((c) => c.classes?.length);
-  const slots = useMemo(() => mySlots(courses, progress), [courses, progress]);
+  // Cloud: with the portal connected, its rooms and cancellations are laid over the catalog's timetable.
+  const [portal, setPortal] = useState(null);
+  useEffect(() => { if (STATIC) api.get('/api/portal').then(setPortal).catch(() => {}); }, []);
+  const slots = useMemo(() => withPortal(mySlots(courses, progress), portal?.ok ? portal.lessons : null), [courses, progress, portal]);
   const next = upcoming(slots, now, 1)[0];
   // Two chosen groups at the same time – usually a wrong pick.
   const clashes = slots.flatMap((a, i) => slots.slice(i + 1)
@@ -239,7 +245,7 @@ export default function Schedule() {
           <div className="course-icon"><CalendarRange size={22} /></div>
           <div className="grow">
             <h1 style={{ fontSize: 26 }}>מערכת שעות</h1>
-            <div className="muted" style={{ fontSize: 14 }}>הימים, השעות והחדרים מקובץ הקורסים של האוניברסיטה – מתעדכן אוטומטית אם משהו משתנה.</div>
+            <div className="muted" style={{ fontSize: 14 }}>{portal?.ok ? 'הימים והשעות מקובץ הקורסים, והחדרים והביטולים מהמערכת שלך בפורטל.' : 'הימים, השעות והחדרים מקובץ הקורסים של האוניברסיטה – מתעדכן אוטומטית אם משהו משתנה.'}</div>
           </div>
           {next && (
             <div className="next-class" data-color={next.course.color}>
@@ -253,6 +259,7 @@ export default function Schedule() {
         </div>
       </motion.div>
 
+      {STATIC && portal && <div style={{ marginTop: 16 }}><PortalConnect status={portal} onChange={setPortal} /></div>}
       <SharedBanner courses={withClasses} />
       <div style={{ marginTop: 16 }}><GroupPicker courses={withClasses} /></div>
 

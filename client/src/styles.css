@@ -951,3 +951,13 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 @media (max-width: 640px) {
   .timer-pop { position: fixed; top: 64px; inset-inline: 16px; width: auto; }
 }
+
+/* ============ BGU portal (timetable) ============ */
+.portal-form { display: grid; gap: 12px; margin-top: 12px; overflow: hidden; }
+.portal-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.portal-fields label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.portal-notices { display: grid; gap: 8px; margin-top: 14px; }
+.portal-notice { padding: 10px 12px; border-radius: 12px; background: var(--warn-bg); font-size: 13.5px; line-height: 1.6; }
+.slot.canceled { opacity: 0.55; text-decoration: line-through; }
+.slot-place.moved, .slot-moved { color: var(--warn-text); font-weight: 700; }
+@media (max-width: 640px) { .portal-fields { grid-template-columns: 1fr; } }

@@ -8,13 +8,14 @@ import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
+import { syncPortal, portalFresh, portalLessons } from './portal.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
 const MAX_SENDS = 30; // push requests per tick (Cloudflare limits outgoing requests per invocation)
 const DEADLINES_FRESH = 3 * 3600000; // deadline reminders only from a recent Moodle answer (submitted work drops off)
 
-export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms', 'material', 'announcements'];
+export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms', 'material', 'announcements', 'portal'];
 const prefsOf = (progress) => ({ ...Object.fromEntries(KINDS.map((k) => [k, true])), ...(progress.notify || {}) });
 
 // ---------- subscriptions ----------
@@ -85,6 +86,32 @@ function whenText(ms) {
 }
 
 // ---------- what each student should hear about now ----------
+/** The weekly meetings of the student's chosen groups, until each course's exams start. */
+function mySlots(courses, progress, today) {
+  const out = [];
+  for (const c of courses) {
+    const pick = progress.classGroups?.[c.id] || {};
+    const firstExam = examSittings(c, progress).filter((e) => !e.quiz).map((e) => e.date).sort()[0];
+    if (firstExam && today >= firstExam) continue;
+    for (const g of c.classes || []) {
+      if (pick[g.type] !== g.group) continue;
+      for (const sl of g.slots || []) out.push({ c, g, sl });
+    }
+  }
+  return out;
+}
+
+// The portal's lesson at the same weekday and (about the same) time as a catalog meeting.
+const portalLesson = (portal, sl) => (portal || []).find((l) => l.day === sl.day && Math.abs(minutes(l.start) - minutes(sl.start)) <= 15);
+// Rooms are written differently in the catalog and the portal: compare their numbers (building, room).
+const numbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
+const roomChanged = (catalog, portal) => !!portal && numbers(portal) !== '' && numbers(catalog) !== '' && numbers(portal) !== numbers(catalog);
+const shortHash = (s) => {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+};
+
 // Moodle posts arrive as many short lines; a notification gets one compact line.
 const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
 
@@ -92,7 +119,7 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, deadlines, updates, now, since = 0, isSent = () => false }) {
+export function dueNotifications({ user, progress, courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   const daytime = il.hour >= 8 && il.hour < 22;
@@ -152,27 +179,27 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
   }
 
   // 4. A class of the student's groups starting within the next quarter of an hour (until the course's exams).
+  //    With the portal connected, its room (and a cancellation) wins over the course catalog.
   if (prefs.classes) {
-    for (const c of courses) {
-      const pick = progress.classGroups?.[c.id] || {};
-      const firstExam = examSittings(c, progress).filter((e) => !e.quiz).map((e) => e.date).sort()[0];
-      if (firstExam && il.date >= firstExam) continue;
-      for (const g of c.classes || []) {
-        if (pick[g.type] !== g.group) continue;
-        for (const sl of g.slots || []) {
-          const startIn = minutes(sl.start) - il.min;
-          if (sl.day !== il.day || startIn <= 0 || startIn > 16) continue;
-          const label = g.type === 'שעור' ? 'שיעור' : g.type;
-          out.push({
-            key: `class:${c.id}:${g.group}:${sl.day}:${sl.start}:${il.date}`,
-            title: `בעוד ${startIn} דקות: ${c.short} · ${label}`,
-            body: [sl.place || sl.mode, `${sl.start}–${sl.end}`].filter(Boolean).join(' · '),
-            url: '/schedule',
-            urgency: 'high',
-            ttl: 15 * 60,
-          });
-        }
+    for (const { c, g, sl } of mySlots(courses, progress, il.date)) {
+      const startIn = minutes(sl.start) - il.min;
+      if (sl.day !== il.day || startIn <= 0 || startIn > 16) continue;
+      const label = g.type === 'שעור' ? 'שיעור' : g.type;
+      const p = portalLesson(portal, sl);
+      const key = `class:${c.id}:${g.group}:${sl.day}:${sl.start}:${il.date}`;
+      if (p?.canceled) {
+        out.push({ key, title: `בוטל: ${c.short} · ${label} של ${sl.start}`, body: p.notifications[0]?.title || 'לפי מערכת השעות בפורטל', url: '/schedule', urgency: 'high', ttl: 15 * 60 });
+        continue;
       }
+      const place = p?.location || sl.place || sl.mode;
+      out.push({
+        key,
+        title: `בעוד ${startIn} דקות: ${c.short} · ${label}`,
+        body: [place, `${sl.start}–${sl.end}`, portal ? '' : 'לפי קובץ הקורסים'].filter(Boolean).join(' · '),
+        url: '/schedule',
+        urgency: 'high',
+        ttl: 15 * 60,
+      });
     }
   }
 
@@ -185,6 +212,35 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
       out.push({ key: `room:${it.id}`, title: it.title, body: it.body, url: '/schedule' });
     }
   }
+  // 7. The portal: a notice on one of the student's lessons (room change, cancellation…), or a room that differs from
+  //    the course catalog's. Each once; notices older than a week (or from before notifications were on) are skipped.
+  if (prefs.portal && portal && daytime) {
+    for (const l of portal) {
+      for (const n of l.notifications || []) {
+        const at = Date.parse(n.date);
+        if (Number.isFinite(at) && (now - at > 7 * DAY || at < since - DAY)) continue;
+        out.push({
+          key: `portal:${shortHash(`${l.name}|${n.title}|${n.date}|${n.content.slice(0, 80)}`)}`,
+          title: `עדכון בפורטל · ${l.name}`,
+          body: [n.title, oneLine(n.content).slice(0, 160)].filter(Boolean).join(' – '),
+          url: '/schedule',
+        });
+      }
+    }
+    for (const { c, g, sl } of mySlots(courses, progress, il.date)) {
+      const p = portalLesson(portal, sl);
+      // A lesson with its own notice already told the student (above); this covers silent room changes.
+      if (!p || p.canceled || p.notifications?.length || !roomChanged(sl.place, p.location)) continue;
+      const label = g.type === 'שעור' ? 'שיעור' : g.type;
+      out.push({
+        key: `portalroom:${c.id}:${g.group}:${sl.day}:${sl.start}:${numbers(p.location)}`,
+        title: `החדר השתנה: ${c.short} · ${label}`,
+        body: `${p.location} (בקובץ הקורסים: ${sl.place})`,
+        url: '/schedule',
+      });
+    }
+  }
+
   // 6. New material and course announcements in the student's courses (from the site's published updates feed).
   //    A burst – the start of a semester, a big Moodle sync – becomes one notification per course and type.
   if ((prefs.material || prefs.announcements) && daytime) {
@@ -240,12 +296,14 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   if (!subs.length) return json({ ok: true, users: 0, sent: 0 });
   const ids = [...new Set(subs.map((s) => s.user_id))];
   const inIds = `(${ids.map(() => '?').join(',')})`;
-  const [users, progressRows, sentRows, deadlineRows] = await Promise.all([
+  const [users, progressRows, sentRows, deadlineRows, portalRows] = await Promise.all([
     db.prepare(`SELECT * FROM users WHERE id IN ${inIds}`).bind(...ids).all(),
     db.prepare(`SELECT user_id, data FROM progress WHERE user_id IN ${inIds}`).bind(...ids).all(),
     db.prepare(`SELECT user_id, key FROM push_sent WHERE user_id IN ${inIds}`).bind(...ids).all(),
     db.prepare(`SELECT user_id, data, at FROM cache WHERE key = 'deadlines' AND user_id IN ${inIds}`).bind(...ids).all(),
+    db.prepare(`SELECT * FROM portal_accounts WHERE user_id IN ${inIds}`).bind(...ids).all(),
   ]);
+  const portalOf = new Map(portalRows.results.map((r) => [r.user_id, r]));
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
@@ -264,6 +322,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const refresh = stale[0]?.id;
 
   let budget = MAX_SENDS;
+  let portalBudget = 3; // portal reads per tick (each is one or two requests)
   let total = 0;
   const marks = [];
   for (const user of users.results) {
@@ -272,6 +331,17 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     try { progress = JSON.parse(progressOf.get(user.id) || '{}'); } catch { /* keep empty */ }
     const allowed = new Set(allowedCourseIds(user, courses));
     const mine = courses.filter((c) => allowed.has(c.id));
+    // The portal schedule: re-read every half hour, and within 10 minutes of a class of theirs (rooms change late).
+    const account = portalOf.get(user.id);
+    let portal = account?.ok ? portalLessons(account) : null;
+    if (account?.ok && portalBudget > 0) {
+      const il = israel(now);
+      const soon = mySlots(mine, progress, il.date).some(({ sl }) => sl.day === il.day && minutes(sl.start) - il.min > 0 && minutes(sl.start) - il.min <= 25);
+      if (!portalFresh(account, soon ? 10 * 60000 : 30 * 60000)) {
+        portalBudget--;
+        portal = await syncPortal(env, account).catch(() => portal);
+      }
+    }
     let deadlines = null;
     const row = deadlineCache.get(user.id);
     if (user.id === refresh) {
@@ -282,7 +352,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const devices = subs.filter((s) => s.user_id === user.id);
     const isSent = (key) => sent.has(`${user.id}|${key}`);
     const since = Math.min(...devices.map((d) => d.created_at || 0));
-    const due = dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent }).filter((n) => !isSent(n.key));
+    const due = dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent, portal }).filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {
       if (budget < devices.length) break;

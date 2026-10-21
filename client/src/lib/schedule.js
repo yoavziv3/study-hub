@@ -121,3 +121,20 @@ export function whenLabel(s) {
   if (s.days === 1) return `מחר ב־${s.start}`;
   return `ביום ${DAY_NAMES[s.day]} ב־${s.start}`;
 }
+
+// ---------- the student's portal schedule (cloud, when connected) ----------
+const numbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
+
+/**
+ * The meetings with what the BGU portal says about them: its room (when it differs from the catalog's), a
+ * cancellation, and its notices. Matched by weekday and start time (within a quarter of an hour).
+ */
+export function withPortal(slots, lessons) {
+  if (!lessons?.length) return slots;
+  return slots.map((s) => {
+    const p = lessons.find((l) => l.day === s.day && Math.abs(minutes(l.start) - minutes(s.start)) <= 15);
+    if (!p) return s;
+    const moved = p.location && numbers(p.location) && numbers(s.place) && numbers(p.location) !== numbers(s.place);
+    return { ...s, catalogPlace: s.place, place: moved ? p.location : s.place, moved: !!moved, canceled: p.canceled, notices: p.notifications || [] };
+  });
+}

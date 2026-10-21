@@ -12,6 +12,7 @@ const KINDS = [
   ['rooms', 'שינוי חדר או שעה בקבוצה שלי'],
   ['material', 'חומר חדש בקורס'],
   ['announcements', 'הודעות מהקורס'],
+  ['portal', 'שינויים מהפורטל (חדר, ביטול)'],
 ];
 
 /** Cloud site: turn phone notifications on for this device and choose which kinds arrive. */

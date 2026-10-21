@@ -35,6 +35,15 @@
         "8788"
       ],
       "port": 8788
+    },
+    {
+      "name": "mock-portal",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/mock-portal.mjs",
+        "9922"
+      ],
+      "port": 9922
     }
   ]
 }

@@ -10,6 +10,7 @@ import {
 import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
+import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing } from './lib/portal.js';
 
 const MIN = 60000;
 
@@ -134,6 +135,21 @@ async function route({ request, env }) {
     return json({ ok: true });
   }
 
+  // ---------- the BGU student portal (schedule changes) ----------
+  if (path === '/api/portal' && method === 'GET') return portalStatus(env, user);
+  if (path === '/api/portal' && method === 'DELETE') return disconnectPortal(env, user);
+  if (path === '/api/portal/connect' && method === 'POST') {
+    // Same throttle as the site's sign-in: a wrong portal password must not be tried again and again.
+    if (await throttled(env, request, `portal:${user.id}`)) throw new HttpError(429, 'יותר מדי ניסיונות. נסו שוב בעוד רבע שעה.');
+    try {
+      return await connectPortal(env, user, await readJson(request, 2000));
+    } catch (e) {
+      if (e instanceof HttpError && e.extra?.badLogin) await recordFailure(env, request, `portal:${user.id}`);
+      throw e;
+    }
+  }
+  if (path === '/api/portal/sync' && method === 'POST') return refreshPortal(env, user);
+
   // ---------- phone notifications (Web Push) ----------
   if (path === '/api/push/key' && method === 'GET') return json({ key: env.VAPID_PRIVATE_KEY ? env.VAPID_PUBLIC_KEY || null : null });
   if (path === '/api/push/subscribe' && method === 'POST') return saveSubscription(env, user, request, await readJson(request, 4000));
@@ -207,6 +223,7 @@ async function admin({ request, env, url, path, method }) {
     return json([...byId.values()].sort((a, b) => b.students - a.students));
   }
 
+  if (path === '/api/admin/portal/ping' && method === 'GET') return portalPing(env);
   if (path === '/api/admin/push/tick' && method === 'POST') {
     const { source, backup } = await readJson(request, 1000);
     return notifyTick(env, request, { source, backup: !!backup });
