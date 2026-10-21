@@ -29,6 +29,11 @@ const lectures = listLectures().filter((l) => l.status === 'ready');
 const MAX_ASSET = 24 * 1024 * 1024;
 const slideAssets = new Map();
 for (const m of lectures) {
+  // Exam-prep units (kind 'prep') are text only: no deck, no original file.
+  if (!m.originalFile) {
+    slideAssets.set(m.id, {});
+    continue;
+  }
   const dir = lectureDir(m.id);
   const original = path.join(dir, m.originalFile);
   const isPdf = path.extname(m.originalFile).toLowerCase() === '.pdf';
@@ -75,7 +80,7 @@ await write(
   courses.map((c) => {
     const ls = lectures.filter((l) => l.courseId === c.id);
     const of = (k) => ls.filter((l) => (l.kind || 'lecture') === k).length;
-    return { ...c, lectureCount: of('lecture'), tutorialCount: of('tutorial'), homeworkCount: of('homework'), slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0), processing: 0 };
+    return { ...c, lectureCount: of('lecture'), tutorialCount: of('tutorial'), homeworkCount: of('homework'), prepCount: of('prep'), slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0), processing: 0 };
   })
 );
 
@@ -98,7 +103,7 @@ for (const m of lectures) {
   index.push({ ...base, type: 'lecture', title: m.title, text: '' });
   for (const t of content?.topics || []) index.push({ ...base, type: 'topic', title: t.title, slide: t.slideStart, text: t.summary });
   for (const g of content?.glossary || []) index.push({ ...base, type: 'term', title: g.term, text: g.definition });
-  for (const s of slides) index.push({ ...base, type: 'slide', title: `שקף ${s.n}`, slide: s.n, text: s.text });
+  for (const s of m.kind === 'prep' ? [] : slides) index.push({ ...base, type: 'slide', title: `שקף ${s.n}`, slide: s.n, text: s.text });
   for (const sec of content?.notes?.sections || []) {
     for (const b of sec.blocks || []) index.push({ ...base, type: 'note', title: b.title || sec.title, text: b.body || '' });
   }
@@ -120,7 +125,7 @@ for (const m of lectures) {
     const images = ['fallback', 'slides'].map((d) => path.join(src, d)).find((d) => fs.existsSync(d) && fs.readdirSync(d).length > 1);
     if (images) await fsp.cp(images, path.join(OUT, 'files', m.id, 'slides'), { recursive: true });
   }
-  if (fs.existsSync(path.join(src, m.originalFile))) {
+  if (m.originalFile && fs.existsSync(path.join(src, m.originalFile))) {
     await fsp.mkdir(path.join(OUT, 'data', 'orig', m.id), { recursive: true });
     await fsp.copyFile(path.join(src, m.originalFile), path.join(OUT, 'data', 'orig', m.id, m.originalFile));
   }

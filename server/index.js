@@ -8,7 +8,7 @@ import {
   ROOT, listCourses, getCourse, listLectures, getLecture, patchLecture, getContent, saveContent, getSlides,
   deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice, getLinks,
 } from './lib/store.js';
-import { addLectureFile, enqueue, queueState, resumePending, watchInbox, ACCEPTED, KINDS } from './lib/ingest.js';
+import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, ACCEPTED, KINDS } from './lib/ingest.js';
 import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
 import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
@@ -73,6 +73,7 @@ app.get('/api/courses', (_req, res) => {
         lectureCount: of('lecture'),
         tutorialCount: of('tutorial'),
         homeworkCount: of('homework'),
+        prepCount: of('prep'),
         slideCount: ls.reduce((s, l) => s + (l.slideCount || 0), 0),
         processing: ls.filter((l) => l.status === 'processing').length,
       };
@@ -279,6 +280,16 @@ app.post('/api/practice', async (req, res) => {
 
 // ---------- homework-level practice ----------
 app.get('/api/courses/:id/practice', (req, res) => res.json(getPractice(req.params.id)));
+
+// Exam-prep units from an earlier semester (text only: slide text + transcript), see addPrepItem / scripts/import-prep.js.
+app.post('/api/courses/:id/prep', async (req, res) => {
+  try {
+    const { lesson, semester, slidesText, transcript } = req.body || {};
+    res.json(await addPrepItem({ courseId: req.params.id, lesson, semester: String(semester || 'סמסטר קודם').slice(0, 60), slidesText, transcript }));
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
 
 app.post('/api/courses/:id/practice', async (req, res) => {
   const course = getCourse(req.params.id);

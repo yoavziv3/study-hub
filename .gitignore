@@ -16,6 +16,8 @@ data/lectures/*/slides.pdf
 data/lectures/*/slides/*
 !data/lectures/*/slides/t001.jpg
 data/lectures/**/*.tmp
+# Lesson transcripts of exam-prep units stay on this Mac (used only to write the study material).
+data/lectures/*/transcript.txt
 
 inbox/*
 !inbox/.gitkeep

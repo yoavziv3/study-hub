@@ -53,6 +53,7 @@ const KIND_INTRO = {
   lecture: 'שקפי ההרצאה',
   tutorial: 'חומר התרגול (מצגת או דף תרגול של המתרגל)',
   homework: 'דף שיעורי הבית / חוברת התרגילים (ייתכן שכולל גם פתרונות)',
+  prep: 'טקסט השקפים של השיעור מהסמסטר הקודם',
 };
 
 const KIND_FIELDS = {
@@ -106,6 +107,24 @@ ${deck}
 
 הפק אובייקט JSON לפי הסכמה:
 ${KIND_FIELDS[kind] || KIND_FIELDS.lecture}`;
+}
+
+/**
+ * Exam-prep unit: a lesson from an earlier semester of the course (e.g. the course's NotebookLM), as slide text
+ * plus a transcript of the lesson itself – no deck file. Same schema as a lecture.
+ */
+export function prepPrompt({ course, lesson, semester, slides, transcript }) {
+  const deck = slides.map((t, i) => `<slide n="${i + 1}">\n${t}\n</slide>`).join('\n');
+  return `להלן החומר של שיעור ${lesson} בקורס ${course.short} מ${semester}: הטקסט של השקפים ותמלול של השיעור עצמו. השנה השיעור הזה עוד לא נלמד, והחומר משמש להכנה למבחן.
+הטקסט של השקפים חולץ מ-PDF, ולכן לפעמים סדר המילים בשורה הפוך או מבולגן – שחזר את המשמעות. מספרי ה-slide מתייחסים לקטעים שבתוך <deck>.
+מהתמלול קח את מה שהמרצה הדגיש, הסביר בדוגמאות או אמר שחשוב (במיוחד למבחן), ושלב את זה בסיכום, בשאלות ובטיפים למבחן. אל תצטט את התמלול ואל תזכיר שמות של סטודנטים.
+
+<deck slides="${slides.length}">
+${deck}
+</deck>
+${transcript ? `\n<transcript>\n${transcript}\n</transcript>\n` : ''}
+הפק אובייקט JSON לפי הסכמה:
+${KIND_FIELDS.lecture}`;
 }
 
 /** Structured study notes: sections in lecture order, each made of typed blocks (definition / example / rule …). */

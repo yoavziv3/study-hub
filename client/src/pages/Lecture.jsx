@@ -243,12 +243,14 @@ export default function Lecture() {
   const { data: lecture, reload, error } = useFetch(`/api/lectures/${id}`, { poll: (d) => d.status === 'processing' || !!d.notesStatus });
   const [menu, setMenu] = useState(false);
   const [edit, setEdit] = useState(false);
-  const tab = params.get('tab') || 'slides';
+  // Exam-prep units (kind 'prep') are text only – no deck to show.
+  const textOnly = lecture?.kind === 'prep';
+  const tab = params.get('tab') || (textOnly ? 'summary' : 'slides');
   const slide = Number(params.get('slide')) || progress.slidePos[id] || 1;
 
   const setTab = (t) => setParams((p) => { p.set('tab', t); return p; }, { replace: true });
   const setSlide = (n) => setParams((p) => { p.set('slide', n); return p; }, { replace: true });
-  const goSlide = (n) => setParams((p) => { p.set('tab', 'slides'); p.set('slide', n); return p; });
+  const goSlide = (n) => setParams((p) => { if (lecture?.kind === 'prep') return p; p.set('tab', 'slides'); p.set('slide', n); return p; });
 
   useEffect(() => {
     if (lecture?.course) setContext({ courseId: lecture.courseId, lectureId: lecture.id, slide: tab === 'slides' ? slide : null, color: lecture.course.color, label: lecture.title });
@@ -283,16 +285,16 @@ export default function Lecture() {
     navigate(`/course/${lecture.courseId}`);
   };
 
-  const ready = lecture.status === 'ready' || (lecture.slides.length > 0 && lecture.stage === 'analyzing');
+  const ready = lecture.status === 'ready' || (!textOnly && lecture.slides.length > 0 && lecture.stage === 'analyzing');
   // Courses built for other students have the deck and personal notes only (no AI material);
   // a link to an AI tab of such a course falls back to the slides.
   const noAi = course?.ai === false || lecture.kind === 'exam';
-  const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : tab;
+  const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : textOnly && tab === 'slides' ? 'summary' : tab;
   const tabs = noAi ? [
     { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
     { id: 'notes', label: 'הערות', icon: <NotebookPen size={16} /> },
   ] : [
-    { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
+    ...(textOnly ? [] : [{ id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> }]),
     { id: 'summary', label: 'סיכום', icon: <FileText size={16} /> },
     { id: 'topics', label: 'נושאים', icon: <ListTree size={16} />, count: content?.topics?.length },
     { id: 'practice', label: 'תרגול', icon: <Target size={16} />, count: content ? (content.quiz?.length || 0) + (content.extraQuiz?.length || 0) : null },
@@ -308,16 +310,22 @@ export default function Lecture() {
         <div className="crumbs">
           <Link to="/">לוח בקרה</Link><ChevronLeft size={14} />
           <Link to={`/course/${course?.id}`}>{course?.short}</Link><ChevronLeft size={14} />
-          <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
+          <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם', prep: 'הכנה למבחן · שיעור' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
         </div>
         <div className="lecture-head">
           <motion.div className="unit-badge" initial={{ scale: 0.6, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 15 }}>{unitNo || '•'}</motion.div>
           <div className="grow">
-            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {{ lecture: course?.unitLabel, tutorial: 'תרגול', homework: 'שיעורי בית ותרגילים', exam: 'מבחן קודם' }[lecture.kind || 'lecture']} {unitNo}</div>
+            <div className="faint" style={{ fontSize: 13.5 }}>{course?.name} · {{ lecture: course?.unitLabel, tutorial: 'תרגול', homework: 'שיעורי בית ותרגילים', exam: 'מבחן קודם', prep: 'הכנה למבחן · שיעור' }[lecture.kind || 'lecture']} {unitNo}</div>
             <h1>{lecture.title}</h1>
             <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
-              <span className="chip">{lecture.slideCount} שקפים</span>
-              <span className="chip">{lecture.originalName}</span>
+              {textOnly ? (
+                <span className="chip warn">מ{lecture.source?.semester || 'סמסטר קודם'} – השיעור עוד לא נלמד השנה</span>
+              ) : (
+                <>
+                  <span className="chip">{lecture.slideCount} שקפים</span>
+                  <span className="chip">{lecture.originalName}</span>
+                </>
+              )}
               {content?.generator && <span className="chip c"><Sparkles size={12} /> סוכם ב-AI</span>}
             </div>
           </div>
@@ -333,7 +341,7 @@ export default function Lecture() {
                 {menu && (
                   <motion.div className="card" style={{ position: 'absolute', top: 46, insetInlineEnd: 0, zIndex: 30, padding: 6, width: 220, boxShadow: 'var(--shadow-lg)' }} initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }}>
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={() => { setMenu(false); setEdit(true); }}><Pencil size={15} /> עריכת פרטים</button>
-                    <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={originalUrl(lecture)} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>
+                    {!textOnly && <a className="btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} href={originalUrl(lecture)} download={lecture.originalName}><Download size={15} /> הורדת המצגת</a>}
                     <button className="local-only btn ghost sm" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={regenerate}><RefreshCw size={15} /> יצירת סיכום מחדש (AI)</button>
                     <button className="local-only btn ghost sm danger" style={{ width: '100%', justifyContent: 'flex-start' }} onClick={remove}><Trash2 size={15} /> מחיקה</button>
                   </motion.div>

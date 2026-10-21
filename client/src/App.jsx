@@ -40,7 +40,7 @@ function useTheme() {
 
 function CourseNav({ c, progress, onNavigate }) {
   const studied = Object.keys(progress.studied).filter((id) => id.startsWith(c.id + '-')).length;
-  const total = c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0);
+  const total = c.lectureCount + (c.tutorialCount || 0) + (c.homeworkCount || 0) + (c.prepCount || 0);
   return (
     <NavItem
       to={`/course/${c.id}`}

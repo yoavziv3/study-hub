@@ -9,7 +9,7 @@ import {
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
-import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt, notesPrompt } from './prompts.js';
+import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
 import { ACCEPTED, EXAM_RE, detectKind } from '../../shared/moodle-kind.js';
 
@@ -86,6 +86,52 @@ export async function addLectureFile({ filePath, originalName, courseId, lessonN
   return meta;
 }
 
+/**
+ * An exam-prep unit: a lesson from an earlier semester, as text only (slide text and the lesson's transcript, e.g.
+ * from the course's NotebookLM). It gets the same study material as a lecture but no deck, and doesn't count as
+ * this semester's lesson. The transcript stays on this Mac (transcript.txt, not in git).
+ */
+export async function addPrepItem({ courseId, lesson, semester, slidesText, transcript = '' }) {
+  const course = getCourse(courseId);
+  if (!course) throw new Error('קורס לא קיים');
+  const n = Number(lesson);
+  if (!Number.isInteger(n) || n < 1 || n > 40) throw new Error('מספר שיעור לא תקין');
+  if (!String(slidesText || '').trim()) throw new Error('אין טקסט של שקפים');
+  const old = listLectures(courseId).find((l) => l.kind === 'prep' && l.lessonNumber === n);
+  const id = old?.id || newLectureId(courseId);
+  await fsp.mkdir(lectureDir(id), { recursive: true });
+  // Slide text in pieces of about one slide's worth, so topics and notes can point at parts of it.
+  const parts = String(slidesText).split(/\n{2,}/).reduce((acc, p) => {
+    if (acc.length && acc[acc.length - 1].length + p.length < 1200) acc[acc.length - 1] += `\n\n${p}`;
+    else acc.push(p);
+    return acc;
+  }, []).map((t) => t.trim()).filter(Boolean);
+  await saveSlides(id, parts.map((text, i) => ({ n: i + 1, text })));
+  if (transcript) await fsp.writeFile(path.join(lectureDir(id), 'transcript.txt'), String(transcript));
+  const meta = {
+    ...(old || {}),
+    id,
+    courseId,
+    autoCourse: false,
+    title: old?.title || `שיעור ${n}`,
+    originalName: `שיעור ${n} – ${semester}`,
+    kind: 'prep',
+    originalFile: null,
+    lessonNumber: n,
+    unitNumber: n,
+    slideCount: 0,
+    hasPdf: false,
+    status: 'processing',
+    stage: 'queued',
+    error: null,
+    createdAt: old?.createdAt || new Date().toISOString(),
+    source: { type: 'prep', semester, lesson: n },
+  };
+  await saveLecture(meta);
+  enqueue(id, { regenerate: true });
+  return meta;
+}
+
 export function enqueue(id, opts = {}) {
   queue.push({ id, opts });
   return pump();
@@ -120,10 +166,11 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   if (!meta) return;
   if (notesOnly) return generateNotes(id);
   const dir = lectureDir(id);
-  const original = path.join(dir, meta.originalFile);
+  const original = path.join(dir, meta.originalFile || '');
   const pdf = path.join(dir, 'slides.pdf');
 
-  if (!aiOnly) {
+  // Exam-prep units have no deck: their slide text was saved by addPrepItem.
+  if (!aiOnly && meta.kind !== 'prep') {
     await stage(id, 'converting');
     const hasPdf = await convertToPdf(original, pdf);
     // The cloud shows slides from this PDF. For a PDF original the original itself is used.
@@ -176,9 +223,12 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
     try {
+      const transcriptFile = path.join(dir, 'transcript.txt');
       content = await generateJSON({
         system: lectureSystem(course),
-        prompt: lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }),
+        prompt: meta.kind === 'prep'
+          ? prepPrompt({ course, lesson: meta.lessonNumber, semester: meta.source?.semester || 'סמסטר קודם', slides, transcript: fs.existsSync(transcriptFile) ? fs.readFileSync(transcriptFile, 'utf8').slice(0, 90000) : '' })
+          : lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }),
         schema: LECTURE_SCHEMA,
         effort: 'high',
       });
@@ -196,7 +246,8 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
 
   // Fill in lesson numbering from the content when the user did not set it.
   const patch = {};
-  if (content?.title && meta.title === prettyName(meta.originalName)) patch.title = (meta.kind || 'lecture') === 'homework' ? homeworkTitle(meta, content.title) : content.title;
+  if (content?.title && meta.kind === 'prep') patch.title = content.title;
+  else if (content?.title && meta.title === prettyName(meta.originalName)) patch.title = (meta.kind || 'lecture') === 'homework' ? homeworkTitle(meta, content.title) : content.title;
   if (!meta.lessonNumber) {
     const unit = meta.unitNumber || content?.lessonNumber || 0;
     const kind = meta.kind || 'lecture';

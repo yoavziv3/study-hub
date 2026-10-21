@@ -264,7 +264,7 @@ function MasteryMap({ map }) {
   const [filter, setFilter] = useState('all');
   const FILTERS = [['all', 'הכל'], ['weak', 'לחיזוק'], ['mid', 'כמעט שם'], ['strong', 'שליטה טובה'], ['new', 'טרם התחלת']];
   const shown = map.filter((x) => filter === 'all' || levelOf(x.m.value) === filter);
-  const kindLabel = (l) => (l.kind === 'tutorial' ? 'תרגול' : l.kind === 'homework' ? 'תרגיל' : 'שיעור');
+  const kindLabel = (l) => (l.kind === 'tutorial' ? 'תרגול' : l.kind === 'homework' ? 'תרגיל' : l.kind === 'prep' ? 'הכנה · שיעור' : 'שיעור');
   return (
     <div className="card pad">
       <div className="row wrap" style={{ marginBottom: 12, gap: 8 }}>
@@ -468,6 +468,34 @@ function MyNotes({ course, progress }) {
   );
 }
 
+/** Lessons from an earlier semester that this one hasn't reached yet (kind 'prep', e.g. from the course's NotebookLM). */
+function PrepUnits({ course }) {
+  const { progress } = useApp();
+  const units = course.lectures.filter((l) => l.kind === 'prep').sort((a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
+  if (!units.length) return null;
+  return (
+    <div className="card pad">
+      <h3 style={{ fontSize: 17, marginBottom: 4 }}>השיעורים הבאים, מ{units[0].source?.semester || 'סמסטר קודם'}</h3>
+      <p className="faint" style={{ fontSize: 13, margin: '0 0 12px' }}>
+        לכל שיעור יש סיכום, שאלות, כרטיסיות ומושגים, שנכתבו מהשקפים ומהתמלול של השיעור בסמסטר הקודם. כשהשיעור יילמד השנה, ההרצאה החדשה תופיע ב"שיעורים".
+      </p>
+      <div className="stack" style={{ gap: 8 }}>
+        {units.map((l) => (
+          <Link key={l.id} to={`/lecture/${l.id}?tab=summary`} className="priority-row">
+            <span className="priority-num">{l.lessonNumber}</span>
+            <div className="grow" style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 650 }}>{l.title}</div>
+              <div className="faint" style={{ fontSize: 13 }}>{l.status === 'ready' ? `${l.quizCount} שאלות · ${l.flashcardCount} כרטיסיות` : 'בהכנה…'}</div>
+            </div>
+            {progress.studied?.[l.id] && <span className="chip good"><Check size={12} /> נלמד</span>}
+            <ArrowLeft size={16} className="faint" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** The course's exam-preparation page: countdown, readiness, today's plan, priorities, focused practice and a checklist. */
 export default function ExamPrep({ course, bundle }) {
   const { progress, progressLoaded, updatePrep } = useApp();
@@ -617,6 +645,7 @@ export default function ExamPrep({ course, bundle }) {
         <div className="stack" style={{ gap: 18 }}>
           {next && <Today course={course} ai={ai} map={map} today={todayPlan} future={future} info={info} onPractice={startPractice} onDone={logToday} exam={next} />}
           <Priorities ai={ai} list={prio} />
+          <PrepUnits course={course} />
           {hasQuiz && <PracticeCards course={course} counts={{ questions: questions.length, mistakes: mistakes.length, dueCards, hardCards }} onPractice={startPractice} />}
           <Mistakes list={mistakes} onPractice={startPractice} />
           <MasteryMap map={map} />

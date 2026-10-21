@@ -170,7 +170,7 @@ function UpdateItem({ item, course, isNew, i }) {
       <div className="grow" style={{ minWidth: 0 }}>
         <div className="row wrap" style={{ gap: 6 }}>
           {isNew && <span className="chip bad" style={{ fontWeight: 700 }}>חדש</span>}
-          <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם' }[item.kind] || T.label : T.label}</span>
+          <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם', prep: 'הכנה למבחן' }[item.kind] || T.label : T.label}</span>
           {course && <span className="chip c">{course.short}</span>}
           {mine && <span className="chip warn">הקבוצה שלך</span>}
           <span className="faint" style={{ fontSize: 12.5, marginInlineStart: 'auto' }}>{timeOf(item.addedAt)}</span>

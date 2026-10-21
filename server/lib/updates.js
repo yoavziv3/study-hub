@@ -9,7 +9,7 @@ import { schedulePublish } from './publish.js';
 
 const FILE = path.join(DATA_DIR, 'updates.json');
 const DAY = 86400000;
-const KIND_LABEL = { lecture: 'הרצאה חדשה', tutorial: 'תרגול חדש', homework: 'שיעורי בית / תרגילים חדשים', exam: 'מבחן קודם חדש' };
+const KIND_LABEL = { lecture: 'הרצאה חדשה', tutorial: 'תרגול חדש', homework: 'שיעורי בית / תרגילים חדשים', exam: 'מבחן קודם חדש', prep: 'חומר חדש להכנה למבחן' };
 
 let state = load();
 let timer = null;

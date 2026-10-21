@@ -18,7 +18,7 @@ const BLOCK = {
   important: { label: 'חשוב לזכור', icon: Lightbulb },
   mistake: { label: 'טעות נפוצה', icon: AlertTriangle },
 };
-export const KIND_LABEL = { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית' };
+export const KIND_LABEL = { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', prep: 'הכנה למבחן · שיעור' };
 
 // Older content (and homework) has a single markdown summary: split it on "## " into sections.
 export function markdownSections(md = '') {
