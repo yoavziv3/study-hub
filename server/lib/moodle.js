@@ -6,7 +6,8 @@ import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
-import { addLectureFile, enqueue, numberFromName, detectKind, ACCEPTED } from './ingest.js';
+import { addLectureFile, enqueue, numberFromName, ACCEPTED } from './ingest.js';
+import { classify, EXCLUDE } from '../../shared/moodle-kind.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission } from './updates.js';
 import { syncCatalog } from './catalog.js';
 
@@ -19,27 +20,6 @@ const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
 const ADMIN_SECRET = process.env.STUDY_ADMIN_SECRET || '';
 const cloudEnabled = () => !!(CLOUD && ADMIN_SECRET.length >= 32);
 
-// Which files in a course page become site items, and of which type.
-const LECTURE_HINT = /הרצא|שיעור(?!י בית)|יחידה|מצגת|שקפים|lecture|slides?|presentation|week|שבוע|chapter|פרק/i;
-// Not imported as material (they still appear under "קישורים"). Past exams are imported – as their own kind.
-const EXCLUDE = /בוחן|סילבוס|syllabus|quiz|דף נוסחאות|formula sheet|ציונים|grades|נהלי|לוח זמנים|הדרכה לקראת|הנחיות לבחינ/i;
-
-/** 'lecture' | 'tutorial' | 'homework' | null (not imported automatically). */
-function classify(filename, moduleName, sectionName) {
-  const own = `${moduleName || ''} ${filename}`;
-  if (EXCLUDE.test(own)) return null;
-  const ownKind = detectKind(own);
-  if (ownKind !== 'lecture') return ownKind;
-  const secKind = detectKind(sectionName || '');
-  const isDeck = /\.pptx?$/i.test(filename);
-  // Section titles are broad ("מצגת וחוברת תרגילים"), so they only decide when the file itself says nothing.
-  if (isDeck) return secKind === 'tutorial' && !LECTURE_HINT.test(sectionName || '') ? 'tutorial' : 'lecture';
-  if (LECTURE_HINT.test(own)) return 'lecture';
-  if (secKind !== 'lecture') return secKind;
-  return LECTURE_HINT.test(sectionName || '') ? 'lecture' : null;
-}
-
-// Moodle rich text (announcements, assignment descriptions) → readable plain text with line breaks and links.
 export function htmlToText(html = '') {
   return html
     .replace(/\r/g, '')
@@ -431,6 +411,8 @@ async function importFile(file, siteCourseId, moodleId, { via = null, initial = 
     source: {
       type: 'moodle',
       courseId: moodleId,
+      // The same key the cloud uses when it spots the file first (cloud/lib/moodle-watch.js), so one upload isn't announced twice.
+      fileKey: file.key,
       section: file.section,
       module: file.module,
       timemodified: file.timemodified,

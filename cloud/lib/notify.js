@@ -9,11 +9,13 @@ import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
 import { parseJson } from './portal.js';
+import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { forOtherGroups } from '../../shared/groups.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
-const MAX_SENDS = 30; // push requests per tick (Cloudflare limits outgoing requests per invocation)
+const MAX_SENDS = 30;
+const CLOUD_WAIT = 30 * 60000; // a new Moodle file spotted by the cloud waits this long for the Mac's own notice // push requests per tick (Cloudflare limits outgoing requests per invocation)
 const DEADLINES_FRESH = 3 * 3600000; // deadline reminders only from a recent Moodle answer (submitted work drops off)
 
 export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms', 'material', 'announcements', 'portal'];
@@ -236,14 +238,19 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
     }
   }
 
-  // 6. New material and course announcements in the student's courses (from the site's published updates feed).
-  //    A burst – the start of a semester, a big Moodle sync – becomes one notification per course and type.
+  // 6. New material and course announcements in the student's courses: the Mac's published feed, plus what the
+  //    cloud spotted in Moodle itself (moodle-watch.js) while the Mac hasn't processed it yet. A burst – the start
+  //    of a semester, a big Moodle sync – becomes one notification per course and type.
   if ((prefs.material || prefs.announcements) && daytime) {
     const groups = new Map();
+    // An item is "sent" by its own id or by its Moodle key (the cloud and the Mac name the same post alike).
+    const sentKeys = (it) => [`upd:${it.id}`, ...(it.key && it.key !== it.id ? [`upd:${it.key}`] : [])];
     for (const it of updates) {
       const wanted = (it.type === 'material' && prefs.material) || (it.type === 'announcement' && prefs.announcements);
       const at = Date.parse(it.addedAt);
-      if (!wanted || now - at > 2 * DAY || at < since || isSent(`upd:${it.id}`) || !short[it.courseId]) continue;
+      if (!wanted || now - at > 2 * DAY || at < since || sentKeys(it).some(isSent) || !short[it.courseId]) continue;
+      // A file the cloud spotted waits half an hour for the Mac, whose notice comes with the summary.
+      if (it.cloud && it.type === 'material' && now - at < CLOUD_WAIT) continue;
       // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
       const course = courses.find((c) => c.id === it.courseId);
       if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId])) continue;
@@ -253,19 +260,23 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
     for (const list of groups.values()) {
       const [it] = list;
       const material = it.type === 'material';
+      // The Mac's notice for a file the cloud already announced: now it's ready on the site.
+      const ready = (x) => material && !x.cloud && x.fileKey && isSent(`upd:moodlefile:${x.fileKey}`);
       if (list.length === 1) {
         out.push({
           key: `upd:${it.id}`,
-          title: material ? it.title : `הודעה ב${short[it.courseId]}: ${it.title}`,
+          keys: sentKeys(it),
+          title: material ? (ready(it) ? `מוכן באתר: ${it.title.replace(/^[^:]*:\s*/, '')}` : it.title) : `הודעה ב${short[it.courseId]}: ${it.title}`,
           body: material
-            ? courses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
+            ? it.cloud ? it.body
+              : courses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
             : oneLine(it.body).slice(0, 180),
-          url: material && it.lectureId ? `/lecture/${it.lectureId}` : '/updates',
+          url: material ? (it.lectureId ? `/lecture/${it.lectureId}` : it.cloud ? it.url : '/updates') : '/updates',
         });
       } else {
         out.push({
           key: `upd:${it.id}`,
-          keys: list.map((x) => `upd:${x.id}`),
+          keys: list.flatMap(sentKeys),
           title: `${list.length} ${material ? 'חומרים חדשים' : 'הודעות חדשות'} ב${short[it.courseId]}`,
           body: list.slice(0, 3).map((x) => (material ? x.title.replace(/^[^:]*:\s*/, '') : x.title)).join(' · '),
           url: material ? `/course/${it.courseId}` : '/updates',
@@ -283,15 +294,19 @@ const BACKUP_AFTER = 8 * 60000; // the Mac steps in only when the cron Worker ha
  * the Mac. The Mac's ticks ({ backup: true }) are skipped while the Worker is running, so the two never race.
  */
 export async function notifyTick(env, request, { source = 'unknown', backup = false } = {}) {
-  if (!pushConfigured(env)) return json({ ok: false, reason: 'not configured' });
   const now = Date.now();
   const db = env.DB;
   const last = await db.prepare("SELECT value FROM push_meta WHERE key = 'last_tick'").first();
   if (backup && last && now - last.value < BACKUP_AFTER) return json({ ok: true, skipped: true });
   const mark = (key) => db.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, now);
   await db.batch([mark('last_tick'), mark(`last_tick:${String(source).slice(0, 20)}`)]);
+  const courses = await siteCourses(env, request);
+  // Moodle as seen from here, a few courses per tick – new files and posts are known (and shown in the updates
+  // feed) even while the Mac is off, whether or not anyone has phone notifications.
+  const found = await watchMoodle(env, courses, now).catch((e) => { console.error('[moodle-watch]', e?.message); return 0; });
+  if (!pushConfigured(env)) return json({ ok: false, reason: 'not configured', found });
   const subs = (await db.prepare('SELECT * FROM push_subs').all()).results;
-  if (!subs.length) return json({ ok: true, users: 0, sent: 0 });
+  if (!subs.length) return json({ ok: true, users: 0, sent: 0, found });
   const ids = [...new Set(subs.map((s) => s.user_id))];
   const inIds = `(${ids.map(() => '?').join(',')})`;
   const [users, progressRows, sentRows, deadlineRows, portalRows] = await Promise.all([
@@ -306,11 +321,11 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
 
-  const courses = await siteCourses(env, request);
   const siteOf = siteByMoodle(courses);
   let updates = [];
   const upd = await env.ASSETS.fetch(new URL('/data/updates.json', request.url));
   if (upd.ok && (upd.headers.get('Content-Type') || '').includes('json')) updates = (await upd.json()).items || [];
+  updates = mergeUpdates(updates, await cloudUpdates(env, courses.map((c) => c.id), { since: now - 2 * DAY }));
 
   // Moodle is asked for one student's deadlines per tick at most (the oldest answer first); the rest use the cache
   // that the site itself keeps fresh while they browse.
@@ -361,6 +376,6 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   }
   if (Math.random() < 0.05) marks.push(db.prepare('DELETE FROM push_sent WHERE at < ?').bind(now - 30 * DAY));
   if (marks.length) await db.batch(marks);
-  return json({ ok: true, users: users.results.length, sent: total });
+  return json({ ok: true, users: users.results.length, sent: total, found });
 }
 

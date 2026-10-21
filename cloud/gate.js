@@ -2,6 +2,7 @@
 // Lists (courses, lectures, updates) are filtered to the student's courses; per-course files are allowed or refused.
 import { json, fail } from './lib/util.js';
 import { currentUser, siteCourses, allowedCourseIds, lectureCourse } from './lib/account.js';
+import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -36,11 +37,14 @@ export async function gate({ request, env }) {
     if (path === '/data/updates.json') {
       const res = await asset();
       const upd = res ? await res.json() : { items: [] };
-      // Shared feed: new material and course announcements of the student's courses.
-      // Deadlines and reminders are personal and come from /api/me/deadlines.
+      // Shared feed: new material and course announcements of the student's courses – the Mac's, plus what the
+      // cloud spotted in Moodle that the Mac hasn't processed yet. Deadlines and reminders are personal and come
+      // from /api/me/deadlines.
+      const mine = (upd.items || []).filter((i) => allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement'));
+      const fresh = await cloudUpdates(env, [...allowed]).catch(() => []);
       return json({
         since: upd.since,
-        items: (upd.items || []).filter((i) => allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement')),
+        items: mergeUpdates(mine, fresh).sort((a, b) => b.addedAt.localeCompare(a.addedAt)),
         deadlines: [],
         settings: {},
       });

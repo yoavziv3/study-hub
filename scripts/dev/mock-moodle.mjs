@@ -41,8 +41,15 @@ const handlers = {
     ] }],
   }),
   core_course_get_contents: (u, _n, p) => {
-    if (Number(p.courseid) !== 99001 || !u.courses.includes(99001)) return [];
     const file = (name, id) => ({ type: 'file', filename: name, filepath: '/', filesize: 1000, timemodified: now() - 5 * DAY, fileurl: `${BASE}/webservice/pluginfile.php/${id}/mod_resource/content/1/${encodeURIComponent(name)}` });
+    // Economics: a lecture deck and a tutorial, for the cloud's Moodle watcher (cloud/lib/moodle-watch.js).
+    if (Number(p.courseid) === 68380 && u.courses.includes(68380)) {
+      return [
+        { name: 'הרצאות', modules: [{ id: 21, modname: 'resource', name: 'הרצאה 2 – היצע וביקוש', contents: [file('הרצאה 2.pdf', 21)] }] },
+        { name: 'תרגולים', modules: [{ id: 22, modname: 'resource', name: 'תרגול 2', contents: [file('תרגול 2.pdf', 22)] }, { id: 23, modname: 'resource', name: 'סילבוס הקורס', contents: [file('סילבוס.pdf', 23)] }] },
+      ];
+    }
+    if (Number(p.courseid) !== 99001 || !u.courses.includes(99001)) return [];
     return [
       { name: 'שבוע 1', modules: [{ id: 11, modname: 'resource', name: 'הרצאה 1 – מרחבים וקטוריים', contents: [file('הרצאה 1 - מרחבים וקטוריים.pdf', 11)] }] },
       { name: 'תרגילים', modules: [{ id: 12, modname: 'resource', name: 'תרגיל בית 1', contents: [file('תרגיל בית 1.pdf', 12)] }] },
@@ -56,8 +63,13 @@ const handlers = {
     return { lastattempt: { submission: { status } } };
   },
   mod_quiz_get_quizzes_by_courses: () => ({ quizzes: [] }),
-  mod_forum_get_forums_by_courses: (u, _n, p) => (Number(p['courseids[0]'] ?? p.courseids?.[0]) === 99001 ? [{ id: 801, course: 99001, type: 'news' }] : []),
-  mod_forum_get_forum_discussions: () => ({ discussions: [{ discussion: 9001, name: 'ברוכים הבאים לאלגברה לינארית', message: '<p>שלום לכולם, התרגול הראשון ביום שני.</p>', userfullname: 'מרצה בדיקה', created: now() - DAY }] }),
+  mod_forum_get_forums_by_courses: (u, _n, p) => {
+    const id = Number(p['courseids[0]'] ?? p.courseids?.[0]);
+    return id === 99001 ? [{ id: 801, course: 99001, type: 'news' }] : id === 68380 ? [{ id: 802, course: 68380, type: 'news' }] : [];
+  },
+  mod_forum_get_forum_discussions: (u, _n, p) => (Number(p.forumid) === 802
+    ? { discussions: [{ discussion: 9101, name: 'שינוי בתרגול השבוע', message: '<p>התרגול של קבוצה 22 יתקיים בזום.</p>', userfullname: 'מתרגל בדיקה', created: now() - 3600 }, { discussion: 9102, name: 'עלה תרגיל 2', message: '<p>תרגיל 2 עלה לאתר, הגשה עד יום ראשון.</p>', userfullname: 'מרצה בדיקה', created: now() - 600 }] }
+    : { discussions: [{ discussion: 9001, name: 'ברוכים הבאים לאלגברה לינארית', message: '<p>שלום לכולם, התרגול הראשון ביום שני.</p>', userfullname: 'מרצה בדיקה', created: now() - DAY }] }),
 };
 
 const readBody = (req) => new Promise((r) => { let b = ''; req.on('data', (c) => (b += c)); req.on('end', () => r(b)); });

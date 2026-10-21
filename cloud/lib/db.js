@@ -34,6 +34,11 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS portal_links (user_id INTEGER PRIMARY KEY, username TEXT, sealed TEXT NOT NULL, ok INTEGER NOT NULL DEFAULT 1, error TEXT, data TEXT, groups TEXT, synced_at INTEGER, requested_at INTEGER, created_at INTEGER)`,
   // The reader's portal session per student (encrypted by the reader, opaque here) and when a read last failed.
   `CREATE TABLE IF NOT EXISTS portal_state (user_id INTEGER PRIMARY KEY, session TEXT, failed_at INTEGER)`,
+  // Moodle as the cloud watches it (moodle-watch.js): what each course page already had, and the new material and
+  // announcements found there before the Mac has processed them.
+  `CREATE TABLE IF NOT EXISTS moodle_watch (moodle_id INTEGER PRIMARY KEY, checked_at INTEGER, seen TEXT)`,
+  `CREATE TABLE IF NOT EXISTS cloud_updates (key TEXT PRIMARY KEY, course_id TEXT NOT NULL, type TEXT NOT NULL, kind TEXT, title TEXT, body TEXT, url TEXT, file_key TEXT, author TEXT, added_at INTEGER NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS cloud_updates_course ON cloud_updates(course_id, added_at)`,
 ];
 
 let ready = null;

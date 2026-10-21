@@ -11,7 +11,9 @@ import { aiStatus, generateJSON } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
-export const ACCEPTED = ['.pdf', '.pptx', '.ppt'];
+import { ACCEPTED, EXAM_RE, detectKind } from '../../shared/moodle-kind.js';
+
+export { ACCEPTED, EXAM_RE, detectKind };
 
 // Processing stages shown in the UI, in order.
 export const STAGES = ['queued', 'converting', 'rendering', 'extracting', 'classifying', 'analyzing', 'ready'];
@@ -21,19 +23,6 @@ let running = false;
 
 // Item types: lectures, tutorial sessions (תרגולים) and homework / exercise sheets.
 export const KINDS = ['lecture', 'tutorial', 'homework', 'exam'];
-// Past exams ("מבחן מועד א 2024", "בחינה לדוגמה", "exam 2023") – not quizzes or exam-day instructions.
-export const EXAM_RE = /מבחן|מבחנים|בחינה|בחינות|מועד\s*[אבג]['׳]?(?![\u0590-\u05FF])|(?<![a-z])exams?(?![a-z])|moed[\s_-]*[abc](?![a-z])|midterm|final[\s_-]*exam/i;
-const NOT_EXAM_RE = /הדרכה לקראת|נהלי|הנחיות לבחינ|לוח בחינות|תאריכי בחינות/i;
-const TUTORIAL_RE = /תרגול|tutorial|recitation|tirgul/i;
-const HOMEWORK_RE = /תרגיל|שיעורי בית|ש["״']ב(?![\u0590-\u05FF])|homework|\bhw\s*\d|exercise|assignment|problem[\s_-]*set|מטל[הו]|גיליון|חוברת תרגילים|פתרון|פתרונות|solution|booklet/i;
-export function detectKind(...texts) {
-  const t = texts.filter(Boolean).join(' ');
-  if (EXAM_RE.test(t) && !NOT_EXAM_RE.test(t)) return 'exam';
-  if (TUTORIAL_RE.test(t) && !/חוברת/.test(t)) return 'tutorial';
-  if (HOMEWORK_RE.test(t)) return 'homework';
-  return 'lecture';
-}
-
 export const numberFromName = (name) => {
   const m = name.match(/(?:הרצאה|שיעור|יחידה|תרגול|תרגיל|גיליון|מטלה|lecture|lesson|unit|week|שבוע|tutorial|exercise|assignment|hw)\s*[-_ ]?\s*0*(\d{1,2})/i) || name.match(/(?:^|\D)0*(\d{1,2})(?:\D|$)/);
   return m ? parseInt(m[1], 10) : 0;

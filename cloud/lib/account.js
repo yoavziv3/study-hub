@@ -198,3 +198,24 @@ export async function cached(env, user, key, ttlMs, fn) {
     .run();
   return data;
 }
+
+/** Run `fn` with the token of some student enrolled in the course; expired tokens are skipped (and flagged). */
+export async function asCourseMember(env, moodleCourseId, fn) {
+  const rows = (await env.DB.prepare('SELECT * FROM users WHERE token_ok = 1 ORDER BY last_login DESC').all()).results;
+  const members = rows.filter((u) => JSON.parse(u.courses || '[]').some((c) => c.id === moodleCourseId));
+  if (!members.length) throw new HttpError(404, 'אין סטודנט מחובר בקורס הזה');
+  let lastError = null;
+  for (const user of members.slice(0, 3)) {
+    try {
+      return await fn(await moodleToken(env, user));
+    } catch (e) {
+      if (e instanceof MoodleError && /invalidtoken/i.test(e.code || '')) {
+        await env.DB.prepare('UPDATE users SET token_ok = 0 WHERE id = ?').bind(user.id).run();
+        lastError = e;
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw lastError || new HttpError(404, 'אין סטודנט מחובר בקורס הזה');
+}

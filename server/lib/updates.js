@@ -89,6 +89,7 @@ function materialItem(l, { addedAt, updated = false } = {}) {
     body: '',
     lectureId: l.id,
     source: l.source?.type || 'upload',
+    ...(l.source?.fileKey ? { fileKey: l.source.fileKey } : {}),
     createdAt: l.createdAt || iso(),
     addedAt: addedAt || (l.source?.initial && l.source?.timemodified ? iso(l.source.timemodified * 1000) : iso()),
   };
