@@ -39,6 +39,8 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS moodle_watch (moodle_id INTEGER PRIMARY KEY, checked_at INTEGER, seen TEXT)`,
   `CREATE TABLE IF NOT EXISTS cloud_updates (key TEXT PRIMARY KEY, course_id TEXT NOT NULL, type TEXT NOT NULL, kind TEXT, title TEXT, body TEXT, url TEXT, file_key TEXT, author TEXT, added_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS cloud_updates_course ON cloud_updates(course_id, added_at)`,
+  // The owner's system status (health.js): the Mac's last heartbeat ('mac') and the watcher's errors ('watch:<id>').
+  `CREATE TABLE IF NOT EXISTS health (key TEXT PRIMARY KEY, at INTEGER NOT NULL, data TEXT)`,
 ];
 
 let ready = null;

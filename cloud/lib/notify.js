@@ -10,12 +10,13 @@ import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
 import { parseJson } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
+import { saveHeartbeat, ownerUserId, systemStatus, publishedItems } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
-const MAX_SENDS = 30;
-const CLOUD_WAIT = 30 * 60000; // a new Moodle file spotted by the cloud waits this long for the Mac's own notice // push requests per tick (Cloudflare limits outgoing requests per invocation)
+const MAX_SENDS = 30; // push requests per tick (Cloudflare limits outgoing requests per invocation)
+const CLOUD_WAIT = 30 * 60000; // a new Moodle file spotted by the cloud waits this long for the Mac's own notice
 const DEADLINES_FRESH = 3 * 3600000; // deadline reminders only from a recent Moodle answer (submitted work drops off)
 
 export const KINDS = ['deadlines', 'exams', 'cards', 'classes', 'rooms', 'material', 'announcements', 'portal'];
@@ -122,6 +123,17 @@ export function dueNotifications({ user, progress, courses, deadlines, updates, 
   const daytime = il.hour >= 8 && il.hour < 22;
   const out = [];
   const short = Object.fromEntries(courses.map((c) => [c.id, c.short]));
+
+  // 0. Their Moodle connection expired: no deadlines or grades until they sign in again. Once per expiry (a new
+  //    sign-in changes last_login), and again each week while it stays expired.
+  if (!user.token_ok && daytime) {
+    out.push({
+      key: `relogin:${user.last_login || 0}:${Math.floor(now / (7 * DAY))}`,
+      title: 'החיבור שלך למודל פג',
+      body: 'בלי החיבור ההגשות, הציונים והתזכורות לא מתעדכנים. היכנסו לאתר ולחצו על "התחברות מחדש".',
+      url: '/',
+    });
+  }
 
   // 1. Submissions coming up – at the closest reminder threshold already crossed (the student's 3 / 1 days…).
   if (prefs.deadlines && daytime && deadlines) {
@@ -293,9 +305,11 @@ const BACKUP_AFTER = 8 * 60000; // the Mac steps in only when the cron Worker ha
  * Called every 5 minutes through the admin channel: by the cron Worker (workers/push-cron) and, as a backup, by
  * the Mac. The Mac's ticks ({ backup: true }) are skipped while the Worker is running, so the two never race.
  */
-export async function notifyTick(env, request, { source = 'unknown', backup = false } = {}) {
+export async function notifyTick(env, request, { source = 'unknown', backup = false, mac = null } = {}) {
   const now = Date.now();
   const db = env.DB;
+  // The Mac's heartbeat rides on its ticks, also the skipped ones (the owner's status page shows it).
+  if (mac) await saveHeartbeat(env, mac, now);
   const last = await db.prepare("SELECT value FROM push_meta WHERE key = 'last_tick'").first();
   if (backup && last && now - last.value < BACKUP_AFTER) return json({ ok: true, skipped: true });
   const mark = (key) => db.prepare('INSERT INTO push_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, now);
@@ -322,10 +336,24 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
 
   const siteOf = siteByMoodle(courses);
-  let updates = [];
-  const upd = await env.ASSETS.fetch(new URL('/data/updates.json', request.url));
-  if (upd.ok && (upd.headers.get('Content-Type') || '').includes('json')) updates = (await upd.json()).items || [];
-  updates = mergeUpdates(updates, await cloudUpdates(env, courses.map((c) => c.id), { since: now - 2 * DAY }));
+  const macItems = await publishedItems(env, request);
+  const updates = mergeUpdates(macItems, await cloudUpdates(env, courses.map((c) => c.id), { since: now - 2 * DAY }));
+
+  // What needs the owner's attention (a part that stopped, a failed publish…) – to the owner's phone.
+  let alerts = [];
+  const owner = await ownerUserId(env);
+  if (owner && subs.some((s) => s.user_id === owner)) {
+    const status = await systemStatus(env, { courses, macItems, now }).catch((e) => { console.error('[health]', e?.message); return null; });
+    const il = israel(now);
+    if (status && il.hour >= 8 && il.hour < 23) {
+      alerts = status.checks.flatMap((c) => (c.alerts || []).map((a) => ({
+        key: a.once ? `health:${a.key}` : `health:${a.key}:${il.date}`,
+        title: `מחברת · ${c.title}`,
+        body: a.text,
+        url: '/system',
+      })));
+    }
+  }
 
   // Moodle is asked for one student's deadlines per tick at most (the oldest answer first); the rest use the cache
   // that the site itself keeps fresh while they browse.
@@ -363,7 +391,10 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const devices = subs.filter((s) => s.user_id === user.id);
     const isSent = (key) => sent.has(`${user.id}|${key}`);
     const since = Math.min(...devices.map((d) => d.created_at || 0));
-    const due = dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent, portal }).filter((n) => !isSent(n.key));
+    const due = [
+      ...(user.id === owner ? alerts : []),
+      ...dueNotifications({ user, progress, courses: mine, deadlines, updates, now, since, isSent, portal }),
+    ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {
       if (budget < devices.length) break;

@@ -77,14 +77,18 @@ export async function watchMoodle(env, courses, now = Date.now()) {
     let found;
     try {
       found = await lookAt(env, moodleId, course);
-    } catch {
-      // No signed-in student in this course, or Moodle is down: try again next round.
-      await db.prepare('INSERT INTO moodle_watch (moodle_id, checked_at) VALUES (?, ?) ON CONFLICT(moodle_id) DO UPDATE SET checked_at = excluded.checked_at').bind(moodleId, now).run();
+    } catch (e) {
+      // No signed-in student in this course, or Moodle is down: try again next round (the owner's status page says why).
+      await db.batch([
+        db.prepare('INSERT INTO moodle_watch (moodle_id, checked_at) VALUES (?, ?) ON CONFLICT(moodle_id) DO UPDATE SET checked_at = excluded.checked_at').bind(moodleId, now),
+        db.prepare('INSERT INTO health (key, at, data) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET at = excluded.at, data = excluded.data')
+          .bind(`watch:${moodleId}`, now, JSON.stringify({ error: String(e?.message || e).slice(0, 200) })),
+      ]);
       continue;
     }
     const prev = state.get(moodleId);
     const seen = new Set(prev?.seen ? JSON.parse(prev.seen) : []);
-    const writes = [];
+    const writes = [db.prepare('DELETE FROM health WHERE key = ?').bind(`watch:${moodleId}`)];
     // The first look only records what's already there.
     if (prev?.seen) {
       for (const [key, it] of found) {

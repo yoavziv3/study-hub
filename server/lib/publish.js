@@ -14,6 +14,13 @@ let busy = false;
 const changed = new Set();
 let root = null;
 let isProcessing = () => false;
+let lastOk = null;
+let lastError = null;
+
+/** For the owner's system status: the last successful push, the last failure and what is waiting. */
+export function publishState() {
+  return { lastOk, lastError, pending: changed.size };
+}
 
 export function initPublish({ rootDir, processing }) {
   root = rootDir;
@@ -47,13 +54,16 @@ async function publish() {
     await git('pull', '--rebase', '--autostash');
     await git('push');
     changed.clear();
+    lastOk = Date.now();
     console.log(`[publish] pushed: ${msg}`);
   } catch (e) {
     // Never leave the repo stuck mid-rebase; the commit stays local and is pushed next time.
     if (fs.existsSync(path.join(root, '.git', 'rebase-merge')) || fs.existsSync(path.join(root, '.git', 'rebase-apply'))) {
       await git('rebase', '--abort').catch(() => {});
     }
-    console.error('[publish] failed:', (e.stderr || e.message).toString().trim().split('\n').slice(-3).join(' | '));
+    const message = (e.stderr || e.message).toString().trim().split('\n').slice(-3).join(' | ');
+    lastError = { at: Date.now(), message: message.slice(0, 300) };
+    console.error('[publish] failed:', message);
   } finally {
     busy = false;
   }

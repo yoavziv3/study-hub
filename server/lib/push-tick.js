@@ -1,6 +1,8 @@
 // Phone notifications are sent by the cloud site, triggered every 5 minutes by a Cloudflare cron Worker
 // (workers/push-cron). This Mac is the backup: it knocks too, and the cloud skips its ticks while the Worker runs.
 // Needs CLOUD_URL and STUDY_ADMIN_SECRET in .env, like the rest of the admin channel.
+import { macHealth } from './health.js';
+
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
 const SECRET = process.env.STUDY_ADMIN_SECRET || '';
 const EVERY = 5 * 60000;
@@ -12,7 +14,8 @@ async function tick() {
     const res = await fetch(`${CLOUD}/api/admin/push/tick`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${SECRET}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source: 'mac', backup: true }),
+      // With this Mac's heartbeat for the owner's system status (health.js).
+      body: JSON.stringify({ source: 'mac', backup: true, mac: macHealth() }),
       signal: AbortSignal.timeout(60000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

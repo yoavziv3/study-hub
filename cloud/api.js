@@ -11,6 +11,7 @@ import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult } from './lib/portal.js';
+import { saveHeartbeat, ownerUserId, systemStatus, publishedItems } from './lib/health.js';
 
 const MIN = 60000;
 
@@ -87,7 +88,14 @@ async function route({ request, env }) {
 
   if (path === '/api/me' && method === 'GET') {
     user = await refreshEnrollments(env, user);
-    return json(meView(user, await siteCourses(env, request)));
+    const owner = (await ownerUserId(env)) === user.id;
+    return json({ ...meView(user, await siteCourses(env, request)), ...(owner ? { owner: true } : {}) });
+  }
+
+  // The site owner's system status (health.js); other students get a plain 404.
+  if (path === '/api/system' && method === 'GET') {
+    if ((await ownerUserId(env)) !== user.id) return fail(404, 'לא נמצא');
+    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request) }));
   }
   if (path === '/api/me' && method === 'DELETE') return deleteAccount(env, user);
 
@@ -223,8 +231,14 @@ async function admin({ request, env, url, path, method }) {
   if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env, url);
   if (path === '/api/admin/portal/result' && method === 'POST') return portalResult(env, request, await readJson(request, 200_000));
   if (path === '/api/admin/push/tick' && method === 'POST') {
-    const { source, backup } = await readJson(request, 1000);
-    return notifyTick(env, request, { source, backup: !!backup });
+    const { source, backup, mac } = await readJson(request, 30_000);
+    return notifyTick(env, request, { source, backup: !!backup, mac: mac && typeof mac === 'object' ? mac : null });
+  }
+  if (path === '/api/admin/system' && method === 'POST') {
+    // The Mac's own status page: it sends a fresh heartbeat and gets the whole picture back.
+    const { mac } = await readJson(request, 30_000);
+    if (mac && typeof mac === 'object') await saveHeartbeat(env, mac);
+    return json(await systemStatus(env, { courses: await siteCourses(env, request), macItems: await publishedItems(env, request) }));
   }
 
   if (path === '/api/admin/backup' && method === 'GET') {

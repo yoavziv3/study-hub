@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -17,6 +17,7 @@ const Review = lazy(() => import('./pages/Review.jsx'));
 const Schedule = lazy(() => import('./pages/Schedule.jsx'));
 const Grades = lazy(() => import('./pages/Grades.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
+const System = lazy(() => import('./pages/System.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
 const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
 const UploadModal = lazy(() => import('./components/UploadModal.jsx'));
@@ -98,6 +99,7 @@ function Sidebar({ open, onNavigate }) {
         onClick={onNavigate}
       />}
       {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים ומשוב" onClick={onNavigate} />}
+      {(!STATIC || me?.owner) && <NavItem to="/system" icon={<Activity size={17} />} label="מצב המערכת" onClick={onNavigate} />}
       <div className="sidebar-foot">
         <Feedback />
         <StatusPill
@@ -177,6 +179,20 @@ function AccountMenu() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/** The student's Moodle token expired: deadlines, grades and reminders stop until they sign in again. */
+function ReloginBanner() {
+  const { signOut } = useApp();
+  return (
+    <div className="page" style={{ paddingTop: 0, paddingBottom: 0 }}>
+      <div className="callout row wrap" style={{ gap: 10, marginTop: 10, background: 'var(--warn-bg)' }}>
+        <AlertTriangle size={17} color="var(--warn)" />
+        <span className="grow">החיבור שלך למודל פג, אז ההגשות, הציונים והתזכורות לא מתעדכנים. ההתקדמות שלך שמורה.</span>
+        <button className="btn sm primary" onClick={signOut}><RefreshCw size={14} /> התחברות מחדש</button>
+      </div>
     </div>
   );
 }
@@ -272,6 +288,7 @@ function Shell() {
           </button>
           <AccountMenu />
         </header>
+        {STATIC && me?.moodleOk === false && <ReloginBanner />}
         <Suspense fallback={<PageLoader />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -287,6 +304,7 @@ function Shell() {
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/system" element={<System />} />
           </Routes>
         </AnimatePresence>
         </Suspense>
