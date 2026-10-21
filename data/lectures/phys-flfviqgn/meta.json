@@ -1,0 +1,28 @@
+{
+  "id": "phys-flfviqgn",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "Book2025",
+  "originalName": "Book2025.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 351,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:08.287Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459947:/Book2025.pdf",
+    "section": "כללי",
+    "module": "חוברת תרגילים",
+    "timemodified": 1792598717
+  },
+  "updatedAt": "2026-10-21T18:15:47.733Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

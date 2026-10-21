@@ -1,0 +1,27 @@
+{
+  "id": "phys-flzuqcop",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מועד א פתרון, חורף תשפג מבוא לפיזיקה",
+  "originalName": "מועד א פתרון, חורף תשפג מבוא לפיזיקה.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 19,
+  "unitNumber": null,
+  "slideCount": 16,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:34.178Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459940:/מועד א פתרון, חורף תשפג מבוא לפיזיקה.pdf",
+    "section": "מבחנים בקורס",
+    "module": "פיתרון חלקי מלבד שאלה 2 -מועד א 2023",
+    "timemodified": 1792598394
+  },
+  "updatedAt": "2026-10-21T18:14:35.836Z",
+  "announced": true
+}

@@ -1,0 +1,27 @@
+{
+  "id": "phys-flsnknqc",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מועד א׳ קייץ 2021",
+  "originalName": "פתרון מועד א׳ קייץ 2021.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 10,
+  "unitNumber": null,
+  "slideCount": 13,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:24.848Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459927:/פתרון מועד א׳ קייץ 2021.pdf",
+    "section": "מבחנים ישנים",
+    "module": "מבחן 2021.08.29",
+    "timemodified": 1792598392
+  },
+  "updatedAt": "2026-10-21T18:14:26.132Z",
+  "announced": true
+}

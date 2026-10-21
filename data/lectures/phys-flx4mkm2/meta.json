@@ -1,0 +1,27 @@
+{
+  "id": "phys-flx4mkm2",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ב",
+  "originalName": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ב.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 15,
+  "unitNumber": null,
+  "slideCount": 11,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:30.647Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459932:/פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ב.pdf",
+    "section": "מבחנים ישנים",
+    "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ב",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:14:30.917Z",
+  "announced": true
+}

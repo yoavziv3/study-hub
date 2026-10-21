@@ -1,0 +1,28 @@
+{
+  "id": "phys-flyuwufz",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "תרגילים לשיעור 4 - החוק הראשון של ניוטון 18.11.22",
+  "originalName": "תרגילים לשיעור 4 - החוק הראשון של ניוטון 18.11.22.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 1,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:32.888Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459937:/תרגילים לשיעור 4 - החוק הראשון של ניוטון 18.11.22.pdf",
+    "section": "מבחנים ישנים",
+    "module": "תרגילים לשיעור 4 - החוק הראשון של ניוטון 18.11.22",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:15:50.985Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

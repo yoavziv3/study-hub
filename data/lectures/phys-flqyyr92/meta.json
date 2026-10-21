@@ -1,0 +1,27 @@
+{
+  "id": "phys-flqyyr92",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבחן מבוא לפיסיקה קיץ 2023 מועד א5-9[74]",
+  "originalName": "מבחן מבוא לפיסיקה קיץ 2023_מועד א5-9[74].pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 5,
+  "unitNumber": 5,
+  "slideCount": 8,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:22.666Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459926:/מבחן מבוא לפיסיקה קיץ 2023_מועד א5-9[74].pdf",
+    "section": "מבחנים ישנים",
+    "module": "מבחן 2023.09.05",
+    "timemodified": 1792598392
+  },
+  "updatedAt": "2026-10-21T18:14:23.789Z",
+  "announced": true
+}

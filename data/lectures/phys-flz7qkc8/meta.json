@@ -1,0 +1,28 @@
+{
+  "id": "phys-flz7qkc8",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "תרגילים לשיעור 5 - החוק השני של ניוטון 25.11.22",
+  "originalName": "תרגילים לשיעור 5 - החוק השני של ניוטון 25.11.22.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 5,
+  "unitNumber": 5,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:33.351Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459938:/תרגילים לשיעור 5 - החוק השני של ניוטון 25.11.22.pdf",
+    "section": "מבחנים ישנים",
+    "module": "תרגילים לשיעור 5 - החוק השני של ניוטון 25.11.22",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:15:52.636Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

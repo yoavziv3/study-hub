@@ -1,0 +1,27 @@
+{
+  "id": "phys-flqglxt8",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבוא קייץ 2022 מועד א 4-9-2022 פתרון",
+  "originalName": "מבוא קייץ 2022 מועד א 4-9-2022 פתרון.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 25,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:22.006Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459925:/מבוא קייץ 2022 מועד א 4-9-2022 פתרון.pdf",
+    "section": "מבחנים ישנים",
+    "module": "מבחן מ-2022.09.04",
+    "timemodified": 1792598392
+  },
+  "updatedAt": "2026-10-21T18:14:23.544Z",
+  "announced": true
+}

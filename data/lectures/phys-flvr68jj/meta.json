@@ -1,0 +1,27 @@
+{
+  "id": "phys-flvr68jj",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ג",
+  "originalName": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ג.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 13,
+  "unitNumber": null,
+  "slideCount": 13,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:28.867Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459930:/פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ג.pdf",
+    "section": "מבחנים ישנים",
+    "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ג",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:14:29.148Z",
+  "announced": true
+}

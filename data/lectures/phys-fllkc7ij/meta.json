@@ -1,0 +1,27 @@
+{
+  "id": "phys-fllkc7ij",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבוא 1 - פתרון מועד ב 2026.03.02",
+  "originalName": "מבוא 1 - פתרון מועד ב 2026.03.02.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 16,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:15.661Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459949:/מבוא 1 - פתרון מועד ב 2026.03.02.pdf",
+    "section": "מבחנים",
+    "module": "מועד ב 2026",
+    "timemodified": 1792598834
+  },
+  "updatedAt": "2026-10-21T18:14:19.881Z",
+  "announced": true
+}

@@ -1,0 +1,27 @@
+{
+  "id": "phys-flxtu47n",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מבחן סמסטר מבוא לפיזיקה 2023 מועד א",
+  "originalName": "פתרון מבחן סמסטר מבוא לפיזיקה 2023 מועד א.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 17,
+  "unitNumber": null,
+  "slideCount": 21,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:31.555Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459934:/פתרון מבחן סמסטר מבוא לפיזיקה 2023 מועד א.pdf",
+    "section": "מבחנים ישנים",
+    "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2023 מועד א",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:14:31.917Z",
+  "announced": true
+}

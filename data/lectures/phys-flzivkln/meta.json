@@ -1,0 +1,27 @@
+{
+  "id": "phys-flzivkln",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מועד א פתרון, חורף תשפג",
+  "originalName": "מועד א פתרון, חורף תשפג.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 18,
+  "unitNumber": null,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:33.751Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459939:/מועד א פתרון, חורף תשפג.pdf",
+    "section": "מבחנים בקורס",
+    "module": "פיתרון שאלה 2 -מועד א 2023",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:14:35.527Z",
+  "announced": true
+}

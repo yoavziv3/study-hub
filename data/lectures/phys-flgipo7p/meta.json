@@ -1,0 +1,27 @@
+{
+  "id": "phys-flgipo7p",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבחן סמסמטר מבוא לפיזיקה 2021 מועד ב",
+  "originalName": "מבחן סמסמטר מבוא לפיזיקה 2021 מועד ב.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:09.121Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459922:/מבחן סמסמטר מבוא לפיזיקה 2021 מועד ב.pdf",
+    "section": "מבחנים",
+    "module": "מועד ב 2021",
+    "timemodified": 1792598392
+  },
+  "updatedAt": "2026-10-21T18:14:16.637Z",
+  "announced": true
+}

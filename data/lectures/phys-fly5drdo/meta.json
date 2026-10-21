@@ -1,0 +1,28 @@
+{
+  "id": "phys-fly5drdo",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "תרגילים לשיעור 2 - זריקה אנכית וזריקה אופקית 4.11.22",
+  "originalName": "תרגילים לשיעור 2 - זריקה אנכית וזריקה אופקית 4.11.22.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 1,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:31.969Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459935:/תרגילים לשיעור 2 - זריקה אנכית וזריקה אופקית 4.11.22.pdf",
+    "section": "מבחנים ישנים",
+    "module": "תרגילים לשיעור 2 - זריקה אנכית וזריקה אופקית 4.11.22",
+    "timemodified": 1792598393
+  },
+  "updatedAt": "2026-10-21T18:15:48.539Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

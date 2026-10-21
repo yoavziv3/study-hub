@@ -1,0 +1,27 @@
+{
+  "id": "phys-fm6yk5xi",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ג",
+  "originalName": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ג.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 25,
+  "unitNumber": null,
+  "slideCount": 15,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:43.388Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459946:/פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ג.pdf",
+    "section": "מבחנים פתורים",
+    "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ג",
+    "timemodified": 1792598394
+  },
+  "updatedAt": "2026-10-21T18:14:43.793Z",
+  "announced": true
+}

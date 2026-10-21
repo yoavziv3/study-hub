@@ -1,0 +1,27 @@
+{
+  "id": "phys-fm0j1qd7",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ב",
+  "originalName": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ב.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 21,
+  "unitNumber": null,
+  "slideCount": 11,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:35.053Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459942:/פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ב.pdf",
+    "section": "מבחנים פתורים",
+    "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ב",
+    "timemodified": 1792598394
+  },
+  "updatedAt": "2026-10-21T18:14:36.513Z",
+  "announced": true
+}

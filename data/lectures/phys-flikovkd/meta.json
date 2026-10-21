@@ -1,0 +1,27 @@
+{
+  "id": "phys-flikovkd",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "2026.01.23 פתרון מבוא לפיזיקה - מועד א",
+  "originalName": "2026.01.23 פתרון מבוא לפיזיקה - מועד א.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 11,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:11.784Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459948:/2026.01.23 פתרון מבוא לפיזיקה - מועד א.pdf",
+    "section": "מבחנים",
+    "module": "מואד א 2026",
+    "timemodified": 1792598800
+  },
+  "updatedAt": "2026-10-21T18:14:17.990Z",
+  "announced": true
+}

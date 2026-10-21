@@ -1,0 +1,27 @@
+{
+  "id": "phys-flg6wdf3",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבחן סמסטר מבוא לפיזיקה 2021 מועד א",
+  "originalName": "מבחן סמסטר מבוא לפיזיקה 2021 מועד א.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 7,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-21T18:14:08.696Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3459921:/מבחן סמסטר מבוא לפיזיקה 2021 מועד א.pdf",
+    "section": "מבחנים",
+    "module": "מועד א 2021",
+    "timemodified": 1792598392
+  },
+  "updatedAt": "2026-10-21T18:14:16.475Z",
+  "announced": true
+}
