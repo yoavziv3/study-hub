@@ -43,11 +43,13 @@ http.createServer(async (req, res) => {
     return send(200, { succeed: true, token, loginId: 1 });
   }
   const auth = (req.headers.authorization || '').replace(/^Bearer /, '');
-  if (req.url === '/Portal/Api/Home/Index') {
+  if (req.url === '/umbraco/Surface/MainPortalSurface/GetPageData') {
     if (!tokens.has(auth)) return send(401, { message: 'Unauthorized' });
-    // The portal answers some calls with JSON inside a string.
-    return send(200, JSON.stringify({ pageId: 1234, blocks: [{ alias: 'StudentCoursesAndScheduleBlockList', data: { semesterListFilter: [{ value: '2027-1', checked: true }], timeRange: [], scheduleByDays: schedule() } }] }));
+    if (input.pageUrl !== 'academy/schedule-and-courses') return send(200, JSON.stringify({ pageNodeId: 1, blockLists: [] }));
+    // The portal answers this with JSON inside a string; the schedule is one of the page's blocks.
+    return send(200, JSON.stringify({ pageNodeId: 1234, blockLists: [{ alias: 'angularBlock', angularComponentName: 'StudentCoursesAndScheduleBlockList', angularBlockListData: { semesterListFilter: [{ value: '2027-1', checked: true }], timeRange: [], scheduleByDays: schedule() } }] }));
   }
+  if (req.url === '/Portal/Api/Home/Index') return send(200, { pageId: 1, rightWidgetGrid: [], centralWidgetGrid: [] });
   if (req.url === '/umbraco/api/PortalGeneralSettingsApi/GetPortalAppSettings') return send(200, { apisTimeout: 60 });
   send(404, { message: 'not found' });
 }).listen(PORT, () => console.log(`mock portal on http://localhost:${PORT}`));

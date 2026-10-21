@@ -18,6 +18,8 @@ const PORTAL_URL = process.env.PORTAL_URL || undefined;
 const KEY_FILE = path.join(ROOT, 'portal-key.json');
 const SESSIONS_FILE = path.join(ROOT, 'portal-sessions.json');
 const EVERY = 60000;
+const BACKOFF = 20 * 60000; // after a failed read, wait before trying that student again (no hammering the portal)
+const failedAt = new Map(); // userId → { at, sealed }
 
 const RSA = { name: 'RSA-OAEP', hash: 'SHA-256' };
 
@@ -57,14 +59,14 @@ async function readOne(job, privateKey, sessions) {
   const key = String(job.userId);
   // A new sealed sign-in (the student reconnected) starts a new session.
   if (sessions[key]?.sealed !== job.sealed.slice(0, 32)) delete sessions[key];
-  let token = sessions[key]?.token;
-  let page = token ? await fetchSchedule(PORTAL_URL, token) : { days: null };
+  let session = sessions[key]?.session;
+  let page = session ? await fetchSchedule(PORTAL_URL, session) : { days: null };
   if (!page.days) {
     const creds = await openSealed(privateKey, job.sealed);
-    token = await login(PORTAL_URL, creds);
-    sessions[key] = { token, sealed: job.sealed.slice(0, 32) };
-    page = await fetchSchedule(PORTAL_URL, token);
-    if (!page.days) throw new PortalError(`הפורטל לא החזיר את מערכת השעות (${page.keys || 'אין נתונים'})`);
+    session = await login(PORTAL_URL, creds);
+    sessions[key] = { session, sealed: job.sealed.slice(0, 32) };
+    page = await fetchSchedule(PORTAL_URL, session);
+    if (!page.days) throw new PortalError(`הפורטל לא החזיר את מערכת השעות (${page.why})`);
   }
   return parseSchedule(page.days);
 }
@@ -84,12 +86,16 @@ export async function relayRound() {
     const { privateKey } = await portalKey();
     const sessions = loadSessions();
     for (const job of jobs) {
+      const failed = failedAt.get(job.userId);
+      if (failed && failed.sealed === job.sealed && Date.now() - failed.at < BACKOFF) continue;
       let result;
       try {
         result = { userId: job.userId, ok: true, lessons: await readOne(job, privateKey, sessions) };
+        failedAt.delete(job.userId);
       } catch (e) {
         if (e instanceof PortalError && e.badLogin) delete sessions[String(job.userId)];
         result = { userId: job.userId, ok: false, badLogin: e instanceof PortalError && e.badLogin, error: e instanceof PortalError ? e.message : 'הקריאה מהפורטל נכשלה' };
+        failedAt.set(job.userId, { at: Date.now(), sealed: job.sealed });
         console.error(`[portal] student ${job.userId}: ${result.error}`);
       }
       await admin('/api/admin/portal/result', { method: 'POST', body: JSON.stringify(result) });

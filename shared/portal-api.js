@@ -7,13 +7,35 @@ const PAGE = '/private/academy/schedule-and-courses';
 const CULTURE = 'he-IL';
 
 // ---------- the portal's own API ----------
-async function post(url, path, body, token) {
-  const res = await fetch(`${base(url)}${path}`, {
+// A session is what the portal's web app holds after signing in: the bearer token, plus the cookies the portal
+// sets (a browser sends those back by itself; here they're kept and sent explicitly).
+const cookieHeader = (session) => Object.entries(session?.cookies || {}).map(([k, v]) => `${k}=${v}`).join('; ');
+function keepCookies(session, res) {
+  if (!session) return;
+  const list = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [res.headers.get('set-cookie')].filter(Boolean);
+  for (const c of list) {
+    const [pair] = c.split(';');
+    const i = pair.indexOf('=');
+    if (i > 0) (session.cookies ||= {})[pair.slice(0, i).trim()] = pair.slice(i + 1).trim();
+  }
+}
+
+async function post(url, path, body, session) {
+  const origin = base(url);
+  const res = await fetch(`${origin}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json, text/plain, */*',
+      Origin: origin,
+      Referer: `${origin}${PAGE}`,
+      ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+      ...(cookieHeader(session) ? { Cookie: cookieHeader(session) } : {}),
+    },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(30000),
   });
+  keepCookies(session, res);
   const text = await res.text();
   let data = null;
   try {
@@ -30,12 +52,13 @@ export class PortalError extends Error {
   }
 }
 
-/** creds: { username, password, id } → the portal's bearer token. */
+/** creds: { username, password, id } → a portal session { token, cookies }. */
 export async function login(url, creds) {
+  const session = { cookies: {} };
   const { status, data } = await post(url, '/Portal/Account/StandardLogin', {
     cultureCode: CULTURE, userName: creds.username, password: creds.password, id: creds.id, isKeepConnected: true, returnUrl: PAGE,
-  });
-  if (data?.succeed && data.token) return data.token;
+  }, session);
+  if (data?.succeed && data.token) return { ...session, token: data.token };
   if (status >= 500 || status === 429 || !data) throw new PortalError(`הפורטל לא זמין כרגע (${status})`);
   throw new PortalError(data.message || 'ההתחברות לפורטל נכשלה – בדקו שם משתמש, סיסמה ותעודת זהות', { badLogin: true });
 }
@@ -51,13 +74,38 @@ function findSchedule(v, depth = 0) {
   return null;
 }
 
-/** The schedule's days, or null when the page came back without one (the session ended, or the page changed). */
-export async function fetchSchedule(url, token) {
-  const { status, data } = await post(url, '/Portal/Api/Home/Index', { pageUrl: PAGE, cultureCode: CULTURE }, token);
-  if (status === 401 || status === 403) return { days: null };
-  if (status >= 400 || !data) throw new PortalError(`הפורטל החזיר שגיאה (${status})`);
-  // The top-level field names help diagnose a changed portal (no personal data in them).
-  return { days: findSchedule(data), keys: Object.keys(data).slice(0, 12).join(',') };
+/** The first semester filter value that's checked (the semester the page shows). */
+function checkedSemester(v, depth = 0) {
+  if (!v || typeof v !== 'object' || depth > 12) return null;
+  if (Array.isArray(v.semesterListFilter)) return (v.semesterListFilter.find((f) => f.checked) || v.semesterListFilter[0])?.value ?? null;
+  for (const x of Array.isArray(v) ? v : Object.values(v)) {
+    const found = checkedSemester(x, depth + 1);
+    if (found != null) return found;
+  }
+  return null;
+}
+
+/**
+ * The schedule's days, or days: null when the page came back without one (the session ended, or the page
+ * changed). `why` says what the portal answered – status, field names, cookies kept – never personal data.
+ */
+export async function fetchSchedule(url, session) {
+  // Content pages (like the schedule) come from GetPageData with the path after /private/; the schedule sits in
+  // the StudentCoursesAndScheduleBlockList block's angularBlockListData. (Portal/Api/Home/Index is the home page.)
+  const page = await post(url, '/umbraco/Surface/MainPortalSurface/GetPageData', { pageUrl: PAGE.replace(/^\/private\//, ''), cultureCode: CULTURE }, session);
+  const why = (r) => `סטטוס ${r.status}${r.data && typeof r.data === 'object' ? `, שדות: ${Object.keys(r.data).slice(0, 10).join(',') || '—'}` : ''}, עוגיות: ${Object.keys(session?.cookies || {}).length}`;
+  if (page.status === 401 || page.status === 403 || page.data?.redirectToPage) return { days: null, why: why(page) };
+  if (page.status >= 400 || !page.data) throw new PortalError(`הפורטל החזיר שגיאה (${why(page)})`);
+  let days = findSchedule(page.data);
+  // The page data may hold only the filter, with the schedule loaded by the block itself (as the portal's app does).
+  if (!days) {
+    const semester = checkedSemester(page.data);
+    if (semester != null) {
+      const r = await post(url, '/Portal/StudentCoursesAndScheduleBlockList/SearchSemesterSchedule', { cultureCode: CULTURE, yearAndSemester: semester }, session);
+      if (r.status < 400 && r.data) days = findSchedule(r.data) || (Array.isArray(r.data) ? r.data : null);
+    }
+  }
+  return { days, why: why(page) };
 }
 
 // ---------- the schedule as the site uses it ----------
