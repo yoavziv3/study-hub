@@ -73,6 +73,8 @@ export function listLectures(courseId) {
   const all = ids
     .map((id) => readJSON(path.join(LECTURES_DIR, id, 'meta.json'), null))
     .filter(Boolean)
+    // Held items (e.g. exam-prep units waiting for the semester's own decks) stay on disk but out of the site.
+    .filter((m) => !m.held)
     .filter((m) => !courseId || m.courseId === courseId);
   return all.sort((a, b) => (a.lessonNumber || 99) - (b.lessonNumber || 99) || (a.unitNumber || 0) - (b.unitNumber || 0) || a.createdAt.localeCompare(b.createdAt));
 }

@@ -19,7 +19,8 @@
     "semester": "סמסטר ב תשפ\"ו",
     "lesson": 10
   },
-  "updatedAt": "2026-10-21T18:15:56.763Z",
+  "updatedAt": "2026-10-21T21:04:06.270Z",
   "aiError": "יצירת הסיכום נכשלה",
-  "announced": true
+  "announced": true,
+  "held": true
 }

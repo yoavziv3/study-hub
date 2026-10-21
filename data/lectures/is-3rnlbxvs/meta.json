@@ -23,5 +23,6 @@
   "aiError": null,
   "notesStatus": null,
   "notesError": null,
-  "announced": true
+  "announced": true,
+  "held": true
 }

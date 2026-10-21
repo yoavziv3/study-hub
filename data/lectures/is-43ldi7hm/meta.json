@@ -19,9 +19,10 @@
     "semester": "סמסטר ב תשפ\"ו",
     "lesson": 4
   },
-  "updatedAt": "2026-10-21T18:15:50.163Z",
+  "updatedAt": "2026-10-21T21:04:06.265Z",
   "aiError": null,
-  "notesStatus": null,
-  "notesError": "כתיבת הסיכום נכשלה",
-  "announced": true
+  "notesStatus": "queued",
+  "notesError": null,
+  "announced": true,
+  "held": true
 }
