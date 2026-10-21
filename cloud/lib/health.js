@@ -122,7 +122,9 @@ export async function systemStatus(env, { courses, macItems, build = null, now =
     const badLogins = links.results.length - okLinks.length;
     const stale = okLinks.filter((l) => now - (l.synced_at || 0) > 2 * HOUR).length;
     const main = readers.find((r) => r.name !== 'mac' && now - r.at < 30 * DAY);
-    const active = readers.find((r) => now - r.at < 5 * MIN);
+    // The Mac checks in every minute too, as the backup: name the main reader (phone/VM) while it's active.
+    const fresh = readers.filter((r) => now - r.at < 5 * MIN);
+    const active = fresh.find((r) => r.name !== 'mac') || fresh[0];
     const mainDown = main && now - main.at > 30 * MIN;
     const detail = [];
     if (mainDown) detail.push(active ? `${label(active.name)} קורא במקומו בינתיים` : 'אף קורא לא פעיל כרגע');

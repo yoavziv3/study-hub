@@ -143,7 +143,7 @@ export async function probeAI() {
     return { ok: true };
   } catch (e) {
     const m = String(e.message || e);
-    const kind = /authenticate|login|OAuth|401/i.test(m) ? 'signed-out' : /429|usage_limit|rate.?limit|credit/i.test(m) ? 'limit' : 'error';
+    const kind = /authenticate|login|OAuth|401/i.test(m) ? 'signed-out' : /429|usage|limit|quota|credit/i.test(m) ? 'limit' : 'error';
     return { ok: false, kind, reason: m.replace(/^claude exited \d+: /, '').slice(0, 200) };
   }
 }
