@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { BookOpen, Target, Layers, BookMarked, FlaskConical, Upload, Check, Loader2, AlertTriangle, Users, Sigma, Sparkles, Presentation, PencilRuler, Eye, EyeOff, Wand2, Award, ExternalLink, Info, FileText, Link2, ScrollText, GraduationCap, Printer } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, thumbUrl, useFetch, shuffle } from '../api.js';
-import { CourseIcon, Page, Ring, Tabs, fadeUp, ltr, safeHref } from '../components/ui.jsx';
-import { Markdown, Tex } from '../components/markdown.jsx';
+import { CourseIcon, Page, Ring, Tabs, fadeUp, safeHref } from '../components/ui.jsx';
+import { Markdown, Tex, RichText } from '../components/markdown.jsx';
 import Quiz from '../components/Quiz.jsx';
 import Flashcards from '../components/Flashcards.jsx';
 import Glossary from '../components/Glossary.jsx';
@@ -37,7 +37,7 @@ function LectureCard({ l, course, i }) {
           </div>
           <h2 className="lecture-card-title">{l.title}</h2>
           {l.kind === 'homework' && <AssignmentLine assignment={l.source?.assignment} />}
-          <p>{ltr(l.overview) || l.originalName}</p>
+          <p>{l.overview ? <RichText>{l.overview}</RichText> : l.originalName}</p>
           <div className="row wrap" style={{ gap: 6 }}>
             {l.topicCount > 0 && <span className="chip">{l.topicCount} נושאים</span>}
             {l.quizCount > 0 && <span className="chip">{l.quizCount} שאלות</span>}
@@ -388,7 +388,7 @@ export default function Course() {
                   <motion.div key={i} className="card formula" variants={fadeUp} initial="hidden" animate="show" custom={i % 12}>
                     <h4 style={{ fontSize: 16 }}>{f.name}</h4>
                     <div className="tex"><Tex>{f.latex}</Tex></div>
-                    <p className="muted" style={{ margin: 0, fontSize: 14 }}>{ltr(f.explanation)}</p>
+                    <p className="muted" style={{ margin: 0, fontSize: 14 }}><RichText>{f.explanation}</RichText></p>
                     <Link to={`/lecture/${f.lectureId}?tab=summary`} className="faint" style={{ fontSize: 12.5 }}>מתוך: {f.lectureTitle}</Link>
                   </motion.div>
                 ))}

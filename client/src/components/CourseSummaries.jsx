@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown, ListChecks, Presentation, Clock, Printer, FileText } from 'lucide-react';
-import { ltr } from './ui.jsx';
+import { RichText } from './markdown.jsx';
 import { Block, markdownSections, useActiveSection } from './StudySummary.jsx';
 import ReportButton from './ReportButton.jsx';
 import ReadAloud from './ReadAloud.jsx';
@@ -86,15 +86,15 @@ export default function CourseSummaries({ course, bundle }) {
               <span className="part-num">{pi + 1}</span>
               <div className="grow" style={{ minWidth: 0 }}>
                 <div className="part-label">{p.label}</div>
-                <h2>{ltr(p.lecture.title)}</h2>
-                {p.subtitle && <p>{ltr(p.subtitle)}</p>}
+                <h2><RichText>{p.lecture.title}</RichText></h2>
+                {p.subtitle && <p><RichText>{p.subtitle}</RichText></p>}
               </div>
               <Link className="btn sm no-print" to={`/lecture/${p.lecture.id}?tab=summary`}>לשיעור</Link>
             </div>
             {p.sections.map((s, i) => (
               <section key={s.id} id={s.id} className={`note-section ${speaking === s.id ? 'speaking' : ''}`}>
                 <div className="note-section-head">
-                  <h3 className="note-section-title"><span className="note-num">{i + 1}</span>{ltr(s.title)}</h3>
+                  <h3 className="note-section-title"><span className="note-num">{i + 1}</span><RichText>{s.title}</RichText></h3>
                   {!s.special && <ReportButton lectureId={p.lecture.id} section={s.title} />}
                   {s.slideStart > 0 && (
                     <Link className="chip slide-link no-print" to={`/lecture/${p.lecture.id}?tab=slides&slide=${s.slideStart}`} title="מעבר לשקפים">
@@ -105,7 +105,7 @@ export default function CourseSummaries({ course, bundle }) {
                 {s.blocks?.map((b, j) => <Block key={j} block={b} />)}
                 {s.special === 'takeaways' && (
                   <ol className="takeaways">
-                    {s.items.map((t, j) => <li key={j}><span>{j + 1}</span><div>{ltr(t)}</div></li>)}
+                    {s.items.map((t, j) => <li key={j}><span>{j + 1}</span><div><RichText>{t}</RichText></div></li>)}
                   </ol>
                 )}
               </section>
@@ -120,7 +120,7 @@ export default function CourseSummaries({ course, bundle }) {
           <div key={p.id}>
             <a href={`#${p.id}`} className={`toc-lecture ${current === p ? 'on' : ''}`} onClick={(e) => { e.preventDefault(); go(p.id); }}>
               <span className="toc-num">{pi + 1}</span>
-              <span>{ltr(p.lecture.title)}</span>
+              <span><RichText>{p.lecture.title}</RichText></span>
             </a>
             <AnimatePresence initial={false}>
               {current === p && (
@@ -128,7 +128,7 @@ export default function CourseSummaries({ course, bundle }) {
                   {p.sections.map((s) => (
                     <a key={s.id} href={`#${s.id}`} className={active === s.id ? 'on' : ''} onClick={(e) => { e.preventDefault(); go(s.id); }}>
                       {s.special === 'takeaways' && <ListChecks size={13} />}
-                      {ltr(s.title)}
+                      <RichText>{s.title}</RichText>
                     </a>
                   ))}
                 </motion.div>
@@ -150,7 +150,7 @@ function CourseMobileToc({ parts, current, active, go }) {
     <div className="notes-toc-mobile">
       <button className="notes-toc-trigger" onClick={() => setOpen((o) => !o)}>
         <span className="faint">{current?.label}:</span>
-        <b className="grow">{ltr(section?.title || current?.lecture.title || '')}</b>
+        <b className="grow"><RichText>{section?.title || current?.lecture.title || ''}</RichText></b>
         <motion.span animate={{ rotate: open ? 180 : 0 }} style={{ display: 'grid' }}><ChevronDown size={17} /></motion.span>
       </button>
       <AnimatePresence>
@@ -159,10 +159,10 @@ function CourseMobileToc({ parts, current, active, go }) {
             {parts.map((p, pi) => (
               <div key={p.id}>
                 <a href={`#${p.id}`} className={`toc-lecture ${current === p ? 'on' : ''}`} onClick={(e) => { e.preventDefault(); pick(p.id); }}>
-                  <span className="toc-num">{pi + 1}</span>{ltr(p.lecture.title)}
+                  <span className="toc-num">{pi + 1}</span><RichText>{p.lecture.title}</RichText>
                 </a>
                 {current === p && p.sections.map((s) => (
-                  <a key={s.id} href={`#${s.id}`} className={`toc-sub-item ${active === s.id ? 'on' : ''}`} onClick={(e) => { e.preventDefault(); pick(s.id); }}>{ltr(s.title)}</a>
+                  <a key={s.id} href={`#${s.id}`} className={`toc-sub-item ${active === s.id ? 'on' : ''}`} onClick={(e) => { e.preventDefault(); pick(s.id); }}><RichText>{s.title}</RichText></a>
                 ))}
               </div>
             ))}

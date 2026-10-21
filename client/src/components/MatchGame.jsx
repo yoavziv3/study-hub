@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { RotateCcw, Timer, Trophy, X } from 'lucide-react';
 import { shuffle } from '../api.js';
-import { ltr } from './ui.jsx';
+import { RichText } from './markdown.jsx';
 
 const ROUND = 6;
 const mistakesText = (n) => (n === 1 ? 'טעות אחת' : `${n} טעויות`);
@@ -103,15 +103,15 @@ export default function MatchGame({ terms }) {
             <div className="match-col terms">
               {pairs.map((p) => (
                 <button key={p.id} className={cls('term', p.id)} disabled={done.has(p.id)} aria-pressed={picked?.side === 'term' && picked.id === p.id} onClick={() => choose('term', p.id)}>
-                  {ltr(p.term)}
+                  <RichText>{p.term}</RichText>
                 </button>
               ))}
             </div>
             <div className="match-col defs">
               {defs.map((p) => (
                 <button key={p.id} className={cls('def', p.id)} disabled={done.has(p.id)} aria-pressed={picked?.side === 'def' && picked.id === p.id} onClick={() => choose('def', p.id)}>
-                  {done.has(p.id) && <b>{ltr(p.term)}: </b>}
-                  {ltr(p.definition)}
+                  {done.has(p.id) && <b><RichText>{p.term}</RichText>: </b>}
+                  <RichText>{p.definition}</RichText>
                 </button>
               ))}
             </div>

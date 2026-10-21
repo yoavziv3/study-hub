@@ -5,6 +5,7 @@ import { Search, FileText, Hash, BookMarked, Presentation, CornerDownLeft, Noteb
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
 import { Highlight, ltr } from './ui.jsx';
+import { plainText } from '../lib/text.js';
 
 const TYPE = {
   lecture: { icon: Presentation, label: 'הרצאה' },
@@ -63,7 +64,7 @@ export default function SearchPalette() {
                 <span className="grow">
                   <b><Highlight text={r.title} q={q} /></b>
                   <small>{T.label} · {r.courseShort} · {r.lectureTitle}</small>
-                  {r.snippet && <p><Highlight text={ltr(r.snippet)} q={q} /></p>}
+                  {r.snippet && <p><Highlight text={ltr(plainText(r.snippet))} q={q} /></p>}
                 </span>
                 {i === sel && <CornerDownLeft size={15} color="var(--text-3)" />}
               </button>

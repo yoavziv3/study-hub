@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Check, X, ArrowLeft, RotateCcw, Presentation, Sparkles, Trophy, Bookmark, BookmarkCheck, Timer, ChevronDown } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { hebLetters, shuffle, hash } from '../api.js';
-import { Ring, ltr } from './ui.jsx';
-import { Markdown } from './markdown.jsx';
+import { Ring } from './ui.jsx';
+import { Markdown, RichText } from './markdown.jsx';
 
 const DIFF = { easy: { label: 'קל', cls: 'good' }, medium: { label: 'בינוני', cls: 'warn' }, hard: { label: 'קשה', cls: 'bad' } };
 
@@ -41,13 +41,13 @@ function ReviewItem({ q, picked }) {
     <div className="review-item">
       <button className="review-q" onClick={() => setOpen(!open)} aria-expanded={open}>
         <b style={{ background: picked == null ? 'var(--text-3)' : 'var(--bad)' }}>{picked == null ? '–' : <X size={13} />}</b>
-        <span className="grow">{ltr(q.question)}</span>
+        <span className="grow"><RichText>{q.question}</RichText></span>
         <ChevronDown size={16} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s', flex: 'none' }} />
       </button>
       {open && (
         <div className="review-a">
-          {picked != null && <div className="faint" style={{ fontSize: 13.5 }}>ענית: {ltr(q.options[picked])}</div>}
-          <div style={{ fontWeight: 700, color: 'var(--good-text)', margin: '4px 0 6px' }}>התשובה הנכונה: {ltr(q.options[q.correctIndex])}</div>
+          {picked != null && <div className="faint" style={{ fontSize: 13.5 }}>ענית: <RichText>{q.options[picked]}</RichText></div>}
+          <div style={{ fontWeight: 700, color: 'var(--good-text)', margin: '4px 0 6px' }}>התשובה הנכונה: <RichText>{q.options[q.correctIndex]}</RichText></div>
           <Markdown>{q.explanation}</Markdown>
           {q.slide > 0 && q.lectureId && !String(q.lectureId).endsWith('-homework') && (
             <Link className="btn sm" style={{ marginTop: 8 }} to={`/lecture/${q.lectureId}?tab=slides&slide=${q.slide}`}><Presentation size={14} /> לשקף {q.slide}</Link>
@@ -176,14 +176,14 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
               {flagged ? <BookmarkCheck size={15} /> : <Bookmark size={15} />} {flagged ? 'נשמרה לחזרה' : 'לחזרה'}
             </button>
           </div>
-          <div className="q-text">{ltr(q.question)}</div>
+          <div className="q-text"><RichText>{q.question}</RichText></div>
           <div className="options">
             {q.options.map((o, i) => {
               const state = picked == null ? '' : i === q.correctIndex ? 'correct' : i === picked ? 'wrong' : '';
               return (
                 <motion.button key={i} className={`option ${state}`} disabled={picked != null} onClick={() => choose(i)} whileTap={picked == null ? { scale: 0.98 } : undefined}>
                   <span className="letter">{state === 'correct' ? <Check size={16} /> : state === 'wrong' ? <X size={16} /> : hebLetters[i]}</span>
-                  <span className="grow">{ltr(o)}</span>
+                  <span className="grow"><RichText>{o}</RichText></span>
                 </motion.button>
               );
             })}

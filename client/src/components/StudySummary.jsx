@@ -3,8 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { BookMarked, PencilLine, Sigma, Lightbulb, AlertTriangle, ListChecks, ChevronDown, Presentation, Loader2, Sparkles, Clock } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
-import { ltr } from './ui.jsx';
-import { Markdown, Tex } from './markdown.jsx';
+import { Markdown, Tex, RichText } from './markdown.jsx';
 import { requiredMap, partsLabel } from './Assignment.jsx';
 import ReportButton from './ReportButton.jsx';
 import ReadAloud from './ReadAloud.jsx';
@@ -87,9 +86,9 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
           <div className="notes-eyebrow">
             {KIND_LABEL[kind]} {lecture.lessonNumber || ''} · <Clock size={13} /> {minutes} דקות קריאה
           </div>
-          <p className="notes-lead">{ltr(notes?.subtitle || content.overview)}</p>
+          <p className="notes-lead"><RichText>{notes?.subtitle || content.overview}</RichText></p>
           <ReadAloud intro={[notes?.subtitle, content.overview].filter(Boolean).join('. ')} sections={sections} onSection={onSpeakSection} />
-          {notes?.subtitle && content.overview && <p className="notes-overview">{ltr(content.overview)}</p>}
+          {notes?.subtitle && content.overview && <p className="notes-overview"><RichText>{content.overview}</RichText></p>}
           {writing && <div className="callout row" style={{ marginTop: 14 }}><Loader2 size={16} className="spin" /> כותב סיכום מובנה עם הגדרות ודוגמאות – זה לוקח כמה דקות.</div>}
           {lecture.notesError && !writing && <div className="chip warn" style={{ marginTop: 14, height: 'auto', padding: '6px 12px', whiteSpace: 'normal' }}>{lecture.notesError}</div>}
           {canGenerate && (
@@ -105,7 +104,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
         {sections.map((s, i) => (
           <motion.section key={s.id} id={s.id} className={`note-section ${speaking === s.id ? 'speaking' : ''}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
             <div className="note-section-head">
-              <h2><span className="note-num">{i + 1}</span>{ltr(s.title)}</h2>
+              <h2><span className="note-num">{i + 1}</span><RichText>{s.title}</RichText></h2>
               {required && exerciseNo(s.title) && (required.has(exerciseNo(s.title)) ? (
                 <span className="chip req-chip">להגשה{required.get(exerciseNo(s.title)).length ? ` · סעיפים ${partsLabel(required.get(exerciseNo(s.title)))}` : ''}</span>
               ) : (
@@ -121,7 +120,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
             {s.blocks?.map((b, j) => <Block key={j} block={b} />)}
             {s.special === 'takeaways' && (
               <ol className="takeaways">
-                {s.items.map((t, j) => <li key={j}><span>{j + 1}</span><div>{ltr(t)}</div></li>)}
+                {s.items.map((t, j) => <li key={j}><span>{j + 1}</span><div><RichText>{t}</RichText></div></li>)}
               </ol>
             )}
             {s.special === 'formulas' && (
@@ -130,14 +129,14 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
                   <div key={j} className="formula" style={{ padding: 0 }}>
                     <b>{f.name}</b>
                     <div className="tex"><Tex>{f.latex}</Tex></div>
-                    <div className="muted" style={{ fontSize: 14 }}>{ltr(f.explanation)}</div>
+                    <div className="muted" style={{ fontSize: 14 }}><RichText>{f.explanation}</RichText></div>
                   </div>
                 ))}
               </div>
             )}
             {s.special === 'tips' && (
               <div className="note-block nb-important">
-                <ul style={{ margin: 0, paddingInlineStart: 20 }}>{s.items.map((t, j) => <li key={j} style={{ margin: '6px 0' }}>{ltr(t)}</li>)}</ul>
+                <ul style={{ margin: 0, paddingInlineStart: 20 }}>{s.items.map((t, j) => <li key={j} style={{ margin: '6px 0' }}><RichText>{t}</RichText></li>)}</ul>
               </div>
             )}
           </motion.section>
@@ -156,7 +155,7 @@ export function Block({ block }) {
   if (block.type === 'text' || !BLOCK[block.type]) {
     return (
       <div className="note-text">
-        {block.title && <h3>{ltr(block.title)}</h3>}
+        {block.title && <h3><RichText>{block.title}</RichText></h3>}
         <Markdown>{block.body}</Markdown>
       </div>
     );
@@ -166,7 +165,7 @@ export function Block({ block }) {
     <div className={`note-block nb-${block.type}`}>
       <div className="nb-head">
         <span className="nb-tag"><Icon size={13} /> {label}</span>
-        {block.title && <b>{ltr(block.title)}</b>}
+        {block.title && <b><RichText>{block.title}</RichText></b>}
       </div>
       <Markdown>{block.body}</Markdown>
     </div>
@@ -177,7 +176,7 @@ function TocLinks({ sections, active, go, onPick }) {
   return sections.map((s) => (
     <a key={s.id} href={`#${s.id}`} className={active === s.id ? 'on' : ''} onClick={(e) => { e.preventDefault(); go(s.id); onPick?.(); }}>
       {s.special === 'takeaways' && <ListChecks size={14} />}
-      {ltr(s.title)}
+      <RichText>{s.title}</RichText>
     </a>
   ));
 }
@@ -190,7 +189,7 @@ function MobileToc({ sections, active, go }) {
     <div className="notes-toc-mobile">
       <button className="notes-toc-trigger" onClick={() => setOpen((o) => !o)}>
         <span className="faint">בסיכום הזה:</span>
-        <b className="grow">{current ? ltr(current.title) : ''}</b>
+        <b className="grow">{current ? <RichText>{current.title}</RichText> : ''}</b>
         <motion.span animate={{ rotate: open ? 180 : 0 }} style={{ display: 'grid' }}><ChevronDown size={17} /></motion.span>
       </button>
       <AnimatePresence>

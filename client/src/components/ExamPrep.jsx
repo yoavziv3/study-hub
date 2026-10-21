@@ -8,7 +8,7 @@ import {
 import { useApp } from '../store.jsx';
 import { Ring, fadeUp, ltr } from './ui.jsx';
 import { isHard } from '../lib/srs.js';
-import { Markdown } from './markdown.jsx';
+import { Markdown, RichText } from './markdown.jsx';
 import Quiz from './Quiz.jsx';
 import {
   STRONG, LEVELS, levelOf, reasonOf, masteryMap, readiness, priorities, examEvents, nextEvent, fmtDay, fmtShortDay, todayKey,
@@ -336,12 +336,12 @@ function MistakeItem({ x }) {
     <div className="review-item">
       <button className="review-q" onClick={() => setOpen(!open)} aria-expanded={open}>
         <b style={{ background: x.wrong ? 'var(--bad)' : 'var(--warn)' }}>{x.wrong ? <X size={13} /> : <Bookmark size={12} />}</b>
-        <span className="grow">{ltr(q.question)}<span className="faint" style={{ display: 'block', fontSize: 12.5 }}>{q.lectureTitle}</span></span>
+        <span className="grow"><RichText>{q.question}</RichText><span className="faint" style={{ display: 'block', fontSize: 12.5 }}>{q.lectureTitle}</span></span>
         <ChevronDown size={16} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s', flex: 'none' }} />
       </button>
       {open && (
         <div className="review-a">
-          <div style={{ fontWeight: 700, color: 'var(--good-text)', marginBottom: 6 }}>התשובה הנכונה: {ltr(q.options[q.correctIndex])}</div>
+          <div style={{ fontWeight: 700, color: 'var(--good-text)', marginBottom: 6 }}>התשובה הנכונה: <RichText>{q.options[q.correctIndex]}</RichText></div>
           <Markdown>{q.explanation}</Markdown>
           {x.flagged && <button className="btn sm ghost" style={{ marginTop: 8 }} onClick={() => toggleFlag(x.key)}>הסרה מהשמורות</button>}
         </div>

@@ -6,6 +6,7 @@ import { shuffle } from '../api.js';
 import { GRADES, previews, schedule, stageOf, isHard, STAGE_LABEL, STAGE_ONE } from '../lib/srs.js';
 import { deckOf, ownKey } from '../lib/cards.js';
 import { ltr } from './ui.jsx';
+import { RichText } from './markdown.jsx';
 
 // Typing mode: how much of the right answer the student wrote (shared words, ignoring niqqud and punctuation).
 const norm = (s) => String(s || '').normalize('NFC').replace(/[֑-ׇ]/g, '').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ');
@@ -181,18 +182,18 @@ export default function Flashcards({ cards, lectures = null, initialMode = 'due'
                   <motion.div className="fc" role="button" tabIndex={0} aria-pressed={flip} aria-label={flip ? 'הצגת השאלה' : 'הצגת התשובה'} onClick={() => setFlip((f) => !f)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); setFlip((f) => !f); } }} animate={{ rotateY: flip ? 180 : 0 }} transition={{ type: 'spring', stiffness: 260, damping: 26 }}>
                     <div className="fc-face">
                       <span className="label">שאלה</span>
-                      <div className="fc-front-text">{ltr(card.front)}</div>
+                      <div className="fc-front-text"><RichText>{card.front}</RichText></div>
                       <div className="faint" style={{ marginTop: 18, fontSize: 13 }}>לחצו או רווח כדי להפוך</div>
                     </div>
                     <div className="fc-face back">
                       <span className="label">תשובה</span>
-                      <div className="fc-back-text">{ltr(card.back)}</div>
+                      <div className="fc-back-text"><RichText>{card.back}</RichText></div>
                     </div>
                   </motion.div>
                 ) : (
                   <div className="card fc-type">
                     <span className="label">שאלה</span>
-                    <div className="fc-front-text">{ltr(card.front)}</div>
+                    <div className="fc-front-text"><RichText>{card.front}</RichText></div>
                     {!flip ? (
                       <form onSubmit={(e) => { e.preventDefault(); check(); }} className="stack" style={{ gap: 10, marginTop: 18 }}>
                         <textarea
@@ -217,7 +218,7 @@ export default function Flashcards({ cards, lectures = null, initialMode = 'due'
                         </div>
                         <div>
                           <span className="label">התשובה הנכונה</span>
-                          <p>{ltr(card.back)}</p>
+                          <p><RichText>{card.back}</RichText></p>
                         </div>
                         {typed.trim() && (
                           <div className="faint" style={{ fontSize: 13 }}>

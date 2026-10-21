@@ -1,5 +1,6 @@
 // Markdown + math rendering (react-markdown, KaTeX). Kept out of the shared UI module so pages that don't show
 // study material (home, sign-in, updates) load without it – it's the heaviest part of the app.
+import { Fragment } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -50,3 +51,19 @@ export function Tex({ children, block = true }) {
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
+
+// ---------- short fields (questions, answers, flashcards, terms, tips) ----------
+// These are single lines that the AI may write with inline math ($…$) and **bold**. RichText renders just that –
+// no paragraphs or lists, so it fits inside buttons and chips. A lone "$" (e.g. "$67") stays a dollar sign.
+const INLINE = /(\$\$[^$]+?\$\$|(?<![\\$\w])\$(?=[^\s$])[^$\n]+?(?<=[^\s\\])\$(?!\d)|\*\*[^*\n]+?\*\*|`[^`\n]+`)/g;
+
+export function RichText({ children }) {
+  const parts = String(children ?? '').split(INLINE);
+  return parts.map((p, i) => {
+    if (i % 2 === 0) return p ? <Fragment key={i}>{ltr(p.replace(/\\\$/g, '$'))}</Fragment> : null;
+    if (p.startsWith('$$')) return <Tex key={i} block={false}>{`\\displaystyle ${p.slice(2, -2)}`}</Tex>;
+    if (p.startsWith('$')) return <Tex key={i} block={false}>{p.slice(1, -1)}</Tex>;
+    if (p.startsWith('**')) return <b key={i}><RichText>{p.slice(2, -2)}</RichText></b>;
+    return <code key={i}>{p.slice(1, -1)}</code>;
+  });
+}

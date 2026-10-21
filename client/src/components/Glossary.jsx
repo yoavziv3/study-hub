@@ -4,6 +4,8 @@ import { motion } from 'motion/react';
 import { Search, Sparkles, List, Puzzle } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { Highlight, ltr } from './ui.jsx';
+import { RichText } from './markdown.jsx';
+import { plainText } from '../lib/text.js';
 import MatchGame from './MatchGame.jsx';
 
 export default function Glossary({ terms, showSource = false }) {
@@ -27,7 +29,7 @@ function TermList({ terms, showSource }) {
   const { openChat } = useApp();
   const [q, setQ] = useState('');
   const sorted = useMemo(() => [...terms].sort((a, b) => a.term.localeCompare(b.term, 'he')), [terms]);
-  const filtered = sorted.filter((t) => !q || (t.term + ' ' + t.definition).toLowerCase().includes(q.toLowerCase()));
+  const filtered = sorted.filter((t) => !q || plainText(`${t.term} ${t.definition}`).toLowerCase().includes(q.toLowerCase()));
   const letters = [...new Set(sorted.map((t) => t.term[0]))];
 
   return (
@@ -49,12 +51,12 @@ function TermList({ terms, showSource }) {
           return (
             <motion.div key={t.term + i} id={first ? `term-${t.term[0]}` : undefined} className="card term" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 20) * 0.02 }}>
               <div className="row" style={{ alignItems: 'flex-start' }}>
-                <h4 className="grow"><Highlight text={ltr(t.term)} q={q} /></h4>
+                <h4 className="grow">{q ? <Highlight text={ltr(plainText(t.term))} q={q} /> : <RichText>{t.term}</RichText>}</h4>
                 <button className="local-only btn sm icon ghost" title="הסבר מורחב" onClick={() => openChat({ prompt: `הסבר לי לעומק את המושג "${t.term}" עם דוגמה מהחומר.`, autoSend: true })}>
                   <Sparkles size={14} />
                 </button>
               </div>
-              <p><Highlight text={ltr(t.definition)} q={q} /></p>
+              <p>{q ? <Highlight text={ltr(plainText(t.definition))} q={q} /> : <RichText>{t.definition}</RichText>}</p>
               {showSource && <Link to={`/lecture/${t.lectureId}?tab=glossary`} className="faint" style={{ fontSize: 12.5, display: 'block', marginTop: 8 }}>{t.lectureTitle}</Link>}
             </motion.div>
           );
