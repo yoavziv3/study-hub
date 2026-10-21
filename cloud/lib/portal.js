@@ -1,6 +1,6 @@
 // The student's BGU portal schedule (room changes, cancellations, notices – before the public course catalog has
-// them). The portal's firewall only answers from Israel, so a reader there does the reading: a small always-on VM
-// in Israel (oracle/portal-relay), with the Mac as backup (shared/portal-relay-core.js). The cloud keeps each student's
+// them). The portal's firewall only answers from Israel, so a reader there does the reading: an always-on machine
+// in Israel (relay/run.mjs – an old phone at home or a VM), with the Mac as backup (shared/portal-relay-core.js). The cloud keeps each student's
 // link, the reader's (encrypted) portal session and what was read.
 //
 // The sign-in (username, password, ID number) is sealed in the student's browser with the Mac's public key

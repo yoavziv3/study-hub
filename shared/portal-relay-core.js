@@ -1,5 +1,5 @@
-// One round of reading students' BGU portal schedules for the cloud site – the same code on the always-on VM in
-// Israel (oracle/portal-relay) and on the Mac (server/lib/portal-relay.js, the backup). The portal only answers
+// One round of reading students' BGU portal schedules for the cloud site – the same code on the always-on machine
+// in Israel (relay/run.mjs) and on the Mac (server/lib/portal-relay.js, the backup). The portal only answers
 // from Israel, so neither Cloudflare nor anything abroad can do this.
 //
 // The cloud hands out the links that are due, each with the student's sign-in sealed for this key pair and the
@@ -51,7 +51,7 @@ async function readOne(job, keys, portalUrl) {
 }
 
 /**
- * Reads every link the cloud says is due. source: the reader's name ('oracle', 'mac'); backup: the cloud hands a backup nothing while
+ * Reads every link the cloud says is due. source: the reader's name ('phone', 'vm', 'mac'); backup: the cloud hands a backup nothing while
  * the main reader has been seen in the last few minutes. Returns { jobs, read, failed }.
  */
 export async function relayRound({ cloud, secret, privateJwk, source, backup = false, portalUrl, log = console }) {

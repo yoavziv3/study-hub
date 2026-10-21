@@ -1,10 +1,10 @@
-// The Mac's part in reading students' BGU portal schedules: the backup of the always-on VM in Israel
-// (oracle/portal-relay). Every minute it asks the cloud for due links; the cloud hands it none while the VM is
-// running, so this only works when the VM is down or not set up. The reading itself is shared/portal-relay-core.js.
+// The Mac's part in reading students' BGU portal schedules: the backup of the always-on machine in
+// Israel (relay/run.mjs – an old phone at home or a VM). Every minute it asks the cloud for due links; the cloud hands it none while that machine is
+// running, so this only works when it is down or not set up. The reading itself is shared/portal-relay-core.js.
 //
 // Keys: portal-key.json (RSA-OAEP, created on first run, not in git). Its public half is PORTAL_PUBLIC_KEY in
-// wrangler.toml (students' browsers seal their portal sign-in with it); the VM holds a copy of the private key
-// (scripts/deploy-portal-vm.sh). Losing the key means every student reconnects their portal once.
+// wrangler.toml (students' browsers seal their portal sign-in with it); that machine holds a copy of the private key
+// (scripts/deploy-portal-android.sh / deploy-portal-vm.sh). Losing the key means every student reconnects their portal once.
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';

@@ -17,15 +17,16 @@ DIR=/opt/portal-relay
 # ---------- package: the reader, the shared code, settings (private files stay 600) ----------
 BUILD=$(mktemp -d)
 trap 'rm -rf "$BUILD"' EXIT
-cp oracle/portal-relay/run.mjs "$BUILD/"
+cp relay/run.mjs "$BUILD/"
 mkdir "$BUILD/shared"
 cp shared/portal-api.js shared/portal-relay-core.js "$BUILD/shared/"
 echo '{"type":"module"}' > "$BUILD/package.json"
 (umask 077
   grep -E '^CLOUD_URL=' .env > "$BUILD/relay.env"
   grep -E '^STUDY_ADMIN_SECRET=' .env | sed 's/^STUDY_ADMIN_SECRET=/ADMIN_SECRET=/' >> "$BUILD/relay.env"
+  echo "SOURCE=vm" >> "$BUILD/relay.env"
   cp portal-key.json "$BUILD/portal-key.json")
-[[ $(wc -l < "$BUILD/relay.env") -eq 2 ]] || { echo "CLOUD_URL / STUDY_ADMIN_SECRET missing in .env"; exit 1; }
+[[ $(wc -l < "$BUILD/relay.env") -eq 3 ]] || { echo "CLOUD_URL / STUDY_ADMIN_SECRET missing in .env"; exit 1; }
 (cd "$BUILD" && tar czf bundle.tgz run.mjs package.json shared relay.env portal-key.json)
 
 echo "copying to $HOST"
