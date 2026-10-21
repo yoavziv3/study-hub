@@ -139,7 +139,8 @@ function HomeworkPractice({ course, bundle, setBundle }) {
   const [topic, setTopic] = useState('');
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState('problems');
-  const hasMaterial = bundle.lectures.some((l) => kindOf(l) !== 'lecture' && l.status === 'ready');
+  // Exercises set the style; before there are any, the lectures do (exams and files kept as is don't count).
+  const hasMaterial = bundle.lectures.some((l) => kindOf(l) !== 'exam' && kindOf(l) !== 'prep' && !l.noAi && l.status === 'ready');
   const generate = async () => {
     setBusy(true);
     try {
@@ -157,7 +158,7 @@ function HomeworkPractice({ course, bundle, setBundle }) {
     <div style={{ marginTop: 34 }}>
       <div className="section-title" style={{ marginTop: 0 }}><h2>תרגול ברמת שיעורי הבית</h2><div className="line" /></div>
       <p className="muted" style={{ marginTop: -6 }}>
-        תרגילים חדשים שנכתבים לפי שיעורי הבית והתרגולים של הקורס – באותה רמה ובאותו סגנון, עם פתרון מלא לכל תרגיל.
+        תרגילים חדשים באותה רמה ובאותו סגנון כמו שיעורי הבית והתרגולים של הקורס (או ההרצאות, כשעוד אין תרגול), רק על מה שכבר נלמד, עם פתרון מלא לכל תרגיל.
       </p>
       <div className="card pad local-only row wrap" style={{ gap: 10, alignItems: 'flex-end' }}>
         <label className="field" style={{ width: 130 }}>מספר תרגילים
@@ -169,7 +170,7 @@ function HomeworkPractice({ course, bundle, setBundle }) {
         <button className="btn accent" style={{ height: 42 }} disabled={busy || !hasMaterial} onClick={generate}>
           {busy ? <Loader2 size={16} className="spin" /> : <Wand2 size={16} />} {busy ? 'כותב תרגילים… (כדקה–שתיים)' : 'צור תרגילים חדשים'}
         </button>
-        {!hasMaterial && <div className="faint" style={{ fontSize: 13, width: '100%' }}>התרגול ייווצר אחרי שיתווספו לקורס שיעורי בית או תרגולים.</div>}
+        {!hasMaterial && <div className="faint" style={{ fontSize: 13, width: '100%' }}>התרגול ייווצר אחרי שיעלו לקורס הרצאות, תרגולים או שיעורי בית.</div>}
       </div>
       {(problems.length > 0 || practice.quiz.length > 0) && (
         <>

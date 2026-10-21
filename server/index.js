@@ -194,7 +194,7 @@ app.post('/api/maintenance/retry-ai', async (req, res) => {
   if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
   let n = 0;
   for (const l of listLectures()) {
-    if (l.status !== 'ready') continue;
+    if (l.status !== 'ready' || l.noAi) continue;
     if (l.aiError) {
       await patchLecture(l.id, { status: 'processing', stage: 'queued' });
       enqueue(l.id, { aiOnly: true });
@@ -311,22 +311,29 @@ app.post('/api/courses/:id/practice', async (req, res) => {
   const course = getCourse(req.params.id);
   if (!course) return res.status(404).json({ error: 'קורס לא נמצא' });
   const { count = 5, topic = '' } = req.body;
-  const items = listLectures(course.id).filter((l) => l.status === 'ready');
-  const homework = items.filter((l) => l.kind === 'homework' || l.kind === 'tutorial');
-  if (!homework.length) return res.status(400).json({ error: 'אין עדיין שיעורי בית או תרגולים בקורס הזה' });
+  const items = listLectures(course.id).filter((l) => l.status === 'ready' && !l.noAi);
+  // Style comes from the course's exercises (homework, tutorials) or, before there are any, from its lectures.
+  const exercises = items.filter((l) => l.kind === 'homework' || l.kind === 'tutorial');
+  const lectures = items.filter((l) => (l.kind || 'lecture') === 'lecture');
+  const style = exercises.length ? exercises : lectures;
+  if (!style.length) return res.status(400).json({ error: 'אין עדיין הרצאות, תרגולים או שיעורי בית בקורס הזה' });
+  // What was taught so far: the lectures and tutorials on Moodle (their topics); before any, the exercise sheets.
+  // Booklets can cover the whole semester, so they set the style only, never the topics.
+  const taughtFrom = items.filter((l) => (l.kind || 'lecture') === 'lecture' || l.kind === 'tutorial');
+  const taught = (taughtFrom.length ? taughtFrom : exercises).flatMap((l) => [l.title, ...(getContent(l.id)?.topics || []).map((t) => `  ${t.title}`)]);
   try {
-    const hwText = homework
-      .map((l) => `## ${l.kind === 'homework' ? 'שיעורי בית' : 'תרגול'}: ${l.title}\n${getSlides(l.id).map((s) => s.text).join('\n')}`)
+    const hwText = style
+      .map((l) => `## ${l.kind === 'homework' ? 'שיעורי בית' : l.kind === 'tutorial' ? 'תרגול' : 'הרצאה'}: ${l.title}\n${getSlides(l.id).map((s) => s.text).join('\n').slice(0, 25000)}`)
       .join('\n\n')
-      .slice(0, 250000);
-    const lecText = items.filter((l) => (l.kind || 'lecture') === 'lecture').map((l) => `## ${l.title}\n${getContent(l.id)?.overview || ''}`).join('\n');
+      .slice(0, 200000);
+    const lecText = lectures.map((l) => `## ${l.title}\n${getContent(l.id)?.overview || ''}`).join('\n');
     const saved = getPractice(course.id);
-    const run = startRun('homework', { trigger: 'manual', input: { course: course.short, count: Number(count) || 5, topic, homework: homework.length } });
+    const run = startRun('homework', { trigger: 'manual', input: { course: course.short, count: Number(count) || 5, topic, style: style.map((l) => l.title).slice(0, 8), taught: taught.length } });
     let out;
     try {
       out = await generateJSON({
         system: `${lectureSystem(course)}\nבמשימה הזו אתה המתרגל של הקורס: כותב תרגילים ופתרונות רשמיים ברמה של שיעורי הבית.`,
-        prompt: homeworkPracticePrompt({ course, homework: hwText, lectures: lecText, count: Math.min(10, Number(count) || 5), topic, avoid: saved.problems.map((p) => p.question.slice(0, 120)).slice(-40) }),
+        prompt: homeworkPracticePrompt({ course, homework: hwText, lectures: lecText, taught, count: Math.min(10, Number(count) || 5), topic, avoid: saved.problems.map((p) => p.question.slice(0, 120)).slice(-40) }),
         schema: HOMEWORK_PRACTICE_SCHEMA,
         effort: 'high',
         maxTokens: 32000,

@@ -177,21 +177,26 @@ export const HOMEWORK_PRACTICE_SCHEMA = obj({
   problems: { type: 'array', items: obj({ question: str, solution: str, difficulty: { type: 'string', enum: ['easy', 'medium', 'hard'] }, topic: str }) },
 });
 
-export function homeworkPracticePrompt({ course, homework, lectures, count, topic, avoid }) {
-  return `לפניך שיעורי הבית והתרגילים של הקורס "${course.name}", ותקצירי ההרצאות.
+export function homeworkPracticePrompt({ course, homework, lectures, taught, count, topic, avoid }) {
+  return `לפניך חומרי התרגול של הקורס "${course.name}" (שיעורי בית ותרגולים, או ההרצאות כשאין עדיין תרגול), ותקצירי ההרצאות.
 
-<homework>
+<style_examples>
 ${homework}
-</homework>
+</style_examples>
 
 <lectures_summary>
 ${lectures}
 </lectures_summary>
 
-צור תרגול חדש **באותה רמה, באותו סגנון ובאותו היקף** כמו שיעורי הבית:
+<taught_so_far>
+${taught.map((t) => `- ${t}`).join('\n')}
+</taught_so_far>
+
+צור תרגול חדש **באותה רמה, באותו סגנון ובאותו היקף** כמו חומרי התרגול שלמעלה:
 - problems: ${count} תרגילים פתוחים חדשים (לא העתקה של תרגילים קיימים – אותם רעיונות עם נתונים/ניסוח אחרים). לכל תרגיל: question (נוסח מלא, Markdown, נוסחאות ב-LaTeX), solution (פתרון מלא צעד-אחר-צעד, כמו פתרון רשמי), difficulty, topic (נושא קצר).
-- quiz: ${Math.max(4, Math.round(count * 1.2))} שאלות אמריקאיות ברמת שיעורי הבית (בעיקר חישוב/יישום), 4 אפשרויות, correctIndex מבוסס 0, הסבר מלא, slide = 0.
-${topic ? `התמקד בנושא: ${topic}.` : 'פזר את התרגילים על פני הנושאים שבשיעורי הבית.'}
+- quiz: ${Math.max(4, Math.round(count * 1.2))} שאלות אמריקאיות באותה רמה (בעיקר חישוב/יישום), 4 אפשרויות, correctIndex מבוסס 0, הסבר מלא, slide = 0.
+**לא להקדים את המאוחר:** כל תרגיל וכל שאלה חייבים להיות רק על נושאים מהרשימה taught_so_far – מה שכבר נלמד. חוברות ומאגרים בדוגמאות יכולים לכסות את כל הסמסטר; מהם לוקחים רק את הסגנון ואת הרמה, לא נושאים שעוד לא נלמדו.
+${topic ? `התמקד בנושא: ${topic} (אם הוא ברשימה).` : 'פזר את התרגילים על פני הנושאים שכבר נלמדו.'}
 אל תחזור על התרגילים שכבר נוצרו:
 ${avoid.map((q) => `- ${q}`).join('\n') || '- (אין)'}
 

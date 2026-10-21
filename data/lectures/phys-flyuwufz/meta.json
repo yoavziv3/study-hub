@@ -23,6 +23,10 @@
     "timemodified": 1792598393
   },
   "updatedAt": "2026-10-21T21:04:06.266Z",
-  "aiError": "יצירת הסיכום נכשלה",
-  "announced": true
+  "aiError": null,
+  "announced": true,
+  "noAi": true,
+  "noAiReason": "scanned",
+  "notesError": null,
+  "notesStatus": null
 }

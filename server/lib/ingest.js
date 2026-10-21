@@ -21,6 +21,7 @@ export { ACCEPTED, EXAM_RE, detectKind };
 export const STAGES = ['queued', 'converting', 'rendering', 'extracting', 'classifying', 'analyzing', 'ready'];
 
 const queue = [];
+const MIN_TEXT = 300; // less extracted text than this: a scanned file, shown as is
 let running = false;
 
 // Item types: lectures, tutorial sessions (תרגולים) and homework / exercise sheets.
@@ -221,7 +222,10 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     await saveContent(id, content);
   } else if (existing && !aiOnly && !regenerate) {
     content = existing;
-  } else if (aiStatus().ready && course?.ai !== false && meta.kind !== 'exam' && slides.some((s) => s.trim())) {
+  } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
+    // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
+    await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
+  } else if (aiStatus().ready && course?.ai !== false && meta.kind !== 'exam' && !meta.noAi && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
     const trigger = meta.kind === 'prep' ? 'import' : aiOnly || regenerate ? 'retry' : meta.source?.fileKey || meta.source?.moodleId ? 'moodle' : 'upload';
@@ -280,7 +284,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
 export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
-  if (!meta || !content || (meta.kind || 'lecture') === 'homework' || !aiStatus().ready) return null;
+  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !aiStatus().ready) return null;
   if (getCourse(meta.courseId)?.ai === false) return null;
   const slides = getSlides(id).map((s) => s.text);
   if (!slides.some((s) => s.trim())) return null;

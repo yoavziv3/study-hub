@@ -288,7 +288,8 @@ export default function Lecture() {
   const ready = lecture.status === 'ready' || (!textOnly && lecture.slides.length > 0 && lecture.stage === 'analyzing');
   // Courses built for other students have the deck and personal notes only (no AI material);
   // a link to an AI tab of such a course falls back to the slides.
-  const noAi = course?.ai === false || lecture.kind === 'exam';
+  // Also files kept as they are: scanned sheets, and question banks that span the whole course (meta.noAi).
+  const noAi = course?.ai === false || lecture.kind === 'exam' || !!lecture.noAi;
   const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : textOnly && tab === 'slides' ? 'summary' : tab;
   const tabs = noAi ? [
     { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },

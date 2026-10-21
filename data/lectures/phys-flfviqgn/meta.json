@@ -28,5 +28,9 @@
   "checks": {
     "at": "2026-10-21T21:08:43.608Z",
     "found": 0
-  }
+  },
+  "noAi": true,
+  "noAiReason": "bank",
+  "notesError": null,
+  "notesStatus": null
 }
