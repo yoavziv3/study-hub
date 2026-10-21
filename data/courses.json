@@ -107,7 +107,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-20T21:21:30.826Z",
+      "checkedAt": "2026-10-21T07:07:56.529Z",
       "updatedAt": "2026-10-20T14:22:09.875Z"
     },
     "classes": [
@@ -239,7 +239,36 @@
       }
     ],
     "credits": 3.5,
-    "passGrade": 56
+    "passGrade": 56,
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2084&preview=1",
+    "grading": {
+      "components": [
+        {
+          "name": "בחינה סופית",
+          "weight": 90,
+          "kind": "exam",
+          "shield": false
+        },
+        {
+          "name": "תרגילי בית",
+          "weight": 10,
+          "kind": "homework",
+          "shield": false
+        }
+      ],
+      "complete": true,
+      "minExam": null,
+      "passGrade": 56,
+      "notes": [
+        "כדי שרכיב התרגילים ייכנס לציון צריך להגיש לפחות 5 מתוך כעשרה תרגילי בית.",
+        "התרגילים נכתבים בכתב יד ומוגשים סרוקים דרך אתר הקורס במודל.",
+        "הנוכחות בשיעור ובתרגול לא חובה, אבל מזכה בבונוס."
+      ],
+      "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2084&preview=1",
+      "hash": "c03ae8d807431bdd",
+      "checkedAt": "2026-10-21T07:08:07.264Z",
+      "extractedAt": "2026-10-21T07:08:07.264Z"
+    }
   },
   {
     "id": "calc",
@@ -734,7 +763,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-20T21:21:35.249Z",
+      "checkedAt": "2026-10-21T07:08:01.684Z",
       "updatedAt": "2026-10-20T14:22:14.183Z"
     },
     "classes": [
@@ -873,7 +902,7 @@
             "day": 1,
             "start": "10:00",
             "end": "12:00",
-            "place": "בניין כתות לימוד [35] חדר 116",
+            "place": "גוטמן [32] חדר 307",
             "mode": "היברידי"
           },
           {
@@ -1398,7 +1427,55 @@
       }
     ],
     "credits": 5,
-    "passGrade": 56
+    "passGrade": 56,
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=1605&preview=1",
+    "grading": {
+      "components": [
+        {
+          "name": "תרגילים להגשה",
+          "weight": 4,
+          "kind": "homework",
+          "shield": false
+        },
+        {
+          "name": "מבדקי סטאק",
+          "weight": 6,
+          "kind": "homework",
+          "shield": false
+        },
+        {
+          "name": "בוחן 1",
+          "weight": 7,
+          "kind": "quiz",
+          "shield": true
+        },
+        {
+          "name": "בוחן 2",
+          "weight": 7,
+          "kind": "quiz",
+          "shield": true
+        },
+        {
+          "name": "בחינה סופית",
+          "weight": 76,
+          "kind": "exam",
+          "shield": false
+        }
+      ],
+      "complete": true,
+      "minExam": null,
+      "passGrade": 56,
+      "notes": [
+        "אין ציון סף לאף מרכיב, רק ציון סופי משוקלל של 56 לפחות.",
+        "מטלת סטאק שקיבלתם בה לפחות 80% נספרת כ-100% בממוצע הסטאק (כ-10 מטלות, מספר ניסיונות לא מוגבל).",
+        "דפי התרגילים מקבלים הוגש/לא הוגש ומגישים אותם במודל בכתב יד בלבד.",
+        "בוחן 1 ב-20.11 ובוחן 2 ב-18.12, ושניהם מגן."
+      ],
+      "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=1605&preview=1",
+      "hash": "13ea5e1866200131",
+      "checkedAt": "2026-10-21T07:08:14.299Z",
+      "extractedAt": "2026-10-21T07:08:14.299Z"
+    }
   },
   {
     "id": "is",
@@ -1506,7 +1583,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-20T21:21:36.942Z",
+      "checkedAt": "2026-10-21T07:08:03.796Z",
       "updatedAt": "2026-10-20T14:22:16.027Z"
     },
     "classes": [
@@ -1554,7 +1631,43 @@
       }
     ],
     "credits": 3,
-    "passGrade": 56
+    "passGrade": 56,
+    "grading": {
+      "components": [
+        {
+          "name": "פרויקט – חלק א'",
+          "weight": 10,
+          "kind": "project",
+          "shield": false
+        },
+        {
+          "name": "פרויקט – חלק ב'",
+          "weight": 10,
+          "kind": "project",
+          "shield": false
+        },
+        {
+          "name": "בחינה סופית",
+          "weight": 80,
+          "kind": "exam",
+          "shield": false
+        }
+      ],
+      "complete": true,
+      "minExam": 56,
+      "passGrade": null,
+      "notes": [
+        "חובה להגיש את כל חלקי הפרויקט ולקבל ציון עובר בכל חלק כדי לעבור את הקורס.",
+        "ציון בבחינה הסופית מתחת ל-56: ציון הקורס יהיה ציון הבחינה.",
+        "10 נקודות יורדות על כל יום איחור (או חלק מיום) בהגשה ללא אישור.",
+        "אפשר לקבל עד 5 נקודות בונוס (הצגה, חידונים, נוכחות ב-10 שיעורים לפחות), ועוד עד 2 נקודות על השתתפות בניסויים."
+      ],
+      "source": "moodle",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3454987",
+      "hash": "a28fa0ad3e42596d",
+      "checkedAt": "2026-10-21T07:09:27.823Z",
+      "extractedAt": "2026-10-21T07:09:27.823Z"
+    }
   },
   {
     "id": "acc",
@@ -1656,7 +1769,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-20T21:21:37.820Z",
+      "checkedAt": "2026-10-21T07:08:04.682Z",
       "updatedAt": "2026-10-20T14:22:16.908Z"
     },
     "classes": [
@@ -1718,7 +1831,22 @@
       }
     ],
     "credits": 3.5,
-    "passGrade": 56
+    "passGrade": 56,
+    "grading": {
+      "components": [],
+      "complete": false,
+      "minExam": null,
+      "passGrade": null,
+      "notes": [
+        "השקפים מפנים לסילבוס באתר הקורס במודל לגבי מרכיבי הציון, אבל לא מפרטים אותם."
+      ],
+      "source": "lecture",
+      "url": null,
+      "lectureId": "acc-9tdsp6zl",
+      "hash": "6f42da68c132ffad",
+      "checkedAt": "2026-10-21T07:09:36.401Z",
+      "extractedAt": "2026-10-21T07:09:36.401Z"
+    }
   },
   {
     "id": "phys",
@@ -1816,7 +1944,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-20T21:21:39.070Z",
+      "checkedAt": "2026-10-21T07:08:06.008Z",
       "updatedAt": "2026-10-20T14:22:18.205Z"
     },
     "classes": [
@@ -1906,6 +2034,30 @@
       }
     ],
     "credits": 0,
-    "passGrade": 65
+    "passGrade": 65,
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2501&preview=1",
+    "grading": {
+      "components": [
+        {
+          "name": "בחינה סופית",
+          "weight": 100,
+          "kind": "exam",
+          "shield": false
+        }
+      ],
+      "complete": true,
+      "minExam": 65,
+      "passGrade": 65,
+      "notes": [
+        "כדי לעבור את הקורס צריך לקבל 65 ומעלה בבחינה המסכמת.",
+        "בבחינה יש 5 שאלות, ועונים על 4 מהן. משך הבחינה 3 שעות.",
+        "לבחינה מצורף דף נוסחאות מוסכם, ומותר להשתמש במחשבון לא גרפי.",
+        "אין חובת נוכחות פורמלית במפגשים המקוונים."
+      ],
+      "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2501&preview=1",
+      "hash": "d17b4c8d72ca6ffd",
+      "checkedAt": "2026-10-21T07:08:22.403Z",
+      "extractedAt": "2026-10-21T07:08:22.403Z"
+    }
   }
 ]

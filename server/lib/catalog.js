@@ -4,6 +4,7 @@
 // Stored on the course as `classes` and `exams` and published with courses.json, so every student sees them.
 import { listCourses, patchCourse } from './store.js';
 import { announceExamDates, announceClassChange } from './updates.js';
+import { parseSyllabusUrl, syncAllGrading } from './syllabus.js';
 
 const CATALOG = 'https://bgu4u.bgu.ac.il/pls/scwp/!app.ann';
 const REFRESH_MS = 12 * 3600000;
@@ -129,7 +130,7 @@ export async function fetchCatalog(code, term) {
   // The catalog is served in ISO-8859-8 (Hebrew).
   const html = new TextDecoder('iso-8859-8').decode(await res.arrayBuffer());
   if (!html.includes('פרטי קורס')) return null; // course not in the catalog for this term
-  return { exams: parseExams(html), classes: parseClasses(html), details: parseDetails(html) };
+  return { exams: parseExams(html), classes: parseClasses(html), details: parseDetails(html), syllabusUrl: parseSyllabusUrl(html) };
 }
 
 const fmt = (iso) => iso.split('-').reverse().join('/');
@@ -160,6 +161,7 @@ export async function syncCatalog({ force = false } = {}) {
         if (page.classes.length) patch.classes = page.classes;
         if (page.details.credits != null) patch.credits = page.details.credits;
         if (page.details.passGrade != null) patch.passGrade = page.details.passGrade;
+        if (page.syllabusUrl) patch.syllabusUrl = page.syllabusUrl;
         await patchCourse(c.id, patch);
         // A room or time of an existing group moved: tell the students (they see it if it's their group).
         if (c.classes?.length && page.classes.length) {
@@ -173,6 +175,9 @@ export async function syncCatalog({ force = false } = {}) {
         result.errors.push(`${c.short}: ${e.message}`);
       }
     }
+    // The grade composition from each syllabus (an AI call only when a syllabus is new or changed).
+    const grading = await syncAllGrading();
+    result.errors.push(...grading.errors);
   } finally {
     running = false;
   }

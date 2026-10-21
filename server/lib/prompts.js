@@ -222,3 +222,39 @@ ${scope}
 ${context}
 </course_material>`;
 }
+
+// ---------- grade composition from the course syllabus ----------
+export const GRADING_SCHEMA = obj({
+  components: {
+    type: 'array',
+    items: obj({
+      name: str,
+      weight: { type: 'number' },
+      kind: { type: 'string', enum: ['exam', 'quiz', 'homework', 'project', 'lab', 'participation', 'other'] },
+      shield: { type: 'boolean' },
+    }),
+  },
+  minExamGrade: { type: 'number' },
+  passGrade: { type: 'number' },
+  notes: strArr,
+  found: { type: 'boolean' },
+});
+
+export function gradingPrompt({ course, text, fromLecture = false }) {
+  return `${fromLecture ? 'אלה השקפים של השיעורים הראשונים' : 'זה הסילבוס'} של הקורס "${course.name}" (${course.code}). חלץ ${fromLecture ? 'מהם' : 'ממנו'} את הרכב הציון הסופי.
+
+- components: כל מרכיב בציון עם המשקל שלו באחוזים (המשקלות מסתכמים ל־100). שם קצר וברור כמו בסילבוס ("בוחן 1", "תרגילי בית", "בחינה סופית").
+  kind: exam לבחינה הסופית, quiz לבוחן, homework לתרגילים/מטלות, project לעבודה/פרויקט, lab למעבדה, participation להשתתפות.
+  shield: true רק אם כתוב שהמרכיב "מגן" (נספר רק אם הוא משפר את הציון).
+  אם בוחן אחד מופיע כמה פעמים (בוחן 1, בוחן 2) – כל אחד מרכיב נפרד.
+- minExamGrade: ציון סף בבחינה הסופית שבלעדיו לא עוברים את הקורס (0 אם אין).
+- passGrade: ציון המעבר בקורס (0 אם לא כתוב).
+- notes: עד 4 דרישות קצרות שחשוב לדעת לחישוב הציון (חובת הגשה, ציון סף במטלות, נוכחות, ממוצע של X הטובים מתוך Y). משפט קצר לכל אחת. בלי דברים כלליים.
+- found: false אם אין בטקסט הרכב ציון ברור (ואז components ריק).
+
+לא להמציא: רק מה שכתוב בטקסט.
+
+<syllabus>
+${text}
+</syllabus>`;
+}

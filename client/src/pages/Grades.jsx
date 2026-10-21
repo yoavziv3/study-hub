@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Calculator, Plus, Trash2, Target, ChevronDown, FileText, Award, Download, Check } from 'lucide-react';
+import { Calculator, Plus, Trash2, Target, ChevronDown, FileText, Award, Download, Check, RotateCcw, Shield } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, CourseIcon, safeHref } from '../components/ui.jsx';
 import { termsOf, termLabel, termKey, SEMESTER_LABEL, hebrewYear } from '../lib/terms.js';
-import { gradeRows, average, needed, num, fmtAvg, ceil1, moodlePercent, withMoodleGrade, usesMoodleGrade } from '../lib/grades.js';
+import { gradeRows, average, needed, num, fmtAvg, ceil1, moodlePercent, withMoodleGrade, usesMoodleGrade, syllabusComponents } from '../lib/grades.js';
 
 const OWN = ['name', 'credits', 'final', 'pass'];
 const newId = () => `x-${Math.random().toString(36).slice(2, 9)}`;
@@ -183,34 +183,51 @@ const DEFAULT_COMPONENTS = () => [
 function ExamCalculator({ row, onChange }) {
   const e = row.entry;
   const c = row.course;
-  const pass = num(c?.passGrade) || 56;
-  const [fallback] = useState(DEFAULT_COMPONENTS); // until the first edit saves the list
+  // The weights read from the course's syllabus (see server/lib/syllabus.js) are the starting point.
+  const grading = c?.grading?.components?.length ? c.grading : null;
+  const pass = num(grading?.passGrade) || num(c?.passGrade) || 56;
+  const [fallback] = useState(() => (grading ? syllabusComponents(c, newId) : DEFAULT_COMPONENTS())); // until the first edit saves the list
   const components = e.components?.length ? e.components : fallback;
+  const fromSyllabus = grading && !e.components?.length;
   const target = num(e.target) ?? pass;
+  const minExam = e.minExam !== undefined ? e.minExam : grading?.minExam ?? null;
   const { data: links } = useFetch(c ? `/api/courses/${c.id}/links` : null);
-  const syllabus = (links || []).find((l) => l.type === 'syllabus');
+  const syllabusHref = safeHref(grading?.url) || safeHref((links || []).find((l) => l.type === 'syllabus')?.href);
   // Grades already in Moodle (homework, quizzes…) fill the matching components, or are added as new ones.
   const { data: moodle } = useFetch(c ? `/api/me/grades/${c.id}` : null);
   const graded = (moodle?.items || []).filter((g) => !g.total && moodlePercent(g) != null);
 
   const setComponents = (list) => onChange({ components: list });
   const edit = (id, patch) => setComponents(components.map((x) => (x.id === id ? { ...x, ...patch } : x)));
-  const r = needed(components, target, e.minExam);
+  const r = needed(components, target, minExam);
   const targets = [...new Set([pass, 70, 80, 90])].sort((a, b) => a - b);
 
   return (
     <div className="exam-calc">
       <div className="row wrap" style={{ gap: 8, marginBottom: 10 }}>
-        <b className="grow">רכיבי הציון (לפי הסילבוס)</b>
-        {safeHref(syllabus?.href) && <a className="btn sm ghost" href={safeHref(syllabus.href)} target="_blank" rel="noreferrer"><FileText size={14} /> פתיחת הסילבוס</a>}
+        <b className="grow">רכיבי הציון</b>
+        {fromSyllabus && <span className="chip c">המשקלות מהסילבוס</span>}
+        {grading && !fromSyllabus && <button className="btn sm ghost" onClick={() => onChange({ components: null, minExam: undefined })}><RotateCcw size={14} /> חזרה למשקלות מהסילבוס</button>}
+        {syllabusHref && <a className="btn sm ghost" href={syllabusHref} target="_blank" rel="noreferrer"><FileText size={14} /> הסילבוס</a>}
       </div>
+      {grading?.notes?.length > 0 && (
+        <ul className="syllabus-notes faint">{grading.notes.map((n) => <li key={n}>{n}</li>)}</ul>
+      )}
+      {!grading && (
+        <div className="faint" style={{ fontSize: 13, marginBottom: 8 }}>
+          לא מצאתי הרכב ציון בסילבוס של הקורס הזה{c?.grading?.notes?.[0] ? ` (${c.grading.notes[0]})` : ''} – מלאו את המשקלות לפי מה שהמרצה פרסם.
+        </div>
+      )}
       <div className="calc-rows">
-        <div className="calc-head faint"><span>רכיב</span><span>משקל %</span><span>ציון</span><span /></div>
+        <div className="calc-head faint"><span>רכיב</span><span>משקל %</span><span>ציון</span><span title="מגן: נספר רק אם הוא משפר את הציון">מגן</span><span /></div>
         {components.map((x) => (
           <div key={x.id} className="calc-row">
             <input className="input sm" value={x.name} aria-label="שם הרכיב" onChange={(ev) => edit(x.id, { name: ev.target.value })} />
             <NumField value={num(x.weight)} label={`משקל – ${x.name}`} width={70} onChange={(v) => edit(x.id, { weight: v })} />
             <NumField value={num(x.grade)} label={`ציון – ${x.name}`} width={70} placeholder="טרם" onChange={(v) => edit(x.id, { grade: v })} />
+            <label className="calc-shield" title="מגן: נספר רק אם הוא משפר את הציון">
+              <input type="checkbox" checked={!!x.shield} onChange={(ev) => edit(x.id, { shield: ev.target.checked })} aria-label={`${x.name} – מגן`} />
+            </label>
             <button className="btn sm icon ghost" onClick={() => setComponents(components.filter((y) => y.id !== x.id))} aria-label="הסרת רכיב" disabled={components.length < 2}><Trash2 size={13} /></button>
           </div>
         ))}
@@ -243,7 +260,7 @@ function ExamCalculator({ row, onChange }) {
             <button key={t} className={`chip ${t === target ? 'c' : ''}`} onClick={() => onChange({ target: t })}>{t === pass ? `עובר (${t})` : t}</button>
           ))}
         </div>
-        <label className="grade-field"><span>מינימום במבחן</span><NumField value={num(e.minExam)} placeholder="אין" label="ציון מינימלי במבחן" onChange={(v) => onChange({ minExam: v })} /></label>
+        <label className="grade-field"><span>מינימום במבחן</span><NumField value={num(minExam)} placeholder="אין" label="ציון מינימלי במבחן" onChange={(v) => onChange({ minExam: v })} /></label>
       </div>
 
       <div className="callout calc-result">
@@ -257,14 +274,19 @@ function ExamCalculator({ row, onChange }) {
         ) : r.secured ? (
           <span>כבר הבטחתם {target}: גם עם 0 במה שנשאר הציון יהיה <b className="num">{ceil1(r.known)}</b>.</span>
         ) : (
-          <span>כדי לסיים עם <b>{target}</b> צריך לפחות <b className="calc-need num">{ceil1(r.need)}</b> {r.rest < r.total && components.filter((x) => num(x.grade) == null).length > 1 ? 'בכל אחד מהרכיבים שנותרו' : 'במבחן'}.</span>
+          <span>כדי לסיים עם <b>{target}</b> צריך לפחות <b className="calc-need num">{ceil1(r.need)}</b> {components.filter((x) => num(x.grade) == null).length > 1 ? 'בכל אחד מהרכיבים שעוד אין להם ציון' : 'במבחן'}.</span>
+        )}
+        {r.dropped?.length > 0 && (
+          <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>
+            <Shield size={12} style={{ verticalAlign: -1 }} /> {r.dropped.join(' ו')} לא {r.dropped.length > 1 ? 'נספרים' : 'נספר'} – {r.dropped.length > 1 ? 'הם מגן ולא משפרים' : 'הוא מגן ולא משפר'} את הציון, אז המשקל עובר לבחינה.
+          </div>
         )}
       </div>
       {r.need != null && (
         <div className="row wrap" style={{ gap: 6, marginTop: 8, fontSize: 13 }}>
           <span className="faint">לפי יעד:</span>
           {targets.map((t) => {
-            const x = needed(components, t, e.minExam);
+            const x = needed(components, t, minExam);
             return <span key={t} className={`chip ${x.impossible ? 'bad' : ''}`}>ל־{t}: {x.impossible ? 'לא אפשרי' : ceil1(Math.max(0, x.need))}</span>;
           })}
         </div>

@@ -445,6 +445,26 @@ async function importFile(file, siteCourseId, moodleId, { via = null, initial = 
 }
 
 /** Import (or re-import) one specific file chosen by the user. */
+/** The course's syllabus file on its Moodle page (a PDF named "סילבוס"), downloaded – or null. For grading (syllabus.js). */
+export async function syllabusFile(siteId) {
+  const own = Object.entries(state.map || {}).find(([, v]) => v === siteId)?.[0];
+  const remote = Object.entries(state.remote || {}).find(([, v]) => v === siteId)?.[0];
+  const moodleId = own || remote;
+  if (!moodleId || (own ? !state.token : !cloudEnabled())) return null;
+  const via = own ? null : moodleId;
+  const call = via ? remoteRest(moodleId) : rest;
+  const sections = await call('core_course_get_contents', { courseid: Number(moodleId) });
+  for (const sec of sections || []) {
+    for (const mod of sec.modules || []) {
+      const f = mod.modname === 'resource' ? (mod.contents || [])[0] : null;
+      if (f && /syllabus|סילבוס/i.test(`${mod.name} ${f.filename}`) && /\.pdf$/i.test(f.filename)) {
+        return { path: await download(f, via), href: `${SITE}/mod/resource/view.php?id=${mod.id}` };
+      }
+    }
+  }
+  return null;
+}
+
 export async function importOne(moodleId, key) {
   const siteCourseId = state.map[moodleId];
   if (!siteCourseId) throw new Error('הקורס לא משויך לקורס באתר');
