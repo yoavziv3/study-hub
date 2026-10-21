@@ -379,6 +379,30 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893536",
       "createdAt": "2026-10-21T07:08:36.000Z",
       "addedAt": "2026-10-21T07:10:19.101Z"
+    },
+    {
+      "id": "mvhw7xdk9bmm",
+      "key": "announcement:893609",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "ביטול תרגול של אוקסנה",
+      "body": "שלום לכולם\n\nתרגול של אוקסנה האמור להתקיים היום בין 12-14 מתבטל באופן חד פעמי,\n\nעמכם הסליחה, \n\nאוקסנה",
+      "author": "אוקסנה קרבץ",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893609",
+      "createdAt": "2026-10-21T08:56:52.000Z",
+      "addedAt": "2026-10-21T09:11:45.080Z"
+    },
+    {
+      "id": "mvhw7xdm5vcf",
+      "key": "announcement:893607",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "ביטול תרגול של אוקסנה",
+      "body": "שלום לכולם\n\nתרגול של אוקסנה האמור להתקיים היום בין 12-14 מתבטל באופן חד פעמי,\n\nעמכם הסליחה, \n\nאוקסנה",
+      "author": "אוקסנה קרבץ",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893607",
+      "createdAt": "2026-10-21T08:55:55.000Z",
+      "addedAt": "2026-10-21T09:11:45.082Z"
     }
   ],
   "deadlines": [
