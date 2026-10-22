@@ -25,6 +25,12 @@ function similar(a, b) {
   for (const w of a) if (b.has(w)) common++;
   return common / (a.size + b.size - common || 1) >= 0.8;
 }
+// The banks run on the owner's Claude plan – the same quota they use themselves – so by default they are written
+// only at night (Israel time, BANK_HOURS="from-to", e.g. "1-7"; "0-24" for always). Summaries of new lessons
+// aren't affected: only these extra questions wait.
+const [BANK_FROM, BANK_TO] = (process.env.BANK_HOURS || '1-7').split('-').map(Number);
+const hourIL = () => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
+export const bankHours = () => { const h = hourIL(); return BANK_FROM <= BANK_TO ? h >= BANK_FROM && h < BANK_TO : h >= BANK_FROM || h < BANK_TO; };
 const isLimit = (e) => /429|usage|limit|quota|authenticate|login/i.test(String(e?.message || e));
 
 /** One round of new questions for a lesson; returns the questions added. */
@@ -78,6 +84,7 @@ export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'man
   let added = 0;
   let thin = 0;
   for (let round = 0; round < rounds; round++) {
+    if (!bankHours()) break; // the rest waits for tonight (growAllBanks picks it up again)
     const have = bankOf(getContent(lectureId)).length;
     if (have >= target) break;
     const from = ((round * span) % total) + 1;
@@ -132,6 +139,7 @@ export function queueBank(lectureId, trigger = 'after-lecture') {
 /** Every lesson on the site below the target, one after another (in the background). Also called by the AI watch
  *  (health.js) whenever Claude answers, so a run stopped by a usage limit carries on by itself. */
 export function growAllBanks({ target = BANK_TARGET } = {}) {
+  if (!bankHours()) return { queued: 0, waiting: 'outside BANK_HOURS' };
   for (const l of listLectures()) {
     if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
   }

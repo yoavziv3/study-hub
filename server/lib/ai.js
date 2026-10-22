@@ -55,11 +55,17 @@ function cliArgs({ system, effort, extra = [] }) {
   ];
 }
 
-function spawnCli(args, input, { onLine, signal } = {}) {
+// A call that hangs would hold up everything queued behind it (one stuck call once blocked for four hours).
+const CLI_TIMEOUT = 20 * 60000;
+
+function spawnCli(args, input, { onLine, signal, timeoutMs = onLine ? 0 : CLI_TIMEOUT } = {}) {
   return new Promise((resolve, reject) => {
     const bin = findClaudeCli();
     if (!bin) return reject(new Error('Claude CLI not found'));
     const child = spawn(bin, args, { cwd: os.tmpdir(), env: process.env });
+    let timedOut = false;
+    const timer = timeoutMs ? setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, timeoutMs) : null;
+    child.on('close', () => clearTimeout(timer));
     let out = '';
     let err = '';
     let buf = '';
@@ -79,6 +85,7 @@ function spawnCli(args, input, { onLine, signal } = {}) {
     child.on('error', reject);
     child.on('close', (code) => {
       if (onLine && buf.trim()) onLine(buf.trim());
+      if (timedOut) return reject(new Error(`claude timed out after ${Math.round(timeoutMs / 60000)} minutes`));
       if (code === 0 || signal?.aborted) return resolve(out);
       // With --output-format json the reason is in the reply's "result" (e.g. an expired sign-in), not in stderr.
       let reason = '';
