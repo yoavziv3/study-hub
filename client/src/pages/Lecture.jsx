@@ -6,7 +6,7 @@ import {
   RefreshCw, Trash2, Pencil, Loader2, AlertTriangle, ChevronLeft, Wand2, Eye, Download,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { api, useFetch, originalUrl, STAGE_LABELS, STAGE_ORDER } from '../api.js';
+import { api, useFetch, originalUrl, STAGE_LABELS, STAGE_ORDER, shuffle, hash } from '../api.js';
 import { Page, Tabs, fadeUp } from '../components/ui.jsx';
 import { Markdown } from '../components/markdown.jsx';
 import SlideViewer from '../components/SlideViewer.jsx';
@@ -90,15 +90,48 @@ function TopicsTab({ content, goSlide }) {
   );
 }
 
+// Practice is a set of PRACTICE_SET questions from the lesson's bank: ones never answered first, then ones answered
+// wrong, then the rest – so each new set goes on from where the student is. The set (and the place in it) is kept
+// in this browser, so a refresh comes back to the same question.
+const PRACTICE_SET = 15;
+function pickSet(pool, items = {}) {
+  const by = (v) => shuffle(pool.filter((q) => items[hash(q.question)] === v));
+  return [...by(undefined), ...by(false), ...by(true)].slice(0, PRACTICE_SET);
+}
+const storage = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* blocked */ } },
+};
+
 function PracticeTab({ lecture, goSlide, reload }) {
-  const { toast, progress } = useApp();
+  const { toast, progress, progressLoaded } = useApp();
   const [diff, setDiff] = useState('all');
   const [gen, setGen] = useState(false);
-  const [run, setRun] = useState(0);
   const [open, setOpen] = useState({});
   const all = [...(lecture.content.quiz || []), ...(lecture.content.extraQuiz || [])];
   const qs = diff === 'all' ? all : all.filter((q) => q.difficulty === diff);
   const stats = progress.quiz[lecture.id];
+  const items = stats?.items || {};
+  const seen = qs.filter((q) => items[hash(q.question)] !== undefined).length;
+
+  // The current set: the one saved for this lesson and level, or a new one (once progress has loaded).
+  const setKey = `practice-set:${lecture.id}:${diff}`;
+  const [set, setSet] = useState(null);
+  useEffect(() => {
+    if (!progressLoaded) return;
+    const byHash = new Map(qs.map((q) => [hash(q.question), q]));
+    const saved = (storage.get(setKey) || []).map((h) => byHash.get(h));
+    if (saved.length && saved.every(Boolean)) { setSet(saved); return; }
+    const fresh = pickSet(qs, items);
+    storage.set(setKey, fresh.map((q) => hash(q.question)));
+    setSet(fresh);
+  }, [setKey, progressLoaded, all.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const nextSet = () => {
+    const fresh = pickSet(qs, progress.quiz[lecture.id]?.items);
+    storage.set(setKey, fresh.map((q) => hash(q.question)));
+    setSet(fresh);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const generate = async () => {
     setGen(true);
@@ -106,7 +139,6 @@ function PracticeTab({ lecture, goSlide, reload }) {
       const r = await api.post('/api/practice', { lectureId: lecture.id, count: 6 });
       toast(`נוספו ${r.quiz.length} שאלות חדשות`);
       await reload();
-      setRun((x) => x + 1);
     } catch (e) {
       toast(e.message, 'info');
     } finally {
@@ -119,16 +151,19 @@ function PracticeTab({ lecture, goSlide, reload }) {
       <div className="row wrap" style={{ justifyContent: 'center' }}>
         <div className="tabs">
           {[['all', `הכל (${all.length})`], ['easy', 'קל'], ['medium', 'בינוני'], ['hard', 'קשה']].map(([id, label]) => (
-            <button key={id} className={`tab ${diff === id ? 'active' : ''}`} onClick={() => { setDiff(id); setRun((x) => x + 1); }}>
+            <button key={id} className={`tab ${diff === id ? 'active' : ''}`} onClick={() => setDiff(id)}>
               {diff === id && <motion.span layoutId="diff" className="tab-bg" />}
               {label}
             </button>
           ))}
         </div>
         <button className="local-only btn sm" onClick={generate} disabled={gen}>{gen ? <Loader2 size={14} className="spin" /> : <Wand2 size={14} />} {gen ? 'יוצר שאלות…' : 'צור 6 שאלות חדשות'}</button>
+        <span className="chip">ענית על {seen} מתוך {qs.length} שאלות בבנק</span>
         {stats && <span className="chip good">דיוק מצטבר: {Math.round((stats.correct / stats.answered) * 100)}% ({stats.answered})</span>}
       </div>
-      <Quiz key={run + diff} questions={qs} lectureId={lecture.id} />
+      {set ? (
+        <Quiz key={set.map((q) => hash(q.question)).join('|')} questions={set} lectureId={lecture.id} persistKey={`${setKey}:quiz`} onMore={nextSet} moreLabel={`עוד ${PRACTICE_SET} שאלות`} />
+      ) : <div style={{ padding: 30, textAlign: 'center' }}><Loader2 className="spin" /></div>}
 
       {lecture.content.openQuestions?.length > 0 && (
         <div style={{ maxWidth: 820, margin: '10px auto 0', width: '100%' }}>

@@ -55,7 +55,13 @@ function ExamMode({ bundle, courseId }) {
   const [count, setCount] = useState(12);
   const [source, setSource] = useState('all');
   const [mode, setMode] = useState('practice');
-  const [run, setRun] = useState(null);
+  // A running test is kept in this browser, so a refresh comes back to it (the Quiz keeps its place: persistKey).
+  const runKey = `exam-run:${courseId}`;
+  const [run, setRunState] = useState(() => { try { return JSON.parse(localStorage.getItem(runKey) || 'null'); } catch { return null; } });
+  const setRun = (r) => {
+    setRunState(r);
+    try { if (r) localStorage.setItem(runKey, JSON.stringify(r)); else { localStorage.removeItem(runKey); localStorage.removeItem(`${runKey}:quiz`); } } catch { /* blocked */ }
+  };
   const ready = bundle.lectures.filter((l) => l.content?.quiz?.length);
   const start = () => {
     const pool = ready
@@ -68,7 +74,7 @@ function ExamMode({ bundle, courseId }) {
     if (r.total) updatePrep(courseId, (p) => ({ ...p, sims: [...(p.sims || []), { at: Date.now(), correct: r.correct, total: r.total }].slice(-12) }));
   };
   if (!ready.length) return <Empty course={bundle} text="מבחן התרגול ייבנה מהשאלות של ההרצאות שיועלו." />;
-  if (run) return <Quiz key={run.key} questions={run.questions} lectureId={null} exam sim={run.sim} timeLimit={run.timeLimit} onFinish={run.sim ? finishSim : undefined} onExit={() => setRun(null)} />;
+  if (run) return <Quiz key={run.key} questions={run.questions} lectureId={null} exam sim={run.sim} timeLimit={run.timeLimit} onFinish={run.sim ? finishSim : undefined} onExit={() => setRun(null)} persistKey={`${runKey}:quiz`} />;
   return (
     <div className="card pad" style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
       <div className="empty-icon" style={{ marginBottom: 14 }}><Target size={30} /></div>

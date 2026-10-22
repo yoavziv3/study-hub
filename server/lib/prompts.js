@@ -203,9 +203,11 @@ ${avoid.map((q) => `- ${q}`).join('\n') || '- (אין)'}
 הקפד על נכונות מלאה של כל פתרון ותשובה – בדוק את החישובים פעמיים.`;
 }
 
-export function practicePrompt({ course, title, material, count, difficulty, avoid }) {
+export function practicePrompt({ course, title, material, count, difficulty, avoid, focus = null }) {
   return `צור ${count} שאלות אמריקאיות חדשות ברמת מבחן בקורס "${course.name}" על החומר הבא ("${title}").
-רמת קושי מבוקשת: ${difficulty === 'mixed' ? 'מעורבת' : difficulty}.
+רמת קושי מבוקשת: ${difficulty === 'mixed' ? 'מעורבת' : difficulty}.${focus ? `
+הפעם התמקד בשקפים ${focus.from}–${focus.to} (מותר לחבר אותם לשאר החומר).` : ''}
+גוון את סוגי השאלות: הגדרה, יישום על מקרה, השוואה בין מושגים, "איזה משפט נכון", חישוב כשיש נתונים, וזיהוי טעות. כל שאלה צריכה לבדוק משהו אחר – לא אותה שאלה בניסוח אחר.
 אל תחזור על השאלות הקיימות האלה:
 ${avoid.map((q) => `- ${q}`).join('\n') || '- (אין)'}
 

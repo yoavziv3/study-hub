@@ -1,33 +1,45 @@
-// More practice questions for a lesson, beyond the 10–14 its summary comes with: written from the lesson's own
+// A big question bank per lesson, beyond the 10–14 questions its summary comes with: written from the lesson's own
 // slides (so never ahead of the course), checked like every AI output (checks.js), deduplicated against what the
-// lesson already has, and kept in content.extraQuiz. growBank brings a lesson up to BANK_TARGET questions in rounds;
-// the ingest pipeline runs it after each new lecture, and /api/maintenance/grow-banks fills up the existing ones.
+// lesson already has (also near-duplicates), and kept in content.extraQuiz. Students practise it in sets of 15
+// (client: Lecture → PracticeTab), unanswered and wrong questions first.
+// growBank brings a lesson up to BANK_TARGET in rounds, each focused on another stretch of the slides so the bank
+// covers the whole lesson. It runs on its own worker (queueBank), not in the ingest queue: a new lesson goes up
+// right away and its bank fills in afterwards. /api/maintenance/grow-banks fills up the existing lessons.
 import { getCourse, getLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
 import { generateJSON, aiStatus } from './ai.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
 import { checkQuiz } from './checks.js';
 
-export const BANK_TARGET = 30;
-const ROUND = 10;
+export const BANK_TARGET = 200;
+const ROUND = 20;
 const BANK_KINDS = ['lecture', 'tutorial', 'prep'];
 
 const bankOf = (content) => [...(content?.quiz || []), ...(content?.extraQuiz || [])];
 
+// Near-duplicates: the same words in another order or with small changes (Jaccard over word sets).
+const words = (t) => new Set(String(t).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter((w) => w.length > 1));
+function similar(a, b) {
+  let common = 0;
+  for (const w of a) if (b.has(w)) common++;
+  return common / (a.size + b.size - common || 1) >= 0.8;
+}
+const isLimit = (e) => /429|usage|limit|quota|authenticate|login/i.test(String(e?.message || e));
+
 /** One round of new questions for a lesson; returns the questions added. */
-export async function addLectureQuestions(lectureId, { count = 6, difficulty = 'mixed', trigger = 'manual' } = {}) {
+export async function addLectureQuestions(lectureId, { count = 6, difficulty = 'mixed', trigger = 'manual', focus = null } = {}) {
   const meta = getLecture(lectureId);
   const course = getCourse(meta.courseId);
   const content = getContent(lectureId) || {};
   const slides = getSlides(lectureId);
   const material = slides.map((s) => `[שקף ${s.n}] ${s.text}`).join('\n');
   const avoid = bankOf(content).map((q) => q.question);
-  const run = startRun('practice', { trigger, input: { lectureId, course: course.short, title: meta.title, count, difficulty, has: avoid.length } });
+  const run = startRun('practice', { trigger, input: { lectureId, course: course.short, title: meta.title, count, difficulty, has: avoid.length, ...(focus ? { slides: `${focus.from}-${focus.to}` } : {}) } });
   let out;
   try {
     out = await generateJSON({
       system: `אתה כותב שאלות מבחן מקצועי בקורס ${course.name}. הקפד על נכונות מלאה של התשובה המסומנת.`,
-      prompt: practicePrompt({ course, title: meta.title, material: material.slice(0, 180000), count, difficulty, avoid: avoid.slice(0, 120) }),
+      prompt: practicePrompt({ course, title: meta.title, material: material.slice(0, 180000), count, difficulty, focus, avoid: avoid.map((q) => q.slice(0, 110)).slice(-220) }),
       schema: PRACTICE_SCHEMA,
       effort: 'medium',
       maxTokens: 24000,
@@ -37,10 +49,16 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
     throw e;
   }
   const checked = checkQuiz(out.quiz, { slideCount: slides.length });
-  // Questions the lesson already has are not added again.
-  const known = new Set(avoid);
-  const fresh = checked.value.filter((q) => !known.has(q.question));
-  const checks = [...checked.checks, ...(fresh.length < checked.value.length ? [{ rule: 'practice.duplicate', level: 'fixed', detail: `הוסרו ${checked.value.length - fresh.length} שאלות שכבר קיימות` }] : [])];
+  // Questions the lesson already has (or almost the same ones) are not added again.
+  const seen = avoid.map(words);
+  const fresh = [];
+  for (const q of checked.value) {
+    const w = words(q.question);
+    if (seen.some((x) => similar(w, x))) continue;
+    seen.push(w);
+    fresh.push(q);
+  }
+  const checks = [...checked.checks, ...(fresh.length < checked.value.length ? [{ rule: 'practice.duplicate', level: 'fixed', detail: `הוסרו ${checked.value.length - fresh.length} שאלות שכבר קיימות או כמעט זהות` }] : [])];
   run.ok({ asked: count, kept: fresh.length, total: avoid.length + fresh.length }, checks);
   const quiz = fresh.map((q) => ({ ...q, generated: true }));
   const latest = getContent(lectureId) || {};
@@ -48,41 +66,71 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
   return quiz;
 }
 
-/** Brings a lesson's bank up to `target` questions, ROUND at a time (stops early if a round adds nothing). */
+/** Brings a lesson's bank up to `target` questions, a round at a time over stretches of the slides. */
 export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'manual' } = {}) {
   const meta = getLecture(lectureId);
-  if (!meta || meta.noAi || !BANK_KINDS.includes(meta.kind || 'lecture') || !aiStatus().ready) return 0;
+  if (!meta || meta.noAi || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !aiStatus().ready) return 0;
   if (getCourse(meta.courseId)?.ai === false || !getContent(lectureId)) return 0;
+  const total = Math.max(1, getSlides(lectureId).length);
+  const rounds = Math.ceil(target / ROUND) + 3;
+  const span = Math.max(4, Math.ceil(total / Math.max(1, Math.ceil(target / ROUND))));
   let added = 0;
-  for (let round = 0; round < 4; round++) {
+  let thin = 0;
+  for (let round = 0; round < rounds; round++) {
     const have = bankOf(getContent(lectureId)).length;
     if (have >= target) break;
-    const got = await addLectureQuestions(lectureId, { count: Math.min(ROUND, target - have + 2), trigger });
+    const from = ((round * span) % total) + 1;
+    const focus = total > span ? { from, to: Math.min(total, from + span - 1) } : null;
+    const got = await addLectureQuestions(lectureId, { count: Math.min(ROUND, target - have + 2), trigger, focus });
     added += got.length;
-    if (!got.length) break;
+    // Two rounds in a row that add almost nothing: the slides are exhausted – stop rather than pad the bank.
+    thin = got.length < 3 ? thin + 1 : 0;
+    if (thin >= 2) break;
   }
   return added;
 }
 
-let growing = false;
-/** Every lesson on the site below the target, one after another (in the background). */
-export async function growAllBanks({ target = BANK_TARGET } = {}) {
-  if (growing) return { running: true };
-  growing = true;
+// ---------- the bank worker: one lesson at a time, apart from the ingest queue ----------
+const pending = [];
+let working = false;
+let stopped = null; // a usage limit / sign-out: the rest waits for the next run
+
+async function work() {
+  if (working) return;
+  working = true;
   const result = { lectures: 0, added: 0, errors: [] };
   try {
-    for (const l of listLectures()) {
-      if (l.status !== 'ready' || bankOf(getContent(l.id)).length >= target) continue;
+    while (pending.length && !stopped) {
+      const { id, trigger } = pending.shift();
       try {
-        const n = await growBank(l.id, { target, trigger: 'manual' });
+        const n = await growBank(id, { trigger });
         if (n) { result.lectures++; result.added += n; }
       } catch (e) {
-        result.errors.push(`${l.title}: ${e.message.slice(0, 120)}`);
+        result.errors.push(`${getLecture(id)?.title || id}: ${String(e.message).slice(0, 120)}`);
+        if (isLimit(e)) stopped = e.message;
       }
     }
   } finally {
-    growing = false;
+    working = false;
+    pending.length = 0;
   }
-  console.log(`[practice] question banks: +${result.added} in ${result.lectures} lessons${result.errors.length ? `, ${result.errors.length} errors` : ''}`);
+  console.log(`[practice] question banks: +${result.added} in ${result.lectures} lessons${result.errors.length ? `, ${result.errors.length} errors` : ''}${stopped ? ' (stopped: AI unavailable)' : ''}`);
+  stopped = null;
   return result;
 }
+
+/** Queue a lesson for its bank (after ingest); it runs once the worker is free. */
+export function queueBank(lectureId, trigger = 'after-lecture') {
+  if (!pending.some((p) => p.id === lectureId)) pending.push({ id: lectureId, trigger });
+  work().catch((e) => console.error('[practice]', e.message));
+}
+
+/** Every lesson on the site below the target, one after another (in the background). */
+export function growAllBanks({ target = BANK_TARGET } = {}) {
+  for (const l of listLectures()) {
+    if (l.status === 'ready' && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
+  }
+  return { queued: pending.length };
+}
+
+export const bankState = () => ({ working, pending: pending.length });

@@ -244,10 +244,7 @@ app.post('/api/practice', async (req, res) => {
 });
 
 /** Fill every lesson's question bank up to BANK_TARGET (runs in the background; progress in the run log). */
-app.post('/api/maintenance/grow-banks', (_req, res) => {
-  growAllBanks().catch((e) => console.error('[practice]', e.message));
-  res.json({ started: true });
-});
+app.post('/api/maintenance/grow-banks', (_req, res) => res.json(growAllBanks()));
 
 // ---------- homework-level practice ----------
 app.get('/api/courses/:id/practice', (req, res) => res.json(getPractice(req.params.id)));

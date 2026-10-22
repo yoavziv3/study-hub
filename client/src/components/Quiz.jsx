@@ -35,6 +35,19 @@ function shuffleOptions(q) {
 
 const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
+// A set in progress survives a page refresh (persistKey): the shuffled questions, where the student is and what
+// they answered, saved in this browser. It belongs to exactly this set of questions (sig); a new set starts fresh.
+const sigOf = (qs) => qs.map((q) => hash(q.question)).join('|');
+function readSaved(key, sig) {
+  if (!key) return null;
+  try {
+    const s = JSON.parse(localStorage.getItem(key) || 'null');
+    return s && s.sig === sig ? s : null;
+  } catch {
+    return null;
+  }
+}
+
 /** A wrong (or unanswered) question in the results, with the right answer and the explanation on demand. */
 function ReviewItem({ q, picked }) {
   const [open, setOpen] = useState(false);
@@ -59,20 +72,29 @@ function ReviewItem({ q, picked }) {
   );
 }
 
-export default function Quiz({ questions: source, lectureId, exam = false, sim = false, timeLimit = 0, onExit, onFinish }) {
+export default function Quiz({ questions: source, lectureId, exam = false, sim = false, timeLimit = 0, onExit, onFinish, onMore, moreLabel, persistKey }) {
   const { recordAnswer, openChat, progress, toggleFlag } = useApp();
+  const [sig] = useState(() => sigOf(source));
+  const [saved] = useState(() => readSaved(persistKey, sig));
   // Frozen per mount: parents pass a fresh array on every render, and reshuffling mid-question would
   // desync the displayed options from the recorded answer. Callers remount (key) for a new set.
-  const [questions] = useState(() => source.map(shuffleOptions));
-  const [order, setOrder] = useState(() => questions.map((_, i) => i));
-  const [idx, setIdx] = useState(0);
-  const [picked, setPicked] = useState(null);
-  const [answers, setAnswers] = useState({});
-  const [choices, setChoices] = useState({});
+  const [questions] = useState(() => saved?.questions || source.map(shuffleOptions));
+  const [order, setOrder] = useState(() => saved?.order || questions.map((_, i) => i));
+  const [idx, setIdx] = useState(saved?.idx || 0);
+  const [picked, setPicked] = useState(saved?.picked ?? null);
+  const [answers, setAnswers] = useState(saved?.answers || {});
+  const [choices, setChoices] = useState(saved?.choices || {});
   const [shake, setShake] = useState(false);
-  const [left, setLeft] = useState(timeLimit);
-  const [timeUp, setTimeUp] = useState(false);
-  const finished = useRef(false);
+  const [left, setLeft] = useState(saved?.left ?? timeLimit);
+  const [timeUp, setTimeUp] = useState(saved?.timeUp || false);
+  const finished = useRef(!!saved && (saved.idx >= saved.order.length || saved.timeUp));
+
+  useEffect(() => {
+    if (!persistKey) return;
+    try {
+      localStorage.setItem(persistKey, JSON.stringify({ sig, questions, order, idx, picked, answers, choices, left, timeUp }));
+    } catch { /* storage full or blocked: the set just won't survive a refresh */ }
+  }, [persistKey, sig, questions, order, idx, picked, answers, choices, left, timeUp]);
   const done = idx >= order.length || timeUp;
   const q = questions[order[idx]];
   const correctCount = Object.values(answers).filter(Boolean).length;
@@ -150,6 +172,7 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
           </div>
         )}
         <div className="row" style={{ justifyContent: 'center', marginTop: 18, flexWrap: 'wrap' }}>
+          {onMore && <button className="btn primary" onClick={onMore}><ArrowLeft size={16} /> {moreLabel || 'עוד שאלות'}</button>}
           {wrong.length > 0 && <button className="btn accent" onClick={() => restart(true)}><RotateCcw size={16} /> תרגול השגויות בלבד</button>}
           <button className="btn" onClick={() => restart(false)}><RotateCcw size={16} /> מהתחלה</button>
           {onExit && <button className="btn ghost" onClick={onExit}>סיום</button>}
