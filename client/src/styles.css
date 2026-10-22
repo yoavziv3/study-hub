@@ -602,13 +602,6 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .notes-overview { margin: 10px 0 0; font-size: 15.5px; line-height: 1.8; color: var(--text-3); }
 .note-section { scroll-margin-top: 78px; padding-top: 30px; position: relative; }
 .note-section::before { content: ''; position: absolute; top: 30px; bottom: 0; inset-inline-start: -12px; width: 4px; border-radius: 4px; background: var(--c); opacity: 0; transition: opacity 0.3s; }
-.note-section.speaking::before { opacity: 1; }
-.read-aloud { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-.read-aloud-bar { display: flex; align-items: center; gap: 4px; padding: 3px 8px 3px 3px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); }
-.read-aloud-progress { width: 90px; height: 4px; border-radius: 4px; background: var(--surface-3); overflow: hidden; margin-inline: 6px; }
-.read-aloud-progress span { display: block; height: 100%; background: var(--c); transition: width 0.4s; }
-.read-aloud-rate { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-.read-aloud-now { flex-basis: 100%; font-size: 13px; font-weight: 600; color: var(--c-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note-section-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .note-section-head h2 { font-size: 24px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
 .note-num { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; font-size: 14px; font-weight: 800; color: var(--c-strong); background: var(--c-soft); }

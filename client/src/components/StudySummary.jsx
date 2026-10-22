@@ -6,7 +6,6 @@ import { api } from '../api.js';
 import { Markdown, Tex, RichText } from './markdown.jsx';
 import { requiredMap, partsLabel } from './Assignment.jsx';
 import ReportButton from './ReportButton.jsx';
-import ReadAloud from './ReadAloud.jsx';
 
 // "תרגיל 3 – …", "שאלה 3", "3. …" → 3
 const exerciseNo = (title = '') => Number((title.match(/(?:תרגיל|שאלה)\s*(\d{1,2})/) || title.match(/^(\d{1,2})[.)\s]/) || [])[1]) || null;
@@ -60,14 +59,6 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  // The section being read aloud is highlighted and scrolled to as the voice reaches it.
-  const [speaking, setSpeaking] = useState(null);
-  const onSpeakSection = (id) => {
-    setSpeaking((prev) => {
-      if (id && id !== prev) go(id);
-      return id;
-    });
-  };
 
   const writing = lecture.notesStatus === 'writing' || lecture.notesStatus === 'queued';
   const canGenerate = !notes && kind !== 'homework' && status?.ai?.ready && !writing;
@@ -87,7 +78,6 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
             {KIND_LABEL[kind]} {lecture.lessonNumber || ''} · <Clock size={13} /> {minutes} דקות קריאה
           </div>
           <p className="notes-lead"><RichText>{notes?.subtitle || content.overview}</RichText></p>
-          <ReadAloud intro={[notes?.subtitle, content.overview].filter(Boolean).join('. ')} sections={sections} onSection={onSpeakSection} />
           {notes?.subtitle && content.overview && <p className="notes-overview"><RichText>{content.overview}</RichText></p>}
           {writing && <div className="callout row" style={{ marginTop: 14 }}><Loader2 size={16} className="spin" /> כותב סיכום מובנה עם הגדרות ודוגמאות – זה לוקח כמה דקות.</div>}
           {lecture.notesError && !writing && <div className="chip warn" style={{ marginTop: 14, height: 'auto', padding: '6px 12px', whiteSpace: 'normal' }}>{lecture.notesError}</div>}
@@ -102,7 +92,7 @@ export default function StudySummary({ lecture, content, goSlide, reload }) {
         <MobileToc sections={sections} active={active} go={go} />
 
         {sections.map((s, i) => (
-          <motion.section key={s.id} id={s.id} className={`note-section ${speaking === s.id ? 'speaking' : ''}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.section key={s.id} id={s.id} className="note-section" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
             <div className="note-section-head">
               <h2><span className="note-num">{i + 1}</span><RichText>{s.title}</RichText></h2>
               {required && exerciseNo(s.title) && (required.has(exerciseNo(s.title)) ? (
