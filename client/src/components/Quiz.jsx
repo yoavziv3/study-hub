@@ -182,6 +182,7 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
   }
 
   const diff = DIFF[q.difficulty] || DIFF.medium;
+  const inlineSlide = q.showSlide && q.slide > 0 && lid(q) && !String(lid(q)).endsWith('-homework');
   return (
     <div className="quiz-wrap">
       <div className="quiz-top">
@@ -203,6 +204,8 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
             </button>
           </div>
           <div className="q-text"><RichText>{q.question}</RichText></div>
+          {/* A question about something on a slide shows that slide (checks.js slideRef marks them). */}
+          {inlineSlide && <SlidePeek key={`in-${lid(q)}-${q.slide}`} lectureId={lid(q)} slide={q.slide} inline />}
           <div className="options">
             {q.options.map((o, i) => {
               const state = picked == null ? '' : i === q.correctIndex ? 'correct' : i === picked ? 'wrong' : '';
@@ -224,7 +227,7 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
                   <Markdown>{q.explanation}</Markdown>
                 </div>
                 <div className="row wrap" style={{ marginTop: 14 }}>
-                  {q.slide > 0 && !String(lid(q)).endsWith('-homework') && (
+                  {q.slide > 0 && !inlineSlide && !String(lid(q)).endsWith('-homework') && (
                     <button className={`btn sm ${peek ? 'accent' : ''}`} onClick={() => setPeek((x) => !x)} aria-expanded={peek}><Presentation size={14} /> {peek ? 'הסתרת השקף' : `לשקף ${q.slide}`}</button>
                   )}
                   <button className="local-only btn sm" onClick={() => openChat({ prompt: `בשאלה: "${q.question}" – ${picked === q.correctIndex ? 'עניתי נכון אבל' : `בחרתי "${q.options[picked]}" ו`}אני רוצה להבין לעומק למה התשובה הנכונה היא "${q.options[q.correctIndex]}".`, autoSend: true })}>

@@ -22,7 +22,7 @@ const loadLecture = (id) => {
  * one screen). Slides come from the lecture's PDF in the cloud and from images on the Mac, like SlideViewer; a
  * text-only unit shows the slide's text. Neighbouring slides are a click away.
  */
-export default function SlidePeek({ lectureId, slide, onClose }) {
+export default function SlidePeek({ lectureId, slide, onClose, inline = false }) {
   const [lecture, setLecture] = useState(null);
   const [error, setError] = useState(null);
   const [n, setN] = useState(slide);
@@ -39,15 +39,15 @@ export default function SlidePeek({ lectureId, slide, onClose }) {
   const text = lecture?.slides?.[n - 1]?.text || '';
 
   return (
-    <motion.div className="slide-peek" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+    <motion.div className={`slide-peek ${inline ? 'inline' : ''}`} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
       <div className="row" style={{ gap: 6, marginBottom: 8 }}>
-        <b style={{ fontSize: 14 }}>שקף {n}{lecture ? ` מתוך ${total}` : ''}</b>
+        <b style={{ fontSize: 14 }}>{inline && n === slide ? 'השקף שהשאלה מתייחסת אליו' : `שקף ${n}`}{lecture ? ` · ${n} מתוך ${total}` : ''}</b>
         {lecture && <span className="faint" style={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lecture.title}</span>}
         <div className="spacer" />
         <button className="btn icon sm ghost" disabled={n <= 1} onClick={() => setN(n - 1)} aria-label="השקף הקודם"><ChevronRight size={16} /></button>
         <button className="btn icon sm ghost" disabled={n >= total} onClick={() => setN(n + 1)} aria-label="השקף הבא"><ChevronLeft size={16} /></button>
         <Link className="btn icon sm ghost" to={`/lecture/${lectureId}?tab=slides&slide=${n}`} title="פתיחה במצגת המלאה" aria-label="פתיחה במצגת המלאה"><ExternalLink size={15} /></Link>
-        <button className="btn icon sm ghost" onClick={onClose} aria-label="סגירת השקף"><X size={16} /></button>
+        {onClose && <button className="btn icon sm ghost" onClick={onClose} aria-label="סגירת השקף"><X size={16} /></button>}
       </div>
       {error && <div className="faint">{error}</div>}
       {!lecture && !error && <div style={{ padding: 30, textAlign: 'center' }}><Loader2 className="spin" /></div>}

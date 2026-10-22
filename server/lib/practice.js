@@ -9,7 +9,7 @@ import { getCourse, getLecture, patchLecture, getContent, saveContent, getSlides
 import { generateJSON, aiStatus } from './ai.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
-import { checkQuiz } from './checks.js';
+import { checkQuiz, slideRef } from './checks.js';
 
 export const BANK_TARGET = 200;
 const ROUND = 20;
@@ -138,3 +138,33 @@ export function growAllBanks({ target = BANK_TARGET } = {}) {
 }
 
 export const bankState = () => ({ working, pending: pending.length });
+
+/** Marks every lesson's questions that point at a slide (checks.js slideRef) and fixes their slide numbers. */
+export async function markSlideRefs() {
+  const result = { lessons: 0, marked: 0, renumbered: 0 };
+  for (const l of listLectures()) {
+    const content = getContent(l.id);
+    if (!content) continue;
+    const slideCount = getSlides(l.id).length;
+    let changed = false;
+    const fix = (list = []) => list.map((q) => {
+      const ref = slideRef(q.question, q.slide, slideCount);
+      if (ref.slide !== (q.slide || 0)) result.renumbered++;
+      if (ref.showSlide && !q.showSlide) result.marked++;
+      if (ref.slide === (q.slide || 0) && !!ref.showSlide === !!q.showSlide) return q;
+      changed = true;
+      const { showSlide, ...rest } = q;
+      return { ...rest, slide: ref.slide, ...(ref.showSlide ? { showSlide: true } : {}) };
+    });
+    const quiz = fix(content.quiz);
+    const extraQuiz = fix(content.extraQuiz);
+    if (changed) {
+      // Re-read right before saving: the bank worker may have added questions meanwhile.
+      const latest = getContent(l.id);
+      const extra = latest.extraQuiz || [];
+      await saveContent(l.id, { ...latest, quiz, extraQuiz: [...extraQuiz, ...fix(extra.slice(extraQuiz.length))] });
+      result.lessons++;
+    }
+  }
+  return result;
+}

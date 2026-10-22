@@ -959,3 +959,4 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .slide-peek { margin-top: 14px; padding: 12px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; }
 .slide-peek-stage { box-shadow: none; }
 .slide-peek-text { white-space: pre-line; line-height: 1.7; font-size: 14px; max-height: 320px; overflow: auto; padding: 4px; }
+.slide-peek.inline { margin: 12px 0 4px; }

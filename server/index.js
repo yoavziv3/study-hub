@@ -19,7 +19,7 @@ import { startPushTicks } from './lib/push-tick.js';
 import { systemStatus, startAIWatch } from './lib/health.js';
 import { startRun, listRuns, PROCESSES } from './lib/runlog.js';
 import { checkQuiz, checkProblems } from './lib/checks.js';
-import { addLectureQuestions, growAllBanks } from './lib/practice.js';
+import { addLectureQuestions, growAllBanks, markSlideRefs } from './lib/practice.js';
 import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
 import { startPortalRelay } from './lib/portal-relay.js';
 import * as updates from './lib/updates.js';
@@ -245,6 +245,7 @@ app.post('/api/practice', async (req, res) => {
 
 /** Fill every lesson's question bank up to BANK_TARGET (runs in the background; progress in the run log). */
 app.post('/api/maintenance/grow-banks', (_req, res) => res.json(growAllBanks()));
+app.post('/api/maintenance/slide-refs', async (_req, res) => res.json(await markSlideRefs()));
 
 // ---------- homework-level practice ----------
 app.get('/api/courses/:id/practice', (req, res) => res.json(getPractice(req.params.id)));

@@ -20,6 +20,16 @@ export function assertUsable(checks) {
   return checks;
 }
 
+// A question that points at something on a slide ("לפי הטבלה בשקף 7", "בתרשים שהוצג") can't be answered without
+// seeing it: such questions get showSlide, and the slide appears inside the question. A slide number written in the
+// question wins over the model's slide field.
+const SLIDE_REF = /שקף|בשקפים|טבלה|תרשים|איור|גרף|דיאגרמה|פירמידה|כפי שמוצג|שמוצג|המוצג|שהוצג|שהוצגה|שהוצגו|בתמונה|במצגת/;
+export function slideRef(question, slide, slideCount) {
+  const named = [...String(question).matchAll(/שקף\s*(?:מס(?:פר|')?\s*)?(\d{1,3})/g)].map((m) => Number(m[1])).find((n) => n >= 1 && n <= slideCount);
+  const at = named || (Number.isInteger(slide) && slide >= 1 && slide <= slideCount ? slide : 0);
+  return { slide: at, showSlide: at > 0 && SLIDE_REF.test(question) };
+}
+
 /** Multiple-choice questions: exactly 4 distinct, non-empty options, a valid correctIndex, a question and an explanation. */
 export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz' } = {}) {
   const checks = [];
@@ -40,9 +50,12 @@ export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz' } = {}) {
       continue;
     }
     seen.add(text(q.question));
-    const slide = Number.isInteger(q.slide) && q.slide >= 0 && q.slide <= slideCount ? q.slide : 0;
+    let slide = Number.isInteger(q.slide) && q.slide >= 0 && q.slide <= slideCount ? q.slide : 0;
     if (slide !== q.slide && q.slide !== undefined) checks.push(finding(`${label}.slide`, 'fixed', `מספר שקף ${q.slide} מחוץ לטווח – הוחלף ב 0`));
-    value.push({ ...q, question: text(q.question), options, slide, difficulty: LEVELS.includes(q.difficulty) ? q.difficulty : 'medium' });
+    const ref = slideRef(q.question, slide, slideCount);
+    if (ref.slide !== slide) checks.push(finding(`${label}.slide`, 'fixed', `השאלה מזכירה את שקף ${ref.slide} – השקף עודכן`));
+    slide = ref.slide;
+    value.push({ ...q, question: text(q.question), options, slide, ...(ref.showSlide ? { showSlide: true } : {}), difficulty: LEVELS.includes(q.difficulty) ? q.difficulty : 'medium' });
   }
   return { value, checks };
 }
