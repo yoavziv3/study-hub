@@ -5,6 +5,7 @@ import { Check, X, ArrowLeft, RotateCcw, Presentation, Sparkles, Trophy, Bookmar
 import { useApp } from '../store.jsx';
 import { hebLetters, shuffle, hash } from '../api.js';
 import { Ring } from './ui.jsx';
+import SlidePeek from './SlidePeek.jsx';
 import { Markdown, RichText } from './markdown.jsx';
 
 const DIFF = { easy: { label: 'קל', cls: 'good' }, medium: { label: 'בינוני', cls: 'warn' }, hard: { label: 'קשה', cls: 'bad' } };
@@ -58,7 +59,7 @@ function ReviewItem({ q, picked }) {
   );
 }
 
-export default function Quiz({ questions: source, lectureId, exam = false, sim = false, timeLimit = 0, onExit, onSlide, onFinish }) {
+export default function Quiz({ questions: source, lectureId, exam = false, sim = false, timeLimit = 0, onExit, onFinish }) {
   const { recordAnswer, openChat, progress, toggleFlag } = useApp();
   // Frozen per mount: parents pass a fresh array on every render, and reshuffling mid-question would
   // desync the displayed options from the recorded answer. Callers remount (key) for a new set.
@@ -106,7 +107,9 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
     setPicked(i);
     if (!ok) { setShake(true); setTimeout(() => setShake(false), 450); }
   };
-  const next = () => { setPicked(null); setIdx((i) => i + 1); };
+  // The slide opened under a question closes when moving on.
+  const [peek, setPeek] = useState(false);
+  const next = () => { setPicked(null); setPeek(false); setIdx((i) => i + 1); };
   const restart = (onlyWrong) => {
     const wrong = order.filter((i) => answers[i] !== true);
     setOrder(onlyWrong && wrong.length ? wrong : questions.map((_, i) => i));
@@ -198,17 +201,16 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
                   <Markdown>{q.explanation}</Markdown>
                 </div>
                 <div className="row wrap" style={{ marginTop: 14 }}>
-                  {q.slide > 0 && (onSlide && !exam ? (
-                    <button className="btn sm" onClick={() => onSlide(q.slide)}><Presentation size={14} /> לשקף {q.slide}</button>
-                  ) : (
-                    <Link className="btn sm" to={`/lecture/${q.lectureId || lectureId}?tab=slides&slide=${q.slide}`}><Presentation size={14} /> לשקף {q.slide}</Link>
-                  ))}
+                  {q.slide > 0 && !String(lid(q)).endsWith('-homework') && (
+                    <button className={`btn sm ${peek ? 'accent' : ''}`} onClick={() => setPeek((x) => !x)} aria-expanded={peek}><Presentation size={14} /> {peek ? 'הסתרת השקף' : `לשקף ${q.slide}`}</button>
+                  )}
                   <button className="local-only btn sm" onClick={() => openChat({ prompt: `בשאלה: "${q.question}" – ${picked === q.correctIndex ? 'עניתי נכון אבל' : `בחרתי "${q.options[picked]}" ו`}אני רוצה להבין לעומק למה התשובה הנכונה היא "${q.options[q.correctIndex]}".`, autoSend: true })}>
                     <Sparkles size={14} /> הסבר לי עוד
                   </button>
                   <div className="spacer" />
                   <button className="btn primary" onClick={next}>{idx + 1 === order.length ? 'לתוצאות' : 'לשאלה הבאה'} <ArrowLeft size={16} /></button>
                 </div>
+                <AnimatePresence>{peek && <SlidePeek key={`${lid(q)}-${q.slide}`} lectureId={lid(q)} slide={q.slide} onClose={() => setPeek(false)} />}</AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>

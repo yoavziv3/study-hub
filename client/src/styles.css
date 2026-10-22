@@ -954,3 +954,8 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .slot.canceled { opacity: 0.55; text-decoration: line-through; }
 .slot-place.moved, .slot-moved { color: var(--warn-text); font-weight: 700; }
 @media (max-width: 640px) { .portal-fields { grid-template-columns: 1fr; } }
+
+/* A question's slide, opened under it in practice (SlidePeek) */
+.slide-peek { margin-top: 14px; padding: 12px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; }
+.slide-peek-stage { box-shadow: none; }
+.slide-peek-text { white-space: pre-line; line-height: 1.7; font-size: 14px; max-height: 320px; overflow: auto; padding: 4px; }

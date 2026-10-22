@@ -154,7 +154,9 @@ export async function systemStatus(env, { courses, macItems, build = null, now =
   // quietly – this notices when the live build stays behind that commit.
   const git = macData?.git;
   if (git?.head && build?.commit && build.commit !== 'local') {
-    const behind = build.commit !== git.head;
+    // Behind = a different commit AND built before the Mac's commit existed. A build newer than that commit is the
+    // cloud being ahead of a heartbeat sent just before a push (the Mac reports every 5 minutes), not behind it.
+    const behind = build.commit !== git.head && Date.parse(build.builtAt) < git.headAt + 15 * MIN;
     const late = behind && now - git.headAt > 30 * MIN;
     checks.push({
       id: 'deploy',

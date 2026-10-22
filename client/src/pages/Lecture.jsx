@@ -128,7 +128,7 @@ function PracticeTab({ lecture, goSlide, reload }) {
         <button className="local-only btn sm" onClick={generate} disabled={gen}>{gen ? <Loader2 size={14} className="spin" /> : <Wand2 size={14} />} {gen ? 'יוצר שאלות…' : 'צור 6 שאלות חדשות'}</button>
         {stats && <span className="chip good">דיוק מצטבר: {Math.round((stats.correct / stats.answered) * 100)}% ({stats.answered})</span>}
       </div>
-      <Quiz key={run + diff} questions={qs} lectureId={lecture.id} onSlide={goSlide} />
+      <Quiz key={run + diff} questions={qs} lectureId={lecture.id} />
 
       {lecture.content.openQuestions?.length > 0 && (
         <div style={{ maxWidth: 820, margin: '10px auto 0', width: '100%' }}>
@@ -309,7 +309,7 @@ export default function Lecture() {
     <Page>
       <div data-color={course?.color}>
         <div className="crumbs">
-          <Link to="/">לוח בקרה</Link><ChevronLeft size={14} />
+          <Link to="/">מסך הבית</Link><ChevronLeft size={14} />
           <Link to={`/course/${course?.id}`}>{course?.short}</Link><ChevronLeft size={14} />
           <span>{{ lecture: 'שיעור', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם', prep: 'הכנה למבחן · שיעור' }[lecture.kind || 'lecture']} {lecture.lessonNumber || '?'}</span>
         </div>

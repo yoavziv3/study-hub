@@ -71,7 +71,7 @@ function Sidebar({ open, onNavigate }) {
           <div className="brand-sub">{term ? `${studyYearLabel(term, terms)} · ${SEMESTER_LABEL[term.semester]}` : 'עזר ללימודים'}</div>
         </div>
       </NavLink>
-      <NavItem to="/" end icon={<HomeIcon size={17} />} label="לוח בקרה" onClick={onNavigate} />
+      <NavItem to="/" end icon={<HomeIcon size={17} />} label="מסך הבית" onClick={onNavigate} />
       <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <NavItem to="/schedule" icon={<CalendarRange size={17} />} label="מערכת שעות" onClick={onNavigate} />
       <NavItem to="/weekly" icon={<Gauge size={17} />} label="דוח עומס שבועי" onClick={onNavigate} />
