@@ -78,7 +78,18 @@ export default function Quiz({ questions: source, lectureId, exam = false, sim =
   const [saved] = useState(() => readSaved(persistKey, sig));
   // Frozen per mount: parents pass a fresh array on every render, and reshuffling mid-question would
   // desync the displayed options from the recorded answer. Callers remount (key) for a new set.
-  const [questions] = useState(() => saved?.questions || source.map(shuffleOptions));
+  // A restored set keeps its option order, but takes everything else from the current bank (a question may have
+  // been fixed since – its slide, the slide shown inside it, its explanation).
+  const [questions] = useState(() => {
+    if (!saved?.questions) return source.map(shuffleOptions);
+    const now = new Map(source.map((x) => [hash(x.question), x]));
+    return saved.questions.map((x) => {
+      const cur = now.get(hash(x.question));
+      if (!cur) return x;
+      const { showSlide, ...rest } = x;
+      return { ...rest, slide: cur.slide, explanation: cur.explanation, ...(cur.showSlide ? { showSlide: true } : {}) };
+    });
+  });
   const [order, setOrder] = useState(() => saved?.order || questions.map((_, i) => i));
   const [idx, setIdx] = useState(saved?.idx || 0);
   const [picked, setPicked] = useState(saved?.picked ?? null);
