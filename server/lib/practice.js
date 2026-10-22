@@ -5,7 +5,7 @@
 // growBank brings a lesson up to BANK_TARGET in rounds, each focused on another stretch of the slides so the bank
 // covers the whole lesson. It runs on its own worker (queueBank), not in the ingest queue: a new lesson goes up
 // right away and its bank fills in afterwards. /api/maintenance/grow-banks fills up the existing lessons.
-import { getCourse, getLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
+import { getCourse, getLecture, patchLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
 import { generateJSON, aiStatus } from './ai.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
@@ -85,7 +85,10 @@ export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'man
     added += got.length;
     // Two rounds in a row that add almost nothing: the slides are exhausted – stop rather than pad the bank.
     thin = got.length < 3 ? thin + 1 : 0;
-    if (thin >= 2) break;
+    if (thin >= 2) {
+      await patchLecture(lectureId, { bankDone: true }); // not offered again by growAllBanks
+      break;
+    }
   }
   return added;
 }
@@ -125,10 +128,11 @@ export function queueBank(lectureId, trigger = 'after-lecture') {
   work().catch((e) => console.error('[practice]', e.message));
 }
 
-/** Every lesson on the site below the target, one after another (in the background). */
+/** Every lesson on the site below the target, one after another (in the background). Also called by the AI watch
+ *  (health.js) whenever Claude answers, so a run stopped by a usage limit carries on by itself. */
 export function growAllBanks({ target = BANK_TARGET } = {}) {
   for (const l of listLectures()) {
-    if (l.status === 'ready' && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
+    if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
   }
   return { queued: pending.length };
 }

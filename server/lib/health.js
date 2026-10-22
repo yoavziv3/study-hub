@@ -8,6 +8,7 @@ import { moodleStatus } from './moodle.js';
 import { publishState } from './publish.js';
 import { aiStatus, probeAI } from './ai.js';
 import { adminAlert } from './updates.js';
+import { growAllBanks, bankState } from './practice.js';
 import { macChecks, worst } from '../../shared/system-checks.js';
 
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
@@ -32,6 +33,8 @@ export async function checkAI() {
   if (changed && aiWatch.since) console.log('[ai] answering again');
   const n = await retryFailedAI({ auto: true }).catch(() => 0);
   if (n) console.log(`[ai] re-queued ${n} items that came in without AI material`);
+  // Question banks that aren't full yet carry on (practice.js; a no-op while its worker is busy).
+  if (!n && !bankState().working) growAllBanks();
   return aiWatch;
 }
 
