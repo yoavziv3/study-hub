@@ -87,7 +87,9 @@ export async function syncGrading(course, { force = false } = {}) {
   const hash = crypto.createHash('sha1').update(text).digest('hex').slice(0, 16);
   const checkedAt = new Date().toISOString();
   if (!force && g?.hash === hash) {
-    await patchCourse(course.id, { grading: { ...g, checkedAt } });
+    // Same text: remember where it was read (the catalog may have moved the link), or every sync rechecks and
+    // republishes the course for nothing.
+    await patchCourse(course.id, { grading: { ...g, url, checkedAt } });
     return false;
   }
   const run = startRun('syllabus', { trigger: force ? 'manual' : 'schedule', input: { course: course.short, source: src.source, url: url || null, chars: text.length } });
