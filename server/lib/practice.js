@@ -10,6 +10,7 @@ import { generateJSON, aiStatus } from './ai.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
 import { checkQuiz, slideRef } from './checks.js';
+import { escapeCurrency } from '../../shared/currency.js';
 
 export const BANK_TARGET = 200;
 const ROUND = 20;
@@ -139,19 +140,25 @@ export function growAllBanks({ target = BANK_TARGET } = {}) {
 
 export const bankState = () => ({ working, pending: pending.length });
 
-/** Marks every lesson's questions that point at a slide (checks.js slideRef) and fixes their slide numbers. */
+/**
+ * Goes over every lesson's questions: marks the ones that point at a slide (checks.js slideRef) and fixes their
+ * slide numbers, and writes currency dollars as text (shared/currency.js).
+ */
 export async function markSlideRefs() {
-  const result = { lessons: 0, marked: 0, renumbered: 0 };
+  const result = { lessons: 0, marked: 0, renumbered: 0, currency: 0 };
   for (const l of listLectures()) {
     const content = getContent(l.id);
     if (!content) continue;
     const slideCount = getSlides(l.id).length;
     let changed = false;
-    const fix = (list = []) => list.map((q) => {
+    const fix = (list = []) => list.map((q0) => {
+      const q = { ...q0, question: escapeCurrency(q0.question), explanation: escapeCurrency(q0.explanation), options: (q0.options || []).map(escapeCurrency) };
+      const money = q.question !== q0.question || q.explanation !== q0.explanation || q.options.some((o, k) => o !== q0.options[k]);
+      if (money) result.currency++;
       const ref = slideRef(q.question, q.slide, slideCount);
       if (ref.slide !== (q.slide || 0)) result.renumbered++;
       if (ref.showSlide && !q.showSlide) result.marked++;
-      if (ref.slide === (q.slide || 0) && !!ref.showSlide === !!q.showSlide) return q;
+      if (!money && ref.slide === (q.slide || 0) && !!ref.showSlide === !!q.showSlide) return q0;
       changed = true;
       const { showSlide, ...rest } = q;
       return { ...rest, slide: ref.slide, ...(ref.showSlide ? { showSlide: true } : {}) };

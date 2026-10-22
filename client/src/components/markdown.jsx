@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import katex from 'katex';
+import { escapeCurrency } from '../../../shared/currency.js';
 import 'katex/dist/katex.min.css';
 import { ltr } from './ui.jsx';
 
@@ -39,7 +40,7 @@ export function Markdown({ children, className = '' }) {
           table: ({ children }) => <table tabIndex={0}>{children}</table>,
         }}
       >
-        {ltrMarkdown(blockMath(tablePipes(children || '')))}
+        {ltrMarkdown(blockMath(tablePipes(escapeCurrency(children || ''))))}
       </ReactMarkdown>
     </div>
   );
@@ -54,11 +55,12 @@ export function Tex({ children, block = true }) {
 
 // ---------- short fields (questions, answers, flashcards, terms, tips) ----------
 // These are single lines that the AI may write with inline math ($…$) and **bold**. RichText renders just that –
-// no paragraphs or lists, so it fits inside buttons and chips. A lone "$" (e.g. "$67") stays a dollar sign.
+// no paragraphs or lists, so it fits inside buttons and chips. Currency dollars ("67$", "$1.6") stay dollar signs
+// (escapeCurrency, shared/currency.js), also when two prices would otherwise pair up as a formula.
 const INLINE = /(\$\$[^$]+?\$\$|(?<![\\$\w])\$(?=[^\s$])[^$\n]+?(?<=[^\s\\])\$(?!\d)|\*\*[^*\n]+?\*\*|`[^`\n]+`)/g;
 
 export function RichText({ children }) {
-  const parts = String(children ?? '').split(INLINE);
+  const parts = escapeCurrency(String(children ?? '')).split(INLINE);
   return parts.map((p, i) => {
     if (i % 2 === 0) return p ? <Fragment key={i}>{ltr(p.replace(/\\\$/g, '$'))}</Fragment> : null;
     if (p.startsWith('$$')) return <Tex key={i} block={false}>{`\\displaystyle ${p.slice(2, -2)}`}</Tex>;

@@ -4,6 +4,8 @@
 // what was found:
 //   { rule, level: 'fixed' | 'warn' | 'reject', detail }
 // 'fixed' – the output was corrected by the rule; 'warn' – kept, but worth a look; 'reject' – not used.
+import { escapeCurrency } from '../../shared/currency.js';
+
 const LEVELS = ['easy', 'medium', 'hard'];
 const text = (s) => (typeof s === 'string' ? s.trim() : '');
 const finding = (rule, level, detail) => ({ rule, level, detail });
@@ -52,10 +54,15 @@ export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz' } = {}) {
     seen.add(text(q.question));
     let slide = Number.isInteger(q.slide) && q.slide >= 0 && q.slide <= slideCount ? q.slide : 0;
     if (slide !== q.slide && q.slide !== undefined) checks.push(finding(`${label}.slide`, 'fixed', `מספר שקף ${q.slide} מחוץ לטווח – הוחלף ב 0`));
+    // Currency dollars ("67$") written as such, so two prices never pair up as a formula (shared/currency.js).
+    const fixedText = { question: escapeCurrency(text(q.question)), options: options.map(escapeCurrency), explanation: escapeCurrency(text(q.explanation)) };
+    if (fixedText.question !== text(q.question) || fixedText.explanation !== text(q.explanation) || fixedText.options.some((o, k) => o !== options[k])) {
+      checks.push(finding(`${label}.currency`, 'fixed', `סימני $ של מחיר סומנו כטקסט – "${text(q.question).slice(0, 50)}"`));
+    }
     const ref = slideRef(q.question, slide, slideCount);
     if (ref.slide !== slide) checks.push(finding(`${label}.slide`, 'fixed', `השאלה מזכירה את שקף ${ref.slide} – השקף עודכן`));
     slide = ref.slide;
-    value.push({ ...q, question: text(q.question), options, slide, ...(ref.showSlide ? { showSlide: true } : {}), difficulty: LEVELS.includes(q.difficulty) ? q.difficulty : 'medium' });
+    value.push({ ...q, ...fixedText, slide, ...(ref.showSlide ? { showSlide: true } : {}), difficulty: LEVELS.includes(q.difficulty) ? q.difficulty : 'medium' });
   }
   return { value, checks };
 }
