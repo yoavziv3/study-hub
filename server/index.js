@@ -19,6 +19,7 @@ import { startPushTicks } from './lib/push-tick.js';
 import { systemStatus, startAIWatch } from './lib/health.js';
 import { startRun, listRuns, PROCESSES } from './lib/runlog.js';
 import { checkQuiz, checkProblems } from './lib/checks.js';
+import { addLectureQuestions, growAllBanks } from './lib/practice.js';
 import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
 import { startPortalRelay } from './lib/portal-relay.js';
 import * as updates from './lib/updates.js';
@@ -53,7 +54,7 @@ function lectureCard(m) {
     ...m,
     overview: c?.overview || '',
     topicCount: c?.topics?.length || 0,
-    quizCount: c?.quiz?.length || 0,
+    quizCount: (c?.quiz?.length || 0) + (c?.extraQuiz?.length || 0),
     flashcardCount: c?.flashcards?.length || 0,
     hasContent: !!c,
   };
@@ -232,53 +233,20 @@ app.post('/api/upload', upload.array('files', 30), async (req, res) => {
 
 // ---------- practice generation ----------
 app.post('/api/practice', async (req, res) => {
-  const { lectureId, courseId, count = 6, difficulty = 'mixed' } = req.body;
+  const { lectureId, count = 6, difficulty = 'mixed' } = req.body;
+  if (!lectureId || !getLecture(lectureId)) return res.status(400).json({ error: 'צריך שיעור' });
   try {
-    let course, title, material, avoid;
-    if (lectureId) {
-      const meta = getLecture(lectureId);
-      course = getCourse(meta.courseId);
-      const content = getContent(lectureId);
-      title = meta.title;
-      material = getSlides(lectureId).map((s) => `[שקף ${s.n}] ${s.text}`).join('\n');
-      avoid = [...(content?.quiz || []), ...(content?.extraQuiz || [])].map((q) => q.question);
-    } else {
-      course = getCourse(courseId);
-      const ls = listLectures(courseId).filter((l) => l.status === 'ready');
-      title = `כל הקורס ${course.short}`;
-      material = ls.map((l) => `## ${l.title}\n${getContent(l.id)?.summary || ''}`).join('\n\n');
-      avoid = [];
-    }
-    const run = startRun('practice', { trigger: 'manual', input: { lectureId: lectureId || null, course: course.short, title, count, difficulty } });
-    let out;
-    try {
-      out = await generateJSON({
-        system: `אתה כותב שאלות מבחן מקצועי בקורס ${course.name}. הקפד על נכונות מלאה של התשובה המסומנת.`,
-        prompt: practicePrompt({ course, title, material: material.slice(0, 180000), count, difficulty, avoid: avoid.slice(0, 60) }),
-        schema: PRACTICE_SCHEMA,
-        effort: 'medium',
-        maxTokens: 16000,
-      });
-    } catch (e) {
-      run.fail(e);
-      throw e;
-    }
-    const checked = checkQuiz(out.quiz, { slideCount: lectureId ? getSlides(lectureId).length : 0 });
-    // Questions the student already has are not added again.
-    const known = new Set(avoid);
-    const fresh = checked.value.filter((q) => !known.has(q.question));
-    const checks = [...checked.checks, ...(fresh.length < checked.value.length ? [{ rule: 'practice.duplicate', level: 'fixed', detail: `הוסרו ${checked.value.length - fresh.length} שאלות שכבר קיימות` }] : [])];
-    run.ok({ asked: count, kept: fresh.length }, checks);
-    const quiz = fresh.map((q) => ({ ...q, generated: true }));
-    if (lectureId) {
-      const content = getContent(lectureId) || {};
-      await saveContent(lectureId, { ...content, extraQuiz: [...(content.extraQuiz || []), ...quiz] });
-    }
-    res.json({ quiz });
+    res.json({ quiz: await addLectureQuestions(lectureId, { count: Math.min(15, Number(count) || 6), difficulty }) });
   } catch (e) {
-    console.error('[practice]', e);
-    res.status(500).json({ error: e.message });
+    console.error('[practice]', e.message);
+    res.status(500).json({ error: /429|usage|limit/i.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : e.message });
   }
+});
+
+/** Fill every lesson's question bank up to BANK_TARGET (runs in the background; progress in the run log). */
+app.post('/api/maintenance/grow-banks', (_req, res) => {
+  growAllBanks().catch((e) => console.error('[practice]', e.message));
+  res.json({ started: true });
 });
 
 // ---------- homework-level practice ----------

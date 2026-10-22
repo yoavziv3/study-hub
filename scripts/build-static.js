@@ -55,7 +55,7 @@ const card = (m) => {
     ...withSlides(m),
     overview: c?.overview || '',
     topicCount: c?.topics?.length || 0,
-    quizCount: c?.quiz?.length || 0,
+    quizCount: (c?.quiz?.length || 0) + (c?.extraQuiz?.length || 0),
     flashcardCount: c?.flashcards?.length || 0,
     hasContent: !!c,
   };

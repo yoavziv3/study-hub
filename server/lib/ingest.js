@@ -12,6 +12,7 @@ import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt } from './prompts.js';
 
 import { startRun } from './runlog.js';
+import { growBank } from './practice.js';
 import { checkLecture, checkNotes, assertUsable, CheckError } from './checks.js';
 import { ACCEPTED, EXAM_RE, detectKind } from '../../shared/moodle-kind.js';
 
@@ -300,6 +301,8 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   await patchLecture(id, patch);
   await stage(id, 'ready');
   await announceMaterial(getLecture(id)).catch((e) => console.error('[updates]', e.message));
+  // A big question bank from the lesson's own slides (practice.js), once the lesson is already up.
+  if (content && !content.extraQuiz?.length) await growBank(id, { trigger: 'after-lecture' }).catch((e) => console.error(`[ingest] ${id} question bank:`, e.message.slice(0, 200)));
 }
 
 /**
