@@ -107,7 +107,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-21T19:29:30.273Z",
+      "checkedAt": "2026-10-22T07:46:20.948Z",
       "updatedAt": "2026-10-20T14:22:09.875Z"
     },
     "classes": [
@@ -763,7 +763,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-21T19:29:37.446Z",
+      "checkedAt": "2026-10-22T07:46:25.750Z",
       "updatedAt": "2026-10-20T14:22:14.183Z"
     },
     "classes": [
@@ -846,7 +846,7 @@
             "day": 3,
             "start": "10:00",
             "end": "12:00",
-            "place": "NIBN [41] חדר 001",
+            "place": "גוטמן [32] חדר 308",
             "mode": "היברידי"
           }
         ]
@@ -1583,7 +1583,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-21T19:29:40.073Z",
+      "checkedAt": "2026-10-22T07:46:27.795Z",
       "updatedAt": "2026-10-20T14:22:16.027Z"
     },
     "classes": [
@@ -1769,7 +1769,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-21T19:29:41.266Z",
+      "checkedAt": "2026-10-22T07:46:28.869Z",
       "updatedAt": "2026-10-20T14:22:16.908Z"
     },
     "classes": [
@@ -1944,7 +1944,7 @@
           }
         ]
       },
-      "checkedAt": "2026-10-21T19:29:43.003Z",
+      "checkedAt": "2026-10-22T07:46:30.501Z",
       "updatedAt": "2026-10-20T14:22:18.205Z"
     },
     "classes": [
@@ -2035,7 +2035,7 @@
     ],
     "credits": 0,
     "passGrade": 65,
-    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2501&preview=1",
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1",
     "grading": {
       "components": [
         {
@@ -2056,7 +2056,7 @@
       ],
       "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2501&preview=1",
       "hash": "d17b4c8d72ca6ffd",
-      "checkedAt": "2026-10-21T07:08:22.403Z",
+      "checkedAt": "2026-10-22T07:46:31.178Z",
       "extractedAt": "2026-10-21T07:08:22.403Z"
     }
   }
