@@ -1087,6 +1087,20 @@
       "fileKey": "68380:3462454:/הרצאה 2 26_27.pdf",
       "createdAt": "2026-10-23T11:03:29.925Z",
       "addedAt": "2026-10-23T11:03:33.470Z"
+    },
+    {
+      "id": "mvl0o9xhqzb7",
+      "key": "material:phys-0o80uz5l",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "phys",
+      "title": "תרגול חדש בפיזיקה: תרגול 1 23.10.2026",
+      "body": "",
+      "lectureId": "phys-0o80uz5l",
+      "source": "moodle",
+      "fileKey": "68587:3462493:/תרגול 1 23.10.2026.pdf",
+      "createdAt": "2026-10-23T13:39:42.368Z",
+      "addedAt": "2026-10-23T13:39:44.837Z"
     }
   ],
   "deadlines": [
