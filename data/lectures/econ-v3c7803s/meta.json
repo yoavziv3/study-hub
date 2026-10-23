@@ -1,0 +1,28 @@
+{
+  "id": "econ-v3c7803s",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "הרצאה 2 26 27",
+  "originalName": "הרצאה 2 26_27.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 36,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-23T11:03:29.925Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3462454:/הרצאה 2 26_27.pdf",
+    "section": "טכנולוגיית הייצור",
+    "module": "הרצאה 2",
+    "timemodified": 1792751862
+  },
+  "updatedAt": "2026-10-23T11:03:33.471Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

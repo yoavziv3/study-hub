@@ -1073,6 +1073,20 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894145",
       "createdAt": "2026-10-23T06:21:09.000Z",
       "addedAt": "2026-10-23T07:00:11.667Z"
+    },
+    {
+      "id": "mvkv3exqlxmb",
+      "key": "material:econ-v3c7803s",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "econ",
+      "title": "הרצאה חדשה במבוא לכלכלה: הרצאה 2 26 27",
+      "body": "",
+      "lectureId": "econ-v3c7803s",
+      "source": "moodle",
+      "fileKey": "68380:3462454:/הרצאה 2 26_27.pdf",
+      "createdAt": "2026-10-23T11:03:29.925Z",
+      "addedAt": "2026-10-23T11:03:33.470Z"
     }
   ],
   "deadlines": [
