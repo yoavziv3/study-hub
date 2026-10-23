@@ -6,5 +6,13 @@
     "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3371890",
     "section": "קישורי זום",
     "ext": ""
+  },
+  {
+    "id": 3462527,
+    "type": "link",
+    "name": "ספר הקורס (בבנייה)",
+    "href": "https://teachingcenter.bgu.ac.il/books/calculus/",
+    "section": "ספר ורשימות מהכיתה",
+    "ext": ""
   }
 ]
