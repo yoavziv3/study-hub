@@ -22,7 +22,8 @@
     "module": "תרגול 1  מחברת",
     "timemodified": 1792760937
   },
-  "updatedAt": "2026-10-23T13:39:44.838Z",
+  "updatedAt": "2026-10-23T23:40:46.265Z",
   "aiError": "יצירת הסיכום נכשלה",
-  "announced": true
+  "announced": true,
+  "aiRetries": 1
 }
