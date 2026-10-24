@@ -22,8 +22,8 @@
     "module": "תרגול 1  מחברת",
     "timemodified": 1792760937
   },
-  "updatedAt": "2026-10-24T03:20:14.480Z",
-  "aiError": "יצירת הסיכום נכשלה",
+  "updatedAt": "2026-10-24T12:34:31.298Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
   "announced": true,
-  "aiRetries": 3
+  "aiRetries": 0
 }
