@@ -2,7 +2,7 @@
   "id": "econ-v3c7803s",
   "courseId": "econ",
   "autoCourse": false,
-  "title": "הרצאה 2 26 27",
+  "title": "טכנולוגיית הייצור: תפוקה כוללת, ממוצעת ושולית והקצאה יעילה",
   "originalName": "הרצאה 2 26_27.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -22,8 +22,14 @@
     "module": "הרצאה 2",
     "timemodified": 1792751862
   },
-  "updatedAt": "2026-10-24T12:34:31.303Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-10-24T12:55:46.728Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 0
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-24T12:54:49.341Z",
+    "found": 2
+  },
+  "notesStatus": null,
+  "notesError": null
 }

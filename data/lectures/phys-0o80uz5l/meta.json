@@ -2,7 +2,7 @@
   "id": "phys-0o80uz5l",
   "courseId": "phys",
   "autoCourse": false,
-  "title": "תרגול 1 23.10.2026",
+  "title": "יחידות, ניתוח ממדים, וקטורים וקינמטיקה חד-ממדית (תרגול פתיחה)",
   "originalName": "תרגול 1 23.10.2026.pdf",
   "kind": "tutorial",
   "originalFile": "original.pdf",
@@ -22,8 +22,14 @@
     "module": "תרגול 1  מחברת",
     "timemodified": 1792760937
   },
-  "updatedAt": "2026-10-24T12:34:31.298Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-10-24T12:52:30.969Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 0
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-24T12:51:44.467Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }
