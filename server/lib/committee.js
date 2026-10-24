@@ -23,14 +23,16 @@ const SEED = {
     acc: [['1', '11'], ['2', '21']],
     is: [['1'], ['2']],
     econ: [['2', '21'], ['2', '22'], ['3', '31'], ['3', '32']],
-    phys: [],
+    // Physics: every group meets Friday 8:00-12:00 (lecture) and 12:00-14:00 (tutorial), online.
+    phys: [['1', '11'], ['2', '12'], ['3', '13']],
   },
 };
 
 export function committeeData() {
   try {
     const saved = JSON.parse(fs.readFileSync(FILE, 'utf8'));
-    return { ...SEED, ...saved, lines: { ...SEED.lines, ...(saved.lines || {}) } };
+    // The registration lines are the faculty's list, kept in this file's code; the file keeps the courses' catalog data.
+    return { ...SEED, ...saved, lines: SEED.lines };
   } catch {
     return SEED;
   }

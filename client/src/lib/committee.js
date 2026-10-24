@@ -17,23 +17,38 @@ export function possibleLines(classes = []) {
   const lectures = classes.filter((g) => g.type === 'שעור');
   const others = classes.filter((g) => g.type !== 'שעור').sort(byGroup);
   const lectureOf = (g) => lectures.find((l) => l.group === g.group.slice(0, -1));
+  // Each meeting remembers which group (and kind of group) it belongs to, for the labels on the grid.
+  const slotsOf = (g) => (g?.slots || []).map((s) => ({ ...s, type: g.type, group: g.group, lecturer: g.lecturer }));
   const out = [];
   const withTutorial = new Set();
   for (const t of others) {
     const l = lectureOf(t);
     if (l) withTutorial.add(l.group);
     const groups = l ? [l.group, t.group] : [t.group];
-    out.push({ id: lineId(groups), groups, slots: [...(l?.slots || []), ...t.slots], lecturer: [l?.lecturer, t.lecturer].filter(Boolean).join(' / ') });
+    out.push({ id: lineId(groups), groups, slots: [...slotsOf(l), ...slotsOf(t)], lecturer: [l?.lecturer, t.lecturer].filter(Boolean).join(' / ') });
   }
-  for (const l of lectures.sort(byGroup)) if (!withTutorial.has(l.group)) out.push({ id: l.group, groups: [l.group], slots: l.slots, lecturer: l.lecturer });
+  for (const l of lectures.sort(byGroup)) if (!withTutorial.has(l.group)) out.push({ id: l.group, groups: [l.group], slots: slotsOf(l), lecturer: l.lecturer });
   return out;
+}
+
+/** A line the faculty's list names, by its group numbers (its tutorial needn't carry its lecture's number). */
+function lineFromGroups(classes, groups) {
+  const found = groups.map((n, i) => classes.find((g) => g.group === n && (i === 0 ? g.type === 'שעור' || groups.length === 1 : g.type !== 'שעור')));
+  if (found.some((g) => !g)) return null;
+  const slotsOf = (g) => g.slots.map((s) => ({ ...s, type: g.type, group: g.group, lecturer: g.lecturer }));
+  return { id: lineId(groups), groups, slots: found.flatMap(slotsOf), lecturer: [...new Set(found.map((g) => g.lecturer).filter(Boolean))].join(' / ') };
 }
 
 /** The committee's courses: the site's (with classes) and the extra ones, each with its lines and which are on. */
 export function committeeCourses(courses, data, saved) {
   const all = [...courses.filter((c) => c.classes?.length), ...(data?.extra || []).filter((c) => c.classes?.length && !courses.some((x) => x.id === c.id))];
   return all.map((c) => {
-    const lines = possibleLines(c.classes);
+    // The faculty's lines first; then the other lines the catalog's numbering allows (not those that would pair one of
+    // their tutorials, or a lecture they cover, differently).
+    const named = (data?.lines?.[c.id] || []).map((g) => lineFromGroups(c.classes, g)).filter(Boolean);
+    const tutorials = new Set(named.flatMap((l) => l.groups.slice(1)));
+    const lectures = new Set(named.map((l) => l.groups[0]));
+    const lines = [...named, ...possibleLines(c.classes).filter((l) => !named.some((n) => n.id === l.id) && !l.groups.slice(1).some((g) => tutorials.has(g)) && !(l.groups.length === 1 && lectures.has(l.groups[0])))];
     const defaults = (data?.lines?.[c.id] || []).map(lineId);
     const chosen = saved?.[c.id] || defaults;
     return { id: c.id, short: c.short, name: c.name, color: c.color, lines: lines.map((l) => ({ ...l, on: chosen.includes(l.id) })) };
@@ -97,3 +112,48 @@ export function freeWindows(grid, rows, days, minFree = 1, minMinutes = 60) {
 }
 
 export const hhmm = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+
+/**
+ * The meetings behind the grid, per day: one block per course, kind of group and time, with the groups that meet then
+ * and the share of the course's selected lines (so of its students) that have it. Overlapping blocks get lanes to sit
+ * side by side. → [{ day, course, type, groups, lecturers, places, from, to, share, lane, lanes }]
+ */
+export function meetings(cc, days = DAYS) {
+  const out = [];
+  for (const c of cc) {
+    const on = c.lines.filter((l) => l.on);
+    if (!on.length) continue;
+    const blocks = new Map();
+    for (const l of on) {
+      for (const s of l.slots) {
+        const key = `${s.day}|${s.start}|${s.end}|${s.type}`;
+        const b = blocks.get(key) || { day: s.day, course: c, type: s.type, from: minutes(s.start), to: minutes(s.end), groups: new Set(), lecturers: new Set(), places: new Set(), lines: new Set() };
+        b.groups.add(s.group);
+        if (s.lecturer) b.lecturers.add(s.lecturer);
+        if (s.place || s.mode) b.places.add(s.place || s.mode);
+        b.lines.add(l.id);
+        blocks.set(key, b);
+      }
+    }
+    for (const b of blocks.values()) out.push({ ...b, groups: [...b.groups].sort((x, y) => Number(x) - Number(y)), lecturers: [...b.lecturers], places: [...b.places], share: b.lines.size / on.length });
+  }
+  // Lanes per day: a cluster of overlapping blocks shares the column's width.
+  for (const day of days) {
+    const list = out.filter((m) => m.day === day).sort((a, b) => a.from - b.from || a.to - b.to);
+    let cluster = [];
+    let end = 0;
+    const close = () => { const lanes = Math.max(1, ...cluster.map((m) => m.lane + 1)); for (const m of cluster) m.lanes = lanes; cluster = []; };
+    const laneEnds = [];
+    for (const m of list) {
+      if (cluster.length && m.from >= end) { close(); laneEnds.length = 0; end = 0; }
+      let lane = laneEnds.findIndex((e) => e <= m.from);
+      if (lane < 0) lane = laneEnds.length;
+      laneEnds[lane] = m.to;
+      m.lane = lane;
+      cluster.push(m);
+      end = Math.max(end, m.to);
+    }
+    if (cluster.length) close();
+  }
+  return out;
+}

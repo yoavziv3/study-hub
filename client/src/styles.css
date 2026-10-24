@@ -965,10 +965,15 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .slide-peek.inline { margin: 12px 0 4px; }
 
 /* The degree committee's overlay (pages/Committee.jsx) */
-.cm-grid { display: grid; min-width: 520px; direction: rtl; }
+.cm-grid { display: grid; min-width: 560px; direction: rtl; }
 .cm-day { text-align: center; font-weight: 700; font-size: 13px; padding: 4px 0 8px; }
-.cm-time { font-size: 11.5px; color: var(--text-3); height: 18px; transform: translateY(-7px); text-align: start; }
-.cm-cell { height: 18px; border-top: 1px dashed var(--border); border-inline-start: 1px solid var(--border); display: flex; align-items: stretch; gap: 1px; padding: 1px 2px; background: var(--surface); }
+.cm-times { position: relative; }
+.cm-times span { position: absolute; inset-inline-start: 0; font-size: 11.5px; color: var(--text-3); transform: translateY(-7px); }
+.cm-col { position: relative; border-inline-start: 1px solid var(--border); }
+.cm-cell { border-top: 1px dashed var(--border); background: var(--surface); }
 .cm-cell.hour { border-top: 1px solid var(--border-strong); }
-.cm-cell i { flex: 1; border-radius: 3px; background: var(--c); }
 .cm-cell.free { background: var(--good-bg); }
+.cm-block { position: absolute; overflow: hidden; border-radius: 7px; padding: 2px 5px; font-size: 11.5px; line-height: 1.25; color: var(--text); background: color-mix(in srgb, var(--c) calc(var(--share) * 100%), var(--surface)); border-inline-start: 3px solid var(--c); display: flex; flex-direction: column; }
+.cm-block b { font-size: 12px; color: var(--c-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-block span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-share { opacity: 0.8; }

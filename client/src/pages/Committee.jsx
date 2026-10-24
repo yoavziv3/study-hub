@@ -5,7 +5,7 @@ import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp } from '../components/ui.jsx';
 import { DAY_NAMES, typeLabel } from '../lib/schedule.js';
-import { committeeCourses, gridRows, occupancy, freeWindows, hhmm, DAYS } from '../lib/committee.js';
+import { committeeCourses, gridRows, occupancy, freeWindows, meetings, hhmm, DAYS, CELL } from '../lib/committee.js';
 
 const THRESHOLDS = [[1, 'פנוי לכולם'], [0.9, '90% פנויים'], [0.8, '80% פנויים'], [0.7, '70% פנויים']];
 
@@ -37,27 +37,68 @@ function LinePicker({ course, onChange }) {
   );
 }
 
-function Grid({ rows, grid, days, minFree }) {
-  const cols = `54px repeat(${days.length}, minmax(0, 1fr))`;
+const CELL_PX = 24;
+const groupsText = (m) => (m.groups.length > 3 ? `${m.groups[0]}–${m.groups[m.groups.length - 1]}` : m.groups.join(', '));
+
+function Grid({ rows, grid, days, minFree, blocks }) {
+  const top = (m) => ((m - rows[0].from) / CELL) * CELL_PX;
   return (
-    <div className="cm-grid" style={{ gridTemplateColumns: cols }}>
+    <div className="cm-grid" style={{ gridTemplateColumns: `54px repeat(${days.length}, minmax(0, 1fr))` }}>
       <div />
       {days.map((d) => <div key={d} className="cm-day">{DAY_NAMES[d]}</div>)}
-      {rows.map((row, r) => (
-        <div key={row.from} style={{ display: 'contents' }}>
-          <div className={`cm-time ${row.from % 60 === 0 ? 'hour' : ''}`}>{row.from % 60 === 0 ? hhmm(row.from) : ''}</div>
-          {days.map((d, i) => {
+      <div className="cm-times" style={{ height: rows.length * CELL_PX }}>
+        {rows.filter((r) => r.from % 60 === 0).map((r) => <span key={r.from} style={{ top: top(r.from) }}>{hhmm(r.from)}</span>)}
+      </div>
+      {days.map((d, i) => (
+        <div key={d} className="cm-col" style={{ height: rows.length * CELL_PX }}>
+          {rows.map((row, r) => {
             const cell = grid[i][r];
             const free = 1 - cell.share >= minFree - 1e-9;
-            const tip = `יום ${DAY_NAMES[d]} ${hhmm(row.from)}–${hhmm(row.to)}\n${cell.by.length ? `תפוסים: ${pct(cell.share)}\n${cell.by.map((b) => `${b.course.short} (${pct(b.share)}): ${b.lines.join(', ')}`).join('\n')}` : 'אף אחד לא בשיעור'}`;
-            return (
-              <div key={d} className={`cm-cell ${free ? 'free' : ''} ${row.from % 60 === 0 ? 'hour' : ''}`} title={tip}>
-                {cell.by.map((b) => <i key={b.course.id} data-color={b.course.color} style={{ opacity: 0.3 + 0.7 * b.share }} />)}
-              </div>
-            );
+            return <div key={row.from} className={`cm-cell ${free ? 'free' : ''} ${row.from % 60 === 0 ? 'hour' : ''}`} style={{ height: CELL_PX }} title={`יום ${DAY_NAMES[d]} ${hhmm(row.from)}–${hhmm(row.to)}${cell.by.length ? ` · תפוסים ${pct(cell.share)}` : ' · אף אחד לא בשיעור'}`} />;
           })}
+          {blocks.filter((m) => m.day === d).map((m) => (
+            <div
+              key={`${m.course.id}-${m.type}-${m.from}`}
+              className="cm-block"
+              data-color={m.course.color}
+              style={{ top: top(m.from) + 1, height: ((m.to - m.from) / CELL) * CELL_PX - 2, width: `calc(${100 / m.lanes}% - 3px)`, insetInlineStart: `${(100 / m.lanes) * m.lane}%`, '--share': 0.28 + 0.62 * m.share }}
+              title={`${m.course.name || m.course.short} · ${typeLabel(m.type)} ${m.groups.join(', ')}\n${hhmm(m.from)}–${hhmm(m.to)}${m.places.length ? `\n${m.places.join(' · ')}` : ''}${m.lecturers.length ? `\n${m.lecturers.join(' · ')}` : ''}\n${m.share < 1 ? `${pct(m.share)} מהסטודנטים בקורס` : 'כל הסטודנטים בקורס'}`}
+            >
+              <b>{m.course.short}</b>
+              <span>{typeLabel(m.type)} {groupsText(m)}</span>
+              {m.share < 1 && m.lanes < 3 && <span className="cm-share">{pct(m.share)}</span>}
+            </div>
+          ))}
         </div>
       ))}
+    </div>
+  );
+}
+
+/** Every meeting as a list, by day: what is on, when, with whom and where. */
+function MeetingList({ blocks, days }) {
+  return (
+    <div className="stack" style={{ gap: 12 }}>
+      {days.map((d) => {
+        const list = blocks.filter((m) => m.day === d).sort((a, b) => a.from - b.from || a.course.short.localeCompare(b.course.short));
+        if (!list.length) return null;
+        return (
+          <div key={d}>
+            <div className="day-title">יום {DAY_NAMES[d]}</div>
+            <div className="stack" style={{ gap: 6 }}>
+              {list.map((m) => (
+                <div key={`${m.course.id}-${m.type}-${m.from}`} className="row wrap" data-color={m.course.color} style={{ gap: 10, padding: '6px 10px', borderRadius: 10, background: 'var(--c-soft)', borderInlineStart: '3px solid var(--c)', fontSize: 13.5 }}>
+                  <b dir="ltr" style={{ minWidth: 92 }}>{hhmm(m.from)}–{hhmm(m.to)}</b>
+                  <b style={{ color: 'var(--c-strong)' }}>{m.course.short}</b>
+                  <span>{typeLabel(m.type)} {m.groups.join(', ')}</span>
+                  <span className="faint grow">{[m.lecturers.join(' · '), m.places.join(' · ')].filter(Boolean).join(' · ')}</span>
+                  {m.share < 1 && <span className="chip">{pct(m.share)} מהקורס</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -77,6 +118,7 @@ export default function Committee() {
   // Friday only when someone has class then.
   const days = DAYS.filter((d) => d < 5 || grid5[d].some((c) => c.by.length));
   const grid = days.map((d) => grid5[d]);
+  const blocks = useMemo(() => meetings(cc, DAYS), [cc]);
   const windows = useMemo(() => freeWindows(grid, rows, days, minFree, minHours * 60), [grid5, rows, minFree, minHours]); // eslint-disable-line react-hooks/exhaustive-deps
   const active = cc.filter((c) => c.lines.some((l) => l.on));
 
@@ -127,7 +169,7 @@ export default function Committee() {
           <div className="row wrap" style={{ gap: 8 }}>
             {windows.map((w) => (
               <span key={`${w.day}-${w.from}`} className="chip good" title={w.busy ? `עד ${pct(w.busy)} מהסטודנטים בשיעור` : 'אף אחד לא בשיעור'}>
-                <CalendarClock size={12} /> יום {DAY_NAMES[w.day]} {hhmm(w.from)}–{hhmm(w.to)}
+                <CalendarClock size={12} /> יום {DAY_NAMES[w.day]} <bdi dir="ltr">{hhmm(w.from)}–{hhmm(w.to)}</bdi>
               </span>
             ))}
           </div>
@@ -138,11 +180,14 @@ export default function Committee() {
       <div className="row wrap" style={{ gap: 8, marginBottom: 10 }}>
         {active.map((c) => <span key={c.id} className="chip c" data-color={c.color}>{c.short}</span>)}
         <span className="chip good"><Eye size={12} /> ירוק: פנוי ({THRESHOLDS.find(([v]) => v === minFree)[1]})</span>
-        <span className="faint" style={{ fontSize: 12.5 }}>הצבע העמוק יותר = יותר סטודנטים בשיעור. מעבר עכבר על משבצת מראה מי.</span>
+        <span className="faint" style={{ fontSize: 12.5 }}>כל בלוק הוא שיעור או תרגול, עם מספרי הקבוצות. צבע עמוק יותר = יותר מהסטודנטים בקורס. מעבר עכבר על בלוק מראה מרצה וחדר.</span>
       </div>
       <div className="card pad" style={{ overflowX: 'auto' }}>
-        <Grid rows={rows} grid={grid} days={days} minFree={minFree} />
+        <Grid rows={rows} grid={grid} days={days} minFree={minFree} blocks={blocks} />
       </div>
+
+      <div className="section-title"><h2>כל המפגשים לפי יום</h2><div className="line" /></div>
+      <div className="card pad"><MeetingList blocks={blocks} days={days} /></div>
     </Page>
   );
 }
