@@ -41,7 +41,7 @@ function Heatmap({ activity, dueCards, focus }) {
         {focus?.[today.toISOString().slice(0, 10)] > 0 && <span className="chip c"><Timer size={13} /> {focus[today.toISOString().slice(0, 10)]} דק׳ ריכוז היום</span>}
         <span className="chip warn"><Flame size={13} /> {streak === 0 ? 'מתחילים רצף היום' : streak === 1 ? 'יום אחד ברצף' : `${streak} ימים ברצף`}</span>
       </div>
-      <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gap: 4, direction: 'ltr' }}>
+      <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gridAutoColumns: 'minmax(0, 1fr)', gap: 4, direction: 'ltr' }}>
         {cells.map((c, i) => (
           <motion.div
             key={c.key}
@@ -191,7 +191,7 @@ export default function Home() {
             <p>{STATIC ? 'כל הקורסים שלך במקום אחד – מצגות, תרגולים, הגשות, הודעות מהמודל, סיכומים ותרגול.' : 'כל ההרצאות של הסמסטר במקום אחד – מצגות, סיכומים, נושאים, תרגול ומורה פרטי שמכיר את כל החומר.'}</p>
             <div className="row wrap">
               {last ? (
-                <Link to={`/lecture/${last.id}?tab=slides&slide=${progress.last.slide || 1}`} className="btn"><PlayCircle size={17} /> המשך: {last.title}</Link>
+                <Link to={`/lecture/${last.id}?tab=slides&slide=${progress.last.slide || 1}`} className="btn btn-fit"><PlayCircle size={17} /> <span className="ellipsis">המשך: {last.title}</span></Link>
               ) : (
                 <button className="local-only btn" onClick={() => openUpload()}><Upload size={17} /> העלאת הרצאה</button>
               )}

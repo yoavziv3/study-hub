@@ -114,7 +114,7 @@ function Sidebar({ open, onNavigate }) {
             : [
                 !moodle?.connected ? { bad: true, text: 'המודל לא מחובר' }
                   : moodle.health?.problems?.length ? { bad: true, text: moodle.health.problems[0] } : { text: 'מחובר למודל' },
-                ai?.ready ? { text: ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)' } : { bad: true, text: 'AI לא מחובר' },
+                ai?.ready ? { text: ai.provider === 'gemini' ? 'AI מחובר (Gemini + Claude)' : ai.provider === 'api' ? 'AI מחובר (API)' : 'AI מחובר (Claude Code)' } : { bad: true, text: 'AI לא מחובר' },
               ]}
           onClick={!STATIC ? () => { onNavigate?.(); navigate('/moodle'); } : undefined}
         />
@@ -267,7 +267,8 @@ function Shell() {
           <button className="btn icon ghost menu-btn" onClick={() => setMenu((m) => !m)} aria-label={menu ? 'סגירת התפריט' : 'פתיחת התפריט'} aria-expanded={menu}>{menu ? <X size={20} /> : <Menu size={20} />}</button>
           <button className="search-trigger" onClick={() => setSearchOpen(true)}>
             <Search size={17} />
-            <span className="grow" style={{ textAlign: 'start' }}>חיפוש בכל החומר – מושגים, שקפים, נושאים…</span>
+            <span className="grow search-long" style={{ textAlign: 'start' }}>חיפוש בכל החומר – מושגים, שקפים, נושאים…</span>
+            <span className="grow search-short" style={{ textAlign: 'start' }}>חיפוש</span>
           </button>
           <div className="spacer" />
           <StudyTimer />
@@ -290,7 +291,7 @@ function Shell() {
             </AnimatePresence>
           </button>
           <button className="local-only btn primary" onClick={() => openUpload(context.courseId || 'auto')}>
-            <Upload size={17} /> העלאת הרצאה
+            <Upload size={17} /> <span className="hide-phone">העלאת הרצאה</span>
           </button>
           <AccountMenu />
         </header>
