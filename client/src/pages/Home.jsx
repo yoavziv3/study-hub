@@ -1,13 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, Upload, Presentation, Layers, Target, Brain, PlayCircle, Sparkles, Flame, GraduationCap, CalendarRange, MapPin, Timer } from 'lucide-react';
 import { useApp } from '../store.jsx';
-import { thumbUrl, useFetch, STATIC } from '../api.js';
+import { api, thumbUrl, useFetch, STATIC } from '../api.js';
 import { CountUp, CourseIcon, Page, Ring, fadeUp } from '../components/ui.jsx';
 import { UpcomingWidget } from './Updates.jsx';
 import { nextEvent, daysText, fmtDay, masteryMap, readiness, STRONG } from '../lib/exam.js';
-import { mySlots, upcoming, whenLabel, typeLabel, missingGroups } from '../lib/schedule.js';
+import { mySlots, upcoming, whenLabel, typeLabel, missingGroups, scheduleContext } from '../lib/schedule.js';
 
 function greeting() {
   const h = new Date().getHours();
@@ -63,6 +63,10 @@ function Heatmap({ activity, dueCards, focus }) {
 
 /** The next classes this week (from the timetable), or a nudge to pick class groups. */
 function ClassesWidget({ courses, progress }) {
+  const { updates } = useApp();
+  // Cloud: the portal's rooms and cancellations count here too, as on the timetable page.
+  const [portal, setPortal] = useState(null);
+  useEffect(() => { if (STATIC) api.get('/api/portal').then(setPortal).catch(() => {}); }, []);
   const slots = mySlots(courses, progress);
   if (!slots.length) {
     if (!courses.some((c) => c.classes?.length && missingGroups(c, progress).length)) return null;
@@ -77,7 +81,8 @@ function ClassesWidget({ courses, progress }) {
       </Link>
     );
   }
-  const next = upcoming(slots, new Date(), 3);
+  const now = new Date();
+  const next = upcoming(slots, now, 3, scheduleContext({ items: updates.items, lessons: portal?.ok ? portal.lessons : null, now }));
   return (
     <div className="card pad">
       <div className="row" style={{ marginBottom: 10 }}>

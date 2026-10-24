@@ -26,6 +26,16 @@ const shortHash = (s) => {
 /** A portal notice's key (also its push_sent key, as "portal:<key>"): the lesson, the notice's title, date and start. */
 export const noticeKey = (lessonName, n) => shortHash(`${lessonName}|${n.title}|${n.date}|${String(n.content || '').slice(0, 80)}`);
 
+/** The portal writes a notice's date as ISO or as dd/mm/yyyy [hh:mm] (Israel time); ms, or NaN when there is none. */
+export function noticeTime(d) {
+  if (!d) return NaN;
+  const m = String(d).match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+  return m ? Date.UTC(+m[3], m[2] - 1, +m[1], (m[4] || 12) - 3, +(m[5] || 0)) : Date.parse(d);
+}
+
+/** Readings are versioned: v2 adds the date, class type and times the timetable needs (older ones are read again). */
+export const NOTICE_VERSION = 2;
+
 const num = (s) => String(Number(String(s).match(/\d+/)?.[0] ?? NaN));
 
 /**

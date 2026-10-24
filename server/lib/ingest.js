@@ -7,7 +7,7 @@ import {
   lectureDir, newLectureId, INBOX_DIR, getContent, listLectures,
 } from './store.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
-import { aiStatus, generateJSON } from './ai.js';
+import { aiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt, DECK_PDF_RULES, DECK_PDF_QUIZ } from './prompts.js';
 
@@ -136,9 +136,9 @@ export async function addPrepItem({ courseId, lesson, semester, slidesText, tran
   return meta;
 }
 
-/** The deck as one PDF, for a model that reads PDFs itself (Gemini); null otherwise or when there is none. */
-function deckPdf(meta) {
-  if (aiStatus().provider !== 'gemini' || !meta.originalFile) return null;
+/** The deck as one PDF, for a model that reads PDFs itself (Gemini: `by`); null for any other or when there is none. */
+function deckPdf(meta, by) {
+  if (by !== 'gemini' || !meta.originalFile) return null;
   const dir = lectureDir(meta.id);
   return [path.join(dir, 'slides.pdf'), path.join(dir, 'deck.pdf'), /\.pdf$/i.test(meta.originalFile) ? path.join(dir, meta.originalFile) : null]
     .find((f) => f && fs.existsSync(f)) || null;
@@ -260,7 +260,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
     // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
     await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
-  } else if (aiStatus().ready && course?.ai !== false && meta.kind !== 'exam' && !meta.noAi && slides.some((s) => s.trim())) {
+  } else if (lessonsReady() && course?.ai !== false && meta.kind !== 'exam' && !meta.noAi && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material.
     await stage(id, 'analyzing');
     const trigger = meta.kind === 'prep' ? 'import' : aiOnly || regenerate ? 'retry' : meta.source?.fileKey || meta.source?.moodleId ? 'moodle' : 'upload';
@@ -268,27 +268,35 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     let checks = [];
     try {
       const transcriptFile = path.join(dir, 'transcript.txt');
-      // Gemini reads the deck's PDF itself (images of the pages too) and writes the full question bank at once.
-      const deck = deckPdf(meta);
-      const raw = await generateJSON({
-        system: lectureSystem(course),
-        prompt: (meta.kind === 'prep'
-          ? prepPrompt({ course, lesson: meta.lessonNumber, semester: meta.source?.semester || 'סמסטר קודם', slides, transcript: fs.existsSync(transcriptFile) ? fs.readFileSync(transcriptFile, 'utf8').slice(0, 90000) : '' })
-          : lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }))
-          + (deck ? DECK_PDF_RULES + DECK_PDF_QUIZ : ''),
-        schema: LECTURE_SCHEMA,
-        effort: 'high',
-        maxTokens: deck ? 65536 : 48000,
-        files: deck ? [deck] : [],
-        cache: !aiOnly && !regenerate,
+      // Claude writes it (AI_LESSONS=claude) and Gemini steps in when Claude fails; Gemini reads the deck's PDF itself
+      // (images of the pages too) and writes a bigger first question set at once (ai.js generateLesson).
+      const made = await generateLesson({
+        build: (by) => {
+          const deck = deckPdf(meta, by);
+          return {
+            system: lectureSystem(course),
+            prompt: (meta.kind === 'prep'
+              ? prepPrompt({ course, lesson: meta.lessonNumber, semester: meta.source?.semester || 'סמסטר קודם', slides, transcript: fs.existsSync(transcriptFile) ? fs.readFileSync(transcriptFile, 'utf8').slice(0, 90000) : '' })
+              : lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }))
+              + (deck ? DECK_PDF_RULES + DECK_PDF_QUIZ : ''),
+            schema: LECTURE_SCHEMA,
+            effort: 'high',
+            maxTokens: deck ? 65536 : 48000,
+            files: deck ? [deck] : [],
+            cache: !aiOnly && !regenerate,
+          };
+        },
+        // Fixed checks on the model's output before anything is saved (checks.js).
+        check: (raw) => {
+          const checked = checkLecture(raw, { slideCount: slides.length, slides });
+          return { checks: assertUsable(checked.checks), value: checked.value };
+        },
       });
-      // Fixed checks on the model's output before anything is saved (checks.js).
-      const checked = checkLecture(raw, { slideCount: slides.length, slides });
-      checks = assertUsable(checked.checks);
-      content = checked.value;
-      await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: aiStatus().provider });
+      checks = made.checks;
+      content = made.value;
+      await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: made.by });
       await patchLecture(id, { aiError: null, aiRetries: 0, checks: { at: new Date().toISOString(), found: checks.length } });
-      run.ok({ title: content.title, summaryChars: content.summary.length, quiz: content.quiz.length, flashcards: content.flashcards.length, glossary: content.glossary.length, topics: content.topics.length }, checks);
+      run.ok({ by: made.by, title: content.title, summaryChars: content.summary.length, quiz: content.quiz.length, flashcards: content.flashcards.length, glossary: content.glossary.length, topics: content.topics.length }, checks);
       await generateNotes(id);
     } catch (e) {
       // Keep the lecture usable (slides, text, chat); study material can be generated later from the lecture menu.
@@ -297,8 +305,8 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       content = null;
       const limit = /429|usage_limit/.test(e.message);
       const signedOut = /authenticate|login|OAuth/i.test(e.message);
-      await patchLecture(id, { aiError: limit ? limitText() : signedOut ? signedOutText() : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
-      adminAlert(limit ? `${limitText()} – חומר חדש נכנס בינתיים בלי סיכום` : signedOut ? `${signedOutText()} – חומר חדש נכנס בלי סיכום` : 'יצירת סיכום נכשלה');
+      await patchLecture(id, { aiError: limit ? limitText(e.message) : signedOut ? signedOutText(e.message) : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
+      adminAlert(limit ? `${limitText(e.message)} – חומר חדש נכנס בינתיים בלי סיכום` : signedOut ? `${signedOutText(e.message)} – חומר חדש נכנס בלי סיכום` : 'יצירת סיכום נכשלה');
     }
   }
 
@@ -320,11 +328,11 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
 }
 
 // What to tell the owner when the AI stops, by provider (the material may be on Gemini or on Claude).
-const onGemini = () => aiStatus().provider === 'gemini';
-export const limitText = () => (onGemini()
+const onGemini = (message = '') => /gemini|free_tier|GEMINI_API_KEY/i.test(message) || (!message && aiStatus().provider === 'gemini');
+export const limitText = (message = '') => (onGemini(message)
   ? 'נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)'
   : 'הגעת למגבלת השימוש ב-Claude – הסיכום ייכתב לבד כשהיא מתאפסת');
-const signedOutText = () => (onGemini() ? 'המפתח של Gemini חסר או נדחה (GEMINI_API_KEY ב-.env)' : 'החיבור ל-Claude במחשב פג – צריך להתחבר מחדש (claude, ואז /login)');
+const signedOutText = (message = '') => (onGemini(message) ? 'המפתח של Gemini חסר או נדחה (GEMINI_API_KEY ב-.env)' : 'החיבור ל-Claude במחשב פג – צריך להתחבר מחדש (claude, ואז /login)');
 
 /**
  * Structured study notes (sections of definition / example / rule blocks) for lectures and tutorials.
@@ -334,7 +342,7 @@ const signedOutText = () => (onGemini() ? 'המפתח של Gemini חסר או נ
 export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
-  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !aiStatus().ready) return null;
+  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !lessonsReady()) return null;
   if (getCourse(meta.courseId)?.ai === false) return null;
   const slides = getSlides(id).map((s) => s.text);
   if (!slides.some((s) => s.trim())) return null;
@@ -343,17 +351,24 @@ export async function generateNotes(id) {
   console.log(`[ingest] ${id} → notes`);
   const run = startRun('notes', { trigger: 'after-lecture', input: { lectureId: id, course: course.short, slides: slides.length, summaryChars: content.summary?.length || 0 } });
   try {
-    const deck = deckPdf(meta);
-    const raw = await generateJSON({
-      system: lectureSystem(course),
-      prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }) + (deck ? DECK_PDF_RULES : ''),
-      schema: NOTES_SCHEMA,
-      effort: 'high',
-      files: deck ? [deck] : [],
+    const made = await generateLesson({
+      build: (by) => {
+        const deck = deckPdf(meta, by);
+        return {
+          system: lectureSystem(course),
+          prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }) + (deck ? DECK_PDF_RULES : ''),
+          schema: NOTES_SCHEMA,
+          effort: 'high',
+          files: deck ? [deck] : [],
+        };
+      },
+      check: (raw) => {
+        const checked = checkNotes(raw, { slideCount: slides.length });
+        return { checks: assertUsable(checked.checks), value: checked.value };
+      },
     });
-    const checked = checkNotes(raw, { slideCount: slides.length });
-    const checks = assertUsable(checked.checks);
-    const notes = checked.value;
+    const checks = made.checks;
+    const notes = made.value;
     await saveContent(id, { ...getContent(id), notes: { ...notes, generatedAt: new Date().toISOString() } });
     await patchLecture(id, { notesStatus: null, notesError: null });
     run.ok({ sections: notes.sections.length, blocks: notes.sections.reduce((s, x) => s + x.blocks.length, 0) }, checks);
@@ -361,7 +376,7 @@ export async function generateNotes(id) {
   } catch (e) {
     console.error(`[ingest] ${id} notes failed:`, e.message.slice(0, 200));
     run.fail(e, e instanceof CheckError ? e.checks : []);
-    await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? limitText() : 'כתיבת הסיכום נכשלה' });
+    await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? limitText(e.message) : 'כתיבת הסיכום נכשלה' });
     return null;
   }
 }

@@ -1,5 +1,9 @@
 // The weekly timetable: class times and rooms come from the university's course catalog (on each course as
 // `classes`); each student picks their own lecture / tutorial group once per course.
+// On top of that, the BGU portal's lessons and Claude's reading of the notices (shared/schedule-changes.js) say what is
+// different on a given date: a class that is not held, a room that moved, a new time.
+
+import { changesFrom, changeFor, israelNow, addDays, weekdayOf } from '../../../shared/schedule-changes.js';
 
 export const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 const TYPE_ORDER = ['שעור', 'תרגיל', 'מעבדה'];
@@ -98,19 +102,24 @@ export function mySlots(courses, progress) {
   return out.sort((a, b) => a.day - b.day || minutes(a.start) - minutes(b.start));
 }
 
-/** The next meetings from now on (today's remaining first), with how far away they are. */
-export function upcoming(slots, now = new Date(), limit = 4) {
-  const today = now.getDay();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
-  return slots
-    .map((s) => {
-      let days = (s.day - today + 7) % 7;
-      if (days === 0 && minutes(s.end) <= nowMin) days = 7;
-      const startIn = days * 1440 + minutes(s.start) - nowMin;
-      return { ...s, days, startIn, live: days === 0 && minutes(s.start) <= nowMin };
-    })
-    .sort((a, b) => a.startIn - b.startIn)
-    .slice(0, limit);
+/**
+ * The next meetings from now on (today's remaining first), with how far away they are. A meeting that isn't held
+ * (cancelled) is skipped for that date, and one that moved is placed at its new time and room.
+ */
+export function upcoming(slots, now = new Date(), limit = 4, ctx = null) {
+  const il = israelNow(now.getTime());
+  const out = [];
+  for (const base of slots) {
+    for (let k = 0; k < 14; k++) {
+      const date = addDays(il.date, k);
+      if (weekdayOf(date) !== base.day) continue;
+      const s = slotOn(base, date, ctx);
+      if ((k === 0 && minutes(s.end) <= il.min) || s.canceled) continue;
+      out.push({ ...s, days: k, startIn: k * 1440 + minutes(s.start) - il.min, live: k === 0 && minutes(s.start) <= il.min });
+      break;
+    }
+  }
+  return out.sort((a, b) => a.startIn - b.startIn).slice(0, limit);
 }
 
 /** "עכשיו", "בעוד 25 דקות", "היום ב־14:00", "מחר ב־10:00", "ביום רביעי ב־16:00". */
@@ -122,19 +131,50 @@ export function whenLabel(s) {
   return `ביום ${DAY_NAMES[s.day]} ב־${s.start}`;
 }
 
-// ---------- the student's portal schedule (cloud, when connected) ----------
+// ---------- what is different on a date: the portal, and what the notices say ----------
 const numbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
+const pad = (n) => String(n).padStart(2, '0');
+const hhmm = (min) => `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
 
 /**
- * The meetings with what the BGU portal says about them: its room (when it differs from the catalog's), a
- * cancellation, and its notices. Matched by weekday and start time (within a quarter of an hour).
+ * The context the timetable is read in: the notices' changes (updates feed: course announcements, and in the cloud
+ * the student's own portal notices), the portal's lessons (cloud, when connected) and the clock in Israel.
  */
-export function withPortal(slots, lessons) {
-  if (!lessons?.length) return slots;
-  return slots.map((s) => {
-    const p = lessons.find((l) => l.day === s.day && Math.abs(minutes(l.start) - minutes(s.start)) <= 15);
-    if (!p) return s;
-    const moved = p.location && numbers(p.location) && numbers(s.place) && numbers(p.location) !== numbers(s.place);
-    return { ...s, catalogPlace: s.place, place: moved ? p.location : s.place, moved: !!moved, canceled: p.canceled, notices: p.notifications || [] };
-  });
+export const scheduleContext = ({ items = [], lessons = null, now = new Date() } = {}) => ({
+  changes: changesFrom({ items }),
+  lessons: lessons?.length ? lessons : null,
+  now: israelNow(now.getTime()),
+});
+
+/**
+ * One weekly meeting as it is on `date`: the portal's room (when it differs from the catalog's), a cancellation
+ * (`canceled`: shown until that meeting has ended, then it is the regular one again), a room or time a notice moved,
+ * and the portal's notices. Matched by weekday and start time (within a quarter of an hour).
+ */
+export function slotOn(s, date, ctx) {
+  const out = { ...s, date, catalogPlace: s.place, canceled: false, moved: false, timeMoved: false, notices: [], note: '' };
+  if (!ctx) return out;
+  const p = ctx.lessons?.find((l) => l.day === s.day && Math.abs(minutes(l.start) - minutes(s.start)) <= 15);
+  if (p) {
+    if (p.location && numbers(p.location) && numbers(s.place) && numbers(p.location) !== numbers(s.place)) { out.place = p.location; out.moved = true; }
+    out.notices = p.notifications || [];
+    // The portal flags the cancelled meeting of this week – until it would have ended.
+    const thisWeek = addDays(ctx.now.date, s.day - ctx.now.day);
+    out.canceled = !!p.canceled && date === thisWeek && (date > ctx.now.date || ctx.now.min < minutes(s.end));
+  }
+  const ch = changeFor(ctx.changes, { courseId: s.course.id, type: s.type, group: s.group, day: s.day, start: s.start, end: s.end }, date, ctx.now);
+  if (ch) {
+    if (ch.canceled) out.canceled = true;
+    if (ch.room) { out.place = ch.room; out.moved = true; }
+    if (ch.start) { out.origStart = s.start; out.origEnd = s.end; out.start = ch.start; out.end = ch.end || hhmm(minutes(ch.start) + minutes(s.end) - minutes(s.start)); out.timeMoved = true; }
+    out.note = ch.headline;
+  }
+  return out;
+}
+
+/** The student's meetings as they are this week (Sunday to Saturday; on Saturday, the coming week), for the week view. */
+export function thisWeek(slots, ctx) {
+  if (!ctx) return slots.map((s) => slotOn(s, null, null));
+  const sunday = addDays(ctx.now.date, ctx.now.day === 6 ? 1 : -ctx.now.day);
+  return slots.map((s) => slotOn(s, addDays(sunday, s.day), ctx));
 }

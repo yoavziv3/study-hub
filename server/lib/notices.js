@@ -8,6 +8,8 @@ import { generateJSON, claudeStatus } from './ai.js';
 import { NOTICE_SCHEMA, NOTICE_SYSTEM, noticePrompt } from './prompts.js';
 import { checkNotice } from './checks.js';
 import { startRun } from './runlog.js';
+import { NOTICE_VERSION, noticeTime } from '../../shared/notices.js';
+import { israelNow } from '../../shared/schedule-changes.js';
 import { getCourse } from './store.js';
 import { pendingNotices, setNoticeAnalysis } from './updates.js';
 
@@ -27,19 +29,23 @@ export const noticesState = () => ({ lastOk, lastError, model: MODEL, ready: cla
 const plain = (html = '') => String(html).replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li)>/gi, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/[ \t]+/g, ' ').trim();
 
 /** One notice → a checked reading (or null when nothing usable came back). */
-async function read({ source, course, classes, lesson, title, body }, checks) {
+async function read({ source, course, classes, lesson, title, body, postedAt }, checks) {
+  // The day it was posted (Israel), so "tomorrow" and "Wednesday" become dates (checkNotice verifies them).
+  const ms = noticeTime(postedAt);
+  const il = Number.isFinite(ms) ? israelNow(ms) : null;
+  const posted = il ? { date: il.date, weekday: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'][il.day] } : null;
   const raw = await generateJSON({
     use: 'claude',
     model: MODEL,
     system: NOTICE_SYSTEM,
-    prompt: noticePrompt({ source, course, classes, lesson, title, body: plain(body).slice(0, 6000) }),
+    prompt: noticePrompt({ source, course, classes, lesson, title, body: plain(body).slice(0, 6000), posted }),
     schema: NOTICE_SCHEMA,
     effort: 'low',
     maxTokens: 2000,
   });
-  const checked = checkNotice(raw, { body: plain(body), title, classes: source === 'portal' ? [] : classes });
+  const checked = checkNotice(raw, { body: plain(body), title, classes: source === 'portal' ? [] : classes, posted: il?.date || null });
   checks.push(...checked.checks);
-  return checked.value && { ...checked.value, ...(source === 'portal' ? { groups: [] } : {}), by: MODEL, at: new Date().toISOString() };
+  return checked.value && { ...checked.value, ...(source === 'portal' ? { groups: [] } : {}), v: NOTICE_VERSION, by: MODEL, at: new Date().toISOString() };
 }
 
 async function admin(pathname, init = {}) {
@@ -63,7 +69,7 @@ export async function analyzeNotices({ trigger = 'schedule' } = {}) {
     for (const it of pendingNotices().slice(0, PER_RUN)) {
       const course = getCourse(it.courseId);
       try {
-        const a = await read({ source: 'moodle', course: course?.name || it.courseId, classes: course?.classes || [], title: it.title, body: it.body }, checks);
+        const a = await read({ source: 'moodle', course: course?.name || it.courseId, classes: course?.classes || [], title: it.title, body: it.body, postedAt: it.createdAt || it.addedAt }, checks);
         await setNoticeAnalysis(it.id, a);
         if (a) result.announcements++;
       } catch (e) {
@@ -79,7 +85,7 @@ export async function analyzeNotices({ trigger = 'schedule' } = {}) {
       try {
         for (const n of pending.slice(0, PER_RUN)) {
           try {
-            const a = await read({ source: 'portal', course: n.course, lesson: n.lesson, title: n.title, body: n.content }, checks);
+            const a = await read({ source: 'portal', course: n.course, lesson: n.lesson, title: n.title, body: n.content, postedAt: n.postedAt || n.date }, checks);
             done.push({ key: n.key, analysis: a || null });
             if (a) result.portal++;
           } catch (e) {

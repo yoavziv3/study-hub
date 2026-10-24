@@ -300,10 +300,15 @@ ${text}
 export const NOTICE_SCHEMA = obj({
   kind: { type: 'string', enum: ['room-change', 'cancellation', 'time-change', 'date-change', 'exam', 'deadline', 'material', 'general'] },
   groups: strArr,
+  classType: { type: 'string', enum: ['שעור', 'תרגיל', 'מעבדה', ''] },
   room: str,
   day: str,
   time: str,
   date: str,
+  onDate: str,
+  repeats: { type: 'boolean' },
+  start: str,
+  end: str,
   headline: str,
   urgent: { type: 'boolean' },
 });
@@ -311,10 +316,10 @@ export const NOTICE_SCHEMA = obj({
 export const NOTICE_SYSTEM = `אתה קורא הודעות של קורסים באוניברסיטת בן-גוריון (מהמודל או מפורטל הסטודנטים) ומסכם לסטודנט מה הן אומרות. אתה מדויק: לא ממציא חדר, שעה, תאריך או קבוצה שלא כתובים בהודעה.`;
 
 /** classes: the course's groups ({ type, group, lecturer }) – so a notice that names only the lecturer maps to a group. */
-export function noticePrompt({ source, course, classes = [], lesson = null, title, body }) {
+export function noticePrompt({ source, course, classes = [], lesson = null, title, body, posted = null }) {
   const groups = classes.map((g) => `- ${g.type === 'שעור' ? 'שיעור' : g.type} ${g.group}${g.lecturer ? ` (${g.lecturer})` : ''}`).join('\n');
   return `${source === 'portal' ? `הודעה מפורטל הסטודנטים על שיעור של הסטודנט${lesson ? ` (${lesson})` : ''}` : 'הודעה מפורום ההודעות של הקורס במודל'} – הקורס: ${course}.
-${groups ? `\nהקבוצות בקורס:\n${groups}\n` : ''}
+${groups ? `\nהקבוצות בקורס:\n${groups}\n` : ''}${posted ? `\nההודעה פורסמה ב־${posted.date} (יום ${posted.weekday}).\n` : ''}
 <notice>
 כותרת: ${title}
 ${body}
@@ -324,6 +329,10 @@ ${body}
 - kind: סוג ההודעה – room-change (שינוי חדר/כיתה/מעבר לזום), cancellation (ביטול שיעור/תרגול), time-change (שינוי שעה), date-change (שינוי תאריך/הזזה), exam (מבחן/בוחן), deadline (הגשה), material (חומר חדש), general (כל השאר).
 - groups: מספרי הקבוצות שההודעה מיועדת להן (רק אם כתוב בהודעה, או אם היא נוקבת בשם מרצה/מתרגל של קבוצה מהרשימה). רשימה ריקה אם היא לכל הקורס.
 - room, day, time, date: מה שהשתנה, בדיוק כפי שכתוב בהודעה (למשל "בניין 32 חדר 210", "יום ב'", "14:00", "12.11"). מחרוזת ריקה כשלא רלוונטי.
+- classType: על מה ההודעה – שעור (הרצאה), תרגיל (תרגול) או מעבדה; מחרוזת ריקה אם לא כתוב או לא ברור.
+- onDate: התאריך המלא (YYYY-MM-DD) של המפגש שהשתנה או בוטל, מחושב מתאריך הפרסום ("היום", "מחר", "ביום רביעי הקרוב", "27.10"). השנה היא השנה של תאריך הפרסום. ריק אם לא כתוב או לא ברור, ובהודעות שאינן שינוי במפגש.
+- repeats: true רק אם כתוב שהשינוי קבוע ("מעתה", "מהשבוע הבא ואילך", "עד סוף הסמסטר"); אחרת false.
+- start, end: שעות בפורמט HH:MM. בביטול או בשינוי חדר – שעות המפגש עצמו (אם כתובות). בשינוי שעה – השעות החדשות. ריק אם לא כתוב.
 - headline: משפט אחד קצר בעברית (עד 15 מילים) שאומר לסטודנט מה קורה ומה עליו לעשות, בלי שם הקורס. בלי מספרים שלא כתובים בהודעה.
 - urgent: true רק אם השיעור או התרגול עצמו משתנה בימים הקרובים (חדר, ביטול, שעה, מועד). תזכורת להגשה או סיכום שבועי אינם דחופים.`;
 }

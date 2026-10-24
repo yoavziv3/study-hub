@@ -114,16 +114,58 @@ function parseLooseJSON(text) {
  * the prompt already). cache: false asks for a fresh answer (regenerate). priority: 'low' for work that can wait
  * (question banks) – with Gemini it never uses the part of the day's quota kept for new lessons.
  */
-export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000, files = [], cache = true, priority = 'normal', use = null, model: wanted = null }) {
-  // use: 'claude' – this task stays with Claude whatever AI_PROVIDER says (the notices: notices.js).
-  const { provider, model: base } = use === 'claude' ? claudeStatus() : aiStatus();
+export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000, files = [], cache = true, priority = 'normal', use = null, model: wanted = null, timeoutMs = undefined }) {
+  // use: 'claude' / 'gemini' – this task goes to that provider whatever AI_PROVIDER says (notices.js, generateLesson).
+  const { provider, model: base } = use === 'claude' ? claudeStatus() : use === 'gemini' ? geminiStatus() : aiStatus();
   const model = wanted || base;
   const key = cache && provider !== 'none' ? cacheKey({ provider, model, system, prompt, schema, files: provider === 'gemini' ? files : [] }) : null;
   const hit = key && readCache(key);
   if (hit) return hit;
-  const out = await generateFresh({ provider, model, system, prompt, schema, effort, maxTokens, files, priority });
+  const out = await generateFresh({ provider, model, system, prompt, schema, effort, maxTokens, files, priority, timeoutMs });
   if (key) writeCache(key, out, { provider, model });
   return out;
+}
+
+/** Gemini whatever AI_PROVIDER says. */
+export const geminiStatus = () => ({ provider: geminiReady() ? 'gemini' : 'none', model: GEMINI_MODEL, ready: geminiReady() });
+
+// ---------- lesson material: Claude first, Gemini as the fallback ----------
+// AI_LESSONS=claude: summaries, notes and a lesson's first questions are written by Claude (AI_LESSON_MODEL, default
+// Sonnet) – and by Gemini when Claude fails (timeout, usage limit, signed out, a rejected output), so no lesson stays
+// without material. Everything else (question banks, practice, chat…) follows AI_PROVIDER. Without AI_LESSONS the
+// lessons follow AI_PROVIDER, as before.
+const LESSON_MODEL = process.env.AI_LESSON_MODEL || 'claude-sonnet-5-5';
+const LESSON_TIMEOUT = 12 * 60000;
+const lessonsOnClaude = () => process.env.AI_LESSONS === 'claude' && claudeStatus().ready;
+
+/** The providers lesson material is tried on, in order: ['claude', 'gemini'], ['gemini'], ['claude'] or []. */
+export function lessonRoute() {
+  if (lessonsOnClaude()) return geminiReady() ? ['claude', 'gemini'] : ['claude'];
+  const main = aiStatus();
+  return main.ready ? [main.provider === 'gemini' ? 'gemini' : 'claude'] : [];
+}
+export const lessonsReady = () => lessonRoute().length > 0;
+
+/**
+ * build(by) → the request for provider `by` ({ system, prompt, schema, … }; Gemini also gets the deck's PDF);
+ * check(raw, by) → the checked result, throwing when the output isn't usable. A failure on one provider moves on to
+ * the next; the last provider's error is thrown when all fail. Returns { ...check's result, by }.
+ */
+export async function generateLesson({ build, check }) {
+  const route = lessonRoute();
+  if (!route.length) throw new Error(NO_AI);
+  let failure = null;
+  for (const by of route) {
+    try {
+      const ownModel = by === 'claude' && lessonsOnClaude();
+      const raw = await generateJSON({ ...build(by), use: by, model: ownModel ? LESSON_MODEL : null, timeoutMs: ownModel ? LESSON_TIMEOUT : undefined });
+      return { ...(await check(raw, by)), by };
+    } catch (e) {
+      failure = e;
+      if (by !== route[route.length - 1]) console.error(`[ai] lesson material on ${by} failed (${String(e.message).slice(0, 120)}) – trying ${route[route.indexOf(by) + 1]}`);
+    }
+  }
+  throw failure;
 }
 
 /** Claude on this Mac – the API key if there is one, else the Claude Code login – regardless of AI_PROVIDER. */
@@ -133,7 +175,7 @@ export function claudeStatus() {
   return { provider, model: MODEL, ready: provider !== 'none' };
 }
 
-async function generateFresh({ provider, model = MODEL, system, prompt, schema, effort, maxTokens, files, priority }) {
+async function generateFresh({ provider, model = MODEL, system, prompt, schema, effort, maxTokens, files, priority, timeoutMs }) {
   if (provider === 'gemini') return geminiJSON({ system, prompt, schema, effort, maxTokens, files, priority });
   if (provider === 'api') {
     const stream = sdk().messages.stream({
@@ -150,7 +192,8 @@ async function generateFresh({ provider, model = MODEL, system, prompt, schema, 
   if (provider === 'cli') {
     const out = await spawnCli(
       cliArgs({ system, effort, model, extra: ['--output-format', 'json', '--json-schema', JSON.stringify(schema)] }),
-      prompt
+      prompt,
+      timeoutMs ? { timeoutMs } : {}
     );
     const res = JSON.parse(out);
     if (res.is_error) throw new Error(res.result || 'CLI error');
@@ -165,8 +208,13 @@ async function generateFresh({ provider, model = MODEL, system, prompt, schema, 
 // needs a summary (health.js runs it regularly and alerts the owner).
 const PROBE_MODEL = process.env.AI_PROBE_MODEL || 'claude-haiku-5-5';
 export async function probeAI() {
-  const { provider } = aiStatus();
   if (process.env.AI_PROVIDER === 'gemini') return geminiProbe();
+  return probeClaude();
+}
+
+/** The same check for Claude itself (also when AI_PROVIDER is Gemini but lessons are on Claude: AI_LESSONS). */
+export async function probeClaude() {
+  const { provider } = claudeStatus();
   if (provider === 'none') return { ok: false, reason: NO_AI };
   try {
     if (provider === 'api') {

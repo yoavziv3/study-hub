@@ -9,7 +9,7 @@ import {
   deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice, getLinks,
 } from './lib/store.js';
 import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, retryFailedAI, limitText, ACCEPTED, KINDS } from './lib/ingest.js';
-import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
+import { aiStatus, chatStream, generateJSON, lessonsReady } from './lib/ai.js';
 import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
 import * as moodle from './lib/moodle.js';
@@ -128,7 +128,7 @@ app.delete('/api/lectures/:id', async (req, res) => {
 app.post('/api/lectures/:id/regenerate', async (req, res) => {
   const meta = getLecture(req.params.id);
   if (!meta) return res.status(404).json({ error: 'הרצאה לא נמצאה' });
-  if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
+  if (!lessonsReady()) return res.status(400).json({ error: 'אין חיבור ל-AI' });
   await patchLecture(meta.id, { status: 'processing', stage: 'queued' });
   enqueue(meta.id, { aiOnly: true });
   res.json({ ok: true });
@@ -193,7 +193,7 @@ app.post('/api/backup', async (req, res) => {
 
 /** "Try again" for everything that came in without AI material (e.g. after the usage limit reset). */
 app.post('/api/maintenance/retry-ai', async (req, res) => {
-  if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
+  if (!lessonsReady()) return res.status(400).json({ error: 'אין חיבור ל-AI' });
   res.json({ queued: await retryFailedAI() });
 });
 
@@ -208,7 +208,7 @@ app.get('/api/me/grades/:courseId', async (req, res) => {
 app.post('/api/lectures/:id/notes', async (req, res) => {
   const meta = getLecture(req.params.id);
   if (!meta) return res.status(404).json({ error: 'הרצאה לא נמצאה' });
-  if (!aiStatus().ready) return res.status(400).json({ error: 'אין חיבור ל-AI' });
+  if (!lessonsReady()) return res.status(400).json({ error: 'אין חיבור ל-AI' });
   await patchLecture(meta.id, { notesStatus: 'queued', notesError: null });
   enqueue(meta.id, { notesOnly: true });
   res.json({ ok: true });
@@ -240,7 +240,7 @@ app.post('/api/practice', async (req, res) => {
     res.json({ quiz: await addLectureQuestions(lectureId, { count: Math.min(15, Number(count) || 6), difficulty }) });
   } catch (e) {
     console.error('[practice]', e.message);
-    res.status(500).json({ error: /429|usage|limit/i.test(e.message) ? limitText() : e.message });
+    res.status(500).json({ error: /429|usage|limit/i.test(e.message) ? limitText(e.message) : e.message });
   }
 });
 
@@ -309,7 +309,7 @@ app.post('/api/courses/:id/practice', async (req, res) => {
     res.json({ added: { quiz: quizChecked.value.length, problems: problemsChecked.value.length }, practice: next });
   } catch (e) {
     console.error('[homework-practice]', e.message);
-    res.status(500).json({ error: /429|usage_limit/.test(e.message) ? limitText() : e.message });
+    res.status(500).json({ error: /429|usage_limit/.test(e.message) ? limitText(e.message) : e.message });
   }
 });
 

@@ -206,12 +206,21 @@ export function checkProblems(problems = []) {
 // ---------- a notice as Claude read it (notices.js) ----------
 const NOTICE_KIND_IDS = ['room-change', 'cancellation', 'time-change', 'date-change', 'exam', 'deadline', 'material', 'general'];
 const digitsIn = (t) => (String(t).match(/\d+/g) || []).map((d) => String(Number(d)));
+// "יום רביעי" / "ביום ד'" / "רביעי" → 3 (Sunday = 0); -1 when no weekday is named.
+const WEEKDAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+function namedWeekday(t) {
+  const s = String(t || '');
+  const full = WEEKDAYS.findIndex((d) => s.includes(d));
+  if (full >= 0) return full;
+  const letter = s.match(/יום\s*([א-ו])['׳]/);
+  return letter ? 'אבגדהוו'.indexOf(letter[1]) : -1;
+}
 /**
  * Nothing in the reading may go beyond the notice: a room, time or date whose numbers aren't in the text is
  * cleared, a group must be one of the course's (or named in the text), and a headline with invented numbers or of
  * the wrong length falls back to the notice's own title.
  */
-export function checkNotice(a, { body, title, classes = [] }) {
+export function checkNotice(a, { body, title, classes = [], posted = null }) {
   const checks = [];
   if (!a || typeof a !== 'object') return { value: null, checks: [finding('notice', 'reject', 'אין פלט')] };
   const source = new Set(digitsIn(`${title}\n${body}`));
@@ -229,6 +238,28 @@ export function checkNotice(a, { body, title, classes = [] }) {
       fields[f] = '';
     } else fields[f] = v;
   }
+  // The date the notice is about (onDate) must be believable: near the day it was posted, on the weekday it names,
+  // and on the date it writes out.
+  let onDate = /^\d{4}-\d{2}-\d{2}$/.test(text(a.onDate)) && !Number.isNaN(Date.parse(text(a.onDate))) ? text(a.onDate) : '';
+  if (text(a.onDate) && !onDate) checks.push(finding('notice.onDate', 'fixed', `תאריך לא תקין (${a.onDate}) – הוסר`));
+  if (onDate && posted) {
+    const gap = Math.round((Date.parse(`${onDate}T12:00:00Z`) - Date.parse(`${posted}T12:00:00Z`)) / 864e5);
+    const weekday = new Date(`${onDate}T12:00:00Z`).getUTCDay();
+    const named = namedWeekday(a.day);
+    const written = [...`${title}\n${body}`.matchAll(/(?<!\d)(\d{1,2})[./](\d{1,2})(?!\d)/g)].map((m) => `${String(Number(m[2]))}-${String(Number(m[1]))}`);
+    const mine = `${Number(onDate.slice(5, 7))}-${Number(onDate.slice(8, 10))}`;
+    if (gap < -10 || gap > 60) { checks.push(finding('notice.onDate', 'fixed', `התאריך ${onDate} רחוק מדי מיום הפרסום – הוסר`)); onDate = ''; }
+    else if (named >= 0 && weekday !== named) { checks.push(finding('notice.onDate', 'fixed', `התאריך ${onDate} לא ביום שכתוב בהודעה – הוסר`)); onDate = ''; }
+    else if (written.length && !written.includes(mine)) { checks.push(finding('notice.onDate', 'fixed', `התאריך ${onDate} לא תואם לתאריך שכתוב בהודעה – הוסר`)); onDate = ''; }
+  } else if (onDate) {
+    checks.push(finding('notice.onDate', 'fixed', 'אין תאריך פרסום להשוואה – התאריך הוסר'));
+    onDate = '';
+  }
+  const hhmm = (v) => (/^\d{2}:\d{2}$/.test(text(v)) && source.has(String(Number(text(v).slice(0, 2)))) ? text(v) : '');
+  const start = hhmm(a.start);
+  const end = hhmm(a.end);
+  if ((text(a.start) && !start) || (text(a.end) && !end)) checks.push(finding('notice.time', 'fixed', 'שעה שלא מופיעה בהודעה – הוסרה'));
+  const classType = ['שעור', 'תרגיל', 'מעבדה'].includes(a.classType) ? a.classType : '';
   let headline = text(a.headline);
   if (!headline || headline.length > 140) {
     checks.push(finding('notice.headline', 'fixed', 'כותרת ריקה או ארוכה מדי – הכותרת המקורית'));
@@ -239,5 +270,5 @@ export function checkNotice(a, { body, title, classes = [] }) {
   }
   // "Urgent" (a high-priority push) is kept for a lesson that changes, never a reminder or a weekly summary.
   const urgent = !!a.urgent && ['room-change', 'cancellation', 'time-change', 'date-change'].includes(kind);
-  return { value: { kind, groups, ...fields, headline, urgent }, checks };
+  return { value: { kind, groups, classType, ...fields, onDate, repeats: !!a.repeats && !!onDate, start, end, headline, urgent }, checks };
 }

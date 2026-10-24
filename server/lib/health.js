@@ -6,7 +6,7 @@ import { ROOT, listLectures } from './store.js';
 import { queueState, retryFailedAI } from './ingest.js';
 import { moodleStatus } from './moodle.js';
 import { publishState } from './publish.js';
-import { aiStatus, probeAI } from './ai.js';
+import { aiStatus, probeAI, probeClaude, lessonRoute } from './ai.js';
 import { geminiUsage } from './gemini.js';
 import { adminAlert } from './updates.js';
 import { growAllBanks, bankState } from './practice.js';
@@ -25,13 +25,22 @@ let aiWatch = { ok: null, kind: null, reason: null, checkedAt: null, since: null
 
 export async function checkAI() {
   const r = await probeAI();
+  // Lessons on Claude (AI_LESSONS=claude) with Gemini behind it: Claude is checked too, and its trouble is only a warning.
+  const claude = lessonRoute()[0] === 'claude' && process.env.AI_PROVIDER === 'gemini' ? await probeClaude() : null;
   const changed = r.ok !== aiWatch.ok;
   const gemini = aiStatus().provider === 'gemini' || process.env.AI_PROVIDER === 'gemini';
-  aiWatch = { ok: r.ok, kind: r.kind || null, reason: r.reason || null, provider: gemini ? 'gemini' : 'claude', usage: gemini ? geminiUsage() : null, checkedAt: Date.now(), since: changed ? Date.now() : aiWatch.since };
+  aiWatch = { ok: r.ok, kind: r.kind || null, reason: r.reason || null, provider: gemini ? 'gemini' : 'claude', usage: gemini ? geminiUsage() : null, claude: claude && { ok: claude.ok, kind: claude.kind || null, reason: claude.reason || null }, checkedAt: Date.now(), since: changed ? Date.now() : aiWatch.since };
+  if (claude && !claude.ok) console.error('[ai] Claude (lessons) not answering – Gemini writes them meanwhile:', claude.reason);
+  if (!r.ok && claude?.ok) {
+    // Gemini is out (usually its daily quota) but Claude can still write the lessons that failed meanwhile.
+    const n = await retryFailedAI({ auto: true }).catch(() => 0);
+    if (n) console.log(`[ai] re-queued ${n} items on Claude`);
+  }
   if (!r.ok) {
     console.error('[ai] not answering:', r.reason);
     const name = gemini ? 'Gemini' : 'Claude';
-    adminAlert(r.kind === 'signed-out' ? (gemini ? 'המפתח של Gemini חסר או נדחה – בדקו את GEMINI_API_KEY ב-.env' : 'ה-Claude במחשב מנותק – צריך להתחבר מחדש (claude, ואז /login)') : r.kind === 'limit' ? `הגעת למגבלת השימוש ב-${name} – הסיכומים יחכו עד שהיא תתאפס` : `ה-${name} לא עונה: ${r.reason}`);
+    // A used-up Gemini day only slows the question banks while Claude writes the lessons: no alert for that.
+    if (!(claude?.ok && r.kind === 'limit')) adminAlert(r.kind === 'signed-out' ? (gemini ? 'המפתח של Gemini חסר או נדחה – בדקו את GEMINI_API_KEY ב-.env' : 'ה-Claude במחשב מנותק – צריך להתחבר מחדש (claude, ואז /login)') : r.kind === 'limit' ? `הגעת למגבלת השימוש ב-${name} – הסיכומים יחכו עד שהיא תתאפס` : `ה-${name} לא עונה: ${r.reason}`);
     return aiWatch;
   }
   if (changed && aiWatch.since) console.log('[ai] answering again');

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarRange, MapPin, ChevronDown, Info, Clock, Search, Share2, Check, Users, Ban, RefreshCcw } from 'lucide-react';
+import { CalendarRange, MapPin, ChevronDown, Info, Clock, Search, Share2, Check, Users, Ban, RefreshCcw, ArrowLeftRight } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { CourseIcon, Page, fadeUp } from '../components/ui.jsx';
 import { api, STATIC } from '../api.js';
 import PortalConnect from '../components/PortalConnect.jsx';
 import {
   DAY_NAMES, typeLabel, minutes, classTypes, groupsOf, chosen, missingGroups, mySlots, upcoming, whenLabel,
-  groupRooms, matchRoom, soleMatch, shareableGroups, validShared, withPortal,
+  groupRooms, matchRoom, soleMatch, shareableGroups, validShared, scheduleContext, thisWeek,
 } from '../lib/schedule.js';
 
 const HOUR_PX = 58;
@@ -154,10 +154,10 @@ function SharedBanner({ courses }) {
 
 function SlotBlock({ s, style, compact, narrow }) {
   return (
-    <Link to={`/course/${s.course.id}`} className={`slot ${narrow ? 'narrow' : ''} ${s.canceled ? 'canceled' : ''}`} data-color={s.course.color} style={style} title={`${s.course.short} · ${typeLabel(s.type)} ${s.group} · ${s.lecturer}${s.moved ? ` · בקובץ הקורסים: ${s.catalogPlace}` : ''}`}>
+    <Link to={`/course/${s.course.id}`} className={`slot ${narrow ? 'narrow' : ''} ${s.canceled ? 'canceled' : ''}`} data-color={s.course.color} style={style} title={`${s.course.short} · ${typeLabel(s.type)} ${s.group} · ${s.lecturer}${s.moved ? ` · בקובץ הקורסים: ${s.catalogPlace}` : ''}${s.canceled ? ' · לא מתקיים' : ''}${s.note ? ` · ${s.note}` : ''}`}>
       <b>{s.course.short}</b>
-      <span>{s.canceled ? 'בוטל' : typeLabel(s.type)}</span>
-      {!narrow && <span className="slot-time">{s.start}–{s.end}</span>}
+      <span>{s.canceled ? 'לא מתקיים' : typeLabel(s.type)}</span>
+      {!narrow && <span className={`slot-time ${s.timeMoved ? 'slot-moved' : ''}`}>{s.timeMoved && <ArrowLeftRight size={10} />} {s.start}–{s.end}</span>}
       {!compact && (s.place || s.mode) && <span className={`slot-place ${s.moved ? 'moved' : ''}`}>{s.moved && <RefreshCcw size={10} />} {s.place || s.mode}</span>}
     </Link>
   );
@@ -206,9 +206,11 @@ function DayList({ slots, now }) {
               <Link key={s.key} to={`/course/${s.course.id}`} className="agenda-row" data-color={s.course.color}>
                 <div className="agenda-time"><b>{s.start}</b><span>{s.end}</span></div>
                 <div className="grow" style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 700 }}>{s.course.short} · {typeLabel(s.type)}{s.canceled && <span className="chip bad" style={{ marginInlineStart: 6 }}><Ban size={11} /> בוטל</span>}</div>
+                  <div style={{ fontWeight: 700 }}>{s.course.short} · {typeLabel(s.type)}{s.canceled && <span className="chip bad" style={{ marginInlineStart: 6 }}><Ban size={11} /> לא מתקיים</span>}{s.timeMoved && !s.canceled && <span className="chip warn" style={{ marginInlineStart: 6 }}><ArrowLeftRight size={11} /> הועבר ל־{s.start}</span>}</div>
                   <div className={s.moved ? 'slot-moved' : 'faint'} style={{ fontSize: 13 }}>{s.moved && <RefreshCcw size={11} />} {s.place || s.mode}{s.lecturer ? ` · ${s.lecturer}` : ''}</div>
-                  {s.moved && <div className="faint" style={{ fontSize: 12 }}>החדר עודכן בפורטל (בקובץ הקורסים: {s.catalogPlace})</div>}
+                  {s.moved && <div className="faint" style={{ fontSize: 12 }}>החדר עודכן (בקובץ הקורסים: {s.catalogPlace})</div>}
+                  {s.timeMoved && <div className="faint" style={{ fontSize: 12 }}>השעה עודכנה (בקובץ הקורסים: {s.origStart}–{s.origEnd})</div>}
+                  {s.note && (s.canceled || s.moved || s.timeMoved) && <div style={{ fontSize: 12.5, marginTop: 2 }}>{s.note}</div>}
                 </div>
               </Link>
             ))}
@@ -220,7 +222,7 @@ function DayList({ slots, now }) {
 }
 
 export default function Schedule() {
-  const { courses, progress, setContext, setClassGroups, progressLoaded } = useApp();
+  const { courses, progress, setContext, setClassGroups, progressLoaded, updates } = useApp();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => { setContext({}); }, [setContext]);
   useEffect(() => {
@@ -238,8 +240,13 @@ export default function Schedule() {
     const changed = Object.fromEntries(Object.entries(portalGroups).filter(([cid, picks]) => Object.entries(picks).some(([t, g]) => progress.classGroups?.[cid]?.[t] !== g)));
     if (Object.keys(changed).length) setClassGroups(changed);
   }, [progressLoaded, JSON.stringify(portalGroups)]); // eslint-disable-line react-hooks/exhaustive-deps
-  const slots = useMemo(() => withPortal(mySlots(courses, progress), portal?.ok ? portal.lessons : null), [courses, progress, portal]);
-  const next = upcoming(slots, now, 1)[0];
+  // What the portal and the notices say differs from the catalog this week: cancelled meetings (marked until they
+  // would have ended), rooms and times that moved (shared/schedule-changes.js).
+  const ctx = useMemo(() => scheduleContext({ items: updates.items, lessons: portal?.ok ? portal.lessons : null, now }), [updates.items, portal, now]);
+  const baseSlots = useMemo(() => mySlots(courses, progress), [courses, progress]);
+  const slots = useMemo(() => thisWeek(baseSlots, ctx), [baseSlots, ctx]);
+  const next = upcoming(baseSlots, now, 1, ctx)[0];
+  const changed = slots.filter((s) => s.canceled || s.timeMoved || (s.moved && s.note));
   // Two chosen groups at the same time – usually a wrong pick.
   const clashes = slots.flatMap((a, i) => slots.slice(i + 1)
     .filter((b) => b.day === a.day && b.course.id !== a.course.id && minutes(a.start) < minutes(b.end) && minutes(b.start) < minutes(a.end))
@@ -273,6 +280,17 @@ export default function Schedule() {
       {clashes.length > 0 && (
         <div className="callout row" style={{ gap: 8, marginTop: 14, background: 'var(--warn-bg)' }}>
           <Info size={16} /> <span>יש התנגשות בין שיעורים ({clashes.join(' · ')}) – כדאי לבדוק שבחרתם את הקבוצות הנכונות.</span>
+        </div>
+      )}
+      {changed.length > 0 && (
+        <div className="card pad stack" style={{ marginTop: 16, gap: 6 }}>
+          <b style={{ fontSize: 14 }}>שינויים במערכת השבוע</b>
+          {changed.map((s) => (
+            <div key={s.key} className="row" style={{ gap: 8, fontSize: 13.5 }} data-color={s.course.color}>
+              {s.canceled ? <Ban size={14} color="var(--bad, #c0392b)" /> : <ArrowLeftRight size={14} />}
+              <span><b>{s.course.short} · {typeLabel(s.type)} · יום {DAY_NAMES[s.day]} {s.origStart || s.start}</b> – {s.canceled ? 'לא מתקיים' : s.timeMoved ? `עבר ל־${s.start}${s.moved ? `, ${s.place}` : ''}` : `החדר: ${s.place}`}{s.note ? ` · ${s.note}` : ''}</span>
+            </div>
+          ))}
         </div>
       )}
       {slots.length > 0 ? (

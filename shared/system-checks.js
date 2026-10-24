@@ -101,6 +101,18 @@ export function macChecks(mac, at, now = Date.now()) {
     });
   }
 
+  // Lessons on Claude with Gemini as the fallback (AI_LESSONS=claude): Claude failing is a warning, not an outage.
+  if (w?.claude && !w.claude.ok) {
+    checks.push({
+      id: 'ai-claude',
+      title: 'Claude לשיעורים',
+      state: away ? 'off' : 'warn',
+      text: w.claude.kind === 'signed-out' ? 'מנותק – Gemini כותב את הסיכומים בינתיים' : w.claude.kind === 'limit' ? 'הגעת למגבלת השימוש – Gemini כותב את הסיכומים בינתיים' : 'לא עונה – Gemini כותב את הסיכומים בינתיים',
+      detail: [w.claude.kind === 'signed-out' ? 'בטרמינל: claude, ואז /login.' : w.claude.reason].filter(Boolean),
+      alerts: [],
+    });
+  }
+
   const pub = mac.publish || {};
   const failedLast = pub.lastError && pub.lastError.at > (pub.lastOk || 0);
   checks.push({

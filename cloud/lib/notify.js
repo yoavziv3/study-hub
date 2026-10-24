@@ -12,7 +12,8 @@ import { parseJson, noticeReadings, withReadings } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
-import { noticeKey, noticeTitle, noticeUrgent } from '../../shared/notices.js';
+import { noticeKey, noticeTitle, noticeUrgent, noticeTime } from '../../shared/notices.js';
+import { changesFrom, changeFor } from '../../shared/schedule-changes.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
@@ -185,22 +186,29 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
 
   // 4. A class of the student's groups starting within the next quarter of an hour (until the course's exams).
   //    With the portal connected, its room (and a cancellation) wins over the course catalog.
+  //    The notices' changes (shared/schedule-changes.js, from Claude's reading of announcements and portal notices) win
+  //    over both: a cancelled class, a room that moved, a new time.
   if (prefs.classes) {
+    const changes = changesFrom({ items: updates, lessons: portal || [], noticeTime });
     for (const { c, g, sl } of mySlots(courses, progress, il.date)) {
-      const startIn = minutes(sl.start) - il.min;
-      if (sl.day !== il.day || startIn <= 0 || startIn > 16) continue;
+      if (sl.day !== il.day) continue;
+      const ch = changeFor(changes, { courseId: c.id, type: g.type, group: g.group, day: sl.day, start: sl.start, end: sl.end }, il.date, il);
+      const start = ch?.start || sl.start;
+      const startIn = minutes(start) - il.min;
+      if (startIn <= 0 || startIn > 16) continue;
       const label = g.type === 'שעור' ? 'שיעור' : g.type;
       const p = portalLesson(portal, sl);
       const key = `class:${c.id}:${g.group}:${sl.day}:${sl.start}:${il.date}`;
-      if (p?.canceled) {
-        out.push({ key, title: `בוטל: ${c.short} · ${label} של ${sl.start}`, body: p.notifications[0]?.title || 'לפי מערכת השעות בפורטל', url: '/schedule', urgency: 'high', ttl: 15 * 60 });
+      if (p?.canceled || ch?.canceled) {
+        out.push({ key, title: `לא מתקיים: ${c.short} · ${label} של ${start}`, body: ch?.headline || p?.notifications?.[0]?.title || 'לפי מערכת השעות בפורטל', url: '/schedule', urgency: 'high', ttl: 15 * 60 });
         continue;
       }
-      const place = p?.location || sl.place || sl.mode;
+      const place = ch?.room || p?.location || sl.place || sl.mode;
+      const end = ch?.end || sl.end;
       out.push({
         key,
         title: `בעוד ${startIn} דקות: ${c.short} · ${label}`,
-        body: [place, `${sl.start}–${sl.end}`, portal ? '' : 'לפי קובץ הקורסים'].filter(Boolean).join(' · '),
+        body: [place, `${start}–${end}`, portal ? '' : 'לפי קובץ הקורסים'].filter(Boolean).join(' · '),
         url: '/schedule',
         urgency: 'high',
         ttl: 15 * 60,

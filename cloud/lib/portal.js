@@ -11,7 +11,7 @@ import { HttpError, json, israel } from './util.js';
 import { siteCourses, allowedCourseIds } from './account.js';
 import { groupsFromPortal, courseOfLesson } from '../../shared/groups.js';
 import { ping } from '../../shared/portal-api.js';
-import { noticeKey } from '../../shared/notices.js';
+import { noticeKey, noticeTime, NOTICE_VERSION } from '../../shared/notices.js';
 
 const MIN = 60000;
 const STALE = 30 * MIN; // re-read every half hour,
@@ -58,16 +58,22 @@ export async function pendingPortalNotices(env) {
     env.DB.prepare('SELECT data FROM portal_links WHERE ok = 1 AND data IS NOT NULL').all(),
     env.DB.prepare('SELECT key, analysis, at FROM notice_analysis').all(),
   ]);
-  const done = new Set(tries.results.filter((r) => r.analysis || r.at >= NOTICE_TRIES).map((r) => r.key));
+  // Done: read with the current version, or tried enough (a failed first try has no analysis; its `at` counts tries,
+  // an old reading that failed to refresh counts them inside the JSON).
+  const done = new Set(tries.results.filter((r) => {
+    if (!r.analysis) return r.at >= NOTICE_TRIES;
+    const a = parseJson(r.analysis, {});
+    return (a.v || 1) >= NOTICE_VERSION || (a.tries || 0) >= NOTICE_TRIES;
+  }).map((r) => r.key));
   const now = Date.now();
   const out = new Map();
   for (const link of links.results) {
     for (const l of parseJson(link.data, [])) {
       for (const n of l.notifications || []) {
         const key = noticeKey(l.name, n);
-        const at = Date.parse(n.date);
+        const at = noticeTime(n.date);
         if (done.has(key) || out.has(key) || (Number.isFinite(at) && now - at > NOTICE_WINDOW)) continue;
-        out.set(key, { key, course: l.name, lesson: [l.type, `יום ${'אבגדהוש'[l.day] || ''}'`, l.start, l.location].filter(Boolean).join(' · '), title: n.title, content: n.content, date: n.date });
+        out.set(key, { key, course: l.name, lesson: [l.type, `יום ${'אבגדהוש'[l.day] || ''}'`, l.start, l.location].filter(Boolean).join(' · '), title: n.title, content: n.content, date: n.date, postedAt: Number.isFinite(at) ? new Date(at).toISOString() : null });
       }
     }
   }
@@ -81,20 +87,16 @@ export async function savePortalNotices(env, body) {
   const stmts = items.map((x) => x.analysis
     ? env.DB.prepare('INSERT INTO notice_analysis (key, analysis, at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET analysis = excluded.analysis, at = excluded.at')
       .bind(x.key, JSON.stringify(x.analysis).slice(0, 4000), now)
-    : env.DB.prepare('INSERT INTO notice_analysis (key, analysis, at) VALUES (?, NULL, 1) ON CONFLICT(key) DO UPDATE SET at = notice_analysis.at + 1 WHERE notice_analysis.analysis IS NULL')
+    : env.DB.prepare(`INSERT INTO notice_analysis (key, analysis, at) VALUES (?, NULL, 1)
+        ON CONFLICT(key) DO UPDATE SET
+          at = CASE WHEN notice_analysis.analysis IS NULL THEN notice_analysis.at + 1 ELSE notice_analysis.at END,
+          analysis = CASE WHEN notice_analysis.analysis IS NULL THEN NULL
+                          ELSE json_set(notice_analysis.analysis, '$.tries', COALESCE(json_extract(notice_analysis.analysis, '$.tries'), 0) + 1) END`)
       .bind(x.key));
   // Readings of notices long gone from the portal.
   stmts.push(env.DB.prepare('DELETE FROM notice_analysis WHERE analysis IS NOT NULL AND at < ?').bind(now - 4 * NOTICE_WINDOW));
   await env.DB.batch(stmts);
   return json({ ok: true, saved: items.length });
-}
-
-// The portal writes dates as ISO or as dd/mm/yyyy; null when there's none.
-function noticeTime(d) {
-  if (!d) return null;
-  const m = String(d).match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
-  const t = m ? Date.UTC(+m[3], m[2] - 1, +m[1], (m[4] || 12) - 3, +(m[5] || 0)) : Date.parse(d);
-  return Number.isFinite(t) ? t : null;
 }
 
 /**
@@ -111,7 +113,7 @@ export async function portalFeed(env, user, courses) {
   for (const l of lessons) {
     for (const n of l.notifications || []) {
       const key = noticeKey(l.name, n);
-      const at = noticeTime(n.date) ?? account.synced_at ?? Date.now();
+      const at = Number.isFinite(noticeTime(n.date)) ? noticeTime(n.date) : account.synced_at ?? Date.now();
       if (at < since || out.has(key)) continue;
       out.set(key, {
         id: `portal:${key}`,
@@ -120,6 +122,9 @@ export async function portalFeed(env, user, courses) {
         courseId: courseOfLesson(courses, l)?.id || null,
         lesson: l.name,
         lessonType: l.type || '',
+        lessonDay: l.day,
+        lessonStart: l.start,
+        lessonRoom: l.location || '',
         title: n.title || 'עדכון בפורטל',
         body: n.content || '',
         addedAt: new Date(at).toISOString(),

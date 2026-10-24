@@ -6,6 +6,7 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { DATA_DIR, getCourse, listLectures, patchLecture } from './store.js';
 import { schedulePublish } from './publish.js';
+import { NOTICE_VERSION } from '../../shared/notices.js';
 
 const FILE = path.join(DATA_DIR, 'updates.json');
 const DAY = 86400000;
@@ -185,7 +186,7 @@ const NOTICE_TRIES = 3;
 export function pendingNotices() {
   if (!state) return [];
   const since = Date.now() - NOTICE_WINDOW;
-  return state.items.filter((i) => i.type === 'announcement' && !i.analysis && (i.analysisTries || 0) < NOTICE_TRIES && Date.parse(i.addedAt) > since);
+  return state.items.filter((i) => i.type === 'announcement' && (!i.analysis || (i.analysis.v || 1) < NOTICE_VERSION) && (i.analysisTries || 0) < NOTICE_TRIES && Date.parse(i.addedAt) > since);
 }
 /** Saves the reading on the feed item (published with the feed); null records a failed try. */
 export async function setNoticeAnalysis(id, analysis) {
