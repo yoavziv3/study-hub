@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap, MapPinned, Gauge,
+  Bell, BellRing, Megaphone, CalendarClock, AlarmClock, BookOpen, Presentation, PencilRuler, ExternalLink, Plus, Check, Trash2, RefreshCw, ChevronDown, Inbox, ScrollText, GraduationCap, MapPinned, Gauge, Building2,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
@@ -25,6 +25,7 @@ const TYPE = {
   exam: { label: 'מבחנים', icon: GraduationCap },
   'class-change': { label: 'שינוי במערכת', icon: MapPinned },
   report: { label: 'דוח שבועי', icon: Gauge },
+  portal: { label: 'עדכון מהפורטל', icon: Building2 },
 };
 const MATERIAL_ICON = { lecture: BookOpen, tutorial: Presentation, homework: PencilRuler, exam: ScrollText };
 
@@ -32,6 +33,7 @@ const FILTERS = [
   ['all', 'הכל'],
   ['material', 'חומרים חדשים'],
   ['announcement', 'הודעות'],
+  ['portal', 'הפורטל'],
   ['deadlines', 'הגשות ותזכורות'],
 ];
 
@@ -163,8 +165,10 @@ function UpdateItem({ item, course, isNew, i }) {
   const mine = item.type === 'class-change' && progress.classGroups?.[item.courseId]?.[item.classType] === item.group;
   const T = TYPE[item.type] || TYPE.announcement;
   // Claude's reading of an announcement (server/lib/notices.js): its kind, who it's for and what changed.
-  const read = item.type === 'announcement' && item.analysis?.headline ? item.analysis : null;
+  const read = (item.type === 'announcement' || item.type === 'portal') && item.analysis?.headline ? item.analysis : null;
   const kind = read && read.kind !== 'general' ? NOTICE_KINDS[read.kind] : null;
+  // A portal notice names its lesson; the course chip already says which course when it was matched.
+  const lesson = item.type === 'portal' ? (course ? item.lessonType : [item.lesson, item.lessonType].filter(Boolean).join(' · ')) : '';
   const Icon = item.type === 'material' ? MATERIAL_ICON[item.kind] || BookOpen : T.icon;
   const text = item.type === 'deadline' ? oneLine(item.body || '') : (item.body || '').replace(/\r/g, '').replace(/\n\s*\n+/g, '\n').trim();
   const long = text.length > 320;
@@ -177,6 +181,7 @@ function UpdateItem({ item, course, isNew, i }) {
           {isNew && <span className="chip bad" style={{ fontWeight: 700 }}>חדש</span>}
           <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם', prep: 'הכנה למבחן' }[item.kind] || T.label : T.label}</span>
           {course && <span className="chip c">{course.short}</span>}
+          {lesson && <span className="chip">{lesson}</span>}
           {mine && <span className="chip warn">הקבוצה שלך</span>}
           {kind && <span className={`chip ${kind.urgent ? 'warn' : ''}`}>{kind.icon} {kind.label}</span>}
           {read?.groups?.length > 0 && <span className="chip">{read.groups.length > 1 ? 'קבוצות' : 'קבוצה'} {read.groups.join(', ')}</span>}
@@ -190,7 +195,7 @@ function UpdateItem({ item, course, isNew, i }) {
           {long && <button className="btn sm ghost" onClick={() => setExpanded((x) => !x)}>{expanded ? 'פחות' : 'להודעה המלאה'} <ChevronDown size={14} style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} /></button>}
           {item.lectureId && <Link className="btn sm" to={`/lecture/${item.lectureId}`}>פתיחה באתר</Link>}
           {item.type === 'exam' && <Link className="btn sm" to={`/course/${item.courseId}/prep`}>להכנה למבחן</Link>}
-          {item.type === 'class-change' && <Link className="btn sm" to="/schedule">למערכת השעות</Link>}
+          {(item.type === 'class-change' || item.type === 'portal') && <Link className="btn sm" to="/schedule">למערכת השעות</Link>}
           {item.type === 'report' && <Link className="btn sm" to="/weekly">לדוח המלא</Link>}
           {item.type !== 'report' && safeHref(item.url) && <a className="btn sm" href={safeHref(item.url)} target="_blank" rel="noreferrer"><ExternalLink size={14} /> במודל</a>}
         </div>
@@ -277,7 +282,7 @@ export default function Updates() {
           </motion.div>
           <div className="grow">
             <h1 style={{ fontSize: 26 }}>עדכונים</h1>
-            <div className="muted" style={{ fontSize: 14 }}>חומרים חדשים, הודעות מהקורסים ודדליינים – הכל ממודל, במקום אחד.</div>
+            <div className="muted" style={{ fontSize: 14 }}>חומרים חדשים, הודעות מהקורסים ומהפורטל ודדליינים – הכל במקום אחד.</div>
           </div>
           {!STATIC && (
             <button className="btn accent" onClick={syncNow} disabled={syncing}>
@@ -342,7 +347,7 @@ export default function Updates() {
         <div className="line" />
       </div>
       <div className="tabs" style={{ marginBottom: 16 }}>
-        {FILTERS.map(([id, label]) => (
+        {FILTERS.filter(([id]) => id !== 'portal' || updates.items.some((i) => i.type === 'portal')).map(([id, label]) => (
           <button key={id} className={`tab ${filter === id ? 'active' : ''}`} onClick={() => setFilter(id)}>
             {filter === id && <motion.span layoutId="upd-filter" className="tab-bg" />}
             {label}

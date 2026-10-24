@@ -9,7 +9,7 @@
 // until the student reconnects (retrying could lock their account).
 import { HttpError, json, israel } from './util.js';
 import { siteCourses, allowedCourseIds } from './account.js';
-import { groupsFromPortal } from '../../shared/groups.js';
+import { groupsFromPortal, courseOfLesson } from '../../shared/groups.js';
 import { ping } from '../../shared/portal-api.js';
 import { noticeKey } from '../../shared/notices.js';
 
@@ -87,6 +87,47 @@ export async function savePortalNotices(env, body) {
   stmts.push(env.DB.prepare('DELETE FROM notice_analysis WHERE analysis IS NOT NULL AND at < ?').bind(now - 4 * NOTICE_WINDOW));
   await env.DB.batch(stmts);
   return json({ ok: true, saved: items.length });
+}
+
+// The portal writes dates as ISO or as dd/mm/yyyy; null when there's none.
+function noticeTime(d) {
+  if (!d) return null;
+  const m = String(d).match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+  const t = m ? Date.UTC(+m[3], m[2] - 1, +m[1], (m[4] || 12) - 3, +(m[5] || 0)) : Date.parse(d);
+  return Number.isFinite(t) ? t : null;
+}
+
+/**
+ * The student's own portal notices as items of their updates feed (type 'portal'), with Claude's reading.
+ * Personal: built per request from their portal_links row, never published. Notices older than FEED_DAYS drop off.
+ */
+const FEED_DAYS = 30;
+export async function portalFeed(env, user, courses) {
+  const account = await env.DB.prepare('SELECT ok, data, synced_at FROM portal_links WHERE user_id = ?').bind(user.id).first();
+  if (!account?.ok || !account.data) return [];
+  const lessons = withReadings(parseJson(account.data, []), await noticeReadings(env));
+  const since = Date.now() - FEED_DAYS * 24 * 60 * MIN;
+  const out = new Map();
+  for (const l of lessons) {
+    for (const n of l.notifications || []) {
+      const key = noticeKey(l.name, n);
+      const at = noticeTime(n.date) ?? account.synced_at ?? Date.now();
+      if (at < since || out.has(key)) continue;
+      out.set(key, {
+        id: `portal:${key}`,
+        key: `portal:${key}`,
+        type: 'portal',
+        courseId: courseOfLesson(courses, l)?.id || null,
+        lesson: l.name,
+        lessonType: l.type || '',
+        title: n.title || 'עדכון בפורטל',
+        body: n.content || '',
+        addedAt: new Date(at).toISOString(),
+        ...(n.analysis ? { analysis: n.analysis } : {}),
+      });
+    }
+  }
+  return [...out.values()];
 }
 
 async function view(env, account) {

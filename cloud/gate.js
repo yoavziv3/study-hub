@@ -4,6 +4,7 @@ import { json, fail } from './lib/util.js';
 import { currentUser, siteCourses, allowedCourseIds, visibleCourseIds, lectureCourse } from './lib/account.js';
 import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
 import { forCourses } from '../shared/weekly-load.js';
+import { portalFeed } from './lib/portal.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -47,9 +48,11 @@ export async function gate({ request, env }) {
       // The weekly load report's item names no course, so every student gets it (the report itself is filtered below).
       const mine = (upd.items || []).filter((i) => (allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement')) || i.type === 'report');
       const fresh = await cloudUpdates(env, [...allowed]).catch(() => []);
+      // The portal's notices on the student's own lessons (portal.js) – theirs alone, read from their portal link.
+      const portal = await portalFeed(env, user, courses).catch(() => []);
       return json({
         since: upd.since,
-        items: mergeUpdates(mine, fresh).sort((a, b) => b.addedAt.localeCompare(a.addedAt)),
+        items: [...mergeUpdates(mine, fresh), ...portal].sort((a, b) => b.addedAt.localeCompare(a.addedAt)),
         deadlines: [],
         settings: {},
       });

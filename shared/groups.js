@@ -17,6 +17,19 @@ const words = (s) => String(s || '').replace(/["'׳״()\-–]/g, ' ').split(/\s+
 const sameCourse = (l, c) => !l.name || words(l.name).some((w) => words(`${c.name} ${c.short}`).includes(w)) || (c.code && l.name.includes(c.code.replace(/-/g, '')));
 
 /**
+ * The site course a portal lesson belongs to: by name or course code, else the one course whose catalog has a
+ * meeting of the same kind on that day and time (the portal may name a course unlike the catalog). Null if unsure.
+ */
+export function courseOfLesson(courses, l) {
+  if (!l?.name) return null;
+  const named = courses.find((c) => sameCourse(l, c));
+  if (named) return named;
+  const timed = courses.filter((c) => (c.classes || []).some((g) => (!KIND(l.type) || KIND(l.type) === KIND(g.type))
+    && (g.slots || []).some((sl) => sl.day === l.day && sameTime(sl.start, l.start))));
+  return timed.length === 1 ? timed[0] : null;
+}
+
+/**
  * The student's groups read off their portal schedule: a catalog group is theirs when every one of its weekly
  * meetings is a lesson of that course in their portal schedule (same day, about the same start, same kind).
  * Several groups often meet at the same time in different rooms: the room, then BGU's numbering (tutorial 21
