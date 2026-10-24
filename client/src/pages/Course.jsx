@@ -321,7 +321,7 @@ export default function Course() {
       <div data-color={course.color}>
         <motion.div className="course-head" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <div className="pattern" />
-          <div className="row" style={{ alignItems: 'flex-start', gap: 18, position: 'relative' }}>
+          <div className="row course-head-row" style={{ alignItems: 'flex-start', gap: 18, position: 'relative' }}>
             <motion.div className="course-icon" style={{ width: 62, height: 62, borderRadius: 18 }} initial={{ rotate: -12, scale: 0.8 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16 }}>
               <CourseIcon name={course.icon} size={30} />
             </motion.div>
@@ -337,7 +337,7 @@ export default function Course() {
                 <span className="chip">{course.lectures.reduce((s, l) => s + (l.slideCount || 0), 0)} שקפים</span>
               </div>
             </div>
-            <div className="row" style={{ gap: 14 }}>
+            <div className="row course-head-side" style={{ gap: 14 }}>
               <Ring value={course.lectures.length ? studied / course.lectures.length : 0} size={74} stroke={7} />
               <div className="stack" style={{ gap: 8 }}>
                 <button className="local-only btn accent" onClick={() => openUpload(course.id)}><Upload size={16} /> העלאה</button>

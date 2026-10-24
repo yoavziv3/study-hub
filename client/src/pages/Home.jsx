@@ -139,9 +139,11 @@ function ExamsWidget({ courses, list, progress }) {
               <Ring value={ready} size={42} stroke={5} color={ready >= STRONG ? 'var(--good)' : ready >= 0.45 ? 'var(--warn)' : 'var(--bad)'} />
               <div className="grow" style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 650 }}>{c.short} · {next.label}</div>
-                <div className="faint" style={{ fontSize: 12.5 }}>{fmtDay(next.date)}{next.time ? ` · ${next.time}` : ''} · מוכנות {Math.round(ready * 100)}%</div>
+                <div className="faint" style={{ fontSize: 12.5 }}>{fmtDay(next.date)}{next.time ? ` · ${next.time}` : ''}<span className="hide-phone"> · מוכנות {Math.round(ready * 100)}%</span></div>
+                {/* On a phone the countdown sits under the date, so the course and the date keep the width. */}
+                <span className={`chip show-phone ${next.days <= 3 ? 'bad' : next.days <= 10 ? 'warn' : 'c'}`} style={{ marginTop: 4 }}>{daysText(next.days)}</span>
               </div>
-              <span className={`chip ${next.days <= 3 ? 'bad' : next.days <= 10 ? 'warn' : 'c'}`}>{daysText(next.days)}</span>
+              <span className={`chip hide-phone ${next.days <= 3 ? 'bad' : next.days <= 10 ? 'warn' : 'c'}`}>{daysText(next.days)}</span>
             </Link>
           );
         })}

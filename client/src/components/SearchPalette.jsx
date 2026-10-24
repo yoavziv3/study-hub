@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { Search, FileText, Hash, BookMarked, Presentation, CornerDownLeft, NotebookText } from 'lucide-react';
+import { Search, FileText, Hash, BookMarked, Presentation, CornerDownLeft, NotebookText, X } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
 import { Highlight, ltr } from './ui.jsx';
@@ -51,7 +51,9 @@ export default function SearchPalette() {
         <div className="palette-input">
           <Search size={20} color="var(--text-3)" />
           <input ref={inputRef} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey} placeholder="חפשו מושג, נושא או מילה מתוך השקפים…" />
-          <span className="kbd">Esc</span>
+          <span className="kbd hide-phone">Esc</span>
+          {/* On a phone there's no Escape key: a close button. */}
+          <button className="btn icon ghost show-phone" onClick={() => setSearchOpen(false)} aria-label="סגירת החיפוש"><X size={18} /></button>
         </div>
         <div className="palette-results">
           {q.trim().length >= 2 && results.length === 0 && <div className="faint" style={{ padding: 24, textAlign: 'center' }}>לא נמצאו תוצאות ל״{q}״</div>}

@@ -79,7 +79,8 @@ await write('status.json', { ai: { provider: 'static', ready: false }, static: t
   const cutoff = Date.now() - 7 * 86400000;
   await write('updates.json', {
     since: upd.since,
-    items: [...(upd.items || [])].sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, 300),
+    // Not the new-material items of lessons that aren't published (held back, or still processing) – they'd link nowhere.
+    items: (upd.items || []).filter((i) => !(i.type === 'material' && i.lectureId && !lectures.some((l) => l.id === i.lectureId))).sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, 300),
     deadlines: (upd.deadlines || []).filter((d) => new Date(d.dueAt).getTime() > cutoff).sort((a, b) => a.dueAt.localeCompare(b.dueAt)),
     settings: { notify: false, reminderDays: upd.settings?.reminderDays || [3, 1] },
   });

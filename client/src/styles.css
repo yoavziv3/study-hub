@@ -159,6 +159,7 @@ button.ai-pill:disabled { cursor: default; opacity: 1; }
 .main { min-width: 0; display: flex; flex-direction: column; overflow-x: clip; }
 .search-trigger { min-width: 0; }
 .search-short { display: none; }
+.show-phone { display: none !important; }
 .topbar {
   position: sticky; top: 0; z-index: 15; display: flex; align-items: center; gap: 12px;
   padding: 14px 32px; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(14px);
@@ -285,6 +286,7 @@ button.chip:hover { transform: translateY(-1px); }
 .crumbs a:hover { color: var(--text); }
 .lecture-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
 .lecture-head h1 { font-size: 30px; font-weight: 800; }
+.lecture-head > .grow { min-width: min(240px, 100%); }
 .unit-badge { flex: none; width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; background: var(--c-grad); color: #fff; font-family: var(--font-display); font-size: 26px; font-weight: 800; box-shadow: 0 12px 26px -12px var(--c); }
 
 .viewer { display: grid; grid-template-columns: 1fr 168px; gap: 14px; }
@@ -609,7 +611,7 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .note-section { scroll-margin-top: 78px; padding-top: 30px; position: relative; }
 .note-section::before { content: ''; position: absolute; top: 30px; bottom: 0; inset-inline-start: -12px; width: 4px; border-radius: 4px; background: var(--c); opacity: 0; transition: opacity 0.3s; }
 .note-section-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.note-section-head h2 { font-size: 24px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.note-section-head h2 { font-size: 24px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: min(220px, 100%); }
 .note-num { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; font-size: 14px; font-weight: 800; color: var(--c-strong); background: var(--c-soft); }
 .slide-link { cursor: pointer; gap: 5px; transition: background 0.2s, color 0.2s; }
 .slide-link:hover { background: var(--c-soft); color: var(--c-strong); }
@@ -677,7 +679,7 @@ input[type='range'] { width: 100%; accent-color: var(--c); }
 .part-head p { margin: 8px 0 0; color: var(--text-2); font-size: 15.5px; line-height: 1.7; }
 .part-num { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; flex: none; font-family: var(--font-display); font-weight: 800; font-size: 20px; color: #fff; background: var(--c-grad); }
 .part-label { font-size: 13px; font-weight: 700; color: var(--c-strong); }
-.note-section-title { font-size: 21px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; margin: 0; }
+.note-section-title { font-size: 21px; display: flex; align-items: center; gap: 12px; flex: 1; min-width: min(220px, 100%); margin: 0; }
 .course-toc .toc-lecture { font-weight: 600; color: var(--text-2); align-items: flex-start; }
 .course-toc .toc-lecture.on { color: var(--c-strong); border-inline-start-color: var(--c); }
 .toc-num { width: 20px; height: 20px; border-radius: 6px; display: inline-grid; place-items: center; flex: none; font-size: 11.5px; font-weight: 800; background: var(--surface-2); color: var(--text-3); margin-top: 1px; }
@@ -996,7 +998,32 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 
 /* Phones: the search box says just "חיפוש" so the icons beside it fit. */
 @media (max-width: 640px) {
-  .hide-phone { display: none; }
+  /* In a row that may wrap (page headers, card headers), the text block keeps a readable width and whatever stands
+     beside it (a "next class" box, chips, buttons) moves to the next line instead of squeezing it into a column. */
+  .row.wrap > .grow { min-width: min(200px, 100%); }
+  /* A long chip (a course and a lesson title) wraps inside the screen. */
+  .chip { max-width: 100%; white-space: normal; height: auto; min-height: 26px; padding-block: 3px; line-height: 1.35; }
+  .continue-card { gap: 12px; padding: 12px; }
+  /* Tabs that scroll sideways fade at the edges, so it shows there is more. */
+  .tabs { mask-image: linear-gradient(to left, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%); }
+  /* Course header: the icon and the name on one line, the rest (chips, progress ring, buttons) below them. */
+  .course-head { padding: 20px 18px; }
+  .course-head h1 { font-size: 24px; }
+  .course-head-row { flex-wrap: wrap; gap: 12px !important; }
+  .course-head-row > .grow { flex-basis: calc(100% - 64px); }
+  .course-head .course-icon { width: 48px !important; height: 48px !important; border-radius: 14px !important; }
+  .course-head-side { width: 100%; justify-content: space-between; }
+  .plan-task > .grow { min-width: min(200px, 100%) !important; }
+  /* Lesson header: the number and the title on one line, the actions under them. */
+  .lecture-head { gap: 12px; }
+  .lecture-head > .grow { flex-basis: calc(100% - 72px); }
+  .lecture-head h1 { font-size: 24px; }
+  .lecture-head > .row { flex-wrap: wrap; }
+  .term-course-head { gap: 10px; padding: 14px 12px; }
+  .term-course-row { padding-inline-end: 12px; }
+  .continue-thumb { width: 96px; }
+  .hide-phone { display: none !important; }
+  .show-phone { display: inline-flex !important; }
   .topbar .local-only.btn { padding: 0 12px; }
   .search-trigger { flex: 1 1 90px; }
   .search-long { display: none; }

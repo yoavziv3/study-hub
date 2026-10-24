@@ -80,7 +80,7 @@ function TermCourse({ course, lectures, studied, i }) {
           </div>
           <ChevronDown size={18} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
         </button>
-        <Link to={`/course/${course.id}`} className="btn sm">לקורס <ArrowLeft size={14} /></Link>
+        <Link to={`/course/${course.id}`} className="btn sm" aria-label="לקורס"><span className="hide-phone">לקורס</span> <ArrowLeft size={14} /></Link>
       </div>
       <AnimatePresence initial={false}>
         {open && (

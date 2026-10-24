@@ -70,7 +70,9 @@ export async function initUpdates() {
 export function updatesView() {
   if (!state) return { since: iso(), items: [], deadlines: [], settings: { notify: false, reminderDays: [3, 1] } };
   const now = Date.now();
-  const items = [...state.items].sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, 300);
+  // New-material items of lessons that are held back or gone (listLectures leaves them out) would link nowhere.
+  const shown = new Set(listLectures().map((l) => l.id));
+  const items = state.items.filter((i) => !(i.type === 'material' && i.lectureId && !shown.has(i.lectureId))).sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, 300);
   const deadlines = state.deadlines
     .filter((d) => new Date(d.dueAt).getTime() > now - 7 * DAY)
     .sort((a, b) => a.dueAt.localeCompare(b.dueAt));

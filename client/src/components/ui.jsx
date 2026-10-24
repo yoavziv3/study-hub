@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useMotionValue, useTransform } from 'motion/react';
 import { TrendingUp, Sigma, Network, Calculator, BookOpen, Atom } from 'lucide-react';
 
@@ -22,8 +22,17 @@ const EXPR = new RegExp(
 export const ltr = (text) => (typeof text === 'string' ? text.replace(EXPR, (m) => LRI + m + PDI) : text);
 
 export function Tabs({ tabs, value, onChange, layoutId = 'tab' }) {
+  // On a phone the tabs scroll sideways: keep the chosen one in view (a link straight to the 5th tab, too).
+  const box = useRef(null);
+  useEffect(() => {
+    const el = box.current?.querySelector('.tab.active');
+    if (!el) return;
+    const b = box.current.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.left < b.left || r.right > b.right) box.current.scrollBy({ left: r.left + r.width / 2 - (b.left + b.width / 2), behavior: 'smooth' });
+  }, [value]);
   return (
-    <div className="tabs" role="tablist">
+    <div className="tabs" role="tablist" ref={box}>
       {tabs.map((t) => (
         <button key={t.id} role="tab" aria-selected={value === t.id} className={`tab ${value === t.id ? 'active' : ''}`} onClick={() => onChange(t.id)}>
           {value === t.id && <motion.span layoutId={layoutId} className="tab-bg" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}

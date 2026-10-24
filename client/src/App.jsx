@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2 } from 'lucide-react';
@@ -158,6 +158,16 @@ function NavItem({ to, end, icon, label, count, color, onClick }) {
 function AccountMenu() {
   const { me, signOut, deleteAccount, toast } = useApp();
   const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  // A tap outside the menu, or Escape, closes it (on a phone there's no other way out).
+  useEffect(() => {
+    if (!open) return undefined;
+    const outside = (e) => { if (!box.current?.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('pointerdown', outside); document.removeEventListener('keydown', esc); };
+  }, [open]);
   if (!STATIC || !me) return null;
   const initials = (me.user?.name || '?').split(/\s+/).map((w) => w[0]).slice(0, 2).join('');
   const remove = async () => {
@@ -170,8 +180,8 @@ function AccountMenu() {
     }
   };
   return (
-    <div style={{ position: 'relative' }}>
-      <button className="btn icon ghost avatar-btn" onClick={() => setOpen((o) => !o)} aria-label="החשבון שלי">{initials}</button>
+    <div style={{ position: 'relative' }} ref={box}>
+      <button className="btn icon ghost avatar-btn" onClick={() => setOpen((o) => !o)} aria-label="החשבון שלי" aria-expanded={open}>{initials}</button>
       <AnimatePresence>
         {open && (
           <motion.div className="card account-menu" initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }}>

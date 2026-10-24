@@ -117,7 +117,7 @@ export default function PortalConnect({ status, onChange }) {
           <div className="row" style={{ gap: 6, fontWeight: 700, fontSize: 14 }}><BellRing size={14} /> הודעות על השיעורים שלך</div>
           {notices.map((n, i) => (
             <div key={i} className="portal-notice">
-              <div><b>{n.lesson}</b>{n.date && <span className="faint"> · {new Date(n.date).toLocaleDateString('he-IL')}</span>}</div>
+              <div className="row wrap" style={{ gap: '2px 8px' }}><b>{n.lesson}</b>{n.date && <span className="faint" style={{ fontSize: 12.5 }}>{new Date(n.date).toLocaleDateString('he-IL')}</span>}</div>
               {n.analysis?.headline && <div style={{ fontWeight: 600 }}>{(NOTICE_KINDS[n.analysis.kind] || NOTICE_KINDS.general).icon} {n.analysis.headline}</div>}
               {n.title && n.title !== n.analysis?.headline && <div>{n.title}</div>}
               {n.content && <div className="faint">{n.content}</div>}
