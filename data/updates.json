@@ -245,7 +245,19 @@
       "author": "צוות הקורס",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=892452",
       "createdAt": "2026-10-17T16:45:29.000Z",
-      "addedAt": "2026-10-19T11:08:19.216Z"
+      "addedAt": "2026-10-19T11:08:19.216Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "הודעת פתיחת סמסטר: מבנה הקורס, מטלות, בחנים, ציון וערוצי פנייה. כדאי לקרוא ולהגיע להרצאות ולתרגולים.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:27.654Z"
+      }
     },
     {
       "id": "mvf5i4r7f8gm",
@@ -257,7 +269,19 @@
       "author": "איתי שורץ",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=892842",
       "createdAt": "2026-10-19T07:06:45.000Z",
-      "addedAt": "2026-10-19T11:08:19.219Z"
+      "addedAt": "2026-10-19T11:08:19.219Z",
+      "analysis": {
+        "kind": "deadline",
+        "groups": [],
+        "room": "",
+        "day": "ראשון",
+        "time": "חצות",
+        "date": "",
+        "headline": "תרגיל 1 באתר המודל; להגיש עד ראשון בחצות ולענות רק על השאלות 1, 2א-ג, 4, 5א-ב ו-6.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:31.734Z"
+      }
     },
     {
       "id": "mvf5i4r8xgoc",
@@ -269,7 +293,26 @@
       "author": "יואב פרץ שביט",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=892736",
       "createdAt": "2026-10-18T15:36:40.000Z",
-      "addedAt": "2026-10-19T11:08:19.220Z"
+      "addedAt": "2026-10-19T11:08:19.220Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "11",
+          "12",
+          "21",
+          "22",
+          "31",
+          "32"
+        ],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "19.10",
+        "headline": "אין תרגולים מחר (19.10) - הבהרה",
+        "urgent": true,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:38.719Z"
+      }
     },
     {
       "id": "mvf5i4r9axka",
@@ -281,7 +324,22 @@
       "author": "עומר עזריה",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=892788",
       "createdAt": "2026-10-18T19:43:16.000Z",
-      "addedAt": "2026-10-19T11:08:19.221Z"
+      "addedAt": "2026-10-19T11:08:19.221Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "11",
+          "21"
+        ],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "התרגול השבוע מבוטל, ממשיכים כרגיל בשבוע הבא.",
+        "urgent": true,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:45.057Z"
+      }
     },
     {
       "id": "mvf5i4rdy42v",
@@ -293,7 +351,22 @@
       "author": "דוד קודיש",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=892002",
       "createdAt": "2026-10-12T10:39:19.000Z",
-      "addedAt": "2026-10-12T10:39:19.000Z"
+      "addedAt": "2026-10-12T10:39:19.000Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [
+          "1",
+          "2"
+        ],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "הודעת פתיחה: כדאי להצטרף לקבוצת הוואטסאפ ולעבור על הסילבוס והמצגות במודל.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:48.973Z"
+      }
     },
     {
       "id": "mvf5i5q13mkz",
@@ -331,7 +404,26 @@
       "author": "מאור רפאילוב",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893255",
       "createdAt": "2026-10-20T10:58:41.000Z",
-      "addedAt": "2026-10-20T11:03:14.827Z"
+      "addedAt": "2026-10-20T11:03:14.827Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "11",
+          "12",
+          "21",
+          "22",
+          "31",
+          "32"
+        ],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "21.10",
+        "headline": "מחר אין תרגולים; משבוע הבא חוזרים כרגיל, ותרגולי איברהים יתקיימו בזום.",
+        "urgent": true,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:54.939Z"
+      }
     },
     {
       "id": "mvgrv9p51hbr",
@@ -393,7 +485,19 @@
       "author": "רותם רווה",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893388",
       "createdAt": "2026-10-20T16:05:36.000Z",
-      "addedAt": "2026-10-20T16:33:49.285Z"
+      "addedAt": "2026-10-20T16:33:49.285Z",
+      "analysis": {
+        "kind": "deadline",
+        "groups": [],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "יש להירשם ב-Moodle לצוות של 4 סטודנטים בדיוק עד סוף תקופת השינויים.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:34:58.988Z"
+      }
     },
     {
       "id": "mvhrstg6ajoy",
@@ -417,7 +521,22 @@
       "author": "עומר עזריה",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893536",
       "createdAt": "2026-10-21T07:08:36.000Z",
-      "addedAt": "2026-10-21T07:10:19.101Z"
+      "addedAt": "2026-10-21T07:10:19.101Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [
+          "11",
+          "21"
+        ],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "יש לפתור שאלות 1, 3 ו-5 בנושא זהות חשבונאית מפרק 2 לקראת התרגול הראשון בשבוע הבא.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:35:07.463Z"
+      }
     },
     {
       "id": "mvhw7xdk9bmm",
@@ -429,7 +548,23 @@
       "author": "אוקסנה קרבץ",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893609",
       "createdAt": "2026-10-21T08:56:52.000Z",
-      "addedAt": "2026-10-21T09:11:45.080Z"
+      "addedAt": "2026-10-21T09:11:45.080Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "21",
+          "31",
+          "85"
+        ],
+        "room": "",
+        "day": "היום",
+        "time": "12-14",
+        "date": "",
+        "headline": "תרגול של אוקסנה היום בין 12 ל-14 מתבטל באופן חד פעמי; אין להגיע.",
+        "urgent": true,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:35:13.610Z"
+      }
     },
     {
       "id": "mvhw7xdm5vcf",
@@ -441,7 +576,23 @@
       "author": "אוקסנה קרבץ",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=893607",
       "createdAt": "2026-10-21T08:55:55.000Z",
-      "addedAt": "2026-10-21T09:11:45.082Z"
+      "addedAt": "2026-10-21T09:11:45.082Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "21",
+          "31",
+          "85"
+        ],
+        "room": "",
+        "day": "היום",
+        "time": "12-14",
+        "date": "",
+        "headline": "תרגול של אוקסנה היום בין 12 ל-14 מתבטל באופן חד פעמי; אין להגיע.",
+        "urgent": true,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:35:13.612Z"
+      }
     },
     {
       "id": "mvi42znn9pgg",
@@ -1012,7 +1163,19 @@
       "author": "צוות הקורס",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894122",
       "createdAt": "2026-10-22T19:39:42.000Z",
-      "addedAt": "2026-10-22T19:59:45.164Z"
+      "addedAt": "2026-10-22T19:59:45.164Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [],
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "headline": "סיכום שבוע 1: ב-27.10 אין לימודים, ודף הגשה 1 ומבדק 1 מוגשים עד 1.11 ב-23:59.",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:35:19.673Z"
+      }
     },
     {
       "id": "mvjytc50hxnf",
@@ -1072,7 +1235,23 @@
       "author": "אוקסנה קרבץ",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894145",
       "createdAt": "2026-10-23T06:21:09.000Z",
-      "addedAt": "2026-10-23T07:00:11.667Z"
+      "addedAt": "2026-10-23T07:00:11.667Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "21",
+          "31",
+          "85"
+        ],
+        "room": "",
+        "day": "יום רביעי",
+        "time": "",
+        "date": "",
+        "headline": "הודעה לסטודנטים המגיעים לתרגול של אוקסנה שהתבטל ביום רביעי",
+        "urgent": false,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-24T11:35:24.926Z"
+      }
     },
     {
       "id": "mvkv3exqlxmb",
