@@ -101,6 +101,33 @@ export function macChecks(mac, at, now = Date.now()) {
     });
   }
 
+  // What should be on the site and isn't (server/lib/gaps.js): lessons without their material, and the question banks.
+  const g = mac.gaps;
+  if (g) {
+    const HOUR3 = 3 * HOUR;
+    const b = g.banks || {};
+    const stalledSince = Math.max(b.lastAdded || 0, b.since || 0);
+    const stalled = b.behind > 0 && stalledSince && now - stalledSince > 30 * HOUR;
+    const lessonGaps = g.lessons || [];
+    const detailLines = [
+      ...lessonGaps.slice(0, 8).map((l) => `${l.course} · ${l.title}: חסר ${l.missing.join(', ')}${l.error ? ` (${l.error})` : ''}`),
+      ...(b.items ? [`מאגרי שאלות: ${b.have} מתוך ${b.want} (${b.behind ? `${b.behind} שיעורים מתחת ל־${b.target}` : 'כולם מלאים'})`] : []),
+      ...(b.items && b.behind ? [`הלילה ב־Claude: ${b.claudeRounds || 0} מתוך ${b.claudeCap} סבבים${b.claudeStopped ? ' (נעצר: מגבלת שימוש)' : ''}; ביום Gemini משלים`] : []),
+      ...(stalled ? [`המאגרים לא התקדמו ${ago(stalledSince, now).replace('לפני', 'כבר')}`] : []),
+    ];
+    checks.push({
+      id: 'gaps',
+      title: 'מה חסר באתר',
+      state: away ? 'off' : lessonGaps.length || stalled ? 'warn' : 'ok',
+      text: lessonGaps.length ? (lessonGaps.length === 1 ? 'שיעור אחד בלי חומר מלא' : `${lessonGaps.length} שיעורים בלי חומר מלא`) : stalled ? 'המאגרים תקועים' : b.behind ? `הכל באתר · המאגרים עוד מתמלאים (${Math.round((100 * b.have) / (b.want || 1))}%)` : 'הכל באתר',
+      detail: detailLines,
+      alerts: away ? [] : [
+        ...lessonGaps.filter((l) => now - (Date.parse(l.since) || now) > HOUR3).map((l) => ({ key: `gaps:lesson:${l.id}`, text: `לשיעור "${l.title}" חסר ${l.missing.join(', ')}${l.error ? ` – ${l.error}` : ''}`, once: true })),
+        ...(stalled ? [{ key: 'gaps:banks', text: `מאגרי השאלות לא התקדמו יותר מיום וחצי (${b.behind} שיעורים מתחת ל־${b.target} שאלות)` }] : []),
+      ],
+    });
+  }
+
   // Lessons on Claude with Gemini as the fallback (AI_LESSONS=claude): Claude failing is a warning, not an outage.
   if (w?.claude && !w.claude.ok) {
     checks.push({

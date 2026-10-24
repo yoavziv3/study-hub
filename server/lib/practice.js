@@ -5,8 +5,11 @@
 // growBank brings a lesson up to BANK_TARGET in rounds, each focused on another stretch of the slides so the bank
 // covers the whole lesson. It runs on its own worker (queueBank), not in the ingest queue: a new lesson goes up
 // right away and its bank fills in afterwards. /api/maintenance/grow-banks fills up the existing lessons.
-import { getCourse, getLecture, patchLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
-import { generateJSON, aiStatus } from './ai.js';
+import { ROOT, getCourse, getLecture, patchLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { generateJSON, aiStatus, claudeStatus, geminiStatus } from './ai.js';
+import { geminiRoom } from './gemini.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
 import { checkQuiz, fixSlide } from './checks.js';
@@ -25,24 +28,53 @@ function similar(a, b) {
   for (const w of a) if (b.has(w)) common++;
   return common / (a.size + b.size - common || 1) >= 0.8;
 }
-// The banks run on the owner's Claude plan – the same quota they use themselves – so by default they are written
-// only at night (Israel time, BANK_HOURS="from-to", e.g. "1-7"; "0-24" for always). Summaries of new lessons
-// aren't affected: only these extra questions wait.
-// With Gemini the free tier's own daily cap (and the share kept for new lessons) does the limiting: any hour.
-const [BANK_FROM, BANK_TO] = (process.env.BANK_HOURS || (process.env.AI_PROVIDER === 'gemini' ? '0-24' : '1-7')).split('-').map(Number);
+// Who writes a round, and when:
+//  - Claude (Sonnet, AI_BANK_MODEL) at night – BANK_CLAUDE_HOURS (Israel time, default "1-7") – at most
+//    BANK_CLAUDE_CAP rounds a night (default 40), because it is the owner's own plan and the quota they use
+//    themselves. A usage limit ends Claude's night early.
+//  - Gemini any other time (BANK_HOURS, default "0-24"), within the share of its free daily quota that isn't kept
+//    for lessons (gemini.js geminiRoom). It also takes over at night when Claude has used its cap or fails.
+// Summaries of new lessons aren't affected: only these extra questions are limited.
+const hoursOf = (spec, fallback) => String(spec || fallback).split('-').map(Number);
+const [BANK_FROM, BANK_TO] = hoursOf(process.env.BANK_HOURS, '0-24');
+const [CLAUDE_FROM, CLAUDE_TO] = hoursOf(process.env.BANK_CLAUDE_HOURS, '1-7');
+const CLAUDE_CAP = Number(process.env.BANK_CLAUDE_CAP) || 40;
+const BANK_MODEL = process.env.AI_BANK_MODEL || 'claude-sonnet-5-5';
+const BANK_TIMEOUT = 8 * 60000;
 const hourIL = () => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
-export const bankHours = () => { const h = hourIL(); return BANK_FROM <= BANK_TO ? h >= BANK_FROM && h < BANK_TO : h >= BANK_FROM || h < BANK_TO; };
+const within = (from, to, h = hourIL()) => (from <= to ? h >= from && h < to : h >= from || h < to);
+export const bankHours = () => within(BANK_FROM, BANK_TO);
 const isLimit = (e) => /429|usage|limit|quota|authenticate|login/i.test(String(e?.message || e));
 
+// Claude's rounds tonight, kept on disk so a restart doesn't hand it a fresh cap. A "night" is named by the Israel
+// date its hours started on; `lastAdded` is when any bank last grew (the status check looks at it).
+const STATE_FILE = path.join(path.dirname(process.env.STUDY_RUNLOG || path.join(ROOT, 'logs', 'runs.jsonl')), 'bank-state.json');
+let bankMeta = (() => { try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch { return {}; } })();
+const saveMeta = () => { try { fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true }); fs.writeFileSync(STATE_FILE, JSON.stringify(bankMeta)); } catch { /* kept in memory */ } };
+if (!bankMeta.since) { bankMeta.since = Date.now(); saveMeta(); }
+const nightKey = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(new Date(Date.now() - CLAUDE_FROM * 3600000));
+const claudeTonight = () => (bankMeta.night === nightKey() ? bankMeta : { night: nightKey(), claudeRounds: 0, claudeStopped: false });
+const claudeCanWrite = () => claudeStatus().ready && within(CLAUDE_FROM, CLAUDE_TO) && !claudeTonight().claudeStopped && claudeTonight().claudeRounds < CLAUDE_CAP;
+const geminiCanWrite = () => geminiStatus().ready && bankHours() && geminiRoom('low') > 0;
+/** Who may write the next round, in order. Empty: the banks wait (for tonight, or for Gemini's quota to reset). */
+export const bankWriters = () => [...(claudeCanWrite() ? ['claude'] : []), ...(geminiCanWrite() ? ['gemini'] : [])];
+const noteRound = (by, added) => {
+  const t = claudeTonight();
+  bankMeta = { ...bankMeta, ...t, ...(by === 'claude' ? { claudeRounds: t.claudeRounds + 1 } : {}), ...(added > 0 ? { lastAdded: Date.now() } : {}) };
+  saveMeta();
+};
+const stopClaudeTonight = () => { bankMeta = { ...bankMeta, ...claudeTonight(), claudeStopped: true }; saveMeta(); };
+export const bankProgress = () => ({ since: (bankMeta.since ||= Date.now()), ...(claudeTonight().night === bankMeta.night ? { claudeRounds: bankMeta.claudeRounds || 0, claudeStopped: !!bankMeta.claudeStopped } : { claudeRounds: 0, claudeStopped: false }), claudeCap: CLAUDE_CAP, lastAdded: bankMeta.lastAdded || null });
+
 /** One round of new questions for a lesson; returns the questions added. */
-export async function addLectureQuestions(lectureId, { count = 6, difficulty = 'mixed', trigger = 'manual', focus = null } = {}) {
+export async function addLectureQuestions(lectureId, { count = 6, difficulty = 'mixed', trigger = 'manual', focus = null, by = null } = {}) {
   const meta = getLecture(lectureId);
   const course = getCourse(meta.courseId);
   const content = getContent(lectureId) || {};
   const slides = getSlides(lectureId);
   const material = slides.map((s) => `[שקף ${s.n}] ${s.text}`).join('\n');
   const avoid = bankOf(content).map((q) => q.question);
-  const run = startRun('practice', { trigger, input: { lectureId, course: course.short, title: meta.title, count, difficulty, has: avoid.length, ...(focus ? { slides: `${focus.from}-${focus.to}` } : {}) } });
+  const run = startRun('practice', { trigger, input: { lectureId, course: course.short, title: meta.title, count, difficulty, has: avoid.length, ...(focus ? { slides: `${focus.from}-${focus.to}` } : {}), ...(by ? { by } : {}) } });
   let out;
   try {
     out = await generateJSON({
@@ -52,6 +84,8 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
       effort: 'medium',
       maxTokens: 24000,
       priority: 'low', // with Gemini: never the quota kept for new lessons
+      // The bank worker names who writes the round (by); a request from the site goes where AI_PROVIDER says.
+      ...(by ? { use: by, model: by === 'claude' ? BANK_MODEL : null, timeoutMs: by === 'claude' ? BANK_TIMEOUT : undefined } : {}),
     });
   } catch (e) {
     run.fail(e);
@@ -78,7 +112,7 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
 /** Brings a lesson's bank up to `target` questions, a round at a time over stretches of the slides. */
 export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'manual' } = {}) {
   const meta = getLecture(lectureId);
-  if (!meta || meta.noAi || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !aiStatus().ready) return 0;
+  if (!meta || meta.noAi || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !bankWriters().length) return 0;
   if (getCourse(meta.courseId)?.ai === false || !getContent(lectureId)) return 0;
   const total = Math.max(1, getSlides(lectureId).length);
   const rounds = Math.ceil(target / ROUND) + 3;
@@ -86,12 +120,27 @@ export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'man
   let added = 0;
   let thin = 0;
   for (let round = 0; round < rounds; round++) {
-    if (!bankHours()) break; // the rest waits for tonight (growAllBanks picks it up again)
+    const writers = bankWriters();
+    if (!writers.length) break; // the rest waits for tonight or for Gemini's quota (growAllBanks picks it up again)
     const have = bankOf(getContent(lectureId)).length;
     if (have >= target) break;
     const from = ((round * span) % total) + 1;
     const focus = total > span ? { from, to: Math.min(total, from + span - 1) } : null;
-    const got = await addLectureQuestions(lectureId, { count: Math.min(ROUND, target - have + 2), trigger, focus });
+    // Claude at night while it has rounds left, else Gemini; if one fails the other gets the round.
+    let got = null;
+    let failure = null;
+    for (const by of writers) {
+      try {
+        got = await addLectureQuestions(lectureId, { count: Math.min(ROUND, target - have + 2), trigger, focus, by });
+        noteRound(by, got.length);
+        break;
+      } catch (e) {
+        failure = e;
+        if (by === 'claude' && isLimit(e)) stopClaudeTonight();
+        console.error(`[practice] bank round on ${by} failed: ${String(e.message).slice(0, 120)}`);
+      }
+    }
+    if (!got) throw failure;
     added += got.length;
     // Two rounds in a row that add almost nothing: the slides are exhausted – stop rather than pad the bank.
     thin = got.length < 3 ? thin + 1 : 0;
@@ -141,7 +190,7 @@ export function queueBank(lectureId, trigger = 'after-lecture') {
 /** Every lesson on the site below the target, one after another (in the background). Also called by the AI watch
  *  (health.js) whenever Claude answers, so a run stopped by a usage limit carries on by itself. */
 export function growAllBanks({ target = BANK_TARGET } = {}) {
-  if (!bankHours()) return { queued: 0, waiting: 'outside BANK_HOURS' };
+  if (!bankWriters().length) return { queued: 0, waiting: 'no writer available now (Claude at night, Gemini within its quota)' };
   for (const l of listLectures()) {
     if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
   }

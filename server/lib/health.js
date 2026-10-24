@@ -11,6 +11,7 @@ import { geminiUsage } from './gemini.js';
 import { adminAlert } from './updates.js';
 import { growAllBanks, bankState } from './practice.js';
 import { noticesState } from './notices.js';
+import { siteGaps } from './gaps.js';
 import { macChecks, worst } from '../../shared/system-checks.js';
 
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
@@ -35,6 +36,8 @@ export async function checkAI() {
     // Gemini is out (usually its daily quota) but Claude can still write the lessons that failed meanwhile.
     const n = await retryFailedAI({ auto: true }).catch(() => 0);
     if (n) console.log(`[ai] re-queued ${n} items on Claude`);
+    // At night Claude writes the question banks even when Gemini's day is used up.
+    if (!n && !bankState().working) growAllBanks();
   }
   if (!r.ok) {
     console.error('[ai] not answering:', r.reason);
@@ -85,6 +88,7 @@ export function macHealth() {
     ai: aiStatus().ready,
     aiWatch,
     notices: noticesState(),
+    gaps: siteGaps(),
     git: originHead(),
   };
 }

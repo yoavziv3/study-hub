@@ -66,6 +66,12 @@ function acquire(priority = 'normal') {
   return turn;
 }
 
+/** How many more requests a low-priority caller (the banks) may make today (the share kept for lessons is left). */
+export function geminiRoom(priority = 'low') {
+  const used = usage.day === dayPT() ? usage.count : 0;
+  return Math.max(0, (priority === 'low' ? Math.floor(RPD * (1 - RESERVE)) : RPD) - used);
+}
+
 export const geminiUsage = () => ({ model: GEMINI_MODEL, day: usage.day === dayPT() ? usage.count : 0, limit: RPD, rpm: RPM });
 
 // Errors in the words the rest of the server checks for (429 / usage_limit → wait; authenticate → bad key).
