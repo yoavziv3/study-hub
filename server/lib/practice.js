@@ -9,7 +9,7 @@ import { getCourse, getLecture, patchLecture, getContent, saveContent, getSlides
 import { generateJSON, aiStatus } from './ai.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
-import { checkQuiz, slideRef } from './checks.js';
+import { checkQuiz, fixSlide } from './checks.js';
 import { escapeCurrency } from '../../shared/currency.js';
 
 export const BANK_TARGET = 200;
@@ -57,7 +57,7 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
     run.fail(e);
     throw e;
   }
-  const checked = checkQuiz(out.quiz, { slideCount: slides.length });
+  const checked = checkQuiz(out.quiz, { slideCount: slides.length, slides: slides.map((x) => x.text) });
   // Questions the lesson already has (or almost the same ones) are not added again.
   const seen = avoid.map(words);
   const fresh = [];
@@ -151,7 +151,7 @@ export function growAllBanks({ target = BANK_TARGET } = {}) {
 export const bankState = () => ({ working, pending: pending.length });
 
 /**
- * Goes over every lesson's questions: marks the ones that point at a slide (checks.js slideRef) and fixes their
+ * Goes over every lesson's questions: marks the ones that point at a slide (checks.js fixSlide) and fixes their
  * slide numbers, and writes currency dollars as text (shared/currency.js).
  */
 export async function markSlideRefs() {
@@ -159,13 +159,13 @@ export async function markSlideRefs() {
   for (const l of listLectures()) {
     const content = getContent(l.id);
     if (!content) continue;
-    const slideCount = getSlides(l.id).length;
+    const slides = getSlides(l.id).map((x) => x.text);
     let changed = false;
     const fix = (list = []) => list.map((q0) => {
       const q = { ...q0, question: escapeCurrency(q0.question), explanation: escapeCurrency(q0.explanation), options: (q0.options || []).map(escapeCurrency) };
       const money = q.question !== q0.question || q.explanation !== q0.explanation || q.options.some((o, k) => o !== q0.options[k]);
       if (money) result.currency++;
-      const ref = slideRef(q.question, q.slide, slideCount);
+      const ref = fixSlide(q, slides);
       if (ref.slide !== (q.slide || 0)) result.renumbered++;
       if (ref.showSlide && !q.showSlide) result.marked++;
       if (!money && ref.slide === (q.slide || 0) && !!ref.showSlide === !!q.showSlide) return q0;

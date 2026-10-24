@@ -32,8 +32,55 @@ export function slideRef(question, slide, slideCount) {
   return { slide: at, showSlide: at > 0 && SLIDE_REF.test(question) };
 }
 
+// ---------- which slide a question is really about ----------
+// The model's slide number is a guess, and a text comparison can only catch a clear mistake: slides that are a
+// diagram or a dashboard have almost no text, and formulas aren't words. So this is a safety net, not a judge:
+// the words of the question and its right answer (formulas left out) are compared with each slide's text, and
+// the claim moves to another slide only when that slide matches clearly well and the claimed neighbourhood (±1)
+// clearly doesn't. A question with too few words, or without a clear winner, keeps its slide; a link is never
+// dropped. A slide named in the text itself ("בשקף 13") always wins.
+const stem = (w) => (w.length > 3 && 'והבלמכש'.includes(w[0]) ? w.slice(1) : w);
+const noMath = (t) => String(t).replace(/\$\$[\s\S]*?\$\$|\$[^$\n]*\$/g, ' ').replace(/\\[a-zA-Z]+/g, ' ');
+const wordSet = (t) => new Set((noMath(t).toLowerCase().match(/[\u0590-\u05FFa-z0-9]{3,}/g) || []).map(stem));
+const NEAR_OK = 0.25; // a claim this well supported (±1 slide) stays
+const MOVE_MIN = 0.4; // the slide a question moves to must match at least this much…
+const MOVE_GAIN = 0.2; // …and this much better than the claim
+const MIN_WORDS = 6; // fewer distinct words than this say too little about the slide
+
+function namedSlide(question, slideCount) {
+  return [...String(question).matchAll(/שקף\s*(?:מס(?:פר|')?\s*)?(\d{1,3})/g)].map((m) => Number(m[1])).find((n) => n >= 1 && n <= slideCount) || 0;
+}
+
+export function matchSlide(q, slides, claimed) {
+  if (!claimed || !slides.length) return claimed;
+  const qw = wordSet(`${q.question} ${q.options?.[q.correctIndex] ?? ''}`);
+  if (qw.size < MIN_WORDS) return claimed;
+  const sets = slides.map(wordSet);
+  const score = (n) => {
+    let c = 0;
+    for (const w of qw) if (sets[n - 1]?.has(w)) c++;
+    return c / qw.size;
+  };
+  const near = Math.max(...[claimed - 1, claimed, claimed + 1].filter((n) => n >= 1 && n <= slides.length).map(score), 0);
+  if (near >= NEAR_OK) return claimed;
+  let best = 0;
+  let at = 0;
+  for (let n = 1; n <= slides.length; n++) {
+    const sc = score(n);
+    if (sc > best) { best = sc; at = n; }
+  }
+  return best >= MOVE_MIN && best >= near + MOVE_GAIN ? at : claimed;
+}
+
+/** The slide a question should link to, and whether to show it inside the question (slides: the slides' texts). */
+export function fixSlide(q, slides = [], slideCount = slides.length) {
+  const claimed = Number.isInteger(q.slide) && q.slide >= 0 && q.slide <= slideCount ? q.slide : 0;
+  const slide = namedSlide(q.question, slideCount) || matchSlide(q, slides, claimed);
+  return { slide, claimed, showSlide: slide > 0 && SLIDE_REF.test(q.question) };
+}
+
 /** Multiple-choice questions: exactly 4 distinct, non-empty options, a valid correctIndex, a question and an explanation. */
-export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz' } = {}) {
+export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz', slides = [] } = {}) {
   const checks = [];
   const seen = new Set();
   const value = [];
@@ -59,22 +106,27 @@ export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz' } = {}) {
     if (fixedText.question !== text(q.question) || fixedText.explanation !== text(q.explanation) || fixedText.options.some((o, k) => o !== options[k])) {
       checks.push(finding(`${label}.currency`, 'fixed', `סימני $ של מחיר סומנו כטקסט – "${text(q.question).slice(0, 50)}"`));
     }
-    const ref = slideRef(q.question, slide, slideCount);
-    if (ref.slide !== slide) checks.push(finding(`${label}.slide`, 'fixed', `השאלה מזכירה את שקף ${ref.slide} – השקף עודכן`));
+    const ref = fixSlide({ ...q, ...fixedText, slide }, slides, slideCount);
+    if (ref.slide !== slide) {
+      checks.push(finding(`${label}.slide`, 'fixed', `השקף הותאם לתוכן השאלה: ${slide || 'ללא'} ← ${ref.slide} – "${fixedText.question.slice(0, 50)}"`));
+    }
     slide = ref.slide;
     value.push({ ...q, ...fixedText, slide, ...(ref.showSlide ? { showSlide: true } : {}), difficulty: LEVELS.includes(q.difficulty) ? q.difficulty : 'medium' });
   }
+  // A third of the questions should be hard (the prompts ask for it): a bank of mostly easy ones is no exam practice.
+  const hard = value.filter((q) => q.difficulty === 'hard').length;
+  if (value.length >= 10 && hard / value.length < 0.2) checks.push(finding(`${label}.difficulty`, 'warn', `רק ${hard} מתוך ${value.length} שאלות ברמה קשה`));
   return { value, checks };
 }
 
 /** A lecture's study content (LECTURE_SCHEMA). */
-export function checkLecture(content, { slideCount = 0 } = {}) {
+export function checkLecture(content, { slideCount = 0, slides = [] } = {}) {
   const checks = [];
   if (!content || typeof content !== 'object') return { value: content, checks: [finding('lecture', 'reject', 'אין פלט')] };
   if (!text(content.title)) checks.push(finding('lecture.title', 'reject', 'אין כותרת'));
   if (text(content.summary).length < 300) checks.push(finding('lecture.summary', 'reject', `סיכום קצר מדי (${text(content.summary).length} תווים)`));
 
-  const quiz = checkQuiz(content.quiz, { slideCount });
+  const quiz = checkQuiz(content.quiz, { slideCount, slides });
   checks.push(...quiz.checks);
   if (quiz.value.length < 5) checks.push(finding('lecture.quiz', 'warn', `רק ${quiz.value.length} שאלות תקינות`));
 

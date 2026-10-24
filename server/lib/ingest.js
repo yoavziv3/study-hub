@@ -283,7 +283,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
         cache: !aiOnly && !regenerate,
       });
       // Fixed checks on the model's output before anything is saved (checks.js).
-      const checked = checkLecture(raw, { slideCount: slides.length });
+      const checked = checkLecture(raw, { slideCount: slides.length, slides });
       checks = assertUsable(checked.checks);
       content = checked.value;
       await saveContent(id, { ...content, generatedAt: new Date().toISOString(), generator: aiStatus().provider });
