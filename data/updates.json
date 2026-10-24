@@ -1101,6 +1101,19 @@
       "fileKey": "68587:3462493:/תרגול 1 23.10.2026.pdf",
       "createdAt": "2026-10-23T13:39:42.368Z",
       "addedAt": "2026-10-23T13:39:44.837Z"
+    },
+    {
+      "id": "mvm7sslibus6",
+      "key": "reminder:mvf5i5q1b2xp:3:2026-10-25T21:59:00.000Z",
+      "type": "reminder",
+      "courseId": "econ",
+      "title": "⏰ בעוד יומיים: תרגיל 1 (מבוא לכלכלה)",
+      "body": "להגשה עד יום ראשון, 25.10, 23:59",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3450717",
+      "dueAt": "2026-10-25T21:59:00.000Z",
+      "deadlineId": "mvf5i5q1b2xp",
+      "createdAt": "2026-10-24T09:46:59.142Z",
+      "addedAt": "2026-10-24T09:46:59.142Z"
     }
   ],
   "deadlines": [
@@ -1131,7 +1144,11 @@
       "done": false
     }
   ],
-  "reminded": {},
+  "reminded": {
+    "mvf5i5q1b2xp": [
+      3
+    ]
+  },
   "settings": {
     "notify": true,
     "reminderDays": [
