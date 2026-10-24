@@ -2,6 +2,8 @@ node_modules
 dist
 dist-cloud
 logs
+# Model answers cached by request (server/lib/ai-cache.js)
+cache/
 .env
 
 # Private / machine-local state – never commit

@@ -63,6 +63,8 @@ npm install
 AI_PROVIDER=api
 ANTHROPIC_API_KEY=sk-ant-...        # המפתח שלכם
 # AI_PROVIDER=cli                   # או: Claude Code המחובר במחשב
+# AI_PROVIDER=gemini                # או: Gemini (מפתח חינמי מ-aistudio.google.com/apikey)
+# GEMINI_API_KEY=...
 
 # נתוני בדיקה בתיקייה נפרדת, ויומן ההרצות לידם
 STUDY_DATA_DIR=./test-data
@@ -160,6 +162,7 @@ npm start
 | "יצירת הסיכום נכשלה" ביומן, עם השגיאה `Failed to authenticate` | החיבור של Claude Code פג: מריצים `claude` ואז `/login`, ואז "יצירת סיכום מחדש" |
 | השגיאה `429` או `usage_limit` | הגעתם למגבלת השימוש. מחכים, ואז "יצירת סיכום מחדש" |
 | השגיאה `ANTHROPIC_API_KEY` | המפתח חסר או שגוי ב־`.env` |
+| השגיאה `Gemini daily quota` | נוצלה המכסה היומית החינמית של Gemini. היא מתאפסת בחצות לפי שעון קליפורניה, והעיבוד ממשיך לבד |
 | קובץ PPTX נתקע בשלב "המרה" | חסר PowerPoint או LibreOffice (סעיף 2) |
 | אין שקפים ואין טקסט | חסר poppler: `brew install poppler` |
 | הפורט 5180 תפוס | מוסיפים `PORT=5181` ל־`.env` |

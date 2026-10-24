@@ -28,7 +28,8 @@ function similar(a, b) {
 // The banks run on the owner's Claude plan – the same quota they use themselves – so by default they are written
 // only at night (Israel time, BANK_HOURS="from-to", e.g. "1-7"; "0-24" for always). Summaries of new lessons
 // aren't affected: only these extra questions wait.
-const [BANK_FROM, BANK_TO] = (process.env.BANK_HOURS || '1-7').split('-').map(Number);
+// With Gemini the free tier's own daily cap (and the share kept for new lessons) does the limiting: any hour.
+const [BANK_FROM, BANK_TO] = (process.env.BANK_HOURS || (process.env.AI_PROVIDER === 'gemini' ? '0-24' : '1-7')).split('-').map(Number);
 const hourIL = () => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
 export const bankHours = () => { const h = hourIL(); return BANK_FROM <= BANK_TO ? h >= BANK_FROM && h < BANK_TO : h >= BANK_FROM || h < BANK_TO; };
 const isLimit = (e) => /429|usage|limit|quota|authenticate|login/i.test(String(e?.message || e));
@@ -50,6 +51,7 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
       schema: PRACTICE_SCHEMA,
       effort: 'medium',
       maxTokens: 24000,
+      priority: 'low', // with Gemini: never the quota kept for new lessons
     });
   } catch (e) {
     run.fail(e);

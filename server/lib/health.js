@@ -7,6 +7,7 @@ import { queueState, retryFailedAI } from './ingest.js';
 import { moodleStatus } from './moodle.js';
 import { publishState } from './publish.js';
 import { aiStatus, probeAI } from './ai.js';
+import { geminiUsage } from './gemini.js';
 import { adminAlert } from './updates.js';
 import { growAllBanks, bankState } from './practice.js';
 import { macChecks, worst } from '../../shared/system-checks.js';
@@ -24,10 +25,12 @@ let aiWatch = { ok: null, kind: null, reason: null, checkedAt: null, since: null
 export async function checkAI() {
   const r = await probeAI();
   const changed = r.ok !== aiWatch.ok;
-  aiWatch = { ok: r.ok, kind: r.kind || null, reason: r.reason || null, checkedAt: Date.now(), since: changed ? Date.now() : aiWatch.since };
+  const gemini = aiStatus().provider === 'gemini' || process.env.AI_PROVIDER === 'gemini';
+  aiWatch = { ok: r.ok, kind: r.kind || null, reason: r.reason || null, provider: gemini ? 'gemini' : 'claude', usage: gemini ? geminiUsage() : null, checkedAt: Date.now(), since: changed ? Date.now() : aiWatch.since };
   if (!r.ok) {
     console.error('[ai] not answering:', r.reason);
-    adminAlert(r.kind === 'signed-out' ? 'ה-Claude במחשב מנותק – צריך להתחבר מחדש (claude, ואז /login)' : r.kind === 'limit' ? 'הגעת למגבלת השימוש ב-Claude – הסיכומים יחכו עד שהיא תתאפס' : `ה-Claude במחשב לא עונה: ${r.reason}`);
+    const name = gemini ? 'Gemini' : 'Claude';
+    adminAlert(r.kind === 'signed-out' ? (gemini ? 'המפתח של Gemini חסר או נדחה – בדקו את GEMINI_API_KEY ב-.env' : 'ה-Claude במחשב מנותק – צריך להתחבר מחדש (claude, ואז /login)') : r.kind === 'limit' ? `הגעת למגבלת השימוש ב-${name} – הסיכומים יחכו עד שהיא תתאפס` : `ה-${name} לא עונה: ${r.reason}`);
     return aiWatch;
   }
   if (changed && aiWatch.since) console.log('[ai] answering again');

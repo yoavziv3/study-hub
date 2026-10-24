@@ -9,7 +9,7 @@ import {
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
-import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt } from './prompts.js';
+import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt, DECK_PDF_RULES, DECK_PDF_QUIZ } from './prompts.js';
 
 import { startRun } from './runlog.js';
 import { queueBank } from './practice.js';
@@ -136,6 +136,14 @@ export async function addPrepItem({ courseId, lesson, semester, slidesText, tran
   return meta;
 }
 
+/** The deck as one PDF, for a model that reads PDFs itself (Gemini); null otherwise or when there is none. */
+function deckPdf(meta) {
+  if (aiStatus().provider !== 'gemini' || !meta.originalFile) return null;
+  const dir = lectureDir(meta.id);
+  return [path.join(dir, 'slides.pdf'), path.join(dir, 'deck.pdf'), /\.pdf$/i.test(meta.originalFile) ? path.join(dir, meta.originalFile) : null]
+    .find((f) => f && fs.existsSync(f)) || null;
+}
+
 const AUTO_RETRIES = 3; // automatic retries per item before it waits for a manual one
 
 /**
@@ -260,13 +268,19 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     let checks = [];
     try {
       const transcriptFile = path.join(dir, 'transcript.txt');
+      // Gemini reads the deck's PDF itself (images of the pages too) and writes the full question bank at once.
+      const deck = deckPdf(meta);
       const raw = await generateJSON({
         system: lectureSystem(course),
-        prompt: meta.kind === 'prep'
+        prompt: (meta.kind === 'prep'
           ? prepPrompt({ course, lesson: meta.lessonNumber, semester: meta.source?.semester || 'סמסטר קודם', slides, transcript: fs.existsSync(transcriptFile) ? fs.readFileSync(transcriptFile, 'utf8').slice(0, 90000) : '' })
-          : lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }),
+          : lecturePrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, hint: [meta.lessonNumber ? `מספר ${meta.lessonNumber}` : '', meta.source?.note ? `הנחיה מהמודל: ${meta.source.note}` : ''].filter(Boolean).join('. ') }))
+          + (deck ? DECK_PDF_RULES + DECK_PDF_QUIZ : ''),
         schema: LECTURE_SCHEMA,
         effort: 'high',
+        maxTokens: deck ? 65536 : 48000,
+        files: deck ? [deck] : [],
+        cache: !aiOnly && !regenerate,
       });
       // Fixed checks on the model's output before anything is saved (checks.js).
       const checked = checkLecture(raw, { slideCount: slides.length });
@@ -322,11 +336,13 @@ export async function generateNotes(id) {
   console.log(`[ingest] ${id} → notes`);
   const run = startRun('notes', { trigger: 'after-lecture', input: { lectureId: id, course: course.short, slides: slides.length, summaryChars: content.summary?.length || 0 } });
   try {
+    const deck = deckPdf(meta);
     const raw = await generateJSON({
       system: lectureSystem(course),
-      prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }),
+      prompt: notesPrompt({ course, kind: meta.kind || 'lecture', fileName: meta.originalName, slides, summary: content.summary }) + (deck ? DECK_PDF_RULES : ''),
       schema: NOTES_SCHEMA,
       effort: 'high',
+      files: deck ? [deck] : [],
     });
     const checked = checkNotes(raw, { slideCount: slides.length });
     const checks = assertUsable(checked.checks);

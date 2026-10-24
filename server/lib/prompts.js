@@ -110,6 +110,16 @@ ${KIND_FIELDS[kind] || KIND_FIELDS.lecture}`;
 }
 
 /**
+ * When the model reads the deck's PDF itself (Gemini): the pages' images too, a full bank of questions in the same
+ * call, and nothing left out. Appended to the lecture and notes prompts.
+ */
+export const DECK_PDF_RULES = `
+מצורף גם קובץ ה-PDF של המצגת עצמה. קרא ממנו גם את מה שלא מופיע בטקסט שלמעלה: טבלאות, תרשימים, גרפים, נוסחאות ותמונות עם כיתוב.
+חובה לחלץ כל נתון מספרי, הגדרה ודוגמה מהשקפים. אסור להשמיט שום פרט אקדמי למען הקיצור.`;
+export const DECK_PDF_QUIZ = `
+quiz: במקום 10–14 שאלות, צור בין 40 ל-80 שאלות תרגול שונות ללא כפילויות – ידע, הבנה ויישום, מכל חלקי המצגת – כל אחת עם 4 אפשרויות, הסבר מלא ומספר השקף המדויק ב-slide.`;
+
+/**
  * Exam-prep unit: a lesson from an earlier semester of the course (e.g. the course's NotebookLM), as slide text
  * plus a transcript of the lesson itself – no deck file. Same schema as a lecture.
  */

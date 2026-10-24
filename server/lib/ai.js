@@ -3,10 +3,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import Anthropic from '@anthropic-ai/sdk';
+import { GEMINI_MODEL, geminiReady, geminiJSON, geminiStream, geminiProbe } from './gemini.js';
+import { cacheKey, readCache, writeCache } from './ai-cache.js';
 
-// Two ways to reach Claude:
+// Three ways to reach a model:
 //  - "api": the Anthropic SDK with ANTHROPIC_API_KEY from .env
 //  - "cli": the locally installed Claude Code CLI in headless mode, using the user's own login
+//  - "gemini": Google's Gemini API with GEMINI_API_KEY (gemini.js) – AI_PROVIDER=gemini
+// Every structured answer is cached by what was asked (ai-cache.js).
 const MODEL = process.env.AI_MODEL || 'claude-opus-5-5';
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01';
 
@@ -26,6 +30,7 @@ function findClaudeCli() {
 
 export function aiStatus() {
   const forced = process.env.AI_PROVIDER;
+  if (forced === 'gemini') return { provider: geminiReady() ? 'gemini' : 'none', model: GEMINI_MODEL, ready: geminiReady() };
   const cli = findClaudeCli();
   let provider = 'none';
   if (forced === 'api' || (!forced && process.env.ANTHROPIC_API_KEY)) provider = 'api';
@@ -33,7 +38,7 @@ export function aiStatus() {
   return { provider, model: MODEL, ready: provider !== 'none' };
 }
 
-const NO_AI = 'לא הוגדר חיבור ל-AI. הוסיפו ANTHROPIC_API_KEY לקובץ ‎.env או התקינו את Claude Code.';
+const NO_AI = 'לא הוגדר חיבור ל-AI. הוסיפו ANTHROPIC_API_KEY או GEMINI_API_KEY (עם AI_PROVIDER=gemini) לקובץ ‎.env, או התקינו את Claude Code.';
 
 function sdk() {
   if (!client) client = new Anthropic();
@@ -104,8 +109,23 @@ function parseLooseJSON(text) {
 }
 
 // ---------- structured generation ----------
-export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000 }) {
-  const { provider } = aiStatus();
+/**
+ * A structured answer matching `schema`. files: PDFs to read along (Gemini reads them; Claude gets their text in
+ * the prompt already). cache: false asks for a fresh answer (regenerate). priority: 'low' for work that can wait
+ * (question banks) – with Gemini it never uses the part of the day's quota kept for new lessons.
+ */
+export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000, files = [], cache = true, priority = 'normal' }) {
+  const { provider, model } = aiStatus();
+  const key = cache && provider !== 'none' ? cacheKey({ provider, model, system, prompt, schema, files: provider === 'gemini' ? files : [] }) : null;
+  const hit = key && readCache(key);
+  if (hit) return hit;
+  const out = await generateFresh({ provider, system, prompt, schema, effort, maxTokens, files, priority });
+  if (key) writeCache(key, out, { provider, model });
+  return out;
+}
+
+async function generateFresh({ provider, system, prompt, schema, effort, maxTokens, files, priority }) {
+  if (provider === 'gemini') return geminiJSON({ system, prompt, schema, effort, maxTokens, files, priority });
   if (provider === 'api') {
     const stream = sdk().messages.stream({
       model: MODEL,
@@ -137,6 +157,7 @@ export async function generateJSON({ system, prompt, schema, effort = 'high', ma
 const PROBE_MODEL = process.env.AI_PROBE_MODEL || 'claude-haiku-5-5';
 export async function probeAI() {
   const { provider } = aiStatus();
+  if (process.env.AI_PROVIDER === 'gemini') return geminiProbe();
   if (provider === 'none') return { ok: false, reason: NO_AI };
   try {
     if (provider === 'api') {
@@ -159,6 +180,7 @@ export async function probeAI() {
 // messages: [{role:'user'|'assistant', content:string}]
 export async function chatStream({ system, messages, onText, signal, effort = 'low' }) {
   const { provider } = aiStatus();
+  if (provider === 'gemini') return geminiStream({ system, messages, onText, signal });
   if (provider === 'api') {
     // Server-side fallbacks keep the tutor answering if a safety classifier declines on the primary model.
     const stream = sdk().beta.messages.stream(

@@ -64,20 +64,26 @@ export function macChecks(mac, at, now = Date.now()) {
   // Claude on the Mac, from its half-hourly check (server/lib/health.js checkAI).
   const w = mac.aiWatch;
   if (w?.checkedAt) {
+    const gemini = w.provider === 'gemini';
+    const name = gemini ? 'Gemini' : 'Claude';
     const text = w.ok ? `עונה · נבדק ${ago(w.checkedAt, now)}`
-      : w.kind === 'signed-out' ? 'מנותק – צריך להתחבר מחדש'
+      : w.kind === 'signed-out' ? (gemini ? 'המפתח חסר או נדחה' : 'מנותק – צריך להתחבר מחדש')
       : w.kind === 'limit' ? 'הגעת למגבלת השימוש'
       : 'לא עונה';
+    const fix = w.kind === 'signed-out'
+      ? (gemini ? 'בדקו את GEMINI_API_KEY בקובץ .env במחשב (מפתח מ-aistudio.google.com).' : 'בטרמינל: claude, ואז /login. אחרי זה מה שחיכה יעובד לבד.')
+      : w.kind === 'limit' ? (gemini ? 'המכסה היומית של Gemini מתאפסת בחצות לפי שעון קליפורניה (10:00 בבוקר בישראל); מה שחיכה יעובד לבד.' : 'כשהמגבלה תתאפס, מה שחיכה יעובד לבד.')
+      : w.reason;
     checks.push({
       id: 'ai',
-      title: 'ה AI במחשב (Claude)',
+      title: `ה AI במחשב (${name})`,
       state: w.ok ? 'ok' : away ? 'off' : 'bad',
       text: away && !w.ok ? `${text} (בבדיקה האחרונה)` : text,
-      detail: w.ok ? [] : [
-        ...(w.kind === 'signed-out' ? ['בטרמינל: claude, ואז /login. אחרי זה מה שחיכה יעובד לבד.'] : w.kind === 'limit' ? ['כשהמגבלה תתאפס, מה שחיכה יעובד לבד.'] : [w.reason]),
-        ...(w.since ? [`כך ${ago(w.since, now).replace('לפני', 'כבר')}`] : []),
+      detail: [
+        ...(w.ok ? [] : [fix, ...(w.since ? [`כך ${ago(w.since, now).replace('לפני', 'כבר')}`] : [])]),
+        ...(w.usage ? [`היום: ${w.usage.day} מתוך ${w.usage.limit} בקשות (${w.usage.model})`] : []),
       ].filter(Boolean),
-      alerts: !w.ok && !away ? [{ key: `ai:${w.kind || 'error'}`, text: w.kind === 'signed-out' ? 'ה Claude במחשב מנותק – הסיכומים לא נוצרים. בטרמינל: claude, ואז /login' : w.kind === 'limit' ? 'הגעת למגבלת השימוש ב Claude – הסיכומים יחכו עד שהיא תתאפס' : `ה Claude במחשב לא עונה: ${w.reason}` }] : [],
+      alerts: !w.ok && !away ? [{ key: `ai:${w.kind || 'error'}`, text: w.kind === 'signed-out' ? (gemini ? 'המפתח של Gemini חסר או נדחה – הסיכומים לא נוצרים. בדקו את GEMINI_API_KEY' : 'ה Claude במחשב מנותק – הסיכומים לא נוצרים. בטרמינל: claude, ואז /login') : w.kind === 'limit' ? `הגעת למגבלת השימוש ב ${name} – הסיכומים יחכו עד שהיא תתאפס` : `ה ${name} במחשב לא עונה: ${w.reason}` }] : [],
     });
   }
 
