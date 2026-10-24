@@ -14,7 +14,7 @@ import { GoogleGenAI } from '@google/genai';
 
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const RPM = Number(process.env.GEMINI_RPM) || 5;
-const RPD = Number(process.env.GEMINI_RPD) || 100;
+const RPD = Number(process.env.GEMINI_RPD) || 20;
 const RESERVE = Math.min(0.9, Math.max(0, Number(process.env.GEMINI_RESERVE ?? 0.4)));
 const MB = 1024 * 1024;
 const INLINE_MAX = 18 * MB; // bigger PDFs go through the File API (up to 50 MB / 1000 pages)
@@ -71,7 +71,15 @@ export const geminiUsage = () => ({ model: GEMINI_MODEL, day: usage.day === dayP
 // Errors in the words the rest of the server checks for (429 / usage_limit → wait; authenticate → bad key).
 function normalize(e) {
   const status = e?.status;
-  const msg = String(e?.message || e).slice(0, 300);
+  const full = String(e?.message || e);
+  const msg = full.slice(0, 300);
+  // Google's own count says the day is used up (it may be lower than GEMINI_RPD): stop asking until it resets.
+  if (/PerDay|per day/i.test(full)) {
+    usage = { day: dayPT(), count: Math.max(usage.day === dayPT() ? usage.count : 0, RPD) };
+    saveUsage();
+    const limit = full.match(/limit: (\d+)/)?.[1];
+    return new Error(`429 usage_limit: Gemini daily quota used up${limit ? ` (Google's limit: ${limit} a day – set GEMINI_RPD=${limit})` : ''} – resets at midnight Pacific time`);
+  }
   if (status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(msg)) return new Error(`429 usage_limit: ${msg}`);
   if (status === 401 || status === 403 || /API key not valid|PERMISSION_DENIED/i.test(msg)) return new Error(`authenticate: Gemini rejected GEMINI_API_KEY (${status || 'invalid'})`);
   return e instanceof Error ? e : new Error(msg);

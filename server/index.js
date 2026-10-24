@@ -8,7 +8,7 @@ import {
   ROOT, listCourses, getCourse, listLectures, getLecture, patchLecture, getContent, saveContent, getSlides,
   deleteLecture, lectureDir, getProgress, saveProgress, LECTURES_DIR, getPractice, savePractice, getLinks,
 } from './lib/store.js';
-import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, retryFailedAI, ACCEPTED, KINDS } from './lib/ingest.js';
+import { addLectureFile, addPrepItem, enqueue, queueState, resumePending, watchInbox, retryFailedAI, limitText, ACCEPTED, KINDS } from './lib/ingest.js';
 import { aiStatus, chatStream, generateJSON } from './lib/ai.js';
 import { lectureSystem, chatSystem, practicePrompt, PRACTICE_SCHEMA, homeworkPracticePrompt, HOMEWORK_PRACTICE_SCHEMA } from './lib/prompts.js';
 import { toolsStatus } from './lib/extract.js';
@@ -240,7 +240,7 @@ app.post('/api/practice', async (req, res) => {
     res.json({ quiz: await addLectureQuestions(lectureId, { count: Math.min(15, Number(count) || 6), difficulty }) });
   } catch (e) {
     console.error('[practice]', e.message);
-    res.status(500).json({ error: /429|usage|limit/i.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : e.message });
+    res.status(500).json({ error: /429|usage|limit/i.test(e.message) ? limitText() : e.message });
   }
 });
 
@@ -309,7 +309,7 @@ app.post('/api/courses/:id/practice', async (req, res) => {
     res.json({ added: { quiz: quizChecked.value.length, problems: problemsChecked.value.length }, practice: next });
   } catch (e) {
     console.error('[homework-practice]', e.message);
-    res.status(500).json({ error: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : e.message });
+    res.status(500).json({ error: /429|usage_limit/.test(e.message) ? limitText() : e.message });
   }
 });
 

@@ -297,8 +297,8 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       content = null;
       const limit = /429|usage_limit/.test(e.message);
       const signedOut = /authenticate|login|OAuth/i.test(e.message);
-      await patchLecture(id, { aiError: limit ? 'הגעת למגבלת השימוש ב-Claude – נסו "יצירת סיכום מחדש" מאוחר יותר' : signedOut ? 'החיבור ל-Claude במחשב פג – צריך להתחבר מחדש (claude, ואז /login)' : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
-      adminAlert(limit ? 'הגעת למגבלת השימוש ב-Claude – חומר חדש נכנס בלי סיכום' : signedOut ? 'החיבור ל-Claude במחשב פג – חומר חדש נכנס בלי סיכום' : 'יצירת סיכום נכשלה');
+      await patchLecture(id, { aiError: limit ? limitText() : signedOut ? signedOutText() : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
+      adminAlert(limit ? `${limitText()} – חומר חדש נכנס בינתיים בלי סיכום` : signedOut ? `${signedOutText()} – חומר חדש נכנס בלי סיכום` : 'יצירת סיכום נכשלה');
     }
   }
 
@@ -318,6 +318,13 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   // A big question bank from the lesson's own slides (practice.js), on its own worker once the lesson is up.
   if (content) queueBank(id);
 }
+
+// What to tell the owner when the AI stops, by provider (the material may be on Gemini or on Claude).
+const onGemini = () => aiStatus().provider === 'gemini';
+export const limitText = () => (onGemini()
+  ? 'נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)'
+  : 'הגעת למגבלת השימוש ב-Claude – הסיכום ייכתב לבד כשהיא מתאפסת');
+const signedOutText = () => (onGemini() ? 'המפתח של Gemini חסר או נדחה (GEMINI_API_KEY ב-.env)' : 'החיבור ל-Claude במחשב פג – צריך להתחבר מחדש (claude, ואז /login)');
 
 /**
  * Structured study notes (sections of definition / example / rule blocks) for lectures and tutorials.
@@ -354,7 +361,7 @@ export async function generateNotes(id) {
   } catch (e) {
     console.error(`[ingest] ${id} notes failed:`, e.message.slice(0, 200));
     run.fail(e, e instanceof CheckError ? e.checks : []);
-    await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? 'הגעת למגבלת השימוש ב-Claude – נסו שוב מאוחר יותר' : 'כתיבת הסיכום נכשלה' });
+    await patchLecture(id, { notesStatus: null, notesError: /429|usage_limit/.test(e.message) ? limitText() : 'כתיבת הסיכום נכשלה' });
     return null;
   }
 }
