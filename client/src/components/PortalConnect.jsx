@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Building2, RefreshCw, Loader2, ShieldCheck, Unplug, BellRing } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api } from '../api.js';
+import { NOTICE_KINDS } from '../../../shared/notices.js';
 
 const ago = (iso) => {
   const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
@@ -117,7 +118,8 @@ export default function PortalConnect({ status, onChange }) {
           {notices.map((n, i) => (
             <div key={i} className="portal-notice">
               <div><b>{n.lesson}</b>{n.date && <span className="faint"> · {new Date(n.date).toLocaleDateString('he-IL')}</span>}</div>
-              {n.title && <div>{n.title}</div>}
+              {n.analysis?.headline && <div style={{ fontWeight: 600 }}>{(NOTICE_KINDS[n.analysis.kind] || NOTICE_KINDS.general).icon} {n.analysis.headline}</div>}
+              {n.title && n.title !== n.analysis?.headline && <div>{n.title}</div>}
               {n.content && <div className="faint">{n.content}</div>}
             </div>
           ))}

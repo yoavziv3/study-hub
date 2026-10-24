@@ -10,6 +10,7 @@ import { aiStatus, probeAI } from './ai.js';
 import { geminiUsage } from './gemini.js';
 import { adminAlert } from './updates.js';
 import { growAllBanks, bankState } from './practice.js';
+import { noticesState } from './notices.js';
 import { macChecks, worst } from '../../shared/system-checks.js';
 
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
@@ -74,6 +75,7 @@ export function macHealth() {
     publish: publishState(),
     ai: aiStatus().ready,
     aiWatch,
+    notices: noticesState(),
     git: originHead(),
   };
 }

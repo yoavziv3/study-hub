@@ -8,6 +8,7 @@ import path from 'node:path';
 import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture, lectureDir, patchLecture, addCourse, saveLinks } from './store.js';
 import { addLectureFile, enqueue, numberFromName, ACCEPTED } from './ingest.js';
 import { classify, EXCLUDE } from '../../shared/moodle-kind.js';
+import { analyzeNotices } from './notices.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission, linkFileKey } from './updates.js';
 import { syncCatalog } from './catalog.js';
 import { startRun } from './runlog.js';
@@ -759,6 +760,8 @@ export async function sync({ trigger = 'schedule' } = {}) {
   }
   if (result.imported.length || result.updated.length) console.log(`[moodle] imported ${result.imported.length}, updated ${result.updated.length}`);
   for (const p of healthProblems()) adminAlert(p);
+  // New announcements: Claude reads them (kind, groups, what changed) – in the background, the sync doesn't wait.
+  analyzeNotices({ trigger: 'moodle-sync' }).catch(() => {});
   return result;
 }
 

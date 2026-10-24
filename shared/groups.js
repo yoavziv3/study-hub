@@ -1,6 +1,7 @@
 // Which class groups a student is in, and which announcements are meant for them – shared by the site (client)
 // and the cloud's phone notifications, so both show the same things.
 
+import { otherGroupsByAnalysis } from './notices.js';
 const minutes = (hhmm) => {
   const [h, m] = String(hhmm).split(':').map(Number);
   return h * 60 + (m || 0);
@@ -68,7 +69,10 @@ const mentions = (text, name) => new RegExp(`(?:^|[^\\u0590-\\u05FF\\w])[ולב�
  * the course and none is theirs, or it names only staff of other groups. Unclear posts count as relevant.
  * mine: the student's groups in this course, { [type]: group }.
  */
-export function forOtherGroups(text, course, mine) {
+export function forOtherGroups(text, course, mine, analysis = null) {
+  // Claude's reading of the notice, when there is one, knows better than the heuristics below (shared/notices.js).
+  const byAnalysis = otherGroupsByAnalysis(analysis, mine);
+  if (byAnalysis !== null) return byAnalysis;
   const classes = course?.classes || [];
   if (!classes.length || !mine || !Object.keys(mine).length) return false;
   const t = String(text || '');

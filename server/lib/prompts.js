@@ -295,3 +295,35 @@ export function gradingPrompt({ course, text, fromLecture = false }) {
 ${text}
 </syllabus>`;
 }
+
+// ---------- notices (Claude reads each new announcement / portal notice: server/lib/notices.js) ----------
+export const NOTICE_SCHEMA = obj({
+  kind: { type: 'string', enum: ['room-change', 'cancellation', 'time-change', 'date-change', 'exam', 'deadline', 'material', 'general'] },
+  groups: strArr,
+  room: str,
+  day: str,
+  time: str,
+  date: str,
+  headline: str,
+  urgent: { type: 'boolean' },
+});
+
+export const NOTICE_SYSTEM = `אתה קורא הודעות של קורסים באוניברסיטת בן-גוריון (מהמודל או מפורטל הסטודנטים) ומסכם לסטודנט מה הן אומרות. אתה מדויק: לא ממציא חדר, שעה, תאריך או קבוצה שלא כתובים בהודעה.`;
+
+/** classes: the course's groups ({ type, group, lecturer }) – so a notice that names only the lecturer maps to a group. */
+export function noticePrompt({ source, course, classes = [], lesson = null, title, body }) {
+  const groups = classes.map((g) => `- ${g.type === 'שעור' ? 'שיעור' : g.type} ${g.group}${g.lecturer ? ` (${g.lecturer})` : ''}`).join('\n');
+  return `${source === 'portal' ? `הודעה מפורטל הסטודנטים על שיעור של הסטודנט${lesson ? ` (${lesson})` : ''}` : 'הודעה מפורום ההודעות של הקורס במודל'} – הקורס: ${course}.
+${groups ? `\nהקבוצות בקורס:\n${groups}\n` : ''}
+<notice>
+כותרת: ${title}
+${body}
+</notice>
+
+החזר:
+- kind: סוג ההודעה – room-change (שינוי חדר/כיתה/מעבר לזום), cancellation (ביטול שיעור/תרגול), time-change (שינוי שעה), date-change (שינוי תאריך/הזזה), exam (מבחן/בוחן), deadline (הגשה), material (חומר חדש), general (כל השאר).
+- groups: מספרי הקבוצות שההודעה מיועדת להן (רק אם כתוב בהודעה, או אם היא נוקבת בשם מרצה/מתרגל של קבוצה מהרשימה). רשימה ריקה אם היא לכל הקורס.
+- room, day, time, date: מה שהשתנה, בדיוק כפי שכתוב בהודעה (למשל "בניין 32 חדר 210", "יום ב'", "14:00", "12.11"). מחרוזת ריקה כשלא רלוונטי.
+- headline: משפט אחד קצר בעברית (עד 15 מילים) שאומר לסטודנט מה קורה ומה עליו לעשות, בלי שם הקורס. בלי מספרים שלא כתובים בהודעה.
+- urgent: true רק אם השיעור או התרגול עצמו משתנה בימים הקרובים (חדר, ביטול, שעה, מועד). תזכורת להגשה או סיכום שבועי אינם דחופים.`;
+}

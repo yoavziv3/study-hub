@@ -8,10 +8,11 @@ import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
-import { parseJson } from './portal.js';
+import { parseJson, noticeReadings, withReadings } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
+import { noticeKey, noticeTitle, noticeUrgent } from '../../shared/notices.js';
 
 const DAY = 86400000;
 const MAX_SUBS = 5;
@@ -104,11 +105,6 @@ const portalLesson = (portal, sl) => (portal || []).find((l) => l.day === sl.day
 // Rooms are written differently in the catalog and the portal: compare their numbers (building, room).
 const numbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
 const roomChanged = (catalog, portal) => !!portal && numbers(portal) !== '' && numbers(catalog) !== '' && numbers(portal) !== numbers(catalog);
-const shortHash = (s) => {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-  return (h >>> 0).toString(36);
-};
 
 // Moodle posts arrive as many short lines; a notification gets one compact line.
 const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
@@ -228,11 +224,14 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       for (const n of l.notifications || []) {
         const at = Date.parse(n.date);
         if (Number.isFinite(at) && (now - at > 7 * DAY || at < since - DAY)) continue;
+        // With Claude's reading (notices.js): what changed, in one line, as the title.
+        const read = noticeTitle(n.analysis, l.name);
         out.push({
-          key: `portal:${shortHash(`${l.name}|${n.title}|${n.date}|${n.content.slice(0, 80)}`)}`,
-          title: `עדכון בפורטל · ${l.name}`,
+          key: `portal:${noticeKey(l.name, n)}`,
+          title: read || `עדכון בפורטל · ${l.name}`,
           body: [n.title, oneLine(n.content).slice(0, 160)].filter(Boolean).join(' – '),
           url: '/schedule',
+          ...(noticeUrgent(n.analysis) ? { urgency: 'high' } : {}),
         });
       }
     }
@@ -275,7 +274,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       if (it.cloud && it.type === 'material' && now - at < CLOUD_WAIT) continue;
       // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
       const course = feedCourses.find((c) => c.id === it.courseId);
-      if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId])) continue;
+      if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId], it.analysis)) continue;
       const k = `${it.type}:${it.courseId}`;
       groups.set(k, [...(groups.get(k) || []), it]);
     }
@@ -288,12 +287,13 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
         out.push({
           key: `upd:${it.id}`,
           keys: sentKeys(it),
-          title: material ? (ready(it) ? `מוכן באתר: ${it.title.replace(/^[^:]*:\s*/, '')}` : it.title) : `הודעה ב${short[it.courseId]}: ${it.title}`,
+          title: material ? (ready(it) ? `מוכן באתר: ${it.title.replace(/^[^:]*:\s*/, '')}` : it.title) : noticeTitle(it.analysis, short[it.courseId]) || `הודעה ב${short[it.courseId]}: ${it.title}`,
           body: material
             ? it.cloud ? it.body
               : feedCourses.find((c) => c.id === it.courseId)?.ai === false ? 'החומר כבר באתר' : 'החומר כבר באתר, עם סיכום, שאלות וכרטיסיות'
             : oneLine(it.body).slice(0, 180),
           url: material ? (it.lectureId ? `/lecture/${it.lectureId}` : it.cloud ? it.url : '/updates') : '/updates',
+          ...(!material && noticeUrgent(it.analysis) ? { urgency: 'high' } : {}),
         });
       } else {
         out.push({
@@ -341,6 +341,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     db.prepare(`SELECT user_id, ok, data, groups FROM portal_links WHERE user_id IN ${inIds}`).bind(...ids).all(),
   ]);
   const portalOf = new Map(portalRows.results.map((r) => [r.user_id, r]));
+  const readings = portalRows.results.some((r) => r.ok && r.data) ? await noticeReadings(env) : new Map();
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
@@ -387,7 +388,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     // The portal schedule the Mac read (portal.js): its lessons, and the groups they show – which win over the ones
     // the student picked by hand, so classes, exams and group announcements follow their real registration.
     const link = portalOf.get(user.id);
-    const portal = link?.ok && link.data ? parseJson(link.data, null) : null;
+    const portal = link?.ok && link.data ? withReadings(parseJson(link.data, null), readings) : null;
     const portalGroups = link?.ok ? parseJson(link.groups, {}) : {};
     if (Object.keys(portalGroups).length) {
       const merged = { ...progress.classGroups };

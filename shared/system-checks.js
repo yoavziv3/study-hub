@@ -87,6 +87,20 @@ export function macChecks(mac, at, now = Date.now()) {
     });
   }
 
+  // Claude reading new notices (server/lib/notices.js) – its own check, since the material may be on Gemini.
+  const n = mac.notices;
+  if (n) {
+    const failed = n.lastError && n.lastError.at > (n.lastOk || 0);
+    checks.push({
+      id: 'notices',
+      title: 'קריאת הודעות (Claude)',
+      state: !n.ready || failed ? (away ? 'off' : 'warn') : 'ok',
+      text: !n.ready ? 'Claude לא זמין במחשב – ההודעות מוצגות כמו שהן' : failed ? `נכשל ${ago(n.lastError.at, now)}` : n.lastOk ? `נקראו לאחרונה ${ago(n.lastOk, now)}` : 'עוד לא רץ מאז שהמחשב עלה',
+      detail: [...(failed ? [n.lastError.message] : []), ...(n.model ? [`מודל: ${n.model}`] : [])],
+      alerts: [],
+    });
+  }
+
   const pub = mac.publish || {};
   const failedLast = pub.lastError && pub.lastError.at > (pub.lastOk || 0);
   checks.push({

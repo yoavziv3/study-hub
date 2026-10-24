@@ -41,6 +41,8 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS cloud_updates_course ON cloud_updates(course_id, added_at)`,
   // The owner's system status (health.js): the Mac's last heartbeat ('mac') and the watcher's errors ('watch:<id>').
   `CREATE TABLE IF NOT EXISTS health (key TEXT PRIMARY KEY, at INTEGER NOT NULL, data TEXT)`,
+  // Claude's reading of the portal's notices (the Mac's notices.js), by the notice's key (shared/notices.js noticeKey).
+  `CREATE TABLE IF NOT EXISTS notice_analysis (key TEXT PRIMARY KEY, analysis TEXT, at INTEGER NOT NULL)`,
 ];
 
 let ready = null;

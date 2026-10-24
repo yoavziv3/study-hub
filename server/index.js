@@ -22,6 +22,7 @@ import { checkQuiz, checkProblems } from './lib/checks.js';
 import { addLectureQuestions, growAllBanks, markSlideRefs } from './lib/practice.js';
 import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
 import { startPortalRelay } from './lib/portal-relay.js';
+import { analyzeNotices, startNotices } from './lib/notices.js';
 import * as updates from './lib/updates.js';
 
 const PORT = Number(process.env.PORT) || 5180;
@@ -245,6 +246,7 @@ app.post('/api/practice', async (req, res) => {
 
 /** Fill every lesson's question bank up to BANK_TARGET (runs in the background; progress in the run log). */
 app.post('/api/maintenance/grow-banks', (_req, res) => res.json(growAllBanks()));
+app.post('/api/maintenance/notices', async (_req, res) => res.json((await analyzeNotices({ trigger: 'manual' })) || { busy: true }));
 app.post('/api/maintenance/slide-refs', async (_req, res) => res.json(await markSlideRefs()));
 
 // ---------- homework-level practice ----------
@@ -482,5 +484,6 @@ app.listen(PORT, HOST, () => {
   startPushTicks();
   startWeekly();
   startAIWatch();
+  startNotices();
   startPortalRelay().catch((e) => console.error('[portal]', e.message));
 });

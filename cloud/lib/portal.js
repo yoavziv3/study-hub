@@ -11,6 +11,7 @@ import { HttpError, json, israel } from './util.js';
 import { siteCourses, allowedCourseIds } from './account.js';
 import { groupsFromPortal } from '../../shared/groups.js';
 import { ping } from '../../shared/portal-api.js';
+import { noticeKey } from '../../shared/notices.js';
 
 const MIN = 60000;
 const STALE = 30 * MIN; // re-read every half hour,
@@ -33,6 +34,61 @@ async function relaySeenAt(env) {
   return r?.value || null;
 }
 
+// ---------- Claude's reading of the portal's notices (the Mac's server/lib/notices.js) ----------
+const NOTICE_WINDOW = 14 * 24 * 60 * MIN;
+const NOTICE_TRIES = 3;
+
+// A row with analysis NULL is a notice Claude failed to read; its `at` counts the tries instead of a time.
+
+/** Every reading, by notice key. */
+export async function noticeReadings(env) {
+  const rows = await env.DB.prepare('SELECT key, analysis FROM notice_analysis WHERE analysis IS NOT NULL').all();
+  return new Map(rows.results.map((r) => [r.key, parseJson(r.analysis, null)]));
+}
+const readingOf = (a) => (a && a.headline ? a : null);
+
+/** The lessons with each notice's reading attached (`analysis`), for the site and the notifications. */
+export const withReadings = (lessons, readings) => (lessons || []).map((l) => (l.notifications?.length
+  ? { ...l, notifications: l.notifications.map((n) => ({ ...n, analysis: readingOf(readings.get(noticeKey(l.name, n))) })) }
+  : l));
+
+/** Notices on any student's lessons that Claude hasn't read yet (one per key, the newest first). */
+export async function pendingPortalNotices(env) {
+  const [links, tries] = await Promise.all([
+    env.DB.prepare('SELECT data FROM portal_links WHERE ok = 1 AND data IS NOT NULL').all(),
+    env.DB.prepare('SELECT key, analysis, at FROM notice_analysis').all(),
+  ]);
+  const done = new Set(tries.results.filter((r) => r.analysis || r.at >= NOTICE_TRIES).map((r) => r.key));
+  const now = Date.now();
+  const out = new Map();
+  for (const link of links.results) {
+    for (const l of parseJson(link.data, [])) {
+      for (const n of l.notifications || []) {
+        const key = noticeKey(l.name, n);
+        const at = Date.parse(n.date);
+        if (done.has(key) || out.has(key) || (Number.isFinite(at) && now - at > NOTICE_WINDOW)) continue;
+        out.set(key, { key, course: l.name, lesson: [l.type, `יום ${'אבגדהוש'[l.day] || ''}'`, l.start, l.location].filter(Boolean).join(' · '), title: n.title, content: n.content, date: n.date });
+      }
+    }
+  }
+  return json([...out.values()].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 25));
+}
+
+/** The Mac's readings: a reading is kept; a failed try (analysis null) counts towards NOTICE_TRIES (in `at`). */
+export async function savePortalNotices(env, body) {
+  const items = (Array.isArray(body?.items) ? body.items : []).slice(0, 50).filter((x) => typeof x?.key === 'string' && x.key.length <= 20);
+  const now = Date.now();
+  const stmts = items.map((x) => x.analysis
+    ? env.DB.prepare('INSERT INTO notice_analysis (key, analysis, at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET analysis = excluded.analysis, at = excluded.at')
+      .bind(x.key, JSON.stringify(x.analysis).slice(0, 4000), now)
+    : env.DB.prepare('INSERT INTO notice_analysis (key, analysis, at) VALUES (?, NULL, 1) ON CONFLICT(key) DO UPDATE SET at = notice_analysis.at + 1 WHERE notice_analysis.analysis IS NULL')
+      .bind(x.key));
+  // Readings of notices long gone from the portal.
+  stmts.push(env.DB.prepare('DELETE FROM notice_analysis WHERE analysis IS NOT NULL AND at < ?').bind(now - 4 * NOTICE_WINDOW));
+  await env.DB.batch(stmts);
+  return json({ ok: true, saved: items.length });
+}
+
 async function view(env, account) {
   const relay = await relaySeenAt(env);
   const base = { key: env.PORTAL_PUBLIC_KEY || null, relayOnline: !!relay && Date.now() - relay < 10 * MIN };
@@ -45,7 +101,7 @@ async function view(env, account) {
     error: account.error || null,
     syncedAt: account.synced_at ? new Date(account.synced_at).toISOString() : null,
     username: account.username,
-    lessons: parseJson(account.data, []),
+    lessons: withReadings(parseJson(account.data, []), await noticeReadings(env)),
     groups: parseJson(account.groups, {}),
   };
 }

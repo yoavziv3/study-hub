@@ -10,7 +10,7 @@ import {
 import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
-import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult } from './lib/portal.js';
+import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult, pendingPortalNotices, savePortalNotices } from './lib/portal.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
 const MIN = 60000;
@@ -230,6 +230,9 @@ async function admin({ request, env, url, path, method }) {
   if (path === '/api/admin/portal/ping' && method === 'GET') return portalPing(env);
   if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env, url);
   if (path === '/api/admin/portal/result' && method === 'POST') return portalResult(env, request, await readJson(request, 200_000));
+  // Claude's reading of the portal's notices, done on the Mac (server/lib/notices.js).
+  if (path === '/api/admin/notices/pending' && method === 'GET') return pendingPortalNotices(env);
+  if (path === '/api/admin/notices/result' && method === 'POST') return savePortalNotices(env, await readJson(request, 200_000));
   if (path === '/api/admin/push/tick' && method === 'POST') {
     const { source, backup, mac } = await readJson(request, 30_000);
     return notifyTick(env, request, { source, backup: !!backup, mac: mac && typeof mac === 'object' ? mac : null });

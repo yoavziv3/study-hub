@@ -178,6 +178,24 @@ export async function addAnnouncements(posts, { history = false } = {}) {
   return added;
 }
 
+// ---------- Claude's reading of announcements (notices.js) ----------
+const NOTICE_WINDOW = 14 * DAY;
+const NOTICE_TRIES = 3;
+/** Recent announcements not read yet (each gets a few tries). */
+export function pendingNotices() {
+  if (!state) return [];
+  const since = Date.now() - NOTICE_WINDOW;
+  return state.items.filter((i) => i.type === 'announcement' && !i.analysis && (i.analysisTries || 0) < NOTICE_TRIES && Date.parse(i.addedAt) > since);
+}
+/** Saves the reading on the feed item (published with the feed); null records a failed try. */
+export async function setNoticeAnalysis(id, analysis) {
+  const it = state?.items.find((i) => i.id === id);
+  if (!it) return;
+  if (analysis) it.analysis = analysis;
+  else it.analysisTries = (it.analysisTries || 0) + 1;
+  await save();
+}
+
 /** Upsert Moodle assignments/quizzes. New future deadlines are announced. */
 export async function syncDeadlines(list) {
   if (!state) return;

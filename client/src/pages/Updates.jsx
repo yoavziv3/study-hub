@@ -10,6 +10,7 @@ import { Page, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { parseRequired, partsLabel } from '../components/Assignment.jsx';
 import PhoneNotifications from '../components/PhoneNotifications.jsx';
 import { forOtherGroups } from '../../../shared/groups.js';
+import { NOTICE_KINDS } from '../../../shared/notices.js';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
 const oneLine = (t) => t.replace(/\r/g, '').split(/\n+/).map((x) => x.trim()).filter(Boolean).join(' · ');
@@ -161,6 +162,9 @@ function UpdateItem({ item, course, isNew, i }) {
   const [expanded, setExpanded] = useState(false);
   const mine = item.type === 'class-change' && progress.classGroups?.[item.courseId]?.[item.classType] === item.group;
   const T = TYPE[item.type] || TYPE.announcement;
+  // Claude's reading of an announcement (server/lib/notices.js): its kind, who it's for and what changed.
+  const read = item.type === 'announcement' && item.analysis?.headline ? item.analysis : null;
+  const kind = read && read.kind !== 'general' ? NOTICE_KINDS[read.kind] : null;
   const Icon = item.type === 'material' ? MATERIAL_ICON[item.kind] || BookOpen : T.icon;
   const text = item.type === 'deadline' ? oneLine(item.body || '') : (item.body || '').replace(/\r/g, '').replace(/\n\s*\n+/g, '\n').trim();
   const long = text.length > 320;
@@ -174,10 +178,13 @@ function UpdateItem({ item, course, isNew, i }) {
           <span className="chip">{item.type === 'material' ? { lecture: 'הרצאה', tutorial: 'תרגול', homework: 'שיעורי בית', exam: 'מבחן קודם', prep: 'הכנה למבחן' }[item.kind] || T.label : T.label}</span>
           {course && <span className="chip c">{course.short}</span>}
           {mine && <span className="chip warn">הקבוצה שלך</span>}
+          {kind && <span className={`chip ${kind.urgent ? 'warn' : ''}`}>{kind.icon} {kind.label}</span>}
+          {read?.groups?.length > 0 && <span className="chip">{read.groups.length > 1 ? 'קבוצות' : 'קבוצה'} {read.groups.join(', ')}</span>}
           <span className="faint" style={{ fontSize: 12.5, marginInlineStart: 'auto' }}>{timeOf(item.addedAt)}</span>
         </div>
         <div style={{ fontWeight: 700, fontSize: 16, marginTop: 6 }}>{item.title}</div>
         {item.author && <div className="faint" style={{ fontSize: 12.5 }}>{item.author}</div>}
+        {read && read.headline !== item.title && <div className="update-read">{ltr(read.headline)}</div>}
         {body && <div className="update-body">{ltr(body)}</div>}
         <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
           {long && <button className="btn sm ghost" onClick={() => setExpanded((x) => !x)}>{expanded ? 'פחות' : 'להודעה המלאה'} <ChevronDown size={14} style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} /></button>}
@@ -217,7 +224,7 @@ export default function Updates() {
   const withInstructions = (d) => (instructions[d.moodleKey] ? { ...d, intro: instructions[d.moodleKey] } : d);
   // Course announcements meant for other groups ("no tutorial in group 22") are hidden unless asked for.
   const [showOthers, setShowOthers] = useState(false);
-  const otherGroups = (i) => i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId]);
+  const otherGroups = (i) => i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId], i.analysis);
   const hiddenCount = updates.items.filter(otherGroups).length;
   const items = updates.items.filter((i) =>
     (showOthers || !otherGroups(i)) && (filter === 'all' ? true : filter === 'deadlines' ? i.type === 'deadline' || i.type === 'reminder' : i.type === filter)

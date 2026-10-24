@@ -202,3 +202,42 @@ export function checkProblems(problems = []) {
   const checks = value.length === problems.length ? [] : [finding('problems.item', 'fixed', `הוסרו ${problems.length - value.length} תרגילים בלי שאלה או בלי פתרון מלא`)];
   return { value: value.map((p) => ({ ...p, difficulty: LEVELS.includes(p.difficulty) ? p.difficulty : 'medium' })), checks };
 }
+
+// ---------- a notice as Claude read it (notices.js) ----------
+const NOTICE_KIND_IDS = ['room-change', 'cancellation', 'time-change', 'date-change', 'exam', 'deadline', 'material', 'general'];
+const digitsIn = (t) => (String(t).match(/\d+/g) || []).map((d) => String(Number(d)));
+/**
+ * Nothing in the reading may go beyond the notice: a room, time or date whose numbers aren't in the text is
+ * cleared, a group must be one of the course's (or named in the text), and a headline with invented numbers or of
+ * the wrong length falls back to the notice's own title.
+ */
+export function checkNotice(a, { body, title, classes = [] }) {
+  const checks = [];
+  if (!a || typeof a !== 'object') return { value: null, checks: [finding('notice', 'reject', 'אין פלט')] };
+  const source = new Set(digitsIn(`${title}\n${body}`));
+  const kind = NOTICE_KIND_IDS.includes(a.kind) ? a.kind : 'general';
+  if (kind !== a.kind) checks.push(finding('notice.kind', 'fixed', `סוג לא מוכר (${a.kind}) – general`));
+  const known = new Set(classes.map((g) => String(Number(g.group))));
+  const groups = [...new Set((a.groups || []).map((g) => String(Number(String(g).match(/\d+/)?.[0] ?? NaN))).filter((g) => g !== 'NaN'))]
+    .filter((g) => known.size ? known.has(g) : source.has(g));
+  if (groups.length !== (a.groups || []).length) checks.push(finding('notice.groups', 'fixed', `הוסרו קבוצות שלא קיימות בקורס (${(a.groups || []).join(', ')})`));
+  const fields = {};
+  for (const f of ['room', 'day', 'time', 'date']) {
+    const v = text(a[f]);
+    if (v && digitsIn(v).some((d) => !source.has(d))) {
+      checks.push(finding(`notice.${f}`, 'fixed', `${f} "${v}" לא מופיע בהודעה – הוסר`));
+      fields[f] = '';
+    } else fields[f] = v;
+  }
+  let headline = text(a.headline);
+  if (!headline || headline.length > 140) {
+    checks.push(finding('notice.headline', 'fixed', 'כותרת ריקה או ארוכה מדי – הכותרת המקורית'));
+    headline = text(title).slice(0, 140);
+  } else if (digitsIn(headline).some((d) => !source.has(d))) {
+    checks.push(finding('notice.headline', 'fixed', `מספר בכותרת שלא מופיע בהודעה – הכותרת המקורית ("${headline.slice(0, 50)}")`));
+    headline = text(title).slice(0, 140);
+  }
+  // "Urgent" (a high-priority push) is kept for a lesson that changes, never a reminder or a weekly summary.
+  const urgent = !!a.urgent && ['room-change', 'cancellation', 'time-change', 'date-change'].includes(kind);
+  return { value: { kind, groups, ...fields, headline, urgent }, checks };
+}

@@ -46,10 +46,10 @@ function sdk() {
 }
 
 // ---------- CLI plumbing ----------
-function cliArgs({ system, effort, extra = [] }) {
+function cliArgs({ system, effort, extra = [], model = MODEL }) {
   return [
     '-p',
-    '--model', MODEL,
+    '--model', model,
     '--tools', '',
     '--no-session-persistence',
     '--strict-mcp-config',
@@ -114,21 +114,30 @@ function parseLooseJSON(text) {
  * the prompt already). cache: false asks for a fresh answer (regenerate). priority: 'low' for work that can wait
  * (question banks) – with Gemini it never uses the part of the day's quota kept for new lessons.
  */
-export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000, files = [], cache = true, priority = 'normal' }) {
-  const { provider, model } = aiStatus();
+export async function generateJSON({ system, prompt, schema, effort = 'high', maxTokens = 48000, files = [], cache = true, priority = 'normal', use = null, model: wanted = null }) {
+  // use: 'claude' – this task stays with Claude whatever AI_PROVIDER says (the notices: notices.js).
+  const { provider, model: base } = use === 'claude' ? claudeStatus() : aiStatus();
+  const model = wanted || base;
   const key = cache && provider !== 'none' ? cacheKey({ provider, model, system, prompt, schema, files: provider === 'gemini' ? files : [] }) : null;
   const hit = key && readCache(key);
   if (hit) return hit;
-  const out = await generateFresh({ provider, system, prompt, schema, effort, maxTokens, files, priority });
+  const out = await generateFresh({ provider, model, system, prompt, schema, effort, maxTokens, files, priority });
   if (key) writeCache(key, out, { provider, model });
   return out;
 }
 
-async function generateFresh({ provider, system, prompt, schema, effort, maxTokens, files, priority }) {
+/** Claude on this Mac – the API key if there is one, else the Claude Code login – regardless of AI_PROVIDER. */
+export function claudeStatus() {
+  const cli = findClaudeCli();
+  const provider = process.env.ANTHROPIC_API_KEY ? 'api' : cli ? 'cli' : 'none';
+  return { provider, model: MODEL, ready: provider !== 'none' };
+}
+
+async function generateFresh({ provider, model = MODEL, system, prompt, schema, effort, maxTokens, files, priority }) {
   if (provider === 'gemini') return geminiJSON({ system, prompt, schema, effort, maxTokens, files, priority });
   if (provider === 'api') {
     const stream = sdk().messages.stream({
-      model: MODEL,
+      model,
       max_tokens: maxTokens,
       system,
       output_config: { effort, format: { type: 'json_schema', schema } },
@@ -140,7 +149,7 @@ async function generateFresh({ provider, system, prompt, schema, effort, maxToke
   }
   if (provider === 'cli') {
     const out = await spawnCli(
-      cliArgs({ system, effort, extra: ['--output-format', 'json', '--json-schema', JSON.stringify(schema)] }),
+      cliArgs({ system, effort, model, extra: ['--output-format', 'json', '--json-schema', JSON.stringify(schema)] }),
       prompt
     );
     const res = JSON.parse(out);

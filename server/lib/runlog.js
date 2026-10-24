@@ -21,6 +21,7 @@ export const PROCESSES = {
   'moodle-sync': 'סנכרון מודל',
   publish: 'פרסום לאתר',
   weekly: 'דוח עומס שבועי',
+  notices: 'קריאת הודעות (Claude)',
 };
 
 const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
