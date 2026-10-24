@@ -194,6 +194,11 @@ export function AppProvider({ children }) {
         else p.exams[courseId] = { a: dates.a || '', b: dates.b || '' };
         return p;
       }, { quiet: true }),
+      // The committee view (owner): which registration lines of a course count in the overlay.
+      setCommitteeLines: (courseId, ids) => update((p) => {
+        p.committee = { ...p.committee, lines: { ...p.committee?.lines, [courseId]: ids } };
+        return p;
+      }, { quiet: true }),
       // The student's class groups per course (lecture, tutorial…), for the timetable.
       setClassGroup: (courseId, type, group) => update((p) => {
         p.classGroups ||= {};

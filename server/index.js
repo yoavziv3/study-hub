@@ -22,6 +22,7 @@ import { checkQuiz, checkProblems } from './lib/checks.js';
 import { addLectureQuestions, growAllBanks, markSlideRefs } from './lib/practice.js';
 import { weeklyReports, runWeekly, startWeekly } from './lib/weekly.js';
 import { startPortalRelay } from './lib/portal-relay.js';
+import { committeeData, refreshCommittee, startCommittee } from './lib/committee.js';
 import { analyzeNotices, startNotices } from './lib/notices.js';
 import * as updates from './lib/updates.js';
 
@@ -423,6 +424,9 @@ const wrap = (fn) => async (req, res) => {
 };
 app.get('/api/moodle', (_req, res) => res.json(moodle.moodleStatus()));
 app.get('/api/system', async (_req, res) => res.json(await systemStatus()));
+// The degree committee's view (owner only: this server answers on this Mac alone; the cloud gates /data/committee.json).
+app.get('/api/committee', (_req, res) => res.json(committeeData()));
+app.post('/api/committee/refresh', async (_req, res) => res.json(await refreshCommittee({ force: true })));
 
 // ---------- run log and weekly report ----------
 app.get('/api/runs', (req, res) => res.json({ processes: PROCESSES, runs: listRuns({ process: req.query.process || null, limit: Math.min(1000, Number(req.query.limit) || 300) }) }));
@@ -485,5 +489,6 @@ app.listen(PORT, HOST, () => {
   startWeekly();
   startAIWatch();
   startNotices();
+  startCommittee();
   startPortalRelay().catch((e) => console.error('[portal]', e.message));
 });

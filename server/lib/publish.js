@@ -8,7 +8,7 @@ import { startRun } from './runlog.js';
 
 const run = promisify(execFile);
 const QUIET_MS = 2 * 60 * 1000;
-const PATHS = ['data/lectures', 'data/courses.json', 'data/practice', 'data/updates.json', 'data/links', 'data/weekly'];
+const PATHS = ['data/lectures', 'data/courses.json', 'data/practice', 'data/updates.json', 'data/links', 'data/weekly', 'data/committee.json'];
 
 let timer = null;
 let busy = false;

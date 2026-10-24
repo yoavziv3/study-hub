@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
-import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2 } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -18,6 +18,7 @@ const Schedule = lazy(() => import('./pages/Schedule.jsx'));
 const Grades = lazy(() => import('./pages/Grades.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 const System = lazy(() => import('./pages/System.jsx'));
+const Committee = lazy(() => import('./pages/Committee.jsx'));
 const Weekly = lazy(() => import('./pages/Weekly.jsx'));
 const Runs = lazy(() => import('./pages/Runs.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
@@ -103,6 +104,7 @@ function Sidebar({ open, onNavigate }) {
       />}
       {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים ומשוב" onClick={onNavigate} />}
       {!STATIC && <NavItem to="/runs" icon={<ListChecks size={17} />} label="יומן הרצות" onClick={onNavigate} />}
+      {(!STATIC || me?.owner) && <NavItem to="/committee" icon={<Table2 size={17} />} label="מערכת הועד" onClick={onNavigate} />}
       {(!STATIC || me?.owner) && <NavItem to="/system" icon={<Activity size={17} />} label="מצב המערכת" onClick={onNavigate} />}
       <div className="sidebar-foot">
         <Feedback />
@@ -309,6 +311,7 @@ function Shell() {
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/system" element={<System />} />
+            <Route path="/committee" element={!STATIC || me?.owner ? <Committee /> : <Navigate to="/" replace />} />
             <Route path="/weekly" element={<Weekly />} />
             <Route path="/runs" element={<Runs />} />
           </Routes>

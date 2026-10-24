@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { committeeData } from '../server/lib/committee.js';
 import { ROOT, DATA_DIR, listCourses, listLectures, getContent, getSlides, lectureDir, getPractice, getLinks } from '../server/lib/store.js';
 
 const OUT = path.join(ROOT, 'dist-cloud');
@@ -60,6 +61,9 @@ const card = (m) => {
     hasContent: !!c,
   };
 };
+
+// The degree committee's courses and registration lines (server/lib/committee.js); cloud/gate.js serves it to the owner alone.
+await write('committee.json', committeeData());
 
 // Weekly load reports (server/lib/weekly.js), newest first; cloud/gate.js limits each to the student's courses.
 {

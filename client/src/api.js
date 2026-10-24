@@ -56,6 +56,7 @@ const STATIC_ROUTES = [
   [/^\/api\/lectures$/, () => '/data/lectures.json'],
   [/^\/api\/updates$/, () => '/data/updates.json'],
   [/^\/api\/weekly$/, () => '/data/weekly.json'],
+  [/^\/api\/committee$/, () => '/data/committee.json'],
   [/^\/api\/lectures\/([\w-]+)$/, (m) => `/data/lectures/${m[1]}.json`],
 ];
 

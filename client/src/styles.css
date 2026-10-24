@@ -72,11 +72,13 @@
 [data-color='sky']     { --c: #0b80d0; --c-soft: #e3f2fc; --c-strong: #0864a3; --c-grad: linear-gradient(135deg, #0b80d0 0%, #3fb5f0 100%); }
 [data-color='rose']    { --c: #e0335e; --c-soft: #fde8ee; --c-strong: #b4204a; --c-grad: linear-gradient(135deg, #e0335e 0%, #ff7a9a 100%); }
 [data-color='amber']   { --c: #d97b06; --c-soft: #fdf0dc; --c-strong: #965400; --c-grad: linear-gradient(135deg, #e0820a 0%, #f5b440 100%); }
+[data-color='teal']    { --c: #0e8a9a; --c-soft: #e0f3f5; --c-strong: #096673; --c-grad: linear-gradient(135deg, #0e8a9a 0%, #3cc3cf 100%); }
 :root[data-theme='dark'] [data-color='emerald'] { --c: #34d39c; --c-soft: rgba(52, 211, 156, 0.12); --c-strong: #7be8c0; }
 :root[data-theme='dark'] [data-color='violet']  { --c: #a68bff; --c-soft: rgba(166, 139, 255, 0.13); --c-strong: #c8b8ff; }
 :root[data-theme='dark'] [data-color='sky']     { --c: #4cb8ff; --c-soft: rgba(76, 184, 255, 0.12); --c-strong: #94d4ff; }
 :root[data-theme='dark'] [data-color='rose']    { --c: #ff6f91; --c-soft: rgba(255, 111, 145, 0.13); --c-strong: #ffa8bd; }
 :root[data-theme='dark'] [data-color='amber']   { --c: #f7ae3f; --c-soft: rgba(247, 174, 63, 0.13); --c-strong: #ffd08a; }
+:root[data-theme='dark'] [data-color='teal']    { --c: #4cc9d6; --c-soft: rgba(76, 201, 214, 0.12); --c-strong: #94e3eb; }
 
 /* ============ Base ============ */
 * { box-sizing: border-box; }
@@ -961,3 +963,12 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .slide-peek-stage { box-shadow: none; }
 .slide-peek-text { white-space: pre-line; line-height: 1.7; font-size: 14px; max-height: 320px; overflow: auto; padding: 4px; }
 .slide-peek.inline { margin: 12px 0 4px; }
+
+/* The degree committee's overlay (pages/Committee.jsx) */
+.cm-grid { display: grid; min-width: 520px; direction: rtl; }
+.cm-day { text-align: center; font-weight: 700; font-size: 13px; padding: 4px 0 8px; }
+.cm-time { font-size: 11.5px; color: var(--text-3); height: 18px; transform: translateY(-7px); text-align: start; }
+.cm-cell { height: 18px; border-top: 1px dashed var(--border); border-inline-start: 1px solid var(--border); display: flex; align-items: stretch; gap: 1px; padding: 1px 2px; background: var(--surface); }
+.cm-cell.hour { border-top: 1px solid var(--border-strong); }
+.cm-cell i { flex: 1; border-radius: 3px; background: var(--c); }
+.cm-cell.free { background: var(--good-bg); }

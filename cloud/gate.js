@@ -5,6 +5,7 @@ import { currentUser, siteCourses, allowedCourseIds, visibleCourseIds, lectureCo
 import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
 import { forCourses } from '../shared/weekly-load.js';
 import { portalFeed } from './lib/portal.js';
+import { ownerUserId } from './lib/health.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -56,6 +57,13 @@ export async function gate({ request, env }) {
         deadlines: [],
         settings: {},
       });
+    }
+
+    // The degree committee's weekly overlay of every course (committee.js): the site's owner only.
+    if (path === '/data/committee.json') {
+      if ((await ownerUserId(env)) !== user.id) return fail(404, 'לא נמצא');
+      const res = await asset();
+      return res ? privately(res) : fail(404, 'לא נמצא');
     }
 
     if (path === '/data/weekly.json') {
