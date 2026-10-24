@@ -135,6 +135,39 @@ export async function portalFeed(env, user, courses) {
   return [...out.values()];
 }
 
+// ---------- holding a push for Claude's reading ----------
+const HOLD = 10 * MIN;
+const MAC_FRESH = 20 * MIN;
+
+/**
+ * Keys of portal notices whose push should wait a little: nobody has read them yet (no `analysis`), the Mac that
+ * reads them is on (its heartbeat is recent), and the cloud first saw them less than HOLD ago. The push then goes out
+ * with Claude's headline ("📍 …: התרגול עובר לחדר 105") instead of the plain text; after HOLD it goes out anyway.
+ * First sight is kept in push_meta as `ns:<key>`.
+ */
+export async function heldNotices(env, rows, readings, now = Date.now()) {
+  const unread = new Set();
+  for (const r of rows) {
+    if (!r.ok || !r.data) continue;
+    for (const l of parseJson(r.data, [])) for (const n of l.notifications || []) {
+      const k = noticeKey(l.name, n);
+      if (!readings.has(k)) unread.add(k);
+    }
+  }
+  if (!unread.size) return new Set();
+  const [seenRows, mac] = await Promise.all([
+    env.DB.prepare("SELECT key, value FROM push_meta WHERE key LIKE 'ns:%'").all(),
+    env.DB.prepare("SELECT at FROM health WHERE key = 'mac'").first(),
+  ]);
+  const seen = new Map(seenRows.results.map((r) => [r.key.slice(3), r.value]));
+  const fresh = [...unread].filter((k) => !seen.has(k));
+  const stmts = fresh.slice(0, 100).map((k) => env.DB.prepare('INSERT OR IGNORE INTO push_meta (key, value) VALUES (?, ?)').bind(`ns:${k}`, now));
+  if (seenRows.results.some((r) => r.value < now - 3 * 24 * 60 * MIN)) stmts.push(env.DB.prepare("DELETE FROM push_meta WHERE key LIKE 'ns:%' AND value < ?").bind(now - 3 * 24 * 60 * MIN));
+  if (stmts.length) await env.DB.batch(stmts);
+  if (!mac || now - mac.at > MAC_FRESH) return new Set();
+  return new Set([...unread].filter((k) => now - (seen.get(k) ?? now) < HOLD));
+}
+
 async function view(env, account) {
   const relay = await relaySeenAt(env);
   const base = { key: env.PORTAL_PUBLIC_KEY || null, relayOnline: !!relay && Date.now() - relay < 10 * MIN };

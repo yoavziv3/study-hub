@@ -8,7 +8,7 @@ import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
-import { parseJson, noticeReadings, withReadings } from './portal.js';
+import { parseJson, noticeReadings, withReadings, heldNotices } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
@@ -114,7 +114,7 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null }) {
+export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set() }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   const daytime = il.hour >= 8 && il.hour < 22;
@@ -232,6 +232,8 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       for (const n of l.notifications || []) {
         const at = Date.parse(n.date);
         if (Number.isFinite(at) && (now - at > 7 * DAY || at < since - DAY)) continue;
+        // Waiting for Claude's reading (portal.js heldNotices): it comes within minutes, with a clear headline.
+        if (held.has(noticeKey(l.name, n))) continue;
         // With Claude's reading (notices.js): what changed, in one line, as the title.
         const read = noticeTitle(n.analysis, l.name);
         out.push({
@@ -350,6 +352,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   ]);
   const portalOf = new Map(portalRows.results.map((r) => [r.user_id, r]));
   const readings = portalRows.results.some((r) => r.ok && r.data) ? await noticeReadings(env) : new Map();
+  const held = await heldNotices(env, portalRows.results, readings, now).catch(() => new Set());
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
@@ -415,7 +418,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const since = Math.min(...devices.map((d) => d.created_at || 0));
     const due = [
       ...(user.id === owner ? alerts : []),
-      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal }),
+      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, held }),
     ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {

@@ -14,7 +14,7 @@ import { getCourse } from './store.js';
 import { pendingNotices, setNoticeAnalysis } from './updates.js';
 
 const MODEL = process.env.NOTICES_MODEL || 'claude-sonnet-5-5';
-const EVERY = 15 * 60000;
+const EVERY = 3 * 60000; // often, because the cloud holds a portal push for up to 10 minutes waiting for the reading
 const PER_RUN = 20;
 const CLOUD = (process.env.CLOUD_URL || '').replace(/\/$/, '');
 const SECRET = process.env.STUDY_ADMIN_SECRET || '';
@@ -63,10 +63,18 @@ export async function analyzeNotices({ trigger = 'schedule' } = {}) {
   running = true;
   const result = { announcements: 0, portal: 0, failed: 0 };
   const checks = [];
-  const run = startRun('notices', { trigger, input: { model: MODEL } });
+  let run = null;
   try {
-    // Moodle announcements on this Mac's feed.
-    for (const it of pendingNotices().slice(0, PER_RUN)) {
+    // What is waiting: announcements on this Mac's feed, and the portal's notices kept in the cloud (deduplicated
+    // there across students). Nothing waiting is the usual case – then there is no run to log.
+    const local = pendingNotices().slice(0, PER_RUN);
+    const remote = cloudOn() ? (await admin('/api/admin/notices/pending')).slice(0, PER_RUN) : [];
+    if (!local.length && !remote.length) {
+      lastOk = Date.now();
+      return result;
+    }
+    run = startRun('notices', { trigger, input: { model: MODEL, announcements: local.length, portal: remote.length } });
+    for (const it of local) {
       const course = getCourse(it.courseId);
       try {
         const a = await read({ source: 'moodle', course: course?.name || it.courseId, classes: course?.classes || [], title: it.title, body: it.body, postedAt: it.createdAt || it.addedAt }, checks);
@@ -78,33 +86,29 @@ export async function analyzeNotices({ trigger = 'schedule' } = {}) {
         result.failed++;
       }
     }
-    // The portal's notices (kept in the cloud; deduplicated there across students).
-    if (cloudOn()) {
-      const pending = await admin('/api/admin/notices/pending');
-      const done = [];
-      try {
-        for (const n of pending.slice(0, PER_RUN)) {
-          try {
-            const a = await read({ source: 'portal', course: n.course, lesson: n.lesson, title: n.title, body: n.content, postedAt: n.postedAt || n.date }, checks);
-            done.push({ key: n.key, analysis: a || null });
-            if (a) result.portal++;
-          } catch (e) {
-            if (isStop(e)) throw e;
-            done.push({ key: n.key, analysis: null });
-            result.failed++;
-          }
+    const done = [];
+    try {
+      for (const n of remote) {
+        try {
+          const a = await read({ source: 'portal', course: n.course, lesson: n.lesson, title: n.title, body: n.content, postedAt: n.postedAt || n.date }, checks);
+          done.push({ key: n.key, analysis: a || null });
+          if (a) result.portal++;
+        } catch (e) {
+          if (isStop(e)) throw e;
+          done.push({ key: n.key, analysis: null });
+          result.failed++;
         }
-      } finally {
-        if (done.length) await admin('/api/admin/notices/result', { method: 'POST', body: JSON.stringify({ items: done }) });
       }
+    } finally {
+      if (done.length) await admin('/api/admin/notices/result', { method: 'POST', body: JSON.stringify({ items: done }) });
     }
     lastOk = Date.now();
     run.ok(result, checks);
-    if (result.announcements || result.portal) console.log(`[notices] read ${result.announcements} announcements, ${result.portal} portal notices`);
+    console.log(`[notices] read ${result.announcements} announcements, ${result.portal} portal notices`);
     return result;
   } catch (e) {
     lastError = { at: Date.now(), message: String(e.message || e).slice(0, 200) };
-    run.fail(e, checks);
+    run?.fail(e, checks);
     console.error('[notices]', lastError.message);
     return null;
   } finally {
