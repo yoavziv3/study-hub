@@ -114,9 +114,11 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set() }) {
+export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set(), owner = false }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
+  // Reminders (deadlines, a lapsed Moodle sign-in) wait for the day; news about the course – new material, announcements,
+  // room and portal changes – goes out at any hour, since a room change posted at night is for the next morning.
   const daytime = il.hour >= 8 && il.hour < 22;
   const out = [];
   const short = Object.fromEntries(courses.map((c) => [c.id, c.short]));
@@ -217,17 +219,18 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
   }
 
   // 5. The room or time of the student's own group changed in the course catalog.
-  if (prefs.rooms && daytime) {
+  if (prefs.rooms) {
     for (const it of updates) {
       if (it.type !== 'class-change' || now - Date.parse(it.addedAt) > 2 * DAY) continue;
-      if (!courses.some((c) => c.id === it.courseId)) continue;
-      if (progress.classGroups?.[it.courseId]?.[it.classType] !== it.group) continue;
+      // The owner (the degree committee) hears about every group of every course, the others only their own.
+      if (!(owner ? feedCourses : courses).some((c) => c.id === it.courseId)) continue;
+      if (!owner && progress.classGroups?.[it.courseId]?.[it.classType] !== it.group) continue;
       out.push({ key: `room:${it.id}`, title: it.title, body: it.body, url: '/schedule' });
     }
   }
   // 7. The portal: a notice on one of the student's lessons (room change, cancellation…), or a room that differs from
   //    the course catalog's. Each once; notices older than a week (or from before notifications were on) are skipped.
-  if (prefs.portal && portal && daytime) {
+  if (prefs.portal && portal) {
     for (const l of portal) {
       for (const n of l.notifications || []) {
         const at = Date.parse(n.date);
@@ -260,7 +263,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
   }
 
   // 8. The weekly load report is out (Sunday morning, from the Mac's weekly.js) – once, with its headline.
-  if (prefs.announcements && daytime) {
+  if (prefs.announcements) {
     for (const it of updates) {
       if (it.type !== 'report' || now - Date.parse(it.addedAt) > DAY || Date.parse(it.addedAt) < since || isSent(`upd:${it.id}`)) continue;
       out.push({ key: `upd:${it.id}`, title: it.title, body: it.body, url: '/weekly' });
@@ -270,7 +273,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
   // 6. New material and course announcements in the student's courses: the Mac's published feed, plus what the
   //    cloud spotted in Moodle itself (moodle-watch.js) while the Mac hasn't processed it yet. A burst – the start
   //    of a semester, a big Moodle sync – becomes one notification per course and type.
-  if ((prefs.material || prefs.announcements) && daytime) {
+  if (prefs.material || prefs.announcements) {
     // These follow the courses whose feed the student sees (the owner: all of them).
     const short = Object.fromEntries(feedCourses.map((c) => [c.id, c.short]));
     const groups = new Map();
@@ -284,7 +287,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       if (it.cloud && it.type === 'material' && now - at < CLOUD_WAIT) continue;
       // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
       const course = feedCourses.find((c) => c.id === it.courseId);
-      if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId], it.analysis)) continue;
+      if (it.type === 'announcement' && !owner && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId], it.analysis)) continue;
       const k = `${it.type}:${it.courseId}`;
       groups.set(k, [...(groups.get(k) || []), it]);
     }
@@ -418,7 +421,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const since = Math.min(...devices.map((d) => d.created_at || 0));
     const due = [
       ...(user.id === owner ? alerts : []),
-      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, held }),
+      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, held, owner: user.id === owner }),
     ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {
