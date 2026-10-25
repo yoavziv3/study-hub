@@ -232,7 +232,11 @@ export default function Updates() {
   const [showOthers, setShowOthers] = useState(false);
   // The owner (the degree committee) sees every group's announcements; students only their own.
   const sees = !STATIC || me?.owner;
-  const otherGroups = (i) => !sees && i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId], i.analysis);
+  const otherGroups = (i) => !sees && (
+    (i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId], i.analysis))
+    // A catalog change to another group's room or time (when the student has picked their group of that kind).
+    || (i.type === 'class-change' && !!progress.classGroups?.[i.courseId]?.[i.classType] && progress.classGroups[i.courseId][i.classType] !== i.group)
+  );
   const hiddenCount = updates.items.filter(otherGroups).length;
   const items = updates.items.filter((i) =>
     (showOthers || !otherGroups(i)) && (filter === 'all' ? true : filter === 'deadlines' ? i.type === 'deadline' || i.type === 'reminder' : i.type === filter)

@@ -47,7 +47,10 @@ export async function gate({ request, env }) {
       // cloud spotted in Moodle that the Mac hasn't processed yet. Deadlines and reminders are personal and come
       // from /api/me/deadlines.
       // The weekly load report's item names no course, so every student gets it (the report itself is filtered below).
-      const mine = (upd.items || []).filter((i) => (allowed.has(i.courseId) && (i.type === 'material' || i.type === 'announcement')) || i.type === 'report');
+      // Class changes (a room or time of a group moved in the catalog) and newly published exam dates are shared too;
+      // the page hides the changes of groups other than the student's own.
+      const SHARED = new Set(['material', 'announcement', 'class-change', 'exam']);
+      const mine = (upd.items || []).filter((i) => (allowed.has(i.courseId) && SHARED.has(i.type)) || i.type === 'report');
       const fresh = await cloudUpdates(env, [...allowed]).catch(() => []);
       // The portal's notices on the student's own lessons (portal.js) – theirs alone, read from their portal link.
       const portal = await portalFeed(env, user, courses).catch(() => []);
