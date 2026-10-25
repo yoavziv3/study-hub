@@ -1479,6 +1479,40 @@
       "source": "upload",
       "createdAt": "2026-10-25T21:59:24.967Z",
       "addedAt": "2026-10-25T22:05:53.037Z"
+    },
+    {
+      "id": "mvoh4cleya2y",
+      "key": "announcement:894723",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "הודעה לסטודנטים שלומדים עם ויקטור ביום שלישי",
+      "body": "השבוע לא מתקיימים שיעורים\n\nביום שלישי , 27.10.26\n\nיום שבתון\n\nיום הבחירות לכנסת ישראל\n\nאתם מוזמנים להצטרף\n\nבצורה פרונטלית או מקוונת\n\nלשיעור שלי , שמתקיים\n\nביום ב' 26.10.26\n\nבין השעות 12-14\n\nבחדר 204 בנין 97\n\nבכבוד רב\n\nVictor",
+      "author": "ויקטור ניקולאיבסק",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894723",
+      "createdAt": "2026-10-25T23:33:29.000Z",
+      "addedAt": "2026-10-25T23:43:27.170Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "23",
+          "32",
+          "61"
+        ],
+        "classType": "",
+        "room": "",
+        "day": "יום שלישי",
+        "time": "",
+        "date": "27.10.26",
+        "onDate": "2026-10-27",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "אין שיעורים ביום שלישי בגלל הבחירות; אפשר להצטרף לשיעור ביום ב' 12-14, בניין 97 חדר 204.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-25T23:43:36.794Z"
+      }
     }
   ],
   "deadlines": [
