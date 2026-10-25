@@ -95,10 +95,46 @@ export function forOtherGroups(text, course, mine, analysis = null) {
     const n = num(m[2]);
     if (classes.some((g) => num(g.group) === n && (!kind || g.type === kind))) named.push({ kind, n });
   }
-  if (named.length) return !named.some(({ kind, n }) => Object.entries(mine).some(([type, g]) => num(g) === n && (!kind || type === kind)));
+  if (named.length) return !named.some(({ kind, n }) => Object.entries(mine).some(([type, g]) => [].concat(g).some((x) => num(x) === n) && (!kind || type === kind)));
   const own = new Set();
   const others = new Set();
-  for (const g of classes) for (const name of surnames(g.lecturer)) (mine[g.type] === g.group ? own : others).add(name);
+  for (const g of classes) for (const name of surnames(g.lecturer)) ([].concat(mine[g.type] ?? []).includes(g.group) ? own : others).add(name);
   const staff = [...new Set([...own, ...others])].filter((name) => mentions(t, name));
   return staff.length > 0 && !staff.some((name) => own.has(name));
+}
+
+/**
+ * The groups the degree committee follows, from its list of registration lines per course ([lecture] or
+ * [lecture, tutorial] group numbers): { [courseId]: { 'שעור': [groups], 'תרגיל': [groups] } } – the same shape as a
+ * student's `classGroups`, but with every group the cohort has. Types come from the course's catalog groups.
+ */
+export function cohortGroups(lines, courses) {
+  const out = {};
+  for (const c of courses || []) {
+    const list = lines?.[c.id];
+    if (!list?.length) continue;
+    const by = {};
+    for (const line of list) {
+      for (const n of line) {
+        const type = (c.classes || []).find((g) => g.group === n)?.type;
+        if (type && !(by[type] ||= []).includes(n)) by[type].push(n);
+      }
+    }
+    if (Object.keys(by).length) out[c.id] = by;
+  }
+  return out;
+}
+
+/**
+ * Is a portal lesson (a notice's lesson: { name, type, day, start }) one of the cohort's? The catalog groups of its
+ * course that meet then, of that kind, decide; a lesson that can't be placed counts as the cohort's (nothing is lost).
+ */
+export function lessonInCohort(lesson, courses, cohort) {
+  const course = courseOfLesson(courses, lesson);
+  const mine = course && cohort?.[course.id];
+  if (!mine) return true;
+  const kind = KIND(lesson.type);
+  const candidates = (course.classes || []).filter((g) => (!kind || kind === g.type) && g.slots?.some((sl) => sl.day === lesson.day && sameTime(sl.start, lesson.start)));
+  if (!candidates.length) return true;
+  return candidates.some((g) => (mine[g.type] || []).includes(g.group));
 }

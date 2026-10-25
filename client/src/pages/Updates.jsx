@@ -9,7 +9,7 @@ import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp, ltr, safeHref } from '../components/ui.jsx';
 import { parseRequired, partsLabel } from '../components/Assignment.jsx';
 import PhoneNotifications from '../components/PhoneNotifications.jsx';
-import { forOtherGroups } from '../../../shared/groups.js';
+import { forOtherGroups, cohortGroups, lessonInCohort } from '../../../shared/groups.js';
 import { NOTICE_KINDS } from '../../../shared/notices.js';
 
 // Moodle intros arrive as many short lines; show them as one compact line.
@@ -230,12 +230,18 @@ export default function Updates() {
   const withInstructions = (d) => (instructions[d.moodleKey] ? { ...d, intro: instructions[d.moodleKey] } : d);
   // Course announcements meant for other groups ("no tutorial in group 22") are hidden unless asked for.
   const [showOthers, setShowOthers] = useState(false);
-  // The owner (the degree committee) sees every group's announcements; students only their own.
-  const sees = !STATIC || me?.owner;
-  const otherGroups = (i) => !sees && (
-    (i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), progress.classGroups?.[i.courseId], i.analysis))
-    // A catalog change to another group's room or time (when the student has picked their group of that kind).
-    || (i.type === 'class-change' && !!progress.classGroups?.[i.courseId]?.[i.classType] && progress.classGroups[i.courseId][i.classType] !== i.group)
+  // A student sees their own groups' news. The owner (the degree committee) follows the cohort's groups – the lines the
+  // faculty offered (committee.js) – and not the other groups of a course; hidden ones are one tap away.
+  const owner = !STATIC || me?.owner;
+  const { data: committee } = useFetch(owner ? '/api/committee' : null);
+  const cohort = useMemo(() => (committee?.lines ? cohortGroups(committee.lines, [...courses, ...(committee.extra || [])]) : null), [committee, courses]);
+  const groupsOf = (courseId) => (owner ? cohort?.[courseId] : progress.classGroups?.[courseId]);
+  const otherGroups = (i) => (
+    (i.type === 'announcement' && forOtherGroups(`${i.title}\n${i.body || ''}`, courseOf(i.courseId), groupsOf(i.courseId), i.analysis))
+    // A catalog change to another group's room or time (when the groups of that kind are known).
+    || (i.type === 'class-change' && (owner ? !!cohort : true) && (() => { const mine = groupsOf(i.courseId)?.[i.classType]; return !!mine && ![].concat(mine).includes(i.group); })())
+    // Another student's lesson (the owner's feed also carries those): not the cohort's.
+    || (i.type === 'portal' && owner && !!cohort && !lessonInCohort({ name: i.lesson, type: i.lessonType, day: i.lessonDay, start: i.lessonStart }, courses, cohort))
   );
   const hiddenCount = updates.items.filter(otherGroups).length;
   const items = updates.items.filter((i) =>

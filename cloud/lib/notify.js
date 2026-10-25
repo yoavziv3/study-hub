@@ -11,7 +11,7 @@ import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
 import { parseJson, noticeReadings, withReadings, heldNotices, otherPortalLessons } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
-import { forOtherGroups } from '../../shared/groups.js';
+import { forOtherGroups, cohortGroups, lessonInCohort } from '../../shared/groups.js';
 import { noticeKey, noticeTitle, noticeUrgent, noticeTime } from '../../shared/notices.js';
 import { changesFrom, changeFor } from '../../shared/schedule-changes.js';
 
@@ -114,7 +114,7 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set(), owner = false, otherPortal = [] }) {
+export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set(), owner = false, otherPortal = [], cohort = null }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   // Reminders (deadlines, a lapsed Moodle sign-in) wait for the day; news about the course – new material, announcements,
@@ -224,7 +224,8 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       if (it.type !== 'class-change' || now - Date.parse(it.addedAt) > 2 * DAY) continue;
       // The owner (the degree committee) hears about every group of every course, the others only their own.
       if (!(owner ? feedCourses : courses).some((c) => c.id === it.courseId)) continue;
-      if (!owner && progress.classGroups?.[it.courseId]?.[it.classType] !== it.group) continue;
+      // The owner follows the cohort's groups (the faculty's list, committee.js); a student their own.
+      if (owner ? cohort && !(cohort[it.courseId]?.[it.classType] || []).includes(it.group) : progress.classGroups?.[it.courseId]?.[it.classType] !== it.group) continue;
       out.push({ key: `room:${it.id}`, title: it.title, body: it.body, url: '/schedule' });
     }
   }
@@ -240,6 +241,8 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
         seenNotice.add(nk);
         const at = noticeTime(n.date);
         if (Number.isFinite(at) && (now - at > 7 * DAY || at < since - DAY)) continue;
+        // The owner only hears about lessons of the cohort's groups.
+        if (owner && cohort && !lessonInCohort(l, feedCourses, cohort)) continue;
         // Waiting for Claude's reading (portal.js heldNotices): it comes within minutes, with a clear headline.
         if (held.has(noticeKey(l.name, n))) continue;
         // With Claude's reading (notices.js): what changed, in one line, as the title.
@@ -292,7 +295,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
       if (it.cloud && it.type === 'material' && now - at < CLOUD_WAIT) continue;
       // "No tutorial in group 22 tomorrow" isn't for a student in group 21.
       const course = feedCourses.find((c) => c.id === it.courseId);
-      if (it.type === 'announcement' && !owner && forOtherGroups(`${it.title}\n${it.body}`, course, progress.classGroups?.[it.courseId], it.analysis)) continue;
+      if (it.type === 'announcement' && forOtherGroups(`${it.title}\n${it.body}`, course, owner ? cohort?.[it.courseId] : progress.classGroups?.[it.courseId], it.analysis)) continue;
       const k = `${it.type}:${it.courseId}`;
       groups.set(k, [...(groups.get(k) || []), it]);
     }
@@ -362,6 +365,10 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const readings = portalRows.results.some((r) => r.ok && r.data) ? await noticeReadings(env) : new Map();
   const held = await heldNotices(env, portalRows.results, readings, now).catch(() => new Set());
   const ownerId = await ownerUserId(env);
+  // The committee's cohort: the groups of the faculty's registration list (data/committee.json, published beside the site).
+  const cohort = ownerId && ids.includes(ownerId)
+    ? await env.ASSETS.fetch(new URL('/data/committee.json', request.url)).then((r) => (r.ok ? r.json() : null)).then((d) => (d?.lines ? cohortGroups(d.lines, [...courses, ...(d.extra || [])]) : null)).catch(() => null)
+    : null;
   const otherPortal = ownerId && ids.includes(ownerId) ? await otherPortalLessons(env, ownerId, await noticeReadings(env)).catch(() => []) : [];
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
@@ -430,7 +437,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
       ...(user.id === owner ? alerts : []),
       ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, owner: user.id === owner,
         // The owner doesn't wait for Claude's reading (they want to know at once) and hears about every student's notices.
-        held: user.id === owner ? new Set() : held, otherPortal: user.id === owner ? otherPortal : [] }),
+        held: user.id === owner ? new Set() : held, otherPortal: user.id === owner ? otherPortal : [], cohort: user.id === owner ? cohort : null }),
     ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {

@@ -46,7 +46,8 @@ export function otherGroupsByAnalysis(analysis, mine) {
   if (!analysis || !Array.isArray(analysis.groups)) return null;
   if (!analysis.groups.length || !mine || !Object.keys(mine).length) return false;
   const nums = analysis.groups.map(num);
-  return !Object.values(mine).some((g) => nums.includes(num(g)));
+  // mine: { [type]: group } for a student, or { [type]: [groups] } for the committee's cohort (every group it has).
+  return !Object.values(mine).flat().some((g) => nums.includes(num(g)));
 }
 
 /** "📍 מבוא לכלכלה: התרגול של קבוצה 21 עובר לחדר 210" – or null without a usable analysis. */
