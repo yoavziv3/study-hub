@@ -59,8 +59,9 @@ export async function refreshCommittee({ force = false } = {}) {
       const page = await fetchCatalog(c.code, term);
       checked++;
       if (!page?.classes?.length) continue;
-      if (JSON.stringify(page.classes) !== JSON.stringify(c.classes)) changed = true;
+      if (JSON.stringify(page.classes) !== JSON.stringify(c.classes) || JSON.stringify(page.exams) !== JSON.stringify(c.exams)) changed = true;
       c.classes = page.classes;
+      c.exams = page.exams; // the exam dates too (the exam schedule's committee overview)
       c.checkedAt = new Date().toISOString();
     } catch (e) {
       console.error(`[committee] ${c.short}:`, e.message);

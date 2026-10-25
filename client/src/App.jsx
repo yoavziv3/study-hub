@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2 } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2, CalendarCheck } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -19,6 +19,7 @@ const Grades = lazy(() => import('./pages/Grades.jsx'));
 const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 const System = lazy(() => import('./pages/System.jsx'));
 const Committee = lazy(() => import('./pages/Committee.jsx'));
+const Exams = lazy(() => import('./pages/Exams.jsx'));
 const Weekly = lazy(() => import('./pages/Weekly.jsx'));
 const Runs = lazy(() => import('./pages/Runs.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
@@ -75,6 +76,7 @@ function Sidebar({ open, onNavigate }) {
       <NavItem to="/" end icon={<HomeIcon size={17} />} label="מסך הבית" onClick={onNavigate} />
       <NavItem to="/updates" icon={<Bell size={17} />} label="עדכונים" count={unread ? <span className="nav-badge">{unread}</span> : null} onClick={onNavigate} />
       <NavItem to="/schedule" icon={<CalendarRange size={17} />} label="מערכת שעות" onClick={onNavigate} />
+      <NavItem to="/exams" icon={<CalendarCheck size={17} />} label="לוח מבחנים" onClick={onNavigate} />
       <NavItem to="/weekly" icon={<Gauge size={17} />} label="דוח עומס שבועי" onClick={onNavigate} />
       <NavItem to="/grades" icon={<Calculator size={17} />} label="ציונים וממוצע" onClick={onNavigate} />
       <div className="nav-label">הקורסים שלי</div>
@@ -319,6 +321,7 @@ function Shell() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/review" element={<Review />} />
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/exams" element={<Exams />} />
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/system" element={<System />} />

@@ -1031,3 +1031,17 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
   .page { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
   .chat-fab { bottom: calc(18px + env(safe-area-inset-bottom)); left: 16px; }
 }
+
+/* Exam schedule (pages/Exams.jsx) */
+.ex-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; border-inline-start: 4px solid var(--c); }
+.ex-item.past { opacity: 0.6; }
+.ex-date { width: 54px; flex: none; text-align: center; padding: 8px 0; border-radius: 14px; background: var(--c-soft); color: var(--c-strong); line-height: 1.1; }
+.ex-date b { display: block; font-family: var(--font-display); font-size: 24px; }
+.ex-date span { font-size: 12.5px; font-weight: 700; }
+.ex-place { display: inline-flex; gap: 4px; align-items: flex-start; color: var(--text-2); }
+.ex-place svg { flex: none; margin-top: 3px; }
+.ex-near { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 4px 10px; border-radius: 10px; font-size: 12.5px; font-weight: 600; width: fit-content; max-width: 100%; }
+.ex-near.warn { background: var(--warn-bg); color: var(--warn-text); }
+.ex-near.bad { background: var(--bad-bg); color: var(--bad-text); }
+.ex-go { flex: none; align-self: center; }
+@media (max-width: 640px) { .ex-item { padding: 12px; gap: 10px; } .ex-date { width: 48px; } .ex-go { display: none; } }
