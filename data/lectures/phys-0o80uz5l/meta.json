@@ -22,13 +22,13 @@
     "module": "תרגול 1  מחברת",
     "timemodified": 1792760937
   },
-  "updatedAt": "2026-10-25T22:02:15.331Z",
+  "updatedAt": "2026-10-25T22:15:51.549Z",
   "aiError": null,
   "announced": true,
   "aiRetries": 0,
   "checks": {
-    "at": "2026-10-25T22:01:19.580Z",
-    "found": 0
+    "at": "2026-10-25T22:14:59.029Z",
+    "found": 1
   },
   "notesStatus": null,
   "notesError": null,
