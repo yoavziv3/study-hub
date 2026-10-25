@@ -1,11 +1,11 @@
 [
   {
     "n": 1,
-    "text": "\u0016\n\n\u000f\u0017\n\u0010\u0017\n\u0011\u0017\n\n\u000f\n\u0010\n\u0011\n\n\u0012\u0013\u0014\u0015\n\n01234\u00054226\u000507284\n\u000e072 \u0005\u0005\u00059\n\n!\n\n#\u0019\u001b\u001d\u0011\u0017\u001e\u001c\u001f\u000f\u000f\n\u0011\u000f\n\u0019\u001a\u001b\n\u0017\n\n\"!\n\n\u0018\n\u001c\u000f\u000f\n\u0019\u001a\u001b\n\u0017\n\u0010\u000f\n\u0019\u001b\u001d\u0010\u0017\u001e\u0011\u0017\u001f\u000f\u000f\n\u0019\u001a\u001b\n\u001e\n\u0017\n\u0018\n\n\"\n\n\u0011\u0018\u001d\u0011\u0017\u0018\u001e\u0018\u001c\u001f\u0019\u0010$\u0010\u0017\u001b"
+    "text": "0\nt 0\n\nt\n\nx 0\n\nx\n\nV0\n\nV\n\nX, m\n\nתנועה שוות תאוצה\n( קבועה- a )\n\nt\n\nV (t )  V0  a  (t - t0 )\n\nx t\n\na (t - t0 ) 2\nx(t )  x0  V0  (t - t0 ) \n2\n\nV\n\nV x\n\nV 2  V02  2a  ( x  x0 )"
   },
   {
     "n": 2,
-    "text": "8 8 \u000e 5\u000f\u0010\u000f36\n\u000e\n\n2\n\n\u000e\n3\n\n0\n\n\u000e\n57\n99\n6\n3\n\u000f9\n56 \u000f3 83 57\n9936 \u000e\n\n\u0014\u0015\u0016\u0017\u0018\u0012\u0013\u0012\u0011\n\n\u000456 83 99\n89\n576\n3\n\n1"
+    "text": "x\nV  V  2a  (x  x0 )\n2\n\n2\n0\n\na (t - t0 ) 2\nx (t )  x0  V0  (t - t0 ) \n2\n\n קבועה- a\nV\n\nV (t )  V0  a  (t - t0 )\n\nt"
   },
   {
     "n": 3,
@@ -21,11 +21,11 @@
   },
   {
     "n": 6,
-    "text": ""
+    "text": "1\nx 01  0\nt 01  0\nm\nV1  40 sec\n\n2\nt  0.5 sec\na1  3\n\nV (t )  V0  a  (t - t0 )\na (t - t0 ) 2\nx(t )  x0  V0  (t - t0 ) \n2\n\nV 2  V02  2a  ( x  x0 )\n\nm\nsec 2\n\n900 m\n\nt  0.5 sec\na2  ...\n\nX(m)\n\nx 02  900 m\nt 02  0\nm\nV2  40 sec"
   },
   {
     "n": 7,
-    "text": ""
+    "text": "1\nx 01  0\nt 01  0\nm\nV1  40 sec\n\n2\nt  0.5 sec\na1  3\n\nV (t )  V0  a  (t - t0 )\na (t - t0 ) 2\nx(t )  x0  V0  (t - t0 ) \n2\n\nV 2  V02  2a  ( x  x0 )\n\nm\nsec 2\n\n900 m\n\nt  0.5 sec\na2  ...\n\nX(m)\n\nx 02  900 m\nt 02  0\nm\nV2  40 sec"
   },
   {
     "n": 8,
@@ -37,18 +37,14 @@
   },
   {
     "n": 10,
-    "text": "80\u0013 0\n9 0\u0018\u0019234\n90\u0013 0\n71\n\u001b\n\u001a\n\u0013\n7\n234\n\u0013 60234\n!\u001d\u001f\n9 0\u001c\u001b 99\n\u001d\u001e\u001f\n0\n\n1\n\u001d\u001e\u001f\n\u001b99\n0\n\u001d\u001f 80\u001c 0 99\n\u001d\u001e\u001f\n89\n0\u001c 1\n\n1\n\n\u001c1\u001b\u001d8 80\u001f\n\n1\n0\n\n\u000f\u0010\u0010\u0011\u0012\n\n\u000e \u0014\u0015\u0016\u0017\n\n9 0\u0018\u0019234\n\u001b1 \u001c\u0018\u0018\u0018\n\n801 5007\n901 0\n7\n1 60234"
+    "text": "V (t )  V0  a  (t - t0 )\na (t - t0 ) 2\nx(t )  x0  V0  (t - t0 ) \n2\n\nV 2  V02  2a  ( x  x0 )\n\nt 0B  0\n\nt 0A 0\n\nx 0B  0\nV0 B  0\na B  0.75\n\nm\nsec 2\n\nm\nV B max  6 sec\n\nx 0 A  20 m\nm\nV A  5 sec\n\nX, m"
   },
   {
     "n": 11,
-    "text": "80\u0013 0\n9 0\u0018\u0019234\n90\u0013 0\n71\n\u001b\n\u001a\n\u0013\n7\n234\n\u0013 60234\n!\u001d\u001f\n9 0\u001c\u001b 99\n\u001d\u001e\u001f\n0\n\n1\n\u001d\u001e\u001f\n\u001b99\n0\n\u001d\u001f 80\u001c 0 99\n\u001d\u001e\u001f\n89\n0\u001c 1\n\n1\n\n\u001c1\u001b\u001d8 80\u001f\n\n1\n0\n\n\u000f\u0010\u0010\u0011\u0012\n\n\u000e \u0014\u0015\u0016\u0017\n\n9 0\u0018\u0019234\n\u001b1 \u001c\u0018\u0018\u0018\n\n801 5007\n901 0\n7\n1 60234"
+    "text": "V (t )  V0  a  (t - t0 )\na (t - t0 ) 2\nx(t )  x0  V0  (t - t0 ) \n2\n\nV 2  V02  2a  ( x  x0 )\n\nt 0B  0\n\nt 0A 0\n\nx 0B  0\nV0 B  0\na B  0.75\n\nm\nsec 2\n\nm\nV B max  6 sec\n\nx 0 A  20 m\nm\nV A  5 sec\n\nX, m"
   },
   {
     "n": 12,
-    "text": ""
-  },
-  {
-    "n": 13,
-    "text": ""
+    "text": "t 0B  0\n\nt 0A 0\n\nx 0B  0\nV0 B  0\na B  0.75\n\nm\nsec 2\n\nm\nV B max  6 sec\n\nx 0 A  20 m\nm\nV A  5 sec\n\nX, m"
   }
 ]

@@ -1,0 +1,27 @@
+{
+  "id": "phys-dek2ppzm",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "מבוא למכניקה וקינמטיקה: תנועה בקו ישר",
+  "originalName": "שיעור 1 2026-2027.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 73,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-25T21:59:24.967Z",
+  "updatedAt": "2026-10-25T22:05:53.041Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-25T22:04:48.047Z",
+    "found": 1
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

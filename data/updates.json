@@ -1466,6 +1466,19 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-10-25T17:08:57.323Z"
       }
+    },
+    {
+      "id": "mvodmvilxup9",
+      "key": "material:phys-dek2ppzm",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "phys",
+      "title": "הרצאה חדשה בפיזיקה: מבוא למכניקה וקינמטיקה: תנועה בקו ישר",
+      "body": "",
+      "lectureId": "phys-dek2ppzm",
+      "source": "upload",
+      "createdAt": "2026-10-25T21:59:24.967Z",
+      "addedAt": "2026-10-25T22:05:53.037Z"
     }
   ],
   "deadlines": [
