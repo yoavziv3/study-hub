@@ -220,12 +220,14 @@ export async function markSlideRefs() {
       const money = q.question !== q0.question || q.explanation !== q0.explanation || q.options.some((o, k) => o !== q0.options[k]);
       if (money) result.currency++;
       const ref = fixSlide(q, slides);
+      // needsContext: a reading of the whole bank found that the question leans on data or a case it doesn't carry.
+      const show = ref.showSlide || (!!q.needsContext && ref.slide > 0);
       if (ref.slide !== (q.slide || 0)) result.renumbered++;
-      if (ref.showSlide && !q.showSlide) result.marked++;
-      if (!money && ref.slide === (q.slide || 0) && !!ref.showSlide === !!q.showSlide) return q0;
+      if (show && !q.showSlide) result.marked++;
+      if (!money && ref.slide === (q.slide || 0) && show === !!q.showSlide) return q0;
       changed = true;
       const { showSlide, ...rest } = q;
-      return { ...rest, slide: ref.slide, ...(ref.showSlide ? { showSlide: true } : {}) };
+      return { ...rest, slide: ref.slide, ...(show ? { showSlide: true } : {}) };
     });
     const extraLen = (content.extraQuiz || []).length;
     const quiz = fix(dropDep(content.quiz));

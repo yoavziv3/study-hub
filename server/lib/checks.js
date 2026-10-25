@@ -26,7 +26,7 @@ export function assertUsable(checks) {
 // A question that points at something on a slide ("לפי הטבלה בשקף 7", "בתרשים שהוצג") can't be answered without
 // seeing it: such questions get showSlide, and the slide appears inside the question. A slide number written in the
 // question wins over the model's slide field.
-const SLIDE_REF = /שקף|בשקפים|טבלה|תרשים|איור|גרף|דיאגרמה|פירמידה|כפי שמוצג|שמוצג|המוצג|שהוצג|שהוצגה|שהוצגו|בתמונה|במצגת/;
+const SLIDE_REF = /שקף|שקפים|טבלה|תרשים|איור|גרף|דיאגרמה|פירמידה|כפי שמוצג|שמוצג|המוצג|שהוצג|שהוצגה|שהוצגו|בתמונה|במצגת/;
 // A question that leans on data it doesn't carry ("בנתוני שני השדות", "בדוגמת שני העובדים"): the data is on its slide.
 const DATA_REF = /בנתוני\s|בנתונים\b|הנתונים של|לפי הנתונים|מהנתונים|בדוגמ[הא]\b|בדוגמת|בתרחיש/;
 // A question that leans on another question ("בהמשך לשאלה הקודמת"): sets are shuffled, so it can't stand alone.
