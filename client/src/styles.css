@@ -1045,3 +1045,14 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .ex-near.bad { background: var(--bad-bg); color: var(--bad-text); }
 .ex-go { flex: none; align-self: center; }
 @media (max-width: 640px) { .ex-item { padding: 12px; gap: 10px; } .ex-date { width: 48px; } .ex-go { display: none; } }
+
+/* How to use the site (pages/Guide.jsx) */
+.guide-item { padding: 0; overflow: hidden; scroll-margin-top: 80px; }
+.guide-item summary { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; list-style: none; }
+.guide-item summary::-webkit-details-marker { display: none; }
+.guide-icon { width: 34px; height: 34px; border-radius: 11px; background: var(--c-soft, var(--surface-2)); }
+.guide-chev { flex: none; color: var(--text-3); transition: transform 0.2s; }
+.guide-item[open] .guide-chev { transform: rotate(180deg); }
+.guide-body { padding: 0 18px 18px; border-top: 1px solid var(--border); }
+.guide-body ol { margin: 14px 0 0; padding-inline-start: 22px; display: grid; gap: 8px; line-height: 1.7; font-size: 14.5px; }
+.guide-body ol li::marker { color: var(--text-3); font-weight: 700; }

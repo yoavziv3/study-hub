@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2, CalendarCheck } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2, CalendarCheck, CircleHelp } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -20,6 +20,7 @@ const Privacy = lazy(() => import('./pages/Privacy.jsx'));
 const System = lazy(() => import('./pages/System.jsx'));
 const Committee = lazy(() => import('./pages/Committee.jsx'));
 const Exams = lazy(() => import('./pages/Exams.jsx'));
+const Guide = lazy(() => import('./pages/Guide.jsx'));
 const Weekly = lazy(() => import('./pages/Weekly.jsx'));
 const Runs = lazy(() => import('./pages/Runs.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
@@ -90,6 +91,7 @@ function Sidebar({ open, onNavigate }) {
         </div>
       )}
       <NavItem to="/archive" icon={<History size={17} />} label="לימודי עבר" onClick={onNavigate} />
+      <NavItem to="/guide" icon={<CircleHelp size={17} />} label="איך משתמשים" onClick={onNavigate} />
       {otherCourses.length > 0 && (
         <>
           <div className="nav-label row" style={{ gap: 6 }}><Users size={12} /> קורסים של סטודנטים אחרים</div>
@@ -322,6 +324,7 @@ function Shell() {
             <Route path="/review" element={<Review />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/exams" element={<Exams />} />
+            <Route path="/guide" element={<Guide />} />
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/system" element={<System />} />
@@ -346,7 +349,7 @@ function Shell() {
       <AnimatePresence>{chat.open && <ChatPanel key="chat" />}</AnimatePresence>
       <AnimatePresence>{uploadOpen && <UploadModal key="upload" />}</AnimatePresence>
       <AnimatePresence>{searchOpen && <SearchPalette key="search" />}</AnimatePresence>
-      <AnimatePresence>{showTour && <Onboarding key="tour" name={me?.user?.name?.trim().split(/\s+/)[0]} onDone={markOnboarded} />}</AnimatePresence>
+      <AnimatePresence>{showTour && <Onboarding key="tour" name={me?.user?.name?.trim().split(/\s+/)[0]} onDone={markOnboarded} onGuide={() => { markOnboarded(); navigate('/guide'); }} />}</AnimatePresence>
       </Suspense>
     </div>
   );

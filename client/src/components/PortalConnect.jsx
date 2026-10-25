@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Building2, RefreshCw, Loader2, ShieldCheck, Unplug, BellRing } from 'lucide-react';
 import { useApp } from '../store.jsx';
+import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 import { NOTICE_KINDS } from '../../../shared/notices.js';
 
@@ -86,6 +87,7 @@ export default function PortalConnect({ status, onChange }) {
             : 'הקבוצות, החדרים, הביטולים וההודעות על השיעורים נלקחים מהמערכת שלך בפורטל – וההתראות לטלפון רק לפיהם.')
           : 'הקבוצות שלך, שינויי חדרים וביטולים מופיעים בפורטל לפני קובץ הקורסים. חברו אותו, והמערכת וההתראות יהיו רק לשיעורים ולתרגולים שלך.'}
       </div>
+      <Link to="/guide#portal" className="linklike" style={{ fontSize: 13, display: 'inline-block', marginTop: 6 }}>איך זה עובד ומה נשמר?</Link>
       {connected && !status.relayOnline && <div className="chip warn" style={{ marginTop: 8 }}>המחשב שקורא את הפורטל לא מחובר כרגע – העדכון יחכה עד שיחזור</div>}
 
       <AnimatePresence>
