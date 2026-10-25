@@ -10,6 +10,7 @@ import {
 import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
+import { watchMoodle } from './lib/moodle-watch.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult, pendingPortalNotices, savePortalNotices } from './lib/portal.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
@@ -163,6 +164,15 @@ async function route({ request, env }) {
   if (path === '/api/me/deadlines' && method === 'GET') {
     const courses = await siteCourses(env, request);
     return json(await studentDeadlines(env, user, courses, url.searchParams.has('fresh'), request));
+  }
+
+  // "Refresh" on the updates page: look at the student's own Moodle courses now (each at most once a minute) for new
+  // files and announcements, instead of waiting for the next round; the Mac's own news comes with the feed itself.
+  if (path === '/api/updates/check' && method === 'POST') {
+    const courses = await siteCourses(env, request);
+    const mine = new Set(allowedCourseIds(user, courses));
+    const found = await watchMoodle(env, courses.filter((c) => mine.has(c.id)), Date.now(), { force: true }).catch(() => 0);
+    return json({ found });
   }
 
   if (path === '/api/me/grades' && method === 'GET') {

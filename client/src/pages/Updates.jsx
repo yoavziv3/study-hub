@@ -208,6 +208,7 @@ export default function Updates() {
   const { updates, refreshUpdates, seenAt, markUpdatesSeen, courses, setContext, toast, deadlineActions, me, progress } = useApp();
   const [filter, setFilter] = useState('all');
   const [syncing, setSyncing] = useState(false);
+  const [checkedAt, setCheckedAt] = useState(null);
   const [showDone, setShowDone] = useState(false);
   // Snapshot of what was unread when the page opened, so highlights stay while the badge clears.
   const firstSeen = useRef(seenAt);
@@ -263,6 +264,23 @@ export default function Updates() {
       setSyncing(false);
     }
   };
+  // Cloud: look at the student's Moodle courses now, ask the portal reader for a fresh read, then re-read the feed
+  // and the deadlines (instead of waiting for the next round, a few minutes away).
+  const refreshAll = async () => {
+    setSyncing(true);
+    const before = new Set(updates.items.map((i) => i.id || i.key));
+    try {
+      await Promise.all([api.post('/api/updates/check', {}).catch(() => null), api.post('/api/portal/sync', {}).catch(() => null)]);
+      const feed = await refreshUpdates(true);
+      const fresh = (feed?.items || []).filter((i) => !before.has(i.id || i.key)).length;
+      setCheckedAt(Date.now());
+      toast(fresh ? (fresh === 1 ? 'נמצא עדכון חדש' : `נמצאו ${fresh} עדכונים חדשים`) : 'הכל מעודכן');
+    } catch (e) {
+      toast(e.message, 'info');
+    } finally {
+      setSyncing(false);
+    }
+  };
   const setSetting = async (patch) => {
     try {
       if (patch.reminderDays) await deadlineActions.setReminderDays(patch.reminderDays);
@@ -286,10 +304,17 @@ export default function Updates() {
             <h1 style={{ fontSize: 26 }}>עדכונים</h1>
             <div className="muted" style={{ fontSize: 14 }}>חומרים חדשים, הודעות מהקורסים ומהפורטל ודדליינים – הכל במקום אחד.</div>
           </div>
-          {!STATIC && (
+          {!STATIC ? (
             <button className="btn accent" onClick={syncNow} disabled={syncing}>
               <RefreshCw size={16} className={syncing ? 'spin' : ''} /> {syncing ? 'בודק במודל…' : 'בדיקה במודל עכשיו'}
             </button>
+          ) : (
+            <div className="stack" style={{ gap: 4, alignItems: 'flex-start' }}>
+              <button className="btn accent" onClick={refreshAll} disabled={syncing}>
+                <RefreshCw size={16} className={syncing ? 'spin' : ''} /> {syncing ? 'מרענן…' : 'רענון עכשיו'}
+              </button>
+              {checkedAt && <span className="faint" style={{ fontSize: 12 }}>נבדק ב־{new Date(checkedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span>}
+            </div>
           )}
         </div>
         <div className="row wrap" style={{ gap: 12, marginTop: 16, fontSize: 14 }}>

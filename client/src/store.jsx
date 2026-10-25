@@ -61,13 +61,15 @@ export function AppProvider({ children }) {
   }, [refreshMe]);
 
   const refreshCourses = useCallback(() => api.get('/api/courses').then(setCourses).catch(() => {}), []);
+  // Resolves with the feed once it and (in the cloud) the student's deadlines are in.
   const refreshUpdates = useCallback((fresh = false) => {
-    api.get('/api/updates').then(setFeed).catch(() => {});
-    if (STATIC) {
-      api.get(`/api/me/deadlines${fresh ? '?fresh' : ''}`).then(setPersonal).catch((e) => {
+    const feedP = api.get('/api/updates').then((f) => { setFeed(f); return f; }).catch(() => null);
+    const personalP = STATIC
+      ? api.get(`/api/me/deadlines${fresh ? '?fresh' : ''}`).then(setPersonal).catch((e) => {
         if (e.relogin) setMe((m) => (m ? { ...m, moodleOk: false } : m));
-      });
-    }
+      })
+      : Promise.resolve();
+    return Promise.all([feedP, personalP]).then(([f]) => f);
   }, []);
 
   useEffect(() => {

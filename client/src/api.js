@@ -61,7 +61,7 @@ const STATIC_ROUTES = [
 ];
 
 // Served by the cloud Functions (accounts, progress, personal Moodle data) rather than by static files.
-const CLOUD_API = /^\/api\/(auth|me|progress|reports|feedback|push|portal|system)(\/|$)/;
+const CLOUD_API = /^\/api\/(auth|me|progress|reports|feedback|push|portal|system|updates\/check)(\/|$)/;
 
 async function staticRequest(method, url, body) {
   const [path, query = ''] = url.split('?');

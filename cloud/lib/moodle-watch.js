@@ -61,17 +61,23 @@ async function lookAt(env, moodleId, course) {
   });
 }
 
-/** One step of watching: the few Moodle courses looked at longest ago. Returns how many new items it found. */
-export async function watchMoodle(env, courses, now = Date.now()) {
+const FORCE_EVERY = MIN; // "refresh now" (a student's button): a course isn't looked at again within this, however often it's pressed
+const FORCE_MAX = 6; // courses per such request
+
+/**
+ * One step of watching: the few Moodle courses looked at longest ago. Returns how many new items it found.
+ * force: the student pressed "refresh" – look at their courses now (each at most once a minute) instead of waiting.
+ */
+export async function watchMoodle(env, courses, now = Date.now(), { force = false } = {}) {
   const db = env.DB;
   const links = courses.flatMap((c) => (c.moodleIds || []).map((m) => ({ moodleId: Number(m), course: c })));
   if (!links.length) return 0;
   const rows = (await db.prepare('SELECT moodle_id, checked_at, seen FROM moodle_watch').all()).results;
   const state = new Map(rows.map((r) => [r.moodle_id, r]));
   const due = links
-    .filter((l) => now - (state.get(l.moodleId)?.checked_at || 0) > EVERY)
+    .filter((l) => now - (state.get(l.moodleId)?.checked_at || 0) > (force ? FORCE_EVERY : EVERY))
     .sort((a, b) => (state.get(a.moodleId)?.checked_at || 0) - (state.get(b.moodleId)?.checked_at || 0))
-    .slice(0, PER_TICK);
+    .slice(0, force ? FORCE_MAX : PER_TICK);
   let added = 0;
   for (const { moodleId, course } of due) {
     let found;
