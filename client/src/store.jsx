@@ -5,6 +5,8 @@ import { api, hash, STATIC, AUTH_EVENT, resetSearchIndex } from './api.js';
 import { termsOf, currentTerm, inTerm } from './lib/terms.js';
 import { schedule } from './lib/srs.js';
 import { resyncPush } from './lib/push.js';
+import { cohortGroups } from '../../shared/groups.js';
+import { otherGroupsTest } from './lib/otherGroups.js';
 
 /* App-wide state: the signed-in student (cloud), study progress, courses, updates & deadlines, toasts,
    chat + upload + search controls. Locally (on the Mac) there is no sign-in and data comes from the server. */
@@ -341,14 +343,6 @@ export function AppProvider({ children }) {
     setFeed({ items: [], deadlines: [], since: null, settings: {} });
   }, []);
 
-  // Unread = added after the last visit to the updates page (or after the feed started, on first use).
-  const seenAt = progress.updatesSeenAt && progress.updatesSeenAt > (updates.since || '') ? progress.updatesSeenAt : updates.since || '';
-  const unread = updates.items.filter((i) => i.addedAt > seenAt && i.addedAt <= new Date().toISOString()).length;
-
-  useEffect(() => {
-    document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
-  }, [unread]);
-
   // "My courses" are this semester's; earlier semesters live under "לימודי עבר".
   // On the Mac, courses built for other students (no AI material) are listed separately from yours.
   // In the cloud the site's owner also gets courses they aren't enrolled in (marked "other" by cloud/gate.js).
@@ -359,9 +353,27 @@ export function AppProvider({ children }) {
   const pastCourses = useMemo(() => mine.filter((c) => !inTerm(c, term)), [mine, term]);
   const otherCourses = useMemo(() => allCourses.filter((c) => (STATIC ? c.other : c.remote) && inTerm(c, term)), [allCourses, term]);
 
+  // The updates page hides news about other groups (for the owner: other than the cohort's), so the badge must not count
+  // them either – otherwise it shows a number and the page has nothing new.
+  const owner = !STATIC || !!me?.owner;
+  const [committee, setCommittee] = useState(null);
+  useEffect(() => {
+    if (owner) api.get('/api/committee').then(setCommittee).catch(() => {});
+  }, [owner]);
+  const cohort = useMemo(() => (committee?.lines ? cohortGroups(committee.lines, [...courses, ...(committee.extra || [])]) : null), [committee, courses]);
+  const isOtherGroups = useMemo(() => otherGroupsTest({ courses, owner, cohort, classGroups: progress.classGroups }), [courses, owner, cohort, progress.classGroups]);
+
+  // Unread = added after the last visit to the updates page (or after the feed started, on first use).
+  const seenAt = progress.updatesSeenAt && progress.updatesSeenAt > (updates.since || '') ? progress.updatesSeenAt : updates.since || '';
+  const unread = updates.items.filter((i) => i.addedAt > seenAt && i.addedAt <= new Date().toISOString() && !isOtherGroups(i)).length;
+
+  useEffect(() => {
+    document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
+  }, [unread]);
+
   const value = {
     me, refreshMe, signOut, deleteAccount,
-    updates, refreshUpdates, unread, seenAt, deadlineActions,
+    updates, refreshUpdates, unread, seenAt, deadlineActions, isOtherGroups,
     progress, progressLoaded, courses, otherCourses, allCourses: mine, pastCourses, terms, term, refreshCourses, status, toast, ...actions,
     chat, openChat, closeChat,
     uploadOpen, openUpload: (courseId = 'auto') => (STATIC ? toast('העלאת הרצאות זמינה באתר שרץ במחשב שלך', 'info') : setUploadOpen({ courseId })), closeUpload: () => setUploadOpen(null),
