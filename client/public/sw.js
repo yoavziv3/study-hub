@@ -1,5 +1,5 @@
 // Service worker for the cloud site: the app opens instantly and pages you've visited work offline.
-// Code and slide images: cache first (they don't change). Course data and the account: network first,
+// Code and icons: cache first (they don't change). Slide images, course data and the account: network first,
 // falling back to the last copy when offline. Sign-in, admin and calendar requests are never cached.
 const VERSION = 'v1';
 const SHELL = `shell-${VERSION}`;
@@ -47,9 +47,10 @@ self.addEventListener('fetch', (e) => {
   if (/^\/api\/(auth|admin|cal)\//.test(url.pathname)) return;
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).catch(async () => (await caches.match('/')) || Response.error()));
-  } else if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/files/') || /\.(png|svg|woff2?)$/.test(url.pathname)) {
+  } else if (url.pathname.startsWith('/assets/') || /\.(png|svg|woff2?)$/.test(url.pathname)) {
     e.respondWith(cacheFirst(req));
-  } else if (url.pathname.startsWith('/data/') || url.pathname.startsWith('/api/')) {
+  } else if (url.pathname.startsWith('/data/') || url.pathname.startsWith('/api/') || url.pathname.startsWith('/files/')) {
+    // /files/ (slide images and decks on the Mac) can change when a lesson's file is replaced, so not cache first.
     e.respondWith(networkFirst(req, DATA));
   }
 });
