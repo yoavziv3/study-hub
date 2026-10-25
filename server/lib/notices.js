@@ -2,7 +2,7 @@
 // students' lessons (through the cloud's admin channel) – and writes what kind of notice it is, which groups it is
 // for and what changed (shared/notices.js). The material of the courses goes to Gemini; this stays with Claude
 // (generateJSON use: 'claude'), on a lighter model (NOTICES_MODEL) since a notice is short.
-// Every reading passes checkNotice (checks.js) before it is saved. Runs after each Moodle sync and every 15 minutes;
+// Every reading passes checkNotice (checks.js) before it is saved. Runs after each Moodle sync and every 3 minutes;
 // a notice that fails is tried again a few times. Without it the site works as before, on the plain text.
 import { generateJSON, claudeStatus } from './ai.js';
 import { NOTICE_SCHEMA, NOTICE_SYSTEM, noticePrompt } from './prompts.js';
