@@ -27,10 +27,14 @@ export function assertUsable(checks) {
 // seeing it: such questions get showSlide, and the slide appears inside the question. A slide number written in the
 // question wins over the model's slide field.
 const SLIDE_REF = /שקף|בשקפים|טבלה|תרשים|איור|גרף|דיאגרמה|פירמידה|כפי שמוצג|שמוצג|המוצג|שהוצג|שהוצגה|שהוצגו|בתמונה|במצגת/;
+// A question that leans on data it doesn't carry ("בנתוני שני השדות", "בדוגמת שני העובדים"): the data is on its slide.
+const DATA_REF = /בנתוני\s|בנתונים\b|הנתונים של|לפי הנתונים|מהנתונים|בדוגמ[הא]\b|בדוגמת|בתרחיש/;
+// A question that leans on another question ("בהמשך לשאלה הקודמת"): sets are shuffled, so it can't stand alone.
+export const ANOTHER_Q = /בשאלה הקודמת|בהמשך לשאלה|מהשאלה הקודמת|שאלה קודמת|בשאלה הבאה|כמו בשאלה|בסעיף הקודם/;
 export function slideRef(question, slide, slideCount) {
   const named = [...String(question).matchAll(/שקף\s*(?:מס(?:פר|')?\s*)?(\d{1,3})/g)].map((m) => Number(m[1])).find((n) => n >= 1 && n <= slideCount);
   const at = named || (Number.isInteger(slide) && slide >= 1 && slide <= slideCount ? slide : 0);
-  return { slide: at, showSlide: at > 0 && SLIDE_REF.test(question) };
+  return { slide: at, showSlide: at > 0 && (SLIDE_REF.test(question) || DATA_REF.test(question)) };
 }
 
 // ---------- which slide a question is really about ----------
@@ -77,7 +81,7 @@ export function matchSlide(q, slides, claimed) {
 export function fixSlide(q, slides = [], slideCount = slides.length) {
   const claimed = Number.isInteger(q.slide) && q.slide >= 0 && q.slide <= slideCount ? q.slide : 0;
   const slide = namedSlide(q.question, slideCount) || matchSlide(q, slides, claimed);
-  return { slide, claimed, showSlide: slide > 0 && SLIDE_REF.test(q.question) };
+  return { slide, claimed, showSlide: slide > 0 && (SLIDE_REF.test(q.question) || DATA_REF.test(q.question)) };
 }
 
 /** Multiple-choice questions: exactly 4 distinct, non-empty options, a valid correctIndex, a question and an explanation. */
@@ -94,6 +98,7 @@ export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz', slides = 
       : !Number.isInteger(q.correctIndex) || q.correctIndex < 0 || q.correctIndex > 3 ? `correctIndex לא חוקי (${q.correctIndex})`
       : !text(q.explanation) ? 'אין הסבר'
       : seen.has(text(q.question)) ? 'שאלה כפולה'
+      : ANOTHER_Q.test(text(q.question)) ? 'נשענת על שאלה אחרת (הסדר אקראי)'
       : null;
     if (problem) {
       checks.push(finding(`${label}.item`, 'fixed', `הוסרה שאלה: ${problem} – "${text(q.question).slice(0, 60)}"`));

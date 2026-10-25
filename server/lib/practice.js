@@ -12,7 +12,7 @@ import { generateJSON, aiStatus, claudeStatus, geminiStatus } from './ai.js';
 import { geminiRoom } from './gemini.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
-import { checkQuiz, fixSlide } from './checks.js';
+import { checkQuiz, fixSlide, ANOTHER_Q } from './checks.js';
 import { escapeCurrency } from '../../shared/currency.js';
 
 export const BANK_TARGET = 200;
@@ -204,12 +204,17 @@ export const bankState = () => ({ working, pending: pending.length });
  * slide numbers, and writes currency dollars as text (shared/currency.js).
  */
 export async function markSlideRefs() {
-  const result = { lessons: 0, marked: 0, renumbered: 0, currency: 0 };
+  const result = { lessons: 0, marked: 0, renumbered: 0, currency: 0, dropped: 0 };
   for (const l of listLectures()) {
     const content = getContent(l.id);
     if (!content) continue;
     const slides = getSlides(l.id).map((x) => x.text);
     let changed = false;
+    const dropDep = (list = []) => {
+      const kept = list.filter((q) => !ANOTHER_Q.test(q.question || ''));
+      if (kept.length !== list.length) { result.dropped += list.length - kept.length; changed = true; }
+      return kept;
+    };
     const fix = (list = []) => list.map((q0) => {
       const q = { ...q0, question: escapeCurrency(q0.question), explanation: escapeCurrency(q0.explanation), options: (q0.options || []).map(escapeCurrency) };
       const money = q.question !== q0.question || q.explanation !== q0.explanation || q.options.some((o, k) => o !== q0.options[k]);
@@ -222,13 +227,14 @@ export async function markSlideRefs() {
       const { showSlide, ...rest } = q;
       return { ...rest, slide: ref.slide, ...(ref.showSlide ? { showSlide: true } : {}) };
     });
-    const quiz = fix(content.quiz);
-    const extraQuiz = fix(content.extraQuiz);
+    const extraLen = (content.extraQuiz || []).length;
+    const quiz = fix(dropDep(content.quiz));
+    const extraQuiz = fix(dropDep(content.extraQuiz));
     if (changed) {
       // Re-read right before saving: the bank worker may have added questions meanwhile.
       const latest = getContent(l.id);
       const extra = latest.extraQuiz || [];
-      await saveContent(l.id, { ...latest, quiz, extraQuiz: [...extraQuiz, ...fix(extra.slice(extraQuiz.length))] });
+      await saveContent(l.id, { ...latest, quiz, extraQuiz: [...extraQuiz, ...fix(dropDep(extra.slice(extraLen)))] });
       result.lessons++;
     }
   }
