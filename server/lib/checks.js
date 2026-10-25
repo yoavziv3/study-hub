@@ -5,6 +5,7 @@
 //   { rule, level: 'fixed' | 'warn' | 'reject', detail }
 // 'fixed' – the output was corrected by the rule; 'warn' – kept, but worth a look; 'reject' – not used.
 import { escapeCurrency } from '../../shared/currency.js';
+import { namedWeekday } from '../../shared/schedule-changes.js';
 
 const LEVELS = ['easy', 'medium', 'hard'];
 const text = (s) => (typeof s === 'string' ? s.trim() : '');
@@ -206,15 +207,8 @@ export function checkProblems(problems = []) {
 // ---------- a notice as Claude read it (notices.js) ----------
 const NOTICE_KIND_IDS = ['room-change', 'cancellation', 'time-change', 'date-change', 'exam', 'deadline', 'material', 'general'];
 const digitsIn = (t) => (String(t).match(/\d+/g) || []).map((d) => String(Number(d)));
-// "יום רביעי" / "ביום ד'" / "רביעי" → 3 (Sunday = 0); -1 when no weekday is named.
-const WEEKDAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-function namedWeekday(t) {
-  const s = String(t || '');
-  const full = WEEKDAYS.findIndex((d) => s.includes(d));
-  if (full >= 0) return full;
-  const letter = s.match(/יום\s*([א-ו])['׳]/);
-  return letter ? 'אבגדהוו'.indexOf(letter[1]) : -1;
-}
+// Wording that makes a change permanent; the model sometimes misses it ("שינוי קבוע ולא חד פעמי").
+const PERMANENT = /שינוי קבוע|קבוע ולא חד[ -]?פעמי|מעתה ואילך|מהיום ואילך|עד סוף הסמסטר/;
 /**
  * Nothing in the reading may go beyond the notice: a room, time or date whose numbers aren't in the text is
  * cleared, a group must be one of the course's (or named in the text), and a headline with invented numbers or of
@@ -270,5 +264,15 @@ export function checkNotice(a, { body, title, classes = [], posted = null }) {
   }
   // "Urgent" (a high-priority push) is kept for a lesson that changes, never a reminder or a weekly summary.
   const urgent = !!a.urgent && ['room-change', 'cancellation', 'time-change', 'date-change'].includes(kind);
-  return { value: { kind, groups, classType, ...fields, onDate, repeats: !!a.repeats && !!onDate, start, end, headline, urgent }, checks };
+  // A permanent change keeps its weekday: with no date, "repeats" still holds when the notice names the day.
+  let repeats = !!a.repeats;
+  if (!repeats && ['room-change', 'time-change'].includes(kind) && PERMANENT.test(`${title}\n${body}`)) {
+    repeats = true;
+    checks.push(finding('notice.repeats', 'fixed', 'ההודעה אומרת שהשינוי קבוע – סומן כקבוע'));
+  }
+  if (repeats && !onDate && namedWeekday(fields.day) < 0) {
+    repeats = false;
+    checks.push(finding('notice.repeats', 'fixed', 'שינוי קבוע בלי תאריך ובלי יום בשבוע – לא סומן כקבוע'));
+  }
+  return { value: { kind, groups, classType, ...fields, onDate, repeats, start, end, headline, urgent }, checks };
 }

@@ -33,8 +33,8 @@ export function noticeTime(d) {
   return m ? Date.UTC(+m[3], m[2] - 1, +m[1], (m[4] || 12) - 3, +(m[5] || 0)) : Date.parse(d);
 }
 
-/** Readings are versioned: v2 adds the date, class type and times the timetable needs (older ones are read again). */
-export const NOTICE_VERSION = 2;
+/** Readings are versioned: v2 adds the date, class type and times the timetable needs; v3 keeps a permanent change that names only a weekday (older ones are read again). */
+export const NOTICE_VERSION = 3;
 
 const num = (s) => String(Number(String(s).match(/\d+/)?.[0] ?? NaN));
 

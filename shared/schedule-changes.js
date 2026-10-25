@@ -26,6 +26,16 @@ export function addDays(date, n) {
 /** The first date on or after `from` that falls on `weekday` (0 = Sunday). */
 export const nextDate = (from, weekday) => addDays(from, (weekday - weekdayOf(from) + 7) % 7);
 
+const WEEKDAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+/** "יום רביעי" / "ביום ד'" / "רביעי" → 3 (Sunday = 0); -1 when no weekday is named. */
+export function namedWeekday(t) {
+  const s = String(t || '');
+  const full = WEEKDAY_NAMES.findIndex((d) => s.includes(d));
+  if (full >= 0) return full;
+  const letter = s.match(/יום\s*([א-ו])['׳]/);
+  return letter ? 'אבגדהוו'.indexOf(letter[1]) : -1;
+}
+
 const IL = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 /** The clock in Israel: { date: 'YYYY-MM-DD', min: minutes since midnight, day: weekday }. */
 export function israelNow(ms = Date.now()) {
@@ -46,6 +56,8 @@ function changeOf(it) {
   let onDate = /^\d{4}-\d{2}-\d{2}$/.test(a.onDate || '') ? a.onDate : null;
   // No date, or one on another weekday than the lesson: the lesson's next meeting from the day it was posted.
   if (anchor && postedDate && (!onDate || weekdayOf(onDate) !== anchor.day)) onDate = nextDate(postedDate, anchor.day);
+  // A permanent change that names only a weekday ("בימי ראשון … שינוי קבוע"): it starts at the first such day from the posting.
+  if (!onDate && a.repeats && postedDate && namedWeekday(a.day) >= 0) onDate = nextDate(postedDate, namedWeekday(a.day));
   if (!onDate) return null;
   return {
     key: it.key || it.id || `${it.lesson || ''}|${it.title || ''}|${posted}`,
