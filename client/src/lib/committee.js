@@ -127,15 +127,17 @@ export function meetings(cc, days = DAYS) {
     for (const l of on) {
       for (const s of l.slots) {
         const key = `${s.day}|${s.start}|${s.end}|${s.type}`;
-        const b = blocks.get(key) || { day: s.day, course: c, type: s.type, from: minutes(s.start), to: minutes(s.end), groups: new Set(), lecturers: new Set(), places: new Set(), lines: new Set() };
+        const b = blocks.get(key) || { day: s.day, course: c, type: s.type, from: minutes(s.start), to: minutes(s.end), groups: new Set(), lecturers: new Set(), places: new Set(), lines: new Set(), info: new Map() };
         b.groups.add(s.group);
+        // Who teaches which group, and where it meets (the block lists every group that has this meeting).
+        if (!b.info.has(s.group)) b.info.set(s.group, { group: s.group, lecturer: s.lecturer || '', place: s.place || s.mode || '' });
         if (s.lecturer) b.lecturers.add(s.lecturer);
         if (s.place || s.mode) b.places.add(s.place || s.mode);
         b.lines.add(l.id);
         blocks.set(key, b);
       }
     }
-    for (const b of blocks.values()) out.push({ ...b, groups: [...b.groups].sort((x, y) => Number(x) - Number(y)), lecturers: [...b.lecturers], places: [...b.places], share: b.lines.size / on.length });
+    for (const b of blocks.values()) out.push({ ...b, groups: [...b.groups].sort((x, y) => Number(x) - Number(y)), lecturers: [...b.lecturers], places: [...b.places], groupInfo: [...b.info.values()].sort((x, y) => Number(x.group) - Number(y.group)), share: b.lines.size / on.length });
   }
   // Lanes per day: a cluster of overlapping blocks shares the column's width.
   for (const day of days) {

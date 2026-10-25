@@ -1056,3 +1056,13 @@ html:not(.static) .main > .site-footer { padding-inline-end: 230px; }
 .guide-body { padding: 0 18px 18px; border-top: 1px solid var(--border); }
 .guide-body ol { margin: 14px 0 0; padding-inline-start: 22px; display: grid; gap: 8px; line-height: 1.7; font-size: 14.5px; }
 .guide-body ol li::marker { color: var(--text-3); font-weight: 700; }
+
+.cm-block { cursor: pointer; text-align: start; font-family: inherit; font-size: 11.5px; line-height: 1.25; border-top: 0; border-inline-end: 0; border-bottom: 0; }
+.cm-block:hover { filter: brightness(0.97); }
+.cm-block.on { outline: 2px solid var(--c-strong); outline-offset: 1px; z-index: 2; }
+.cm-list-row { cursor: pointer; }
+.cm-list-row:hover { filter: brightness(0.97); }
+.cm-sheet-wrap { position: fixed; inset: 0; z-index: 70; display: flex; align-items: flex-end; justify-content: center; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: rgba(15, 14, 12, 0.28); }
+.cm-sheet { width: min(460px, 100%); padding: 18px; border-top: 4px solid var(--c); box-shadow: var(--shadow-lg); max-height: 80dvh; overflow-y: auto; }
+.cm-sheet-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--c-soft); }
+@media (min-width: 700px) { .cm-sheet-wrap { align-items: center; } }

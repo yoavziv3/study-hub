@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { Table2, RefreshCw, Eye, CalendarClock } from 'lucide-react';
+import { Table2, RefreshCw, Eye, CalendarClock, X, User, MapPin } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp } from '../components/ui.jsx';
@@ -40,7 +40,7 @@ function LinePicker({ course, onChange }) {
 const CELL_PX = 24;
 const groupsText = (m) => (m.groups.length > 3 ? `${m.groups[0]}–${m.groups[m.groups.length - 1]}` : m.groups.join(', '));
 
-function Grid({ rows, grid, days, minFree, blocks }) {
+function Grid({ rows, grid, days, minFree, blocks, selected, onPick }) {
   const top = (m) => ((m - rows[0].from) / CELL) * CELL_PX;
   return (
     <div className="cm-grid" style={{ gridTemplateColumns: `54px repeat(${days.length}, minmax(0, 1fr))` }}>
@@ -57,17 +57,19 @@ function Grid({ rows, grid, days, minFree, blocks }) {
             return <div key={row.from} className={`cm-cell ${free ? 'free' : ''} ${row.from % 60 === 0 ? 'hour' : ''}`} style={{ height: CELL_PX }} title={`יום ${DAY_NAMES[d]} ${hhmm(row.from)}–${hhmm(row.to)}${cell.by.length ? ` · תפוסים ${pct(cell.share)}` : ' · אף אחד לא בשיעור'}`} />;
           })}
           {blocks.filter((m) => m.day === d).map((m) => (
-            <div
+            <button
+              type="button"
               key={`${m.course.id}-${m.type}-${m.from}`}
-              className="cm-block"
+              className={`cm-block ${selected === m ? 'on' : ''}`}
               data-color={m.course.color}
+              onClick={() => onPick(selected === m ? null : m)}
+              aria-label={`${m.course.name || m.course.short}, ${typeLabel(m.type)} ${m.groups.join(', ')}, ${hhmm(m.from)} עד ${hhmm(m.to)}`}
               style={{ top: top(m.from) + 1, height: ((m.to - m.from) / CELL) * CELL_PX - 2, width: `calc(${100 / m.lanes}% - 3px)`, insetInlineStart: `${(100 / m.lanes) * m.lane}%`, '--share': 0.28 + 0.62 * m.share }}
-              title={`${m.course.name || m.course.short} · ${typeLabel(m.type)} ${m.groups.join(', ')}\n${hhmm(m.from)}–${hhmm(m.to)}${m.places.length ? `\n${m.places.join(' · ')}` : ''}${m.lecturers.length ? `\n${m.lecturers.join(' · ')}` : ''}\n${m.share < 1 ? `${pct(m.share)} מהסטודנטים בקורס` : 'כל הסטודנטים בקורס'}`}
             >
               <b>{m.course.short}</b>
               <span>{typeLabel(m.type)} {groupsText(m)}</span>
               {m.share < 1 && m.lanes < 3 && <span className="cm-share">{pct(m.share)}</span>}
-            </div>
+            </button>
           ))}
         </div>
       ))}
@@ -76,7 +78,7 @@ function Grid({ rows, grid, days, minFree, blocks }) {
 }
 
 /** Every meeting as a list, by day: what is on, when, with whom and where. */
-function MeetingList({ blocks, days }) {
+function MeetingList({ blocks, days, onPick }) {
   return (
     <div className="stack" style={{ gap: 12 }}>
       {days.map((d) => {
@@ -87,7 +89,7 @@ function MeetingList({ blocks, days }) {
             <div className="day-title">יום {DAY_NAMES[d]}</div>
             <div className="stack" style={{ gap: 6 }}>
               {list.map((m) => (
-                <div key={`${m.course.id}-${m.type}-${m.from}`} className="row wrap" data-color={m.course.color} style={{ gap: 10, padding: '6px 10px', borderRadius: 10, background: 'var(--c-soft)', borderInlineStart: '3px solid var(--c)', fontSize: 13.5 }}>
+                <div key={`${m.course.id}-${m.type}-${m.from}`} className="row wrap cm-list-row" data-color={m.course.color} role="button" tabIndex={0} onClick={() => onPick(m)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onPick(m)} style={{ gap: 10, padding: '6px 10px', borderRadius: 10, background: 'var(--c-soft)', borderInlineStart: '3px solid var(--c)', fontSize: 13.5 }}>
                   <b dir="ltr" style={{ minWidth: 92 }}>{hhmm(m.from)}–{hhmm(m.to)}</b>
                   <b style={{ color: 'var(--c-strong)' }}>{m.course.short}</b>
                   <span>{typeLabel(m.type)} {m.groups.join(', ')}</span>
@@ -103,6 +105,40 @@ function MeetingList({ blocks, days }) {
   );
 }
 
+/** A meeting's details: the course, the group numbers, who teaches each group, when and where. */
+function MeetingSheet({ m, onClose }) {
+  useEffect(() => {
+    const esc = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', esc);
+    return () => document.removeEventListener('keydown', esc);
+  }, [onClose]);
+  return (
+    <div className="cm-sheet-wrap" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <motion.div className="card cm-sheet" data-color={m.course.color} role="dialog" aria-modal="true" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}>
+        <div className="row" style={{ gap: 10, alignItems: 'flex-start' }}>
+          <div className="grow" style={{ minWidth: 0 }}>
+            <div className="faint" style={{ fontSize: 12.5 }}>{typeLabel(m.type)} · יום {DAY_NAMES[m.day]} · <bdi dir="ltr">{hhmm(m.from)}–{hhmm(m.to)}</bdi></div>
+            <h3 style={{ fontSize: 19, marginTop: 2 }}>{m.course.name || m.course.short}</h3>
+          </div>
+          <button className="btn icon ghost" onClick={onClose} aria-label="סגירה"><X size={18} /></button>
+        </div>
+        <div className="stack" style={{ gap: 8, marginTop: 12 }}>
+          {m.groupInfo.map((g) => (
+            <div key={g.group} className="cm-sheet-row">
+              <span className="chip c">{typeLabel(m.type)} {g.group}</span>
+              <div className="grow" style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 650 }}><User size={13} style={{ verticalAlign: '-2px' }} /> {g.lecturer || 'המרצה עוד לא פורסם'}</div>
+                {g.place && <div className="faint" style={{ fontSize: 13 }}><MapPin size={12} style={{ verticalAlign: '-1px' }} /> {g.place}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+        {m.share < 1 && <div className="faint" style={{ fontSize: 12.5, marginTop: 10 }}>{pct(m.share)} מהסטודנטים בקורס, לפי המסלולים שסימנת.</div>}
+      </motion.div>
+    </div>
+  );
+}
+
 /** The degree committee's overlay (owner only): every course's weekly meetings on one grid, with the free windows. */
 export default function Committee() {
   const { courses, progress, setContext, setCommitteeLines, toast } = useApp();
@@ -110,6 +146,7 @@ export default function Committee() {
   const [minFree, setMinFree] = useState(1);
   const [minHours, setMinHours] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  const [selected, setSelected] = useState(null);
   useEffect(() => { setContext({}); }, [setContext]);
 
   const cc = useMemo(() => (data ? committeeCourses(courses, data, progress.committee?.lines) : []), [courses, data, progress.committee]);
@@ -119,6 +156,8 @@ export default function Committee() {
   const days = DAYS.filter((d) => d < 5 || grid5[d].some((c) => c.by.length));
   const grid = days.map((d) => grid5[d]);
   const blocks = useMemo(() => meetings(cc, DAYS), [cc]);
+  // The lines changed: the open meeting may no longer exist.
+  useEffect(() => { setSelected(null); }, [blocks]);
   const windows = useMemo(() => freeWindows(grid, rows, days, minFree, minHours * 60), [grid5, rows, minFree, minHours]); // eslint-disable-line react-hooks/exhaustive-deps
   const active = cc.filter((c) => c.lines.some((l) => l.on));
 
@@ -183,11 +222,12 @@ export default function Committee() {
         <span className="faint" style={{ fontSize: 12.5 }}>כל בלוק הוא שיעור או תרגול, עם מספרי הקבוצות. צבע עמוק יותר = יותר מהסטודנטים בקורס. מעבר עכבר על בלוק מראה מרצה וחדר.</span>
       </div>
       <div className="card pad" style={{ overflowX: 'auto' }}>
-        <Grid rows={rows} grid={grid} days={days} minFree={minFree} blocks={blocks} />
+        <Grid rows={rows} grid={grid} days={days} minFree={minFree} blocks={blocks} selected={selected} onPick={setSelected} />
       </div>
 
       <div className="section-title"><h2>כל המפגשים לפי יום</h2><div className="line" /></div>
-      <div className="card pad"><MeetingList blocks={blocks} days={days} /></div>
+      <div className="card pad"><MeetingList blocks={blocks} days={days} onPick={setSelected} /></div>
+      {selected && <MeetingSheet m={selected} onClose={() => setSelected(null)} />}
     </Page>
   );
 }
