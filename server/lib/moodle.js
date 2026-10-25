@@ -143,6 +143,8 @@ export async function resolveCloudReport(id) {
   await admin(`/api/admin/reports/${Number(id)}/resolve`, { method: 'POST' });
 }
 
+const isNet = (e) => /fetch failed|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN|socket hang up|network|timed out/i.test(String(e));
+
 // ---------- health ----------
 /** What needs the owner's attention right now (shown red in the sidebar and on the Moodle page). */
 function healthProblems() {
@@ -150,8 +152,9 @@ function healthProblems() {
   if (!state.token) problems.push('המפתח של המודל פג – צריך להתחבר מחדש');
   const noAi = listLectures().filter((l) => (l.aiError || l.notesError) && l.status === 'ready');
   if (noAi.length) problems.push(`${noAi.length} ${noAi.length === 1 ? 'פריט' : 'פריטים'} בלי סיכום AI – כנראה מגבלת השימוש`);
-  const errors = state.lastResult?.errors?.length || 0;
-  if (errors) problems.push(`בסנכרון האחרון היו ${errors} שגיאות`);
+  const errors = state.lastResult?.errors || [];
+  // A dropped connection fails every call at once: not worth a red flag unless the next sync fails the same way.
+  if (errors.length && (!errors.every(isNet) || (state.netFails || 0) >= 2)) problems.push(`בסנכרון האחרון היו ${errors.length} שגיאות`);
   return problems;
 }
 
@@ -746,6 +749,10 @@ export async function sync({ trigger = 'schedule' } = {}) {
     syncing = false;
     state.lastSync = new Date().toISOString();
     state.lastResult = result;
+    // Every error a dropped connection: look again soon instead of waiting for the next round.
+    const netOnly = result.errors.length > 0 && result.errors.every(isNet);
+    state.netFails = netOnly ? (state.netFails || 0) + 1 : 0;
+    if (netOnly && state.netFails < 3) setTimeout(() => sync({ trigger: 'retry' }).catch(() => {}), 3 * 60000).unref?.();
     await save();
     run.ok({ imported: result.imported.length, updated: result.updated.length, skipped: result.skipped, errors: result.errors.slice(0, 10) });
   }

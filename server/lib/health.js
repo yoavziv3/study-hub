@@ -24,6 +24,11 @@ const SECRET = process.env.STUDY_ADMIN_SECRET || '';
 const AI_EVERY = 30 * 60000;
 let aiWatch = { ok: null, kind: null, reason: null, checkedAt: null, since: null };
 
+// A dropped internet connection (fetch failed, DNS, a timeout) is not an AI outage: look again in a few minutes and only
+// alert when it lasts.
+export const isNetworkError = (m) => /fetch failed|ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN|socket hang up|network|timed out/i.test(String(m || ''));
+let netFails = 0;
+
 export async function checkAI() {
   const r = await probeAI();
   // Lessons on Claude (AI_LESSONS=claude) with Gemini behind it: Claude is checked too, and its trouble is only a warning.
@@ -38,6 +43,14 @@ export async function checkAI() {
     if (n) console.log(`[ai] re-queued ${n} items on Claude`);
     // At night Claude writes the question banks even when Gemini's day is used up.
     if (!n && !bankState().working) growAllBanks();
+  }
+  const blip = !r.ok && r.kind === 'error' && isNetworkError(r.reason);
+  netFails = blip ? netFails + 1 : 0;
+  if (blip) {
+    console.error(`[ai] no connection (${netFails}):`, r.reason);
+    setTimeout(() => checkAI().catch(() => {}), 3 * 60000).unref?.();
+    // Looked at again in 3 minutes; the owner hears about it only if it lasts (three misses in a row).
+    if (netFails < 3) return aiWatch;
   }
   if (!r.ok) {
     console.error('[ai] not answering:', r.reason);
