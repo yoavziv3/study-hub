@@ -11,6 +11,7 @@ import { calendarFeed } from './lib/ics.js';
 import { siteByMoodle, studentDeadlines, loadProgress } from './lib/student.js';
 import { saveSubscription, removeSubscription, sendTest, notifyTick } from './lib/notify.js';
 import { watchMoodle } from './lib/moodle-watch.js';
+import { gradeRows } from '../shared/grades.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult, pendingPortalNotices, savePortalNotices } from './lib/portal.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
@@ -191,17 +192,7 @@ async function route({ request, env }) {
     const moodleId = (course.moodleIds || []).find((m) => mine.has(m));
     const data = await cached(env, user, `grades:${moodleId}`, 30 * MIN, () =>
       withMoodle(env, user, (token) => rest(env, token, 'gradereport_user_get_grade_items', { courseid: moodleId, userid: user.moodle_userid })));
-    const items = (data.usergrades?.[0]?.gradeitems || [])
-      .filter((g) => g.itemtype === 'mod' || g.itemtype === 'course')
-      .map((g) => ({
-        name: g.itemtype === 'course' ? 'ציון הקורס' : g.itemname,
-        total: g.itemtype === 'course',
-        grade: g.gradeformatted && g.gradeformatted !== '-' ? g.gradeformatted : null,
-        percentage: g.percentageformatted && g.percentageformatted !== '-' ? g.percentageformatted : null,
-        range: g.rangeformatted || '',
-        feedback: g.feedback ? String(g.feedback).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 400) : '',
-        url: g.itemmodule && g.cmid ? `${moodleSite(env)}/mod/${g.itemmodule}/view.php?id=${g.cmid}` : null,
-      }));
+    const items = gradeRows(data.usergrades?.[0]?.gradeitems, { site: moodleSite(env), text: (h) => String(h).replace(/<[^>]+>/g, ' ') });
     return json({ courseId: course.id, items });
   }
 

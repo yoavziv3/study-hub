@@ -290,6 +290,8 @@ export default function Course() {
   // Courses built for other students have no AI material: files, the lecturer's exercises and grades only.
   const ai = course.ai !== false;
   const exam = nextEvent(course, progress);
+  // The syllabus: the lecturer's own file on Moodle when there is one, else the university's published syllabus page.
+  const syllabus = safeHref(links?.find((l) => l.type === 'syllabus')?.href || course.syllabusUrl);
   const tabs = [
     { id: 'lessons', label: 'שיעורים', icon: <BookOpen size={16} />, count: course.lectures.filter((l) => kindOf(l) === 'lecture').length },
     ...(ai ? [{ id: 'summaries', label: 'סיכומים', icon: <FileText size={16} />, count: course.lectures.filter((l) => kindOf(l) !== 'homework' && l.hasContent).length || null }] : []),
@@ -329,6 +331,7 @@ export default function Course() {
               <div className="course-code">{course.code}</div>
               <h1>{course.name}</h1>
               <div className="meta">
+                {syllabus && <a className="chip syllabus-chip" href={syllabus} target="_blank" rel="noreferrer"><ScrollText size={13} /> סילבוס הקורס <ExternalLink size={11} /></a>}
                 {exam && <Link to={`/course/${course.id}/prep`} className="chip warn">🎯 {exam.label} {daysText(exam.days)}</Link>}
                 {course.staff.length > 0 && <span className="chip"><Users size={13} /> {course.staff.join(' · ')}</span>}
                 <span className="chip">{course.lectures.filter((l) => kindOf(l) === 'lecture').length} {course.unitLabel === 'יחידה' ? 'יחידות' : 'הרצאות'}</span>

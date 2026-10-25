@@ -9,6 +9,7 @@ import { DATA_DIR, listCourses, getCourse, listLectures, patchCourse, getLecture
 import { addLectureFile, enqueue, numberFromName, ACCEPTED } from './ingest.js';
 import { classify, EXCLUDE } from '../../shared/moodle-kind.js';
 import { analyzeNotices } from './notices.js';
+import { gradeRows } from '../../shared/grades.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission, linkFileKey } from './updates.js';
 import { syncCatalog } from './catalog.js';
 import { startRun } from './runlog.js';
@@ -265,17 +266,7 @@ export async function courseGrades(siteId) {
   const moodleId = Object.entries(state.map).find(([, v]) => v === siteId)?.[0];
   if (!moodleId) return { courseId: siteId, items: [] };
   const data = await rest('gradereport_user_get_grade_items', { courseid: Number(moodleId), userid: state.user.id });
-  const items = (data.usergrades?.[0]?.gradeitems || [])
-    .filter((g) => g.itemtype === 'mod' || g.itemtype === 'course')
-    .map((g) => ({
-      name: g.itemtype === 'course' ? 'ציון הקורס' : g.itemname,
-      total: g.itemtype === 'course',
-      grade: g.gradeformatted && g.gradeformatted !== '-' ? g.gradeformatted : null,
-      percentage: g.percentageformatted && g.percentageformatted !== '-' ? g.percentageformatted : null,
-      range: g.rangeformatted || '',
-      feedback: g.feedback ? htmlToText(g.feedback).replace(/\s+/g, ' ').slice(0, 400) : '',
-      url: g.itemmodule && g.cmid ? `${SITE}/mod/${g.itemmodule}/view.php?id=${g.cmid}` : null,
-    }));
+  const items = gradeRows(data.usergrades?.[0]?.gradeitems, { site: SITE, text: htmlToText });
   return { courseId: siteId, items };
 }
 
