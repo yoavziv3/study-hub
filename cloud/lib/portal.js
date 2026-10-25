@@ -14,8 +14,9 @@ import { ping } from '../../shared/portal-api.js';
 import { noticeKey, noticeTime, NOTICE_VERSION } from '../../shared/notices.js';
 
 const MIN = 60000;
-const STALE = 30 * MIN; // re-read every half hour,
-const STALE_SOON = 10 * MIN; // and every 10 minutes when a lesson of theirs starts within 25 minutes
+const STALE = 15 * MIN; // re-read every quarter of an hour (the owner's own: every 5 minutes),
+const STALE_SOON = 5 * MIN; // and every 5 minutes when a lesson of theirs starts within 25 minutes
+const STALE_OWNER = 5 * MIN; // the site owner (the degree committee) wants to know as soon as something is posted
 const RELAY_SEEN = 'portal_relay';
 const BACKOFF = 20 * MIN; // after a failed read, that student waits (unless they ask to refresh)
 const MAIN_FRESH = 3 * MIN; // a backup reader (the Mac) gets nothing while any main reader was seen this recently
@@ -102,37 +103,48 @@ export async function savePortalNotices(env, body) {
 /**
  * The student's own portal notices as items of their updates feed (type 'portal'), with Claude's reading.
  * Personal: built per request from their portal_links row, never published. Notices older than FEED_DAYS drop off.
+ * owner: the site's owner (the degree committee) also gets the notices of every other connected student, each once
+ * (a notice on a lesson several students share is one item) and without saying whose it is.
  */
 const FEED_DAYS = 30;
-export async function portalFeed(env, user, courses) {
-  const account = await env.DB.prepare('SELECT ok, data, synced_at FROM portal_links WHERE user_id = ?').bind(user.id).first();
-  if (!account?.ok || !account.data) return [];
-  const lessons = withReadings(parseJson(account.data, []), await noticeReadings(env));
+export async function portalFeed(env, user, courses, { owner = false } = {}) {
+  const readings = await noticeReadings(env);
   const since = Date.now() - FEED_DAYS * 24 * 60 * MIN;
   const out = new Map();
-  for (const l of lessons) {
-    for (const n of l.notifications || []) {
-      const key = noticeKey(l.name, n);
-      const at = Number.isFinite(noticeTime(n.date)) ? noticeTime(n.date) : account.synced_at ?? Date.now();
-      if (at < since || out.has(key)) continue;
-      out.set(key, {
-        id: `portal:${key}`,
-        key: `portal:${key}`,
-        type: 'portal',
-        courseId: courseOfLesson(courses, l)?.id || null,
-        lesson: l.name,
-        lessonType: l.type || '',
-        lessonDay: l.day,
-        lessonStart: l.start,
-        lessonRoom: l.location || '',
-        title: n.title || 'עדכון בפורטל',
-        body: n.content || '',
-        addedAt: new Date(at).toISOString(),
-        ...(n.analysis ? { analysis: n.analysis } : {}),
-      });
+  const add = (account) => {
+    if (!account?.ok || !account.data) return;
+    for (const l of withReadings(parseJson(account.data, []), readings)) {
+      for (const n of l.notifications || []) {
+        const key = noticeKey(l.name, n);
+        const at = Number.isFinite(noticeTime(n.date)) ? noticeTime(n.date) : account.synced_at ?? Date.now();
+        if (at < since || out.has(key)) continue;
+        out.set(key, {
+          id: `portal:${key}`,
+          key: `portal:${key}`,
+          type: 'portal',
+          courseId: courseOfLesson(courses, l)?.id || null,
+          lesson: l.name,
+          lessonType: l.type || '',
+          lessonDay: l.day,
+          lessonStart: l.start,
+          lessonRoom: l.location || '',
+          title: n.title || 'עדכון בפורטל',
+          body: n.content || '',
+          addedAt: new Date(at).toISOString(),
+          ...(n.analysis ? { analysis: n.analysis } : {}),
+        });
+      }
     }
-  }
+  };
+  add(await env.DB.prepare('SELECT ok, data, synced_at FROM portal_links WHERE user_id = ?').bind(user.id).first());
+  if (owner) for (const r of (await env.DB.prepare('SELECT ok, data, synced_at FROM portal_links WHERE user_id != ? AND ok = 1 AND data IS NOT NULL').bind(user.id).all()).results) add(r);
   return [...out.values()];
+}
+
+/** Every other connected student's lessons (with Claude's readings on their notices): the owner's pushes about all of them. */
+export async function otherPortalLessons(env, exceptUserId, readings) {
+  const rows = (await env.DB.prepare('SELECT data FROM portal_links WHERE user_id != ? AND ok = 1 AND data IS NOT NULL').bind(exceptUserId).all()).results;
+  return rows.flatMap((r) => withReadings(parseJson(r.data, []), readings));
 }
 
 // ---------- holding a push for Claude's reading ----------
@@ -236,11 +248,12 @@ export async function portalJobs(env, url) {
     `SELECT l.user_id, l.sealed, l.data, l.synced_at, l.requested_at, s.session, s.failed_at
      FROM portal_links l LEFT JOIN portal_state s ON s.user_id = l.user_id WHERE l.ok = 1`
   ).all()).results;
+  const owner = (await env.DB.prepare("SELECT u.id FROM push_meta m JOIN users u ON u.moodle_userid = m.value WHERE m.key = 'owner'").first())?.id;
   const due = rows.filter((r) => {
     if (r.failed_at && now - r.failed_at < BACKOFF && !((r.requested_at || 0) > r.failed_at)) return false;
     if (!r.synced_at || (r.requested_at || 0) > r.synced_at) return true;
     const age = now - r.synced_at;
-    if (age > STALE) return true;
+    if (age > (r.user_id === owner ? STALE_OWNER : STALE)) return true;
     const soon = parseJson(r.data, []).some((l) => l.day === il.day && !l.canceled && minutesOf(l.start) - il.min > 0 && minutesOf(l.start) - il.min <= 25);
     return soon && age > STALE_SOON;
   });

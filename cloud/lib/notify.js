@@ -8,7 +8,7 @@ import { siteCourses, allowedCourseIds } from './account.js';
 import { siteByMoodle, studentDeadlines } from './student.js';
 import { examSittings } from './ics.js';
 import { sendPush, pushConfigured, PUSH_HOST } from './webpush.js';
-import { parseJson, noticeReadings, withReadings, heldNotices } from './portal.js';
+import { parseJson, noticeReadings, withReadings, heldNotices, otherPortalLessons } from './portal.js';
 import { watchMoodle, cloudUpdates, mergeUpdates } from './moodle-watch.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './health.js';
 import { forOtherGroups } from '../../shared/groups.js';
@@ -114,7 +114,7 @@ const oneLine = (t = '') => String(t).replace(/\r/g, '').split(/\n+/).map((x) =>
  * Notifications due now for one student. `since`: when they first turned notifications on (older news isn't sent);
  * `isSent(key)`: what they already got.
  */
-export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set(), owner = false }) {
+export function dueNotifications({ user, progress, courses, feedCourses = courses, deadlines, updates, now, since = 0, isSent = () => false, portal = null, held = new Set(), owner = false, otherPortal = [] }) {
   const prefs = prefsOf(progress);
   const il = israel(now);
   // Reminders (deadlines, a lapsed Moodle sign-in) wait for the day; news about the course – new material, announcements,
@@ -230,10 +230,15 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
   }
   // 7. The portal: a notice on one of the student's lessons (room change, cancellation…), or a room that differs from
   //    the course catalog's. Each once; notices older than a week (or from before notifications were on) are skipped.
-  if (prefs.portal && portal) {
-    for (const l of portal) {
+  if (prefs.portal && (portal || otherPortal.length)) {
+    // The owner also hears about the notices on every other student's lessons – each notice once.
+    const seenNotice = new Set();
+    for (const l of [...(portal || []), ...otherPortal]) {
       for (const n of l.notifications || []) {
-        const at = Date.parse(n.date);
+        const nk = noticeKey(l.name, n);
+        if (seenNotice.has(nk)) continue;
+        seenNotice.add(nk);
+        const at = noticeTime(n.date);
         if (Number.isFinite(at) && (now - at > 7 * DAY || at < since - DAY)) continue;
         // Waiting for Claude's reading (portal.js heldNotices): it comes within minutes, with a clear headline.
         if (held.has(noticeKey(l.name, n))) continue;
@@ -356,6 +361,8 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
   const portalOf = new Map(portalRows.results.map((r) => [r.user_id, r]));
   const readings = portalRows.results.some((r) => r.ok && r.data) ? await noticeReadings(env) : new Map();
   const held = await heldNotices(env, portalRows.results, readings, now).catch(() => new Set());
+  const ownerId = await ownerUserId(env);
+  const otherPortal = ownerId && ids.includes(ownerId) ? await otherPortalLessons(env, ownerId, await noticeReadings(env)).catch(() => []) : [];
   const progressOf = new Map(progressRows.results.map((r) => [r.user_id, r.data]));
   const sent = new Set(sentRows.results.map((r) => `${r.user_id}|${r.key}`));
   const deadlineCache = new Map(deadlineRows.results.map((r) => [r.user_id, r]));
@@ -421,7 +428,9 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     const since = Math.min(...devices.map((d) => d.created_at || 0));
     const due = [
       ...(user.id === owner ? alerts : []),
-      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, held, owner: user.id === owner }),
+      ...dueNotifications({ user, progress, courses: mine, feedCourses, deadlines, updates, now, since, isSent, portal, owner: user.id === owner,
+        // The owner doesn't wait for Claude's reading (they want to know at once) and hears about every student's notices.
+        held: user.id === owner ? new Set() : held, otherPortal: user.id === owner ? otherPortal : [] }),
     ].filter((n) => !isSent(n.key));
     if (!due.length) continue;
     for (const n of due) {

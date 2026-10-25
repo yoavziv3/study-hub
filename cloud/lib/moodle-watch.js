@@ -11,8 +11,8 @@ import { classify, accepted } from '../../shared/moodle-kind.js';
 
 const MIN = 60000;
 const DAY = 86400000;
-const EVERY = 10 * MIN; // each Moodle course is looked at about this often
-const PER_TICK = 3; // courses per tick (each is three Moodle calls)
+const EVERY = 4 * MIN; // each Moodle course is looked at about this often (the cron ticks every 5 minutes, so about every tick)
+const PER_TICK = 6; // courses per tick (each is three Moodle calls)
 const KIND_LABEL = { lecture: 'הרצאה חדשה', tutorial: 'תרגול חדש', homework: 'שיעורי בית / תרגילים חדשים', exam: 'מבחן קודם חדש' };
 
 const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');

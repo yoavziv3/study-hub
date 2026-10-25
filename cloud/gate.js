@@ -53,7 +53,7 @@ export async function gate({ request, env }) {
       const mine = (upd.items || []).filter((i) => (allowed.has(i.courseId) && SHARED.has(i.type)) || i.type === 'report');
       const fresh = await cloudUpdates(env, [...allowed]).catch(() => []);
       // The portal's notices on the student's own lessons (portal.js) – theirs alone, read from their portal link.
-      const portal = await portalFeed(env, user, courses).catch(() => []);
+      const portal = await portalFeed(env, user, courses, { owner: (await ownerUserId(env)) === user.id }).catch(() => []);
       return json({
         since: upd.since,
         items: [...mergeUpdates(mine, fresh), ...portal].sort((a, b) => b.addedAt.localeCompare(a.addedAt)),
