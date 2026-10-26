@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8paft",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "יחסי גדילה, תת-סדרות וגבולות חלקיים (פרק 7, חלק ד)",
+  "originalName": "ספר הקורס – יחסי גדילה, תת-סדרות וגבולות חלקיים.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 15,
+  "unitNumber": null,
+  "slideCount": 18,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.514Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:17:27.771Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:17:27.769Z",
+    "found": 0
+  }
+}
