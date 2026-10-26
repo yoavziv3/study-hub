@@ -1,0 +1,28 @@
+{
+  "id": "m66384-wqi220h6",
+  "courseId": "m66384",
+  "autoCourse": false,
+  "title": "week1-all-summary-students",
+  "originalName": "week1-all-summary-students.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 14,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:34.923Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66384,
+    "fileKey": "66384:3414036:/week1-all-summary-students.pdf",
+    "section": "סיכום הרצאות",
+    "module": "סיכום שבוע",
+    "timemodified": 1791544812,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:57.850Z",
+  "announced": true
+}

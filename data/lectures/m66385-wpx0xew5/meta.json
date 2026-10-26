@@ -1,0 +1,28 @@
+{
+  "id": "m66385-wpx0xew5",
+  "courseId": "m66385",
+  "autoCourse": false,
+  "title": "sw-01-day1",
+  "originalName": "sw-01-day1.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:07.666Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66385,
+    "fileKey": "66385:3414750:/sw-01-day1.pdf",
+    "section": "דפי תרגילים",
+    "module": "דף תרגילים 1 לתירגול עצמי",
+    "timemodified": 1791661388,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:52.168Z",
+  "announced": true
+}

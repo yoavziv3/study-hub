@@ -1,0 +1,28 @@
+{
+  "id": "m66384-wqc6cmq0",
+  "courseId": "m66384",
+  "autoCourse": false,
+  "title": "sw-04-day4-sol",
+  "originalName": "sw-04-day4-sol.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 8,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:27.301Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66384,
+    "fileKey": "66384:3404775:/sw-04-day4-sol.pdf",
+    "section": "דפי תרגילים ופיתרונות",
+    "module": "דף תרגילים 4 לעבודה עצמית - פיתרונות",
+    "timemodified": 1791178969,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:54.480Z",
+  "announced": true
+}

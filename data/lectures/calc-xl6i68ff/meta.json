@@ -1,0 +1,28 @@
+{
+  "id": "calc-xl6i68ff",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "תרגול 2 - ערך מוחלט אי שוויון המשולש וסדרות",
+  "originalName": "תרגול 2 - ערך מוחלט אי שוויון המשולש וסדרות.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 4,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:24:26.286Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464425:/תרגול 2 - ערך מוחלט אי שוויון המשולש וסדרות.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1792995962
+  },
+  "updatedAt": "2026-10-26T07:53:05.694Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

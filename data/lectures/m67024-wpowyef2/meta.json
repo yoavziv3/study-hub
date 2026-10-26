@@ -1,0 +1,28 @@
+{
+  "id": "m67024-wpowyef2",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "תרגול 1 - קבוצות ומספרים מרוכבים",
+  "originalName": "תרגול 1 - קבוצות ומספרים מרוכבים.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T06:59:57.157Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3457967:/תרגול 1 - קבוצות ומספרים מרוכבים.pdf",
+    "section": "סיכומי הרצאות ותירגולים",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1792528706,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:43.247Z",
+  "announced": true
+}

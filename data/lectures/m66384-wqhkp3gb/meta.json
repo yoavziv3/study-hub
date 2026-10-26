@@ -1,0 +1,28 @@
+{
+  "id": "m66384-wqhkp3gb",
+  "courseId": "m66384",
+  "autoCourse": false,
+  "title": "lecture notes day4",
+  "originalName": "lecture_notes_day4.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 11,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:34.298Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66384,
+    "fileKey": "66384:3410554:/lecture_notes_day4.pdf",
+    "section": "תרגולים ",
+    "module": "קובץ 4",
+    "timemodified": 1791368591,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:57.387Z",
+  "announced": true
+}

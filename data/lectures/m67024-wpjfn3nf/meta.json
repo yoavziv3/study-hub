@@ -1,0 +1,28 @@
+{
+  "id": "m67024-wpjfn3nf",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "9321-stack-grade-guide",
+  "originalName": "9321-stack-grade-guide.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T06:59:50.052Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3450983:/9321-stack-grade-guide.pdf",
+    "section": "מטלות להגשה",
+    "module": "מדריך: איפה רואים את הציון במבדק ממוחשב",
+    "timemodified": 1792396896,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:41.951Z",
+  "announced": true
+}

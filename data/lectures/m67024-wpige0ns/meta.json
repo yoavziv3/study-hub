@@ -1,0 +1,28 @@
+{
+  "id": "m67024-wpige0ns",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "sheets-01-08",
+  "originalName": "sheets-01-08.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 33,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T06:59:48.783Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3437478:/sheets-01-08.pdf",
+    "section": "דפי תרגילים ופתרונות",
+    "module": "חוברת תרגילים - חלק א'",
+    "timemodified": 1792131236,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:38.397Z",
+  "announced": true
+}

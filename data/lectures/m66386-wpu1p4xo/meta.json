@@ -1,0 +1,28 @@
+{
+  "id": "m66386-wpu1p4xo",
+  "courseId": "m66386",
+  "autoCourse": false,
+  "title": "Hatchala Java Day3 2026",
+  "originalName": "Hatchala_Java_Day3_2026.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 18,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:03.806Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66386,
+    "fileKey": "66386:3384918:/Hatchala_Java_Day3_2026.pdf",
+    "section": "יום 3 לסדנה - יום רביעי ה - 16/9/26",
+    "module": "שקפים - הרצאה - יום 3",
+    "timemodified": 1789536423,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:51.646Z",
+  "announced": true
+}

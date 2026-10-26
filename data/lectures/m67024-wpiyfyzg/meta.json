@@ -1,0 +1,28 @@
+{
+  "id": "m67024-wpiyfyzg",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "sheets-01-08-sol",
+  "originalName": "sheets-01-08-sol.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 134,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T06:59:49.432Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3437479:/sheets-01-08-sol.pdf",
+    "section": "דפי תרגילים ופתרונות",
+    "module": "חוברת פיתרונות - חלק א'",
+    "timemodified": 1792131290,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:41.740Z",
+  "announced": true
+}

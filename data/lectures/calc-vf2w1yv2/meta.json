@@ -1,0 +1,35 @@
+{
+  "id": "calc-vf2w1yv2",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "אי שוויונים ואינדוקציה מתמטית",
+  "originalName": "תרגול 1 - אי שוויונים ואינדוקציה מתמטית.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 4,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T06:23:42.434Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464425:/תרגול 1 - אי שוויונים ואינדוקציה מתמטית.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1792995583
+  },
+  "updatedAt": "2026-10-26T07:00:38.058Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T06:26:07.672Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": "כתיבת הסיכום נכשלה",
+  "announced": true
+}

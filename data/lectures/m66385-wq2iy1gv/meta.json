@@ -1,0 +1,28 @@
+{
+  "id": "m66385-wq2iy1gv",
+  "courseId": "m66385",
+  "autoCourse": false,
+  "title": "sw-03-day3-sol",
+  "originalName": "sw-03-day3-sol.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:14.795Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66385,
+    "fileKey": "66385:3425873:/sw-03-day3-sol.pdf",
+    "section": "דפי תרגילים",
+    "module": "דף תרגילים 3 לעבודה עצמית - פיתרונות",
+    "timemodified": 1791880133,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:53.058Z",
+  "announced": true
+}

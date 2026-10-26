@@ -1,0 +1,28 @@
+{
+  "id": "m66385-wpwi04tq",
+  "courseId": "m66385",
+  "autoCourse": false,
+  "title": "sw-00-day0-sol",
+  "originalName": "sw-00-day0-sol.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 10,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:06.985Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66385,
+    "fileKey": "66385:3425868:/sw-00-day0-sol.pdf",
+    "section": "דפי תרגילים",
+    "module": "דף תרגילים 0 לתירגול עצמי - פיתרונות",
+    "timemodified": 1791879639,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:52.029Z",
+  "announced": true
+}

@@ -1,0 +1,28 @@
+{
+  "id": "m66384-wq9tbi94",
+  "courseId": "m66384",
+  "autoCourse": false,
+  "title": "sw-02-day2",
+  "originalName": "sw-02-day2.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:24.239Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66384,
+    "fileKey": "66384:3404770:/sw-02-day2.pdf",
+    "section": "דפי תרגילים ופיתרונות",
+    "module": "דף תרגילים 2 לעבודה עצמית",
+    "timemodified": 1791177687,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:53.659Z",
+  "announced": true
+}

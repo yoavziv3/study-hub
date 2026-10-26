@@ -1,0 +1,106 @@
+[
+  {
+    "id": 3366360,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3366360",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3384908,
+    "type": "syllabus",
+    "name": "סילבוס מקוצר",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3384908",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
+    "id": 3384909,
+    "type": "link",
+    "name": "Java online compiler and debugger",
+    "href": "https://www.onlinegdb.com/online_java_compiler",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3384914,
+    "type": "folder",
+    "name": "חומר לתרגול - שאלות - יום 1",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3384914",
+    "section": "יום 1 לסדנה - יום שני ה - 14/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3384915,
+    "type": "folder",
+    "name": "חומר לתרגול - תשובות - יום 1",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3384915",
+    "section": "יום 1 לסדנה - יום שני ה - 14/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3384917,
+    "type": "folder",
+    "name": "קבצי תרגול 2 - שאלות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3384917",
+    "section": "יום 2 לסדנה - יום שלישי ה - 15/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3388681,
+    "type": "folder",
+    "name": "קבצי תרגול 2 - תשובות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3388681",
+    "section": "יום 2 לסדנה - יום שלישי ה - 15/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3384919,
+    "type": "folder",
+    "name": "קבצי תרגול 3 - שאלות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3384919",
+    "section": "יום 3 לסדנה - יום רביעי ה - 16/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3384920,
+    "type": "folder",
+    "name": "קבצי תרגול 3 - תשובות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3384920",
+    "section": "יום 3 לסדנה - יום רביעי ה - 16/9/26",
+    "ext": ""
+  },
+  {
+    "id": 3388528,
+    "type": "folder",
+    "name": "תרגול רשות - יום 1",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3388528",
+    "section": "רשות: תרגול נוסף",
+    "ext": ""
+  },
+  {
+    "id": 3388530,
+    "type": "folder",
+    "name": "תרגול רשות - יום 2",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3388530",
+    "section": "רשות: תרגול נוסף",
+    "ext": ""
+  },
+  {
+    "id": 3388529,
+    "type": "folder",
+    "name": "תרגול רשות - יום 3",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3388529",
+    "section": "רשות: תרגול נוסף",
+    "ext": ""
+  },
+  {
+    "id": 3388531,
+    "type": "folder",
+    "name": "תרגול רשות - יום 4",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3388531",
+    "section": "רשות: תרגול נוסף",
+    "ext": ""
+  }
+]

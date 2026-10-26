@@ -1,5 +1,13 @@
 [
   {
+    "id": 3464445,
+    "type": "file",
+    "name": "מתווה מילואים בקורס (עודכן: 26.10)",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3464445",
+    "section": "ברוכים וברוכות הבאים והבאות!",
+    "ext": "pdf"
+  },
+  {
     "id": 3371890,
     "type": "zoom",
     "name": "כניסה לשיעורים מקוונים",
@@ -12,6 +20,14 @@
     "type": "link",
     "name": "ספר הקורס (בבנייה)",
     "href": "https://teachingcenter.bgu.ac.il/books/calculus/",
+    "section": "ספר ורשימות מהכיתה",
+    "ext": ""
+  },
+  {
+    "id": 3464422,
+    "type": "folder",
+    "name": "סיכומי הרצאות של מוטקה",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3464422",
     "section": "ספר ורשימות מהכיתה",
     "ext": ""
   }

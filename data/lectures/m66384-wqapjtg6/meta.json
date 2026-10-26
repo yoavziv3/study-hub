@@ -1,0 +1,28 @@
+{
+  "id": "m66384-wqapjtg6",
+  "courseId": "m66384",
+  "autoCourse": false,
+  "title": "sw-03-day3",
+  "originalName": "sw-03-day3.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T07:00:25.400Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 66384,
+    "fileKey": "66384:3404772:/sw-03-day3.pdf",
+    "section": "דפי תרגילים ופיתרונות",
+    "module": "דף תרגילים 3 לעבודה עצמית",
+    "timemodified": 1791178044,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T07:00:53.933Z",
+  "announced": true
+}
