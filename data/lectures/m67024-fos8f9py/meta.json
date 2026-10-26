@@ -1,0 +1,27 @@
+{
+  "id": "m67024-fos8f9py",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "דטרמיננטות (פרק 4)",
+  "originalName": "רשימות הרצאה – דטרמיננטות.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 8,
+  "unitNumber": null,
+  "slideCount": 13,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.504Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:20:04.942Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:20:04.940Z",
+    "found": 0
+  }
+}
