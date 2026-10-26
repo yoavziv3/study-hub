@@ -12,8 +12,8 @@ if (!file) {
 const data = JSON.parse(fs.readFileSync(file, 'utf8'));
 const lit = (v) => (v === null || v === undefined ? 'NULL' : typeof v === 'number' ? String(v) : `'${String(v).replace(/'/g, "''")}'`);
 const out = [];
-for (const table of ['users', 'progress', 'reports']) {
-  for (const row of data[table] || []) {
+for (const [table, key] of [['users', 'users'], ['progress', 'progress'], ['reports', 'reports'], ['committee_members', 'committee']]) {
+  for (const row of data[key] || []) {
     const cols = Object.keys(row);
     out.push(`INSERT OR REPLACE INTO ${table} (${cols.join(', ')}) VALUES (${cols.map((c) => lit(row[c])).join(', ')});`);
   }

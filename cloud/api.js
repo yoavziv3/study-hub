@@ -14,6 +14,7 @@ import { watchMoodle } from './lib/moodle-watch.js';
 import { gradeRows } from '../shared/grades.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult, pendingPortalNotices, savePortalNotices } from './lib/portal.js';
 import { personalFiles } from './lib/files.js';
+import { isCommittee, committeeAdmin } from './lib/committee.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
 const MIN = 60000;
@@ -92,7 +93,8 @@ async function route({ request, env }) {
   if (path === '/api/me' && method === 'GET') {
     user = await refreshEnrollments(env, user);
     const owner = (await ownerUserId(env)) === user.id;
-    return json({ ...meView(user, await siteCourses(env, request)), ...(owner ? { owner: true } : {}) });
+    const committee = owner || (await isCommittee(env, user));
+    return json({ ...meView(user, await siteCourses(env, request)), ...(owner ? { owner: true } : {}), ...(committee ? { committee: true } : {}) });
   }
 
   // The site owner's system status (health.js); other students get a plain 404.
@@ -232,6 +234,9 @@ async function admin({ request, env, url, path, method }) {
     return json([...byId.values()].sort((a, b) => b.students - a.students));
   }
 
+  // Committee members besides the owner: the Mac's scripts/committee-members.js lists, adds and removes them by username.
+  if (path === '/api/admin/committee' && (method === 'GET' || method === 'POST')) return json(await committeeAdmin(env, method === 'POST' ? await readJson(request, 4000) : {}));
+
   if (path === '/api/admin/portal/ping' && method === 'GET') return portalPing(env);
   if (path === '/api/admin/portal/jobs' && method === 'GET') return portalJobs(env, url);
   if (path === '/api/admin/portal/result' && method === 'POST') return portalResult(env, request, await readJson(request, 200_000));
@@ -259,6 +264,7 @@ async function admin({ request, env, url, path, method }) {
       users: await all('SELECT * FROM users'),
       progress: await all('SELECT * FROM progress'),
       reports: await all('SELECT * FROM reports'),
+      committee: await all('SELECT * FROM committee_members'),
     });
   }
 

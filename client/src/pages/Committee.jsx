@@ -5,6 +5,7 @@ import { useApp } from '../store.jsx';
 import { api, useFetch, STATIC } from '../api.js';
 import { Page, fadeUp } from '../components/ui.jsx';
 import { DAY_NAMES, typeLabel } from '../lib/schedule.js';
+import { inTerm } from '../lib/terms.js';
 import { committeeCourses, gridRows, occupancy, freeWindows, meetings, hhmm, DAYS, CELL } from '../lib/committee.js';
 
 const THRESHOLDS = [[1, 'פנוי לכולם'], [0.9, '90% פנויים'], [0.8, '80% פנויים'], [0.7, '70% פנויים']];
@@ -139,10 +140,13 @@ function MeetingSheet({ m, onClose }) {
   );
 }
 
-/** The degree committee's overlay (owner only): every course's weekly meetings on one grid, with the free windows. */
+/** The degree committee's overlay (the owner and the members they added): every course's weekly meetings on one grid, with the free windows. */
 export default function Committee() {
-  const { courses, progress, setContext, setCommitteeLines, toast } = useApp();
+  const { courses: myCourses, term, progress, setContext, setCommitteeLines, toast } = useApp();
   const { data, error, reload } = useFetch('/api/committee');
+  // In the cloud a member needn't be enrolled in the courses, so the cloud sends every course's meetings (no material).
+  const { data: sent } = useFetch(STATIC ? '/api/committee-courses' : null);
+  const courses = useMemo(() => (STATIC ? (sent || []).filter((c) => inTerm(c, term)) : myCourses), [sent, term, myCourses]);
   const [minFree, setMinFree] = useState(1);
   const [minHours, setMinHours] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -173,7 +177,7 @@ export default function Committee() {
           <div className="course-icon"><Table2 size={22} /></div>
           <div className="grow">
             <h1 style={{ fontSize: 26 }}>מערכת הועד</h1>
-            <div className="muted" style={{ fontSize: 14 }}>כל הקורסים זה על גבי זה בשבוע אחד, כדי לראות מתי אף סטודנט לא בשיעור ואפשר להכניס השלמות, תרגולים ושעות קבלה. רק את/ה רואה את זה.</div>
+            <div className="muted" style={{ fontSize: 14 }}>כל הקורסים זה על גבי זה בשבוע אחד, כדי לראות מתי אף סטודנט לא בשיעור ואפשר להכניס השלמות, תרגולים ושעות קבלה. רק הועד רואה את זה.</div>
           </div>
           {!STATIC && <button className="btn" onClick={refresh} disabled={refreshing}><RefreshCw size={15} className={refreshing ? 'spin' : ''} /> עדכון מקובץ הקורסים</button>}
         </div>

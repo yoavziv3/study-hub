@@ -6,6 +6,7 @@ import { cloudUpdates, mergeUpdates } from './lib/moodle-watch.js';
 import { forCourses } from '../shared/weekly-load.js';
 import { portalFeed } from './lib/portal.js';
 import { ownerUserId } from './lib/health.js';
+import { isCommittee, committeeCourses } from './lib/committee.js';
 
 const PUBLIC = new Set(['/data/status.json', '/data/build.json']);
 
@@ -62,11 +63,16 @@ export async function gate({ request, env }) {
       });
     }
 
-    // The degree committee's weekly overlay of every course (committee.js): the site's owner only.
+    // The degree committee's weekly overlay of every course (committee.js): the site's owner and the members they added.
     if (path === '/data/committee.json') {
-      if ((await ownerUserId(env)) !== user.id) return fail(404, 'לא נמצא');
+      if (!(await isCommittee(env, user))) return fail(404, 'לא נמצא');
       const res = await asset();
       return res ? privately(res) : fail(404, 'לא נמצא');
+    }
+    // The courses the overlay lays out (meetings only, no material), so a member needn't be enrolled in any of them.
+    if (path === '/data/committee-courses.json') {
+      if (!(await isCommittee(env, user))) return fail(404, 'לא נמצא');
+      return json(await committeeCourses(env, request), 200, { 'Cache-Control': 'private, no-cache' });
     }
 
     if (path === '/data/weekly.json') {

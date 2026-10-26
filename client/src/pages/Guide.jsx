@@ -156,7 +156,7 @@ const SECTIONS = [
     steps: ['המפתח של המודל והפרטים של הפורטל נשמרים מוצפנים. ב"פרטיות ואבטחה" רואים בדיוק מה נשמר, ואפשר למחוק את החשבון וכל המידע בלחיצה (בתפריט החשבון).'],
   },
   {
-    id: 'committee', owner: true, icon: Table2, title: 'מערכת הועד', to: '/committee', cta: 'למערכת הועד',
+    id: 'committee', committee: true, memberSteps: 1, icon: Table2, title: 'מערכת הועד', to: '/committee', cta: 'למערכת הועד',
     short: 'כל הקורסים זה על גבי זה, כדי למצוא שעות פנויות.',
     steps: [
       'מסמנים אילו מסלולים (שיעור עם תרגול) פתוחים למחזור, והעמוד מראה מתי אף סטודנט לא בשיעור.',
@@ -176,7 +176,8 @@ export default function Guide() {
   const { hash } = useLocation();
   useEffect(() => { setContext({}); }, [setContext]);
   const owner = !STATIC || me?.owner;
-  const list = SECTIONS.filter((s) => !s.owner || owner);
+  const committee = !STATIC || me?.committee;
+  const list = SECTIONS.filter((s) => (!s.owner || owner) && (!s.committee || committee));
 
   // A link like /guide#portal opens that part.
   useEffect(() => {
@@ -209,13 +210,13 @@ export default function Guide() {
             <summary>
               <span className="nav-dot guide-icon"><s.icon size={16} /></span>
               <span className="grow" style={{ minWidth: 0 }}>
-                <b style={{ display: 'block' }}>{s.title}{s.owner && <span className="chip" style={{ marginInlineStart: 8 }}>לועד</span>}</b>
+                <b style={{ display: 'block' }}>{s.title}{(s.owner || s.committee) && <span className="chip" style={{ marginInlineStart: 8 }}>לועד</span>}</b>
                 <span className="faint" style={{ fontSize: 13 }}>{s.short}</span>
               </span>
               <ChevronDown size={18} className="guide-chev" />
             </summary>
             <div className="guide-body">
-              <ol>{s.steps.map((t, i) => <li key={i}>{t}</li>)}</ol>
+              <ol>{s.steps.slice(0, !owner && s.memberSteps ? s.memberSteps : undefined).map((t, i) => <li key={i}>{t}</li>)}</ol>
               {s.tip && <div className="callout" style={{ marginTop: 10 }}>💡 {s.tip}</div>}
               <Link to={s.to} className="btn sm" style={{ marginTop: 12 }}>{s.cta}</Link>
             </div>

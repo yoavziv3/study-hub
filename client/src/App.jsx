@@ -112,7 +112,7 @@ function Sidebar({ open, onNavigate }) {
       />}
       {!STATIC && <NavItem to="/reports" icon={<Flag size={17} />} label="דיווחים ומשוב" onClick={onNavigate} />}
       {!STATIC && <NavItem to="/runs" icon={<ListChecks size={17} />} label="יומן הרצות" onClick={onNavigate} />}
-      {(!STATIC || me?.owner) && <NavItem to="/committee" icon={<Table2 size={17} />} label="מערכת הועד" onClick={onNavigate} />}
+      {(!STATIC || me?.committee) && <NavItem to="/committee" icon={<Table2 size={17} />} label="מערכת הועד" onClick={onNavigate} />}
       {(!STATIC || me?.owner) && <NavItem to="/system" icon={<Activity size={17} />} label="מצב המערכת" onClick={onNavigate} />}
       <div className="sidebar-foot">
         <Feedback />
@@ -332,7 +332,7 @@ function Shell() {
             <Route path="/grades" element={<Grades />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/system" element={<System />} />
-            <Route path="/committee" element={!STATIC || me?.owner ? <Committee /> : <Navigate to="/" replace />} />
+            <Route path="/committee" element={!STATIC || me?.committee ? <Committee /> : <Navigate to="/" replace />} />
             <Route path="/weekly" element={<Weekly />} />
             <Route path="/files" element={<Files />} />
             <Route path="/file/:id" element={<MyFile />} />
