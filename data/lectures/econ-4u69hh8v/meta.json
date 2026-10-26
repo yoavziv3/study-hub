@@ -1,0 +1,29 @@
+{
+  "id": "econ-4u69hh8v",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "עקומת התמורה, יתרון יחסי ועלויות אלטרנטיביות",
+  "originalName": "תרגול 1 - עקומת התמורה.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 16,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T10:47:23.191Z",
+  "updatedAt": "2026-10-26T11:06:52.937Z",
+  "noAi": false,
+  "noAiReason": null,
+  "aiError": null,
+  "announced": true,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T11:04:49.205Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": "כתיבת הסיכום נכשלה"
+}
