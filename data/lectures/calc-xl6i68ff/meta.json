@@ -22,14 +22,14 @@
     "module": "תרגולים של ברנדה",
     "timemodified": 1792995962
   },
-  "updatedAt": "2026-10-26T09:16:53.868Z",
+  "updatedAt": "2026-10-26T10:43:52.821Z",
   "aiError": null,
   "announced": true,
-  "aiRetries": 0,
+  "aiRetries": 1,
   "checks": {
     "at": "2026-10-26T08:57:35.073Z",
     "found": 0
   },
   "notesStatus": null,
-  "notesError": "כתיבת הסיכום נכשלה"
+  "notesError": null
 }

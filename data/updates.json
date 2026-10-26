@@ -2437,6 +2437,42 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-10-26T08:05:14.598Z"
       }
+    },
+    {
+      "id": "mvp4od901rvx",
+      "key": "announcement:894788",
+      "type": "announcement",
+      "courseId": "m67024",
+      "title": "שינוי מועד תרגול לקבוצות של נינה",
+      "body": "שלום לכולם/ן,\n\nביום שלישי 27/10/26 כל התרגולים מתבטלים, לכן אשמח ליצירת קשר עם נציגי הקבוצות במייל (vina@post.bgu.ac.il) לקביעת מועד חילופי כבר בשבוע הבא. \n\nבברכה,\n\nנינה",
+      "author": "נינה גורביץ",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894788",
+      "createdAt": "2026-10-26T08:53:48.000Z",
+      "addedAt": "2026-10-26T10:42:52.308Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "14",
+          "33",
+          "53",
+          "65",
+          "73"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "יום שלישי",
+        "time": "",
+        "date": "27/10/26",
+        "onDate": "2026-10-27",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "התרגול מחר, יום שלישי, מתבטל; נציגי הקבוצות יתאמו עם נינה מועד חילופי במייל.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-26T10:43:04.203Z"
+      }
     }
   ],
   "deadlines": [
