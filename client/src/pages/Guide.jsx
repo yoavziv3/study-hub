@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   CircleHelp, Home as HomeIcon, Bell, Building2, CalendarRange, CalendarCheck, BookOpen, FileText, Target, Layers, Calculator, Gauge,
-  Search, History, ShieldCheck, ChevronDown, Table2, Activity, Smartphone,
+  Search, History, ShieldCheck, ChevronDown, Table2, Activity, Smartphone, FolderUp,
 } from 'lucide-react';
 import { useApp } from '../store.jsx';
 import { STATIC } from '../api.js';
@@ -101,6 +101,17 @@ const SECTIONS = [
       'כרטיסיות: מסמנים "ידעתי" או "לא ידעתי", והמערכת מחזירה אותן בזמן המתאים. מושגים: המילון של השיעור.',
       'הערות: מקום לרשום משהו אישי. "סימון כנלמד" נותן התקדמות בקורס.',
     ],
+  },
+  {
+    id: 'files', icon: FolderUp, title: 'הקבצים שלי', to: '/files', cta: 'להעלאת קבצים',
+    short: 'הרצאות ותרגולים שיש לך ולא עלו למודל, רק בשבילך.',
+    steps: [
+      'בוחרים קורס (גם אחד שאתם לא רשומים אליו), ואז "הרצאות" או "תרגולים", וגוררים לשם PDF, PowerPoint או Word.',
+      'PDF נקרא ישר באתר, עמוד אחרי עמוד. קבצי PowerPoint ו-Word אפשר להוריד.',
+      'הקבצים מופיעים גם בעמוד הקורס, מתחת לשיעורים או לתרגולים, בכותרת "שלי".',
+      'הם פרטיים ולא עוברים AI: אין עליהם סיכום, שאלות או כרטיסיות. את אלה האתר בונה רק לחומר שעולה מהמודל.',
+    ],
+    tip: 'יש מקום ל-100MB לכל סטודנט, עד 20MB לקובץ. אפשר לשנות שם, להעביר בין הרצאה לתרגול ולמחוק.',
   },
   {
     id: 'review', icon: Layers, title: 'חזרה להיום', to: '/review', cta: 'לחזרה',

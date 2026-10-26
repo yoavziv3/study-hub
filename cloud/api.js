@@ -13,6 +13,7 @@ import { saveSubscription, removeSubscription, sendTest, notifyTick } from './li
 import { watchMoodle } from './lib/moodle-watch.js';
 import { gradeRows } from '../shared/grades.js';
 import { portalStatus, connectPortal, refreshPortal, disconnectPortal, portalPing, portalJobs, portalResult, pendingPortalNotices, savePortalNotices } from './lib/portal.js';
+import { personalFiles } from './lib/files.js';
 import { saveHeartbeat, ownerUserId, systemStatus, publishedItems, buildInfo } from './lib/health.js';
 
 const MIN = 60000;
@@ -107,6 +108,9 @@ async function route({ request, env }) {
     await env.DB.prepare('UPDATE users SET reminder_days = ? WHERE id = ?').bind(days.join(','), user.id).run();
     return json({ ok: true, reminderDays: days });
   }
+
+  // The student's own files (lectures and tutorials added for themselves; no AI is ever run on them).
+  if (path === '/api/me/files' || path.startsWith('/api/me/files/')) return personalFiles({ request, env, user, path, method });
 
   if (path === '/api/progress') {
     if (method === 'GET') return json(await loadProgress(env, user));

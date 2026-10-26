@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2, CalendarCheck, CircleHelp } from 'lucide-react';
+import { Home as HomeIcon, Search, Upload, Moon, Sun, Menu, Sparkles, Loader2, GraduationCap, Bell, LogOut, Trash2, Hourglass, Users, AlertTriangle, History, Flag, ShieldCheck, X, CalendarRange, Calculator, Activity, RefreshCw, Gauge, ListChecks, Table2, CalendarCheck, CircleHelp, FolderUp } from 'lucide-react';
 import { useApp } from './store.jsx';
 import { CourseIcon, SiteFooter } from './components/ui.jsx';
 import Home from './pages/Home.jsx';
@@ -22,6 +22,8 @@ const Committee = lazy(() => import('./pages/Committee.jsx'));
 const Exams = lazy(() => import('./pages/Exams.jsx'));
 const Guide = lazy(() => import('./pages/Guide.jsx'));
 const Weekly = lazy(() => import('./pages/Weekly.jsx'));
+const Files = lazy(() => import('./pages/Files.jsx'));
+const MyFile = lazy(() => import('./pages/MyFile.jsx'));
 const Runs = lazy(() => import('./pages/Runs.jsx'));
 const Onboarding = lazy(() => import('./components/Onboarding.jsx'));
 const ChatPanel = lazy(() => import('./components/ChatPanel.jsx'));
@@ -81,6 +83,7 @@ function Sidebar({ open, onNavigate }) {
       <NavItem to="/exams" icon={<CalendarCheck size={17} />} label="לוח מבחנים" onClick={onNavigate} />
       <NavItem to="/weekly" icon={<Gauge size={17} />} label="דוח עומס שבועי" onClick={onNavigate} />
       <NavItem to="/grades" icon={<Calculator size={17} />} label="ציונים וממוצע" onClick={onNavigate} />
+      {STATIC && <NavItem to="/files" icon={<FolderUp size={17} />} label="הקבצים שלי" onClick={onNavigate} />}
       <div className="nav-label">הקורסים שלי</div>
       {courses.map((c) => <CourseNav key={c.id} c={c} progress={progress} onNavigate={onNavigate} />)}
       {STATIC && me?.pending?.length > 0 && (
@@ -331,6 +334,8 @@ function Shell() {
             <Route path="/system" element={<System />} />
             <Route path="/committee" element={!STATIC || me?.owner ? <Committee /> : <Navigate to="/" replace />} />
             <Route path="/weekly" element={<Weekly />} />
+            <Route path="/files" element={<Files />} />
+            <Route path="/file/:id" element={<MyFile />} />
             <Route path="/runs" element={<Runs />} />
           </Routes>
         </AnimatePresence>

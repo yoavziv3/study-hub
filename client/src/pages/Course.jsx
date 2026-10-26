@@ -14,6 +14,7 @@ import CourseLinks from '../components/CourseLinks.jsx';
 import { LABS } from '../labs/index.js';
 import { AssignmentLine } from '../components/Assignment.jsx';
 import ExamPrep from '../components/ExamPrep.jsx';
+import MyFiles from '../components/MyFiles.jsx';
 import { nextEvent, daysText } from '../lib/exam.js';
 
 function LectureCard({ l, course, i }) {
@@ -372,6 +373,7 @@ export default function Course() {
                 <span className="grow">השיעורים הבאים מהסמסטר הקודם ({course.lectures.filter((l) => l.kind === 'prep' && l.hasContent).length}), עם סיכומים ושאלות, נמצאים ב"הכנה למבחן".</span>
               </Link>
             )}
+            {(kind === 'lecture' || kind === 'tutorial') && <MyFiles courseId={course.id} kind={kind} />}
             {kind === 'homework' && course.ai === false && (
               <div className="callout row" style={{ marginTop: 18, gap: 10 }}>
                 <Info size={17} />

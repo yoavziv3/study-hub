@@ -43,6 +43,10 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS health (key TEXT PRIMARY KEY, at INTEGER NOT NULL, data TEXT)`,
   // Claude's reading of the portal's notices (the Mac's notices.js), by the notice's key (shared/notices.js noticeKey).
   `CREATE TABLE IF NOT EXISTS notice_analysis (key TEXT PRIMARY KEY, analysis TEXT, at INTEGER NOT NULL)`,
+  // The student's own files (files.js): private lectures and tutorials, stored as base64 chunks of ~0.5 MB.
+  `CREATE TABLE IF NOT EXISTS user_files (id TEXT PRIMARY KEY, user_id INTEGER NOT NULL, course_id TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, name TEXT NOT NULL, size INTEGER NOT NULL, chunks INTEGER NOT NULL, ready INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS user_files_user ON user_files(user_id, course_id)`,
+  `CREATE TABLE IF NOT EXISTS user_file_chunks (file_id TEXT NOT NULL, n INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (file_id, n))`,
 ];
 
 let ready = null;

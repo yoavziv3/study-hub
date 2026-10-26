@@ -7,6 +7,7 @@ import { schedule } from './lib/srs.js';
 import { resyncPush } from './lib/push.js';
 import { cohortGroups } from '../../shared/groups.js';
 import { otherGroupsTest } from './lib/otherGroups.js';
+import { forgetAllPersonalFiles } from './lib/personalFiles.js';
 
 /* App-wide state: the signed-in student (cloud), study progress, courses, updates & deadlines, toasts,
    chat + upload + search controls. Locally (on the Mac) there is no sign-in and data comes from the server. */
@@ -321,7 +322,7 @@ export function AppProvider({ children }) {
   }, [toast]);
   const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), []);
 
-  const forgetCachedData = () => navigator.serviceWorker?.controller?.postMessage('clear-data');
+  const forgetCachedData = () => { navigator.serviceWorker?.controller?.postMessage('clear-data'); forgetAllPersonalFiles(); };
   const signOut = useCallback(async () => {
     await api.post('/api/auth/logout', {}).catch(() => {});
     forgetCachedData();

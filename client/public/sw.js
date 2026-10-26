@@ -1,7 +1,7 @@
 // Service worker for the cloud site: the app opens instantly and pages you've visited work offline.
 // Code and icons: cache first (they don't change). Slide images, course data and the account: network first,
 // falling back to the last copy when offline. Sign-in, admin and calendar requests are never cached.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL = `shell-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const DATA = `data-${VERSION}`;
@@ -45,6 +45,8 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;
   if (/^\/api\/(auth|admin|cal)\//.test(url.pathname)) return;
+  // The student's own files are large and private: never kept by the worker (cloud/lib/files.js).
+  if (/^\/api\/me\/files\/[0-9a-f]+\/chunks\//.test(url.pathname)) return;
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).catch(async () => (await caches.match('/')) || Response.error()));
   } else if (url.pathname.startsWith('/assets/') || /\.(png|svg|woff2?)$/.test(url.pathname)) {
