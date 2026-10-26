@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8l9lb",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "גבולות אינסופיים (פרק 7, חלק א)",
+  "originalName": "ספר הקורס – גבולות אינסופיים.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 12,
+  "unitNumber": null,
+  "slideCount": 12,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.510Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:08:57.244Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:08:57.241Z",
+    "found": 0
+  }
+}
