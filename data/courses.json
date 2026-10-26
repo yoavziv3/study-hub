@@ -3202,5 +3202,179 @@
       "lecture"
     ],
     "bank": false
+  },
+  {
+    "id": "m68589",
+    "code": "500-5-0006",
+    "name": "מבוא לפיזיקה",
+    "short": "מבוא לפיזיקה",
+    "color": "emerald",
+    "icon": "BookOpen",
+    "staff": [],
+    "unitLabel": "הרצאה",
+    "tagline": "",
+    "keywords": [],
+    "ai": false,
+    "remote": true,
+    "moodleIds": [
+      68589
+    ],
+    "term": {
+      "year": 2027,
+      "semester": 1
+    },
+    "exams": {
+      "groups": {
+        "1": [
+          {
+            "key": "a",
+            "label": "מועד א׳",
+            "quiz": false,
+            "date": "2027-01-15",
+            "time": "",
+            "place": [
+              "קרייטמן-זלוטובסקי(חדש) [34]"
+            ]
+          },
+          {
+            "key": "b",
+            "label": "מועד ב׳",
+            "quiz": false,
+            "date": "2027-02-14",
+            "time": "",
+            "place": []
+          }
+        ],
+        "2": [
+          {
+            "key": "a",
+            "label": "מועד א׳",
+            "quiz": false,
+            "date": "2027-01-15",
+            "time": "",
+            "place": []
+          },
+          {
+            "key": "b",
+            "label": "מועד ב׳",
+            "quiz": false,
+            "date": "2027-02-14",
+            "time": "",
+            "place": [
+              "קרייטמן-זלוטובסקי(חדש) [34]"
+            ]
+          }
+        ],
+        "3": [
+          {
+            "key": "a",
+            "label": "מועד א׳",
+            "quiz": false,
+            "date": "2027-01-15",
+            "time": "",
+            "place": []
+          },
+          {
+            "key": "b",
+            "label": "מועד ב׳",
+            "quiz": false,
+            "date": "2027-02-14",
+            "time": "",
+            "place": []
+          }
+        ]
+      },
+      "checkedAt": "2026-10-26T17:57:13.813Z",
+      "updatedAt": "2026-10-26T17:57:13.813Z"
+    },
+    "classes": [
+      {
+        "group": "1",
+        "type": "שעור",
+        "lecturer": "ד\"ר ג. רשס",
+        "slots": [
+          {
+            "day": 5,
+            "start": "08:00",
+            "end": "12:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      },
+      {
+        "group": "11",
+        "type": "תרגיל",
+        "lecturer": "ד\"ר ג. רשס",
+        "slots": [
+          {
+            "day": 5,
+            "start": "12:00",
+            "end": "14:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      },
+      {
+        "group": "2",
+        "type": "שעור",
+        "lecturer": "ד\"ר מ. ספקטור",
+        "slots": [
+          {
+            "day": 5,
+            "start": "08:00",
+            "end": "12:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      },
+      {
+        "group": "12",
+        "type": "תרגיל",
+        "lecturer": "מר א. זאטולובסקי",
+        "slots": [
+          {
+            "day": 5,
+            "start": "12:00",
+            "end": "14:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      },
+      {
+        "group": "3",
+        "type": "שעור",
+        "lecturer": "ד\"ר א. הלסטוך",
+        "slots": [
+          {
+            "day": 5,
+            "start": "08:00",
+            "end": "12:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      },
+      {
+        "group": "13",
+        "type": "תרגיל",
+        "lecturer": "גב' ר. גוטין",
+        "slots": [
+          {
+            "day": 5,
+            "start": "12:00",
+            "end": "14:00",
+            "place": "",
+            "mode": "מקוון"
+          }
+        ]
+      }
+    ],
+    "credits": 0,
+    "passGrade": 65,
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1"
   }
 ]

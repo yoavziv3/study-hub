@@ -1,0 +1,28 @@
+{
+  "id": "m68589-k6pqqhz7",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "תרגיל בית - 1",
+  "originalName": "תרגיל בית - 1.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 1,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T17:57:02.546Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3455619:/תרגיל בית - 1.pdf",
+    "section": "דפי תרגול וחזרה",
+    "module": "דף תירגול להרצאה 1",
+    "timemodified": 1792494010,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T17:57:13.591Z",
+  "announced": true
+}

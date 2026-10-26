@@ -1,0 +1,50 @@
+[
+  {
+    "id": 3380768,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3380768",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3461961,
+    "type": "file",
+    "name": "וקטורים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3461961",
+    "section": "מצגות",
+    "ext": "pdf"
+  },
+  {
+    "id": 3455613,
+    "type": "syllabus",
+    "name": "סילבוס",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3455613",
+    "section": "דפי תרגול וחזרה",
+    "ext": "pdf"
+  },
+  {
+    "id": 3455614,
+    "type": "file",
+    "name": "נוסחאון",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3455614",
+    "section": "דפי תרגול וחזרה",
+    "ext": "pdf"
+  },
+  {
+    "id": 3455616,
+    "type": "file",
+    "name": "מבחנים משנים קודמות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3455616",
+    "section": "דפי תרגול וחזרה",
+    "ext": "docx"
+  },
+  {
+    "id": 3455623,
+    "type": "link",
+    "name": "מבוא לנפילה חופשית - סרטון קצר",
+    "href": "https://www.youtube.com/watch?v=GGgfn_GSpqc",
+    "section": "דפי תרגול וחזרה",
+    "ext": ""
+  }
+]

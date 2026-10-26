@@ -1,0 +1,28 @@
+{
+  "id": "m68589-k6uh1d0y",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "פתרון מבחן מבוא לפיסיקה קיץ 2023 מועד ב מעודכן 27-9",
+  "originalName": "פתרון מבחן מבוא לפיסיקה קיץ 2023_מועד ב_מעודכן_27-9.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 27,
+  "unitNumber": 27,
+  "slideCount": 12,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T17:57:08.677Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3455631:/פתרון מבחן מבוא לפיסיקה קיץ 2023_מועד ב_מעודכן_27-9.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "מבחנים",
+    "timemodified": 1792494484,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T17:57:19.222Z",
+  "announced": true
+}

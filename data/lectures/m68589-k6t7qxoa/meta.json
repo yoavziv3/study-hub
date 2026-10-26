@@ -1,0 +1,28 @@
+{
+  "id": "m68589-k6t7qxoa",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "פתרון מבחן מבוא לפיסיקה מועד א קייץ 2024 (2)",
+  "originalName": "פתרון מבחן מבוא לפיסיקה מועד א קייץ 2024 (2).pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 14,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T17:57:07.046Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3455631:/פתרון מבחן מבוא לפיסיקה מועד א קייץ 2024 (2).pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "מבחנים",
+    "timemodified": 1792494484,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T17:57:17.626Z",
+  "announced": true
+}

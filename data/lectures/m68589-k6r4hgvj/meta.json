@@ -1,0 +1,31 @@
+{
+  "id": "m68589-k6r4hgvj",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "תרגיל בית - 3 פד",
+  "originalName": "תרגיל בית - 3 פד.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T17:57:04.337Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3455622:/תרגיל בית - 3 פד.pdf",
+    "section": "דפי תרגול וחזרה",
+    "module": "דף תירגול להרצאה 3",
+    "timemodified": 1792494011,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T17:57:13.793Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}
