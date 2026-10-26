@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8i3h2",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "משפט הסנדוויץ׳ ומונוטוניות (פרק 6, חלק ב)",
+  "originalName": "ספר הקורס – משפט הסנדוויץ׳ ומונוטוניות.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 10,
+  "unitNumber": null,
+  "slideCount": 16,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.507Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:02:03.110Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:02:03.108Z",
+    "found": 1
+  }
+}
