@@ -1,0 +1,28 @@
+{
+  "id": "m68588-kjvbm7g2",
+  "courseId": "m68588",
+  "autoCourse": false,
+  "title": "פתרון מבוא לפיסיקה 2022 מועד ב",
+  "originalName": "פתרון מבוא לפיסיקה 2022 מועד ב.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 19,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T18:07:16.306Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68588,
+    "fileKey": "68588:3456714:/פתרון מבוא לפיסיקה 2022 מועד ב.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "מבחנים",
+    "timemodified": 1792507139,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T18:07:22.391Z",
+  "announced": true
+}

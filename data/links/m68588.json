@@ -1,0 +1,42 @@
+[
+  {
+    "id": 3380774,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3380774",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3456703,
+    "type": "syllabus",
+    "name": "סילבוס",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456703",
+    "section": "דפי תרגול וחזרה",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456704,
+    "type": "file",
+    "name": "נוסחאון",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456704",
+    "section": "דפי תרגול וחזרה",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456706,
+    "type": "file",
+    "name": "מבחנים משנים קודמות",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456706",
+    "section": "דפי תרגול וחזרה",
+    "ext": "docx"
+  },
+  {
+    "id": 3456713,
+    "type": "link",
+    "name": "מבוא לנפילה חופשית - סרטון קצר",
+    "href": "https://www.youtube.com/watch?v=GGgfn_GSpqc",
+    "section": "דפי תרגול וחזרה",
+    "ext": ""
+  }
+]

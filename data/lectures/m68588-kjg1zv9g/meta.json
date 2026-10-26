@@ -1,0 +1,28 @@
+{
+  "id": "m68588-kjg1zv9g",
+  "courseId": "m68588",
+  "autoCourse": false,
+  "title": "01 lecture vectors",
+  "originalName": "01 lecture vectors.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 44,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T18:06:56.520Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68588,
+    "fileKey": "68588:3456692:/01 lecture vectors.pdf",
+    "section": "מצגות",
+    "module": "lecture 1",
+    "timemodified": 1792507137,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T18:07:01.351Z",
+  "announced": true
+}

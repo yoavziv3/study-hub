@@ -1,0 +1,28 @@
+{
+  "id": "m68588-kjsf1uoj",
+  "courseId": "m68588",
+  "autoCourse": false,
+  "title": "מועד א 2020",
+  "originalName": "__מועד א 2020_.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 5,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T18:07:12.541Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68588,
+    "fileKey": "68588:3456714:/__מועד א 2020_.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "מבחנים",
+    "timemodified": 1792507139,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T18:07:20.299Z",
+  "announced": true
+}

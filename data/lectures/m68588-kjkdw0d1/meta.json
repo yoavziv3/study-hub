@@ -1,0 +1,28 @@
+{
+  "id": "m68588-kjkdw0d1",
+  "courseId": "m68588",
+  "autoCourse": false,
+  "title": "04 newton laws",
+  "originalName": "04 newton laws.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 29,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T18:07:02.133Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68588,
+    "fileKey": "68588:3456695:/04 newton laws.pdf",
+    "section": "מצגות",
+    "module": "lecture 4",
+    "timemodified": 1792507137,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T18:07:07.263Z",
+  "announced": true
+}

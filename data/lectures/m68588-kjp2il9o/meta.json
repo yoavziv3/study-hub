@@ -1,0 +1,31 @@
+{
+  "id": "m68588-kjp2il9o",
+  "courseId": "m68588",
+  "autoCourse": false,
+  "title": "תרגיל בית - 3",
+  "originalName": "תרגיל בית - 3.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T18:07:08.203Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68588,
+    "fileKey": "68588:3456711:/תרגיל בית - 3.pdf",
+    "section": "דפי תרגול וחזרה",
+    "module": "דף תירגול להרצאה 2",
+    "timemodified": 1792507139,
+    "initial": true
+  },
+  "updatedAt": "2026-10-26T18:07:20.062Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

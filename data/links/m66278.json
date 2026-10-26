@@ -1,0 +1,394 @@
+[
+  {
+    "id": 3366395,
+    "type": "zoom",
+    "name": "Zoom Links",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3366395",
+    "section": "General",
+    "ext": ""
+  },
+  {
+    "id": 3456349,
+    "type": "file",
+    "name": "Reserve Duty Policy 2027 Hebrew",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456349",
+    "section": "General",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456351,
+    "type": "file",
+    "name": "Reserve Duty Policy 2027",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456351",
+    "section": "General",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456353,
+    "type": "syllabus",
+    "name": "Syllabus and Grading",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3456353",
+    "section": "General",
+    "ext": ""
+  },
+  {
+    "id": 3456355,
+    "type": "link",
+    "name": "Name Tents",
+    "href": "https://www.youtube.com/watch?v=8ePZnm5OrOg",
+    "section": "1. October 22",
+    "ext": ""
+  },
+  {
+    "id": 3456356,
+    "type": "file",
+    "name": "Grammar Past Simple Review",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456356",
+    "section": "1. October 22",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456357,
+    "type": "link",
+    "name": "Kahoot Past Simple",
+    "href": "https://create.kahoot.it/details/aa-past-simple/c1a4fd53-a322-4776-b5b3-a2b9d6696290?drawer=",
+    "section": "1. October 22",
+    "ext": ""
+  },
+  {
+    "id": 3456362,
+    "type": "link",
+    "name": "Quizlet AWL Sublist 1",
+    "href": "https://quizlet.com/il/337480796/awl-sublist-1-english-arabichebrew-flash-cards/",
+    "section": "1. October 22",
+    "ext": ""
+  },
+  {
+    "id": 3456363,
+    "type": "file",
+    "name": "How mental exhaustion changes the choices you make   Scientific American with par num",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456363",
+    "section": "1. October 22",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456365,
+    "type": "file",
+    "name": "Grammar Present Perfect vs Past Simple",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456365",
+    "section": "2. October 29",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456366,
+    "type": "link",
+    "name": "Kahoot Past Simple vs Present Perfect",
+    "href": "https://create.kahoot.it/details/aa-past-simple-vs-present-perfect/fb042135-85d5-4d4f-ad3a-e67ccc410a37?drawer=",
+    "section": "2. October 29",
+    "ext": ""
+  },
+  {
+    "id": 3456371,
+    "type": "link",
+    "name": "Quizlet--AWL sublist 2, Hebrew and Arabic",
+    "href": "https://quizlet.com/il/33157941/awl-sublist-2-in-arabic-english-and-hebrew-flash-cards/",
+    "section": "2. October 29",
+    "ext": ""
+  },
+  {
+    "id": 3456372,
+    "type": "file",
+    "name": "This is Your Brain in Meltdown with par numbers",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456372",
+    "section": "2. October 29",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456374,
+    "type": "file",
+    "name": "Grammar Connectors Cause, Effect, and Contrast",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456374",
+    "section": "3. November 5",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456375,
+    "type": "link",
+    "name": "Kahoot Connectors of Cause, Effect, Contrast",
+    "href": "https://create.kahoot.it/details/aa-connectors-of-cause-effect-and-contrast/1c481dbb-97c8-484e-807b-ea85473b8bd3?drawer=",
+    "section": "3. November 5",
+    "ext": ""
+  },
+  {
+    "id": 3456380,
+    "type": "file",
+    "name": "More Common Connectors",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456380",
+    "section": "3. November 5",
+    "ext": "docx"
+  },
+  {
+    "id": 3456381,
+    "type": "file",
+    "name": "Why do people discard scientific rigor",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456381",
+    "section": "3. November 5",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456384,
+    "type": "link",
+    "name": "Quizlet for AWL Sublist 3",
+    "href": "https://quizlet.com/il/306946166/awl-sublist-3-in-arabic-english-and-hebrew-flash-cards/",
+    "section": "3. November 5",
+    "ext": ""
+  },
+  {
+    "id": 3456385,
+    "type": "file",
+    "name": "Brain Scans of Jazz Musicians Reveal How to Reach a Creative ‘Flow State’   Scientific American with par num",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456385",
+    "section": "3. November 5",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456387,
+    "type": "file",
+    "name": "Grammar Modal Verbs Review",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456387",
+    "section": "4. November 12",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456388,
+    "type": "link",
+    "name": "Kahoot on Modals",
+    "href": "https://create.kahoot.it/details/mastering-english-modal-verbs/40d16702-21da-4df6-b261-74a15c61fad3?drawer=",
+    "section": "4. November 12",
+    "ext": ""
+  },
+  {
+    "id": 3456393,
+    "type": "file",
+    "name": "The Richness of Routine (13)",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456393",
+    "section": "4. November 12",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456395,
+    "type": "link",
+    "name": "Quizlet--AWL, sublist 4",
+    "href": "https://quizlet.com/il/87631652/awl-sublist-4-hebrew-flash-cards/",
+    "section": "4. November 12",
+    "ext": ""
+  },
+  {
+    "id": 3456396,
+    "type": "file",
+    "name": "Ready for Anything with par num",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456396",
+    "section": "4. November 12",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456398,
+    "type": "file",
+    "name": "Student Activities after reading Ready for Anything",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456398",
+    "section": "4. November 12",
+    "ext": "docx"
+  },
+  {
+    "id": 3456399,
+    "type": "file",
+    "name": "Grammar Conditionals 2nd and 3rd",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456399",
+    "section": "5. November 19",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456403,
+    "type": "file",
+    "name": "Student Activities after reading Ready for Anything (copy)",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456403",
+    "section": "5. November 19",
+    "ext": "docx"
+  },
+  {
+    "id": 3456405,
+    "type": "link",
+    "name": "Quizlet AWL Sublist 5",
+    "href": "https://quizlet.com/il/100050426/awl-sublist-5-in-arabic-english-and-hebrew-flash-cards/",
+    "section": "5. November 19",
+    "ext": ""
+  },
+  {
+    "id": 3456407,
+    "type": "link",
+    "name": "Kahoot 2nd and 3rd Conditionals",
+    "href": "https://create.kahoot.it/details/aa-2nd-and-3rd-conditionals/fbcd0524-f014-4dce-b5c6-224c68c8002b?drawer=",
+    "section": "5. November 19",
+    "ext": ""
+  },
+  {
+    "id": 3456408,
+    "type": "file",
+    "name": "Grammar Expressing Opinions",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456408",
+    "section": "6. November 26",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456409,
+    "type": "link",
+    "name": "Kahoot Expressing Opinions",
+    "href": "https://create.kahoot.it/details/aa-expressing-opinions/686e3de0-bd86-41a1-8fdb-c8447d707c8c?drawer=",
+    "section": "6. November 26",
+    "ext": ""
+  },
+  {
+    "id": 3456413,
+    "type": "file",
+    "name": "Recognizing Terms and Definitions in Articles",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456413",
+    "section": "6. November 26",
+    "ext": "docx"
+  },
+  {
+    "id": 3456414,
+    "type": "file",
+    "name": "The Power to Persuade",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456414",
+    "section": "6. November 26",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456415,
+    "type": "link",
+    "name": "Quizlet AWL Sublist 6",
+    "href": "https://quizlet.com/il/356643629/awl-sublist-6-hebrew-flash-cards/",
+    "section": "6. November 26",
+    "ext": ""
+  },
+  {
+    "id": 3456416,
+    "type": "file",
+    "name": "The Power to Persuade Questions (10)",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456416",
+    "section": "6. November 26",
+    "ext": "docx"
+  },
+  {
+    "id": 3456419,
+    "type": "file",
+    "name": "SPICE Your Research Choice",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456419",
+    "section": "7. December 3",
+    "ext": "docx"
+  },
+  {
+    "id": 3456420,
+    "type": "link",
+    "name": "Quizlet AWL Sublist 7",
+    "href": "https://quizlet.com/il/356643788/awl-sublist-7-hebrew-flash-cards/",
+    "section": "7. December 3",
+    "ext": ""
+  },
+  {
+    "id": 3456426,
+    "type": "file",
+    "name": "Individual Research Article Presentation",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456426",
+    "section": "9. December 17",
+    "ext": "docx"
+  },
+  {
+    "id": 3456428,
+    "type": "link",
+    "name": "Quizlet for AWL Sublist 8",
+    "href": "https://quizlet.com/il/356643916/awl-sublist-8-hebrew-flash-cards/",
+    "section": "9. December 17",
+    "ext": ""
+  },
+  {
+    "id": 3456430,
+    "type": "file",
+    "name": "Reflecting on Your Presentation",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456430",
+    "section": "10. December 24--Presentations Group 1",
+    "ext": "docx"
+  },
+  {
+    "id": 3456433,
+    "type": "file",
+    "name": "Reflecting on Your Presentation",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456433",
+    "section": "11. December 31--Presentations Group 2",
+    "ext": "docx"
+  },
+  {
+    "id": 3456438,
+    "type": "link",
+    "name": "Quizlet for AWL Sublist 9",
+    "href": "https://quizlet.com/7596219/awl-sublist-9-flash-cards/",
+    "section": "12. January 7",
+    "ext": ""
+  },
+  {
+    "id": 3456439,
+    "type": "file",
+    "name": "Managing Human Error in Aviation 1 (18)",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456439",
+    "section": "12. January 7",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456440,
+    "type": "file",
+    "name": "Human Error v1",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456440",
+    "section": "12. January 7",
+    "ext": "doc"
+  },
+  {
+    "id": 3456446,
+    "type": "link",
+    "name": "Quizlet for AWL Sublist 10",
+    "href": "https://quizlet.com/7596336/awl-sublist-10-flash-cards/",
+    "section": "13. January 14",
+    "ext": ""
+  },
+  {
+    "id": 3456447,
+    "type": "file",
+    "name": "Why your ability to cope with stress changes with time   Scientific American with par num",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456447",
+    "section": "13. January 14",
+    "ext": "pdf"
+  },
+  {
+    "id": 3456448,
+    "type": "file",
+    "name": "Why Your Ability Practice Exam",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456448",
+    "section": "13. January 14",
+    "ext": "docx"
+  },
+  {
+    "id": 3456450,
+    "type": "link",
+    "name": "FYI--Rethink Stress Toolkit",
+    "href": "https://sparqtools.org/rethinkingstress/",
+    "section": "13. January 14",
+    "ext": ""
+  },
+  {
+    "id": 3456451,
+    "type": "file",
+    "name": "SEMESTER REFLECTION ASSIGNMENT",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3456451",
+    "section": "13. January 14",
+    "ext": "docx"
+  }
+]
