@@ -1,0 +1,42 @@
+[
+  {
+    "id": 3441892,
+    "type": "file",
+    "name": "נוהל ערעורים – קורס עברית",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3441892",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
+    "id": 3441895,
+    "type": "file",
+    "name": "כללי פלגיאט",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3441895",
+    "section": "מבוא",
+    "ext": "pdf"
+  },
+  {
+    "id": 3379286,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3379286",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3427722,
+    "type": "file",
+    "name": "חוברת הבנת הנקרא – קורס עברית רמה ו",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3427722",
+    "section": "חומרי לימוד ",
+    "ext": "pdf"
+  },
+  {
+    "id": 3441888,
+    "type": "file",
+    "name": "טבלת עזר – דקדוק",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3441888",
+    "section": "חומרי לימוד ",
+    "ext": "pdf"
+  }
+]

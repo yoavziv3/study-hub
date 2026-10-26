@@ -1,0 +1,130 @@
+[
+  {
+    "id": 3366457,
+    "type": "zoom",
+    "name": "Zoom Links",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3366457",
+    "section": "General",
+    "ext": ""
+  },
+  {
+    "id": 3402098,
+    "type": "link",
+    "name": "1.1 ABT 2026 Fall Class Google Sheet-INTERACT!",
+    "href": "https://docs.google.com/spreadsheets/d/1LoMmYysjeAR1GCxGpeoqcGn9JSBEpCtY/edit?usp=sharing&ouid=118057314179276505410&rtpof=true&sd=true",
+    "section": "General",
+    "ext": ""
+  },
+  {
+    "id": 3460341,
+    "type": "file",
+    "name": "Reserve Duty Policy 2027 English",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3460341",
+    "section": "General",
+    "ext": "pdf"
+  },
+  {
+    "id": 3460342,
+    "type": "file",
+    "name": "Reserve Duty Policy 2027 Hebrew",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3460342",
+    "section": "General",
+    "ext": "pdf"
+  },
+  {
+    "id": 3418925,
+    "type": "folder",
+    "name": "General INFO-SCAN",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/folder/view.php?id=3418925",
+    "section": "General",
+    "ext": ""
+  },
+  {
+    "id": 3430501,
+    "type": "file",
+    "name": "C1 ABT Course At A Glance",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3430501",
+    "section": "General",
+    "ext": "docx"
+  },
+  {
+    "id": 3430502,
+    "type": "file",
+    "name": "C1 ABT 2026 2027 Student Course Overview-READ",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3430502",
+    "section": "General",
+    "ext": "pdf"
+  },
+  {
+    "id": 3462554,
+    "type": "link",
+    "name": "Artists Peter Kater and Carlos Nakai Album Honorable Sky Song If Men Were at Peace",
+    "href": "https://www.youtube.com/watch?v=uwNnkJB8fU8&list=PLV-geXFe-DFTs2LDMRFMofvTRF5eJ5hKJ&index=5",
+    "section": "Lesson 2 25.10.26",
+    "ext": ""
+  },
+  {
+    "id": 3462555,
+    "type": "link",
+    "name": "Kater Nakai Essence",
+    "href": "https://www.youtube.com/watch?v=I8RtX40kMfM&list=RDI8RtX40kMfM&start_radio=1",
+    "section": "Lesson 2 25.10.26",
+    "ext": ""
+  },
+  {
+    "id": 3418940,
+    "type": "file",
+    "name": "03 TED Two Color Notes",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3418940",
+    "section": "Lesson 2 25.10.26",
+    "ext": "docx"
+  },
+  {
+    "id": 3418932,
+    "type": "file",
+    "name": "OPTIONAL Note Taking Toolkit Reference",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3418932",
+    "section": "Lesson 2 25.10.26",
+    "ext": "pdf"
+  },
+  {
+    "id": 3462537,
+    "type": "link",
+    "name": "Sunni Brown: Doodlers, unite!",
+    "href": "https://www.youtube.com/watch?v=7fx0QcHyrFk",
+    "section": "Lesson 2 25.10.26",
+    "ext": ""
+  },
+  {
+    "id": 3463430,
+    "type": "file",
+    "name": "Doodlers Unite 15Q Questions Choices Only to practice answering questions",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3463430",
+    "section": "Lesson 2 25.10.26",
+    "ext": "docx"
+  },
+  {
+    "id": 3462536,
+    "type": "file",
+    "name": "Reflection1 SPARC GVC C1 Student Updated",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3462536",
+    "section": "Lesson 2 25.10.26",
+    "ext": "docx"
+  },
+  {
+    "id": 3419350,
+    "type": "link",
+    "name": "Reading Comprehension TEXT: Neuroscience Says 1 Rather Brainless Activity Can Lower Your Stress and Make You More Productive",
+    "href": "https://www.inc.com/marcel-schwantes/neuroscience-says-one-rather-brainless-activity-can-lower-your-stress-make-you-more-productive.html",
+    "section": "Lesson 2 25.10.26",
+    "ext": ""
+  },
+  {
+    "id": 3431498,
+    "type": "file",
+    "name": "Writing Portfolio Moodle Section",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3431498",
+    "section": "Writing Portfolio",
+    "ext": "docx"
+  }
+]
