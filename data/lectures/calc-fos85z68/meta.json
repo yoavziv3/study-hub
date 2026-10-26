@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos85z68",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "מערכות מספרים: טבעיים, שלמים, רציונליים וממשיים (פרק 3, חלק א)",
+  "originalName": "ספר הקורס – מערכות מספרים: טבעיים, שלמים, רציונליים וממשיים.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": null,
+  "slideCount": 10,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.494Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:56:11.425Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:56:11.423Z",
+    "found": 0
+  }
+}

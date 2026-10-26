@@ -1,0 +1,27 @@
+{
+  "id": "m67024-fos8aujt",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "מטריצות: חיבור, כפל בסקלר וכפל מטריצות (פרק 3, חלק א)",
+  "originalName": "רשימות הרצאה – מטריצות: חיבור, כפל בסקלר וכפל מטריצות.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 5,
+  "unitNumber": null,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.499Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:59:11.207Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:59:11.204Z",
+    "found": 0
+  }
+}
