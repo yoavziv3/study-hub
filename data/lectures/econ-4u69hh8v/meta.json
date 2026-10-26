@@ -14,12 +14,12 @@
   "stage": "ready",
   "error": null,
   "createdAt": "2026-10-26T10:47:23.191Z",
-  "updatedAt": "2026-10-26T11:06:52.937Z",
+  "updatedAt": "2026-10-26T12:02:27.391Z",
   "noAi": false,
   "noAiReason": null,
   "aiError": null,
   "announced": true,
-  "aiRetries": 0,
+  "aiRetries": 1,
   "checks": {
     "at": "2026-10-26T11:04:49.205Z",
     "found": 0
