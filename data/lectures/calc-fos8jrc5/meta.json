@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8jrc5",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "סדרה חסומה ומונוטונית, וגבולות עם חזקות (פרק 6, חלק ג)",
+  "originalName": "ספר הקורס – סדרה חסומה ומונוטונית, וגבולות עם חזקות.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 11,
+  "unitNumber": null,
+  "slideCount": 20,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.508Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:04:42.144Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:04:42.141Z",
+    "found": 0
+  }
+}
