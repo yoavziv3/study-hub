@@ -90,7 +90,15 @@ export async function systemStatus(env, { courses, macItems, build = null, now =
   if (!linked.length) {
     checks.push({ id: 'watch', title: 'מעקב המודל', state: 'off', text: 'אין קורסים שמקושרים למודל', detail: [], alerts: [] });
   } else {
-    const oldest = Math.min(...linked.map((id) => checked.get(id) || 0));
+    // A course added to the site a moment ago has no look yet: it only counts as waiting from the first time it was seen
+    // here (health row `watchnew:<id>`), so the next tick – which looks at it – doesn't read as a stuck watcher.
+    const firstSeen = new Map();
+    for (const id of linked.filter((x) => !checked.get(x))) {
+      const row = healthOf.get(`watchnew:${id}`);
+      firstSeen.set(id, row ? row.at : now);
+      if (!row) await db.prepare('INSERT OR IGNORE INTO health (key, at, data) VALUES (?, ?, NULL)').bind(`watchnew:${id}`, now).run();
+    }
+    const oldest = Math.min(...linked.map((id) => checked.get(id) || firstSeen.get(id) || 0));
     const newest = Math.max(...linked.map((id) => checked.get(id) || 0));
     const errors = linked.map((id) => [id, parse(healthOf.get(`watch:${id}`)?.data)?.error]).filter(([, e]) => e);
     const stuck = now - oldest > 45 * MIN;
