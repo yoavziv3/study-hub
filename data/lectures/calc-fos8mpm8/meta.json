@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8mpm8",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "אריתמטיקה של גבולות אינסופיים (פרק 7, חלק ב)",
+  "originalName": "ספר הקורס – אריתמטיקה של גבולות אינסופיים.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 13,
+  "unitNumber": null,
+  "slideCount": 16,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.511Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T17:12:00.806Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T17:12:00.805Z",
+    "found": 0
+  }
+}
