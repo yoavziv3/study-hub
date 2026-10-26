@@ -2496,7 +2496,27 @@
       "author": "טטיאנה ישוק",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894863",
       "createdAt": "2026-10-26T11:21:28.000Z",
-      "addedAt": "2026-10-26T12:01:39.352Z"
+      "addedAt": "2026-10-26T12:01:39.352Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "92"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "יום ג'",
+        "time": "",
+        "date": "27.10.26",
+        "onDate": "2026-10-27",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "תרגול קבוצה 92 מחר בוטל; אפשר להצטרף לתרגולי טניה האחרים או לצפות בהקלטה.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-26T12:05:33.863Z"
+      }
     },
     {
       "id": "mvp7honvlrul",
@@ -2508,7 +2528,27 @@
       "author": "טטיאנה ישוק",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=894862",
       "createdAt": "2026-10-26T11:20:08.000Z",
-      "addedAt": "2026-10-26T12:01:39.355Z"
+      "addedAt": "2026-10-26T12:01:39.355Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "92"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "27.10.26",
+        "onDate": "2026-10-27",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "תרגול קבוצה 92 מחר בוטל; אפשר להצטרף לתרגולים של טניה ביום ב' או ד', או לצפות בהקלטה.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-26T12:05:46.849Z"
+      }
     }
   ],
   "deadlines": [
