@@ -8,7 +8,7 @@ import { api, STATIC } from '../api.js';
 import PortalConnect from '../components/PortalConnect.jsx';
 import {
   DAY_NAMES, typeLabel, minutes, classTypes, groupsOf, chosen, missingGroups, mySlots, upcoming, whenLabel,
-  groupRooms, matchRoom, soleMatch, shareableGroups, validShared, scheduleContext, thisWeek,
+  groupRooms, matchRoom, soleMatch, shareableGroups, validShared, scheduleContext, thisWeek, portalOnlySlots,
 } from '../lib/schedule.js';
 
 const HOUR_PX = 58;
@@ -243,7 +243,11 @@ export default function Schedule() {
   // What the portal and the notices say differs from the catalog this week: cancelled meetings (marked until they
   // would have ended), rooms and times that moved (shared/schedule-changes.js).
   const ctx = useMemo(() => scheduleContext({ items: updates.items, lessons: portal?.ok ? portal.lessons : null, now }), [updates.items, portal, now]);
-  const baseSlots = useMemo(() => mySlots(courses, progress), [courses, progress]);
+  const baseSlots = useMemo(() => {
+    const own = mySlots(courses, progress);
+    // Courses the catalog lists without times (physics) still show, from the student's portal schedule.
+    return [...own, ...portalOnlySlots(courses, portal?.ok ? portal.lessons : null, own)].sort((a, b) => a.day - b.day || minutes(a.start) - minutes(b.start));
+  }, [courses, progress, portal]);
   const slots = useMemo(() => thisWeek(baseSlots, ctx), [baseSlots, ctx]);
   const next = upcoming(baseSlots, now, 1, ctx)[0];
   const changed = slots.filter((s) => s.canceled || s.timeMoved || (s.moved && s.note));

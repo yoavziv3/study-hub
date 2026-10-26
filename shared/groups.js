@@ -12,8 +12,10 @@ const num = (g) => String(Number(g));
 // The portal names kinds its own way ("הרצאה", "תרגול"); the catalog writes "שעור", "תרגיל", "מעבדה".
 const KIND = (t = '') => (/תרג/.test(t) ? 'תרגיל' : /מעבד/.test(t) ? 'מעבדה' : /שעור|שיעור|הרצא/.test(t) ? 'שעור' : null);
 const roomNumbers = (s) => [...String(s || '').matchAll(/\d+/g)].map((m) => String(Number(m[0]))).sort().join(',');
-const words = (s) => String(s || '').replace(/["'׳״()\-–]/g, ' ').split(/\s+/).filter((w) => w.length >= 3);
-// A portal lesson of this course: their names share a word (or the lesson has no name to tell).
+// Words many course names share ("מבוא לפיזיקה", "מבוא לכלכלה", "מבוא למדעי המחשב") say nothing about which course it is.
+const GENERIC = new Set(['מבוא', 'יסודות', 'קורס', 'להנדסה', 'לתעשיה', 'לתעשייה', 'וניהול', 'הנדסה']);
+const words = (s) => String(s || '').replace(/["'׳״()\-–]/g, ' ').split(/\s+/).filter((w) => w.length >= 3 && !GENERIC.has(w));
+// A portal lesson of this course: their names share a telling word (or the lesson has no name to tell).
 const sameCourse = (l, c) => !l.name || words(l.name).some((w) => words(`${c.name} ${c.short}`).includes(w)) || (c.code && l.name.includes(c.code.replace(/-/g, '')));
 
 /**

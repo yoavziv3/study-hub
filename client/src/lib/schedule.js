@@ -4,6 +4,7 @@
 // different on a given date: a class that is not held, a room that moved, a new time.
 
 import { changesFrom, changeFor, israelNow, addDays, weekdayOf } from '../../../shared/schedule-changes.js';
+import { courseOfLesson } from '../../../shared/groups.js';
 
 export const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 const TYPE_ORDER = ['שעור', 'תרגיל', 'מעבדה'];
@@ -100,6 +101,23 @@ export function mySlots(courses, progress) {
     }
   }
   return out.sort((a, b) => a.day - b.day || minutes(a.start) - minutes(b.start));
+}
+
+/**
+ * Meetings the student's portal schedule has that the catalog can't give: some courses list their groups without
+ * days and times (physics), so no group can be matched and `mySlots` has nothing for them. Those lessons are shown as
+ * the portal has them (day, time, room), with no group. A lesson `have` already covers (same course, same day,
+ * about the same start) is left out.
+ */
+export function portalOnlySlots(courses, lessons, have) {
+  const out = [];
+  for (const l of lessons || []) {
+    const course = courseOfLesson(courses, l);
+    if (!course || !l.start || !l.end) continue;
+    if (have.some((s) => s.course.id === course.id && s.day === l.day && Math.abs(minutes(s.start) - minutes(l.start)) <= 15)) continue;
+    out.push({ day: l.day, start: l.start, end: l.end, place: l.location || '', mode: l.online ? 'אונליין' : '', course, type: l.type, group: null, lecturer: '', fromPortal: true, key: `${course.id}-portal-${l.day}-${l.start}` });
+  }
+  return out;
 }
 
 /**

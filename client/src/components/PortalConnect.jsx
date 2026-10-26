@@ -63,7 +63,7 @@ export default function PortalConnect({ status, onChange }) {
   const connected = status?.connected;
   const notices = (status?.lessons || []).flatMap((l) => (l.notifications || []).map((n) => ({ ...n, lesson: l.name })));
   return (
-    <div className="card pad portal-card">
+    <div className="card pad portal-card" style={!connected ? { borderColor: 'var(--c)', background: 'var(--c-soft)' } : undefined}>
       <div className="row wrap" style={{ gap: 10 }}>
         <Building2 size={18} />
         <b className="grow">הפורטל הבן־גוריוני</b>
@@ -77,7 +77,7 @@ export default function PortalConnect({ status, onChange }) {
             <button className="btn sm ghost" onClick={disconnect} disabled={busy}><Unplug size={14} /> ניתוק</button>
           </>
         ) : (
-          !open && <button className="btn sm accent" onClick={() => setOpen(true)}>חיבור הפורטל</button>
+          !open && <button className="btn sm accent" onClick={() => setOpen(true)}>חיבור הפורטל – והקבוצות ייקבעו לבד</button>
         )}
       </div>
       <div className="faint" style={{ fontSize: 13, marginTop: 6 }}>
@@ -85,7 +85,7 @@ export default function PortalConnect({ status, onChange }) {
           ? status.error || (status.pending
             ? 'המחשב שקורא את הפורטל מתחבר אליו עכשיו – בדרך כלל תוך דקה.'
             : 'הקבוצות, החדרים, הביטולים וההודעות על השיעורים נלקחים מהמערכת שלך בפורטל – וההתראות לטלפון רק לפיהם.')
-          : 'הקבוצות שלך, שינויי חדרים וביטולים מופיעים בפורטל לפני קובץ הקורסים. חברו אותו, והמערכת וההתראות יהיו רק לשיעורים ולתרגולים שלך.'}
+          : 'אין צורך לבחור קבוצות ידנית: הקבוצות שלך, שינויי חדרים וביטולים מופיעים בפורטל לפני קובץ הקורסים. חברו אותו, והמערכת וההתראות יהיו רק לשיעורים ולתרגולים שלך.'}
       </div>
       <Link to="/guide#portal" className="linklike" style={{ fontSize: 13, display: 'inline-block', marginTop: 6 }}>איך זה עובד ומה נשמר?</Link>
       {connected && !status.relayOnline && <div className="chip warn" style={{ marginTop: 8 }}>המחשב שקורא את הפורטל לא מחובר כרגע – העדכון יחכה עד שיחזור</div>}
