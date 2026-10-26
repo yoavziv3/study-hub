@@ -65,7 +65,7 @@ export async function sendTest(env, user) {
   if (!pushConfigured(env)) throw new HttpError(503, 'התראות לטלפון עוד לא הוגדרו בשרת');
   const subs = (await env.DB.prepare('SELECT * FROM push_subs WHERE user_id = ?').bind(user.id).all()).results;
   if (!subs.length) throw new HttpError(400, 'אין מכשיר רשום להתראות');
-  const ok = await deliver(env, subs, { title: 'מחברת · התראת בדיקה', body: 'מעולה – ההתראות מגיעות לטלפון 🎉', url: '/updates', tag: 'test' });
+  const ok = await deliver(env, subs, { title: 'IEMprove · התראת בדיקה', body: 'מעולה – ההתראות מגיעות לטלפון 🎉', url: '/updates', tag: 'test' });
   if (!ok) throw new HttpError(502, 'שליחת ההתראה נכשלה – נסו לכבות ולהדליק את ההתראות מחדש');
   return json({ ok: true, devices: ok });
 }
@@ -387,7 +387,7 @@ export async function notifyTick(env, request, { source = 'unknown', backup = fa
     if (status && il.hour >= 8 && il.hour < 23) {
       alerts = status.checks.flatMap((c) => (c.alerts || []).map((a) => ({
         key: a.once ? `health:${a.key}` : `health:${a.key}:${il.date}`,
-        title: `מחברת · ${c.title}`,
+        title: `IEMprove · ${c.title}`,
         body: a.text,
         url: '/system',
       })));

@@ -32,6 +32,7 @@ import StudyTimer from './components/StudyTimer.jsx';
 const PageLoader = () => <div style={{ padding: 60, textAlign: 'center' }}><Loader2 className="spin" /></div>;
 import { SEMESTER_LABEL, studyYearLabel } from './lib/terms.js';
 import Feedback from './components/Feedback.jsx';
+import { BrandMark, BrandName } from './components/Brand.jsx';
 import { useFetch, STATIC } from './api.js';
 
 function useTheme() {
@@ -68,9 +69,9 @@ function Sidebar({ open, onNavigate }) {
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <NavLink to="/" className="brand" onClick={onNavigate}>
-        <div className="brand-mark" />
+        <BrandMark />
         <div>
-          <div className="brand-name">מחברת</div>
+          <BrandName />
           <div className="brand-sub">{term ? `${studyYearLabel(term, terms)} · ${SEMESTER_LABEL[term.semester]}` : 'עזר ללימודים'}</div>
         </div>
       </NavLink>

@@ -4,6 +4,7 @@ import { Lock, KeyRound, ShieldCheck, Loader2, ChevronDown, LogIn } from 'lucide
 import { api } from '../api.js';
 import { useApp } from '../store.jsx';
 import { SiteFooter } from '../components/ui.jsx';
+import { BrandMark, BrandName } from '../components/Brand.jsx';
 
 /** Cloud sign-in: the student signs in with their Moodle (BGU) account; the site only keeps Moodle's access key. */
 export default function Login() {
@@ -34,9 +35,9 @@ export default function Login() {
     <div className="login-wrap">
       <motion.div className="card login-card" initial={{ opacity: 0, y: 18, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
         <div className="row" style={{ gap: 12, marginBottom: 6 }}>
-          <div className="brand-mark" />
+          <BrandMark />
           <div>
-            <div className="brand-name">מחברת</div>
+            <BrandName />
             <div className="brand-sub">עזר ללימודים · הנדסת תעשייה וניהול</div>
           </div>
         </div>

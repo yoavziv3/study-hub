@@ -368,7 +368,7 @@ export function AppProvider({ children }) {
   const unread = updates.items.filter((i) => i.addedAt > seenAt && i.addedAt <= new Date().toISOString() && !isOtherGroups(i)).length;
 
   useEffect(() => {
-    document.title = unread ? `(${unread}) מחברת · סמסטר א׳` : 'מחברת · סמסטר א׳';
+    document.title = unread ? `(${unread}) IEMprove · סמסטר א׳` : 'IEMprove · סמסטר א׳';
   }, [unread]);
 
   const value = {

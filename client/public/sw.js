@@ -1,7 +1,7 @@
 // Service worker for the cloud site: the app opens instantly and pages you've visited work offline.
 // Code and icons: cache first (they don't change). Slide images, course data and the account: network first,
 // falling back to the last copy when offline. Sign-in, admin and calendar requests are never cached.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `shell-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const DATA = `data-${VERSION}`;
@@ -64,7 +64,7 @@ self.addEventListener('push', (e) => {
     data = { body: e.data?.text() || '' };
   }
   e.waitUntil(
-    self.registration.showNotification(data.title || 'מחברת', {
+    self.registration.showNotification(data.title || 'IEMprove', {
       body: data.body || '',
       icon: '/icon-192.png',
       badge: '/icon-192.png',

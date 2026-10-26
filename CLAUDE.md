@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-"מחברת" (Study Hub): a personal study site for a BGU semester (Hebrew, RTL UI). Lecture decks (PDF/PPTX) are converted to slides, then analysed by Claude into summaries, topics, quizzes, flashcards, glossary and notes. It also syncs with BGU Moodle (new material, announcements, deadlines, grades) and the public BGU course catalog (class groups, exam dates).
+"IEMprove" (formerly "מחברת", Study Hub): a personal study site for a BGU semester (Hebrew, RTL UI). Lecture decks (PDF/PPTX) are converted to slides, then analysed by Claude into summaries, topics, quizzes, flashcards, glossary and notes. It also syncs with BGU Moodle (new material, announcements, deadlines, grades) and the public BGU course catalog (class groups, exam dates).
 
 All user-facing strings are Hebrew; code and comments are English. Code commits use English messages; `עדכון תוכן: …` commits are made automatically by the server (see Auto-publish).
 

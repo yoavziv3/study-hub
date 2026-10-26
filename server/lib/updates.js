@@ -47,7 +47,7 @@ export function adminAlert(message) {
   const last = alerted.get(message) || 0;
   if (Date.now() - last < 3600000) return;
   alerted.set(message, Date.now());
-  notify('מחברת – צריך תשומת לב', message, '');
+  notify('IEMprove – צריך תשומת לב', message, '');
 }
 
 // ---------- public API ----------
@@ -104,7 +104,7 @@ function push(item, { silent = false } = {}) {
   state.items.push(item);
   // Courses built for other students appear in their feed but never pop up on this Mac.
   const course = getCourse(item.courseId);
-  if (!silent && !course?.remote) notify('מחברת', item.title, course?.short || '');
+  if (!silent && !course?.remote) notify('IEMprove', item.title, course?.short || '');
   return true;
 }
 
@@ -323,7 +323,7 @@ export async function setSettings({ notify: n, reminderDays }) {
 export function testNotification() {
   const was = state.settings.notify;
   state.settings.notify = true;
-  notify('מחברת', 'כך ייראו התזכורות לדדליינים 🔔', 'בדיקה');
+  notify('IEMprove', 'כך ייראו התזכורות לדדליינים 🔔', 'בדיקה');
   state.settings.notify = was;
 }
 

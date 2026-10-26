@@ -13,7 +13,7 @@ export default function Privacy() {
           <ShieldCheck size={22} color="var(--good)" />
           <h1 style={{ fontSize: 26 }}>פרטיות ואבטחה</h1>
         </div>
-        <p className="muted">"מחברת" הוא כלי עזר ללימודים שנבנה על ידי סטודנט – לא אתר רשמי של האוניברסיטה. כך הוא מטפל במידע שלכם:</p>
+        <p className="muted">"IEMprove" הוא כלי עזר ללימודים שנבנה על ידי סטודנט – לא אתר רשמי של האוניברסיטה. כך הוא מטפל במידע שלכם:</p>
 
         <h3>ההתחברות</h3>
         <ul>

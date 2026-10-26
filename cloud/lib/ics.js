@@ -67,7 +67,7 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
     'PRODID:-//Study Hub//Deadlines//HE',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:מחברת – הגשות, מבחנים ושיעורים',
+    'X-WR-CALNAME:IEMprove – הגשות, מבחנים ושיעורים',
     'X-WR-TIMEZONE:Asia/Jerusalem',
     'REFRESH-INTERVAL;VALUE=DURATION:PT2H',
     'X-PUBLISHED-TTL:PT2H',
