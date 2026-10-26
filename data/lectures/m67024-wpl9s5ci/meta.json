@@ -2,7 +2,7 @@
   "id": "m67024-wpl9s5ci",
   "courseId": "m67024",
   "autoCourse": false,
-  "title": "LES 1",
+  "title": "מספרים מרוכבים, חיתוך קבוצות במישור ושוויון ישרים",
   "originalName": "LES 1.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -23,9 +23,16 @@
     "timemodified": 1792925933,
     "initial": true
   },
-  "updatedAt": "2026-10-26T07:00:42.854Z",
-  "noAi": true,
-  "noAiReason": "scanned",
+  "updatedAt": "2026-10-26T13:55:25.235Z",
+  "noAi": false,
+  "noAiReason": null,
   "aiError": null,
-  "announced": true
+  "announced": true,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T13:54:44.497Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }
