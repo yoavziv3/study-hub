@@ -5,6 +5,7 @@
 // growBank brings a lesson up to BANK_TARGET in rounds, each focused on another stretch of the slides so the bank
 // covers the whole lesson. It runs on its own worker (queueBank), not in the ingest queue: a new lesson goes up
 // right away and its bank fills in afterwards. /api/maintenance/grow-banks fills up the existing lessons.
+import { bankOk } from './courses.js';
 import { ROOT, getCourse, getLecture, patchLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -113,7 +114,7 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
 export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'manual' } = {}) {
   const meta = getLecture(lectureId);
   if (!meta || meta.noAi || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !bankWriters().length) return 0;
-  if (getCourse(meta.courseId)?.ai === false || !getContent(lectureId)) return 0;
+  if (!bankOk(getCourse(meta.courseId)) || !getContent(lectureId)) return 0;
   const total = Math.max(1, getSlides(lectureId).length);
   const rounds = Math.ceil(target / ROUND) + 3;
   const span = Math.max(4, Math.ceil(total / Math.max(1, Math.ceil(target / ROUND))));
@@ -192,7 +193,7 @@ export function queueBank(lectureId, trigger = 'after-lecture') {
 export function growAllBanks({ target = BANK_TARGET } = {}) {
   if (!bankWriters().length) return { queued: 0, waiting: 'no writer available now (Claude at night, Gemini within its quota)' };
   for (const l of listLectures()) {
-    if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
+    if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOk(getCourse(l.courseId)) && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
   }
   return { queued: pending.length };
 }

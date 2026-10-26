@@ -5,6 +5,7 @@
 // What is deliberately not on the site (exams and scanned files shown as they are, held items, other students'
 // courses) is not a gap.
 import { listLectures, getContent, getCourse } from './store.js';
+import { aiKindOk, bankOk } from './courses.js';
 import { BANK_TARGET, bankProgress, bankState } from './practice.js';
 
 const BANK_KINDS = ['lecture', 'tutorial', 'prep'];
@@ -17,9 +18,12 @@ export function siteGaps() {
   const banks = { items: 0, behind: 0, have: 0, want: 0 };
   for (const l of listLectures()) {
     const kind = l.kind || 'lecture';
-    if (l.status !== 'ready' || l.noAi || l.held || kind === 'exam' || kind === 'prep' || getCourse(l.courseId)?.ai === false) continue;
+    const course = getCourse(l.courseId);
+    if (l.status !== 'ready' || l.noAi || l.held || kind === 'prep' || kind === 'exam' || course?.ai === false) continue;
     const c = getContent(l.id);
-    const missing = [
+    // What a lesson should have: nothing is expected of a tutorial (or a kind the course leaves out), but one that
+    // already has its material still counts toward the question banks below.
+    const missing = !aiKindOk(course, kind) ? [] : [
       !c?.summary && 'סיכום',
       kind !== 'homework' && !c?.notes && 'סיכום מובנה',
       !c?.quiz?.length && 'שאלות',
@@ -28,7 +32,7 @@ export function siteGaps() {
     if (missing.length) {
       lessons.push({ id: l.id, title: l.title || l.originalFile, course: getCourse(l.courseId)?.short || l.courseId, missing, error: l.aiError || l.notesError || null, since: l.updatedAt || l.createdAt || null });
     }
-    if (BANK_KINDS.includes(kind) && c) {
+    if (BANK_KINDS.includes(kind) && c && bankOk(course)) {
       const have = (c.quiz?.length || 0) + (c.extraQuiz?.length || 0);
       banks.items++;
       banks.have += Math.min(have, BANK_TARGET);

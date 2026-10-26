@@ -85,6 +85,23 @@ export function fixSlide(q, slides = [], slideCount = slides.length) {
 }
 
 /** Multiple-choice questions: exactly 4 distinct, non-empty options, a valid correctIndex, a question and an explanation. */
+// The options are shuffled for the student, so an explanation can't say "the first option is wrong": a mention of an
+// option by its place ("האפשרות הראשונה", "התשובה השנייה", and the list that follows: "; השלישית …", "ברביעית") is
+// replaced by the option's own text. Only explanations that name an option this way are touched, so "השנייה האחרונה"
+// (the last second, in physics) and "המשוואה הראשונה" stay as they are.
+const ORD = 'ראשונה|שנייה|שניה|שלישית|רביעית';
+const ORDINALS = { ראשונה: 0, שנייה: 1, שניה: 1, שלישית: 2, רביעית: 3 };
+const ANCHOR_RE = new RegExp(`[הבל]?(?:אפשרות|תשובה)\\s+ה(?:${ORD})(?![א-ת])`);
+const ORDINAL_RE = new RegExp(`([הבל]?(?:אפשרות|תשובה)\\s+|[.;:,]\\s*|(?<=\\s)ו)ה(${ORD})(?![א-ת])(?!\\s+האחרונה)|(?<=\\s|^)([בל])(${ORD})(?![א-ת])(?!\\s+האחרונה)`, 'g');
+export function unorder(explanation = '', options = []) {
+  if (!ANCHOR_RE.test(explanation)) return explanation;
+  return explanation.replace(ORDINAL_RE, (all, lead, word, prefix, prefixed) => {
+    const option = options[ORDINALS[word || prefixed]];
+    if (!option) return all;
+    return prefix ? `${prefix}״${option}״` : `${lead}״${option}״`;
+  });
+}
+
 export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz', slides = [] } = {}) {
   const checks = [];
   const seen = new Set();
@@ -109,6 +126,11 @@ export function checkQuiz(quiz = [], { slideCount = 0, label = 'quiz', slides = 
     if (slide !== q.slide && q.slide !== undefined) checks.push(finding(`${label}.slide`, 'fixed', `מספר שקף ${q.slide} מחוץ לטווח – הוחלף ב 0`));
     // Currency dollars ("67$") written as such, so two prices never pair up as a formula (shared/currency.js).
     const fixedText = { question: escapeCurrency(text(q.question)), options: options.map(escapeCurrency), explanation: escapeCurrency(text(q.explanation)) };
+    const unordered = unorder(fixedText.explanation, fixedText.options);
+    if (unordered !== fixedText.explanation) {
+      fixedText.explanation = unordered;
+      checks.push(finding(`${label}.options`, 'fixed', `ההסבר הפנה לאפשרויות לפי מקומן (הסדר מעורבב) – הוחלף בטקסט האפשרות: "${text(q.question).slice(0, 50)}"`));
+    }
     if (fixedText.question !== text(q.question) || fixedText.explanation !== text(q.explanation) || fixedText.options.some((o, k) => o !== options[k])) {
       checks.push(finding(`${label}.currency`, 'fixed', `סימני $ של מחיר סומנו כטקסט – "${text(q.question).slice(0, 50)}"`));
     }

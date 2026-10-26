@@ -2419,7 +2419,7 @@
     "unitLabel": "הרצאה",
     "tagline": "",
     "keywords": [],
-    "ai": false,
+    "ai": true,
     "remote": true,
     "moodleIds": [
       67024
@@ -3545,7 +3545,11 @@
     ],
     "credits": 4.5,
     "passGrade": 56,
-    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1"
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1",
+    "aiKinds": [
+      "lecture"
+    ],
+    "bank": false
   },
   {
     "id": "m66386",
@@ -5159,7 +5163,7 @@
     "unitLabel": "הרצאה",
     "tagline": "",
     "keywords": [],
-    "ai": false,
+    "ai": true,
     "remote": true,
     "moodleIds": [
       66384
@@ -6285,6 +6289,10 @@
     ],
     "credits": 4.5,
     "passGrade": 56,
-    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1"
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1",
+    "aiKinds": [
+      "lecture"
+    ],
+    "bank": false
   }
 ]

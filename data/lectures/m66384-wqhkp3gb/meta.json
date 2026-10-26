@@ -4,7 +4,7 @@
   "autoCourse": false,
   "title": "lecture notes day4",
   "originalName": "lecture_notes_day4.pdf",
-  "kind": "lecture",
+  "kind": "tutorial",
   "originalFile": "original.pdf",
   "lessonNumber": 4,
   "unitNumber": 4,
@@ -23,6 +23,6 @@
     "timemodified": 1791368591,
     "initial": true
   },
-  "updatedAt": "2026-10-26T07:00:57.387Z",
+  "updatedAt": "2026-10-26T13:12:11.603Z",
   "announced": true
 }

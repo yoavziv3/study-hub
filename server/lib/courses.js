@@ -1,4 +1,16 @@
 // Semester courses (שנה א' – תבנית ב', סמסטר א'). Linear algebra and the library course are excluded on purpose.
+/**
+ * Which kinds of material get AI study material (summary, topics, questions, cards) in a course: lectures, and the
+ * owner's own homework and exam-prep units. Tutorials go up as slides and files only (nobody reads a summary of a
+ * worked-examples sheet), past exams as they are. A course built for other students can list the kinds it wants in
+ * `aiKinds` (linear algebra: lectures only), and `bank: false` keeps it out of the question-bank growth.
+ */
+export function aiKindOk(course, kind = 'lecture') {
+  if (course?.ai === false || kind === 'exam' || kind === 'tutorial') return false;
+  return !course?.aiKinds || course.aiKinds.includes(kind);
+}
+export const bankOk = (course) => course?.ai !== false && course?.bank !== false;
+
 export const DEFAULT_COURSES = [
   {
     id: 'econ',

@@ -2,7 +2,7 @@
   "id": "m66384-wqi220h6",
   "courseId": "m66384",
   "autoCourse": false,
-  "title": "week1-all-summary-students",
+  "title": "קבוצות, הישר הממשי, ישרים ומישורים, שלילת טענות ומערכות משוואות לינאריות",
   "originalName": "week1-all-summary-students.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -23,6 +23,14 @@
     "timemodified": 1791544812,
     "initial": true
   },
-  "updatedAt": "2026-10-26T07:00:57.850Z",
-  "announced": true
+  "updatedAt": "2026-10-26T13:17:39.697Z",
+  "announced": true,
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T13:15:50.039Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }

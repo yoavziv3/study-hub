@@ -6,6 +6,7 @@ import {
   listCourses, getCourse, getLecture, saveLecture, patchLecture, saveSlides, getSlides, saveContent,
   lectureDir, newLectureId, INBOX_DIR, getContent, listLectures,
 } from './store.js';
+import { aiKindOk } from './courses.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
@@ -260,8 +261,9 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
     // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
     await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
-  } else if (lessonsReady() && course?.ai !== false && meta.kind !== 'exam' && !meta.noAi && slides.some((s) => s.trim())) {
-    // Courses built for other students (course.ai === false) get slides and files only – no AI material.
+  } else if (lessonsReady() && aiKindOk(course, meta.kind || 'lecture') && !meta.noAi && slides.some((s) => s.trim())) {
+    // Courses built for other students (course.ai === false) get slides and files only – no AI material; so do
+    // tutorials and anything outside a course's aiKinds (see aiKindOk).
     await stage(id, 'analyzing');
     const trigger = meta.kind === 'prep' ? 'import' : aiOnly || regenerate ? 'retry' : meta.source?.fileKey || meta.source?.moodleId ? 'moodle' : 'upload';
     const run = startRun('lecture', { trigger, input: { lectureId: id, course: course.short, kind: meta.kind || 'lecture', file: meta.originalName, slides: slides.length } });
@@ -343,7 +345,11 @@ export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
   if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !lessonsReady()) return null;
-  if (getCourse(meta.courseId)?.ai === false) return null;
+  if (!aiKindOk(getCourse(meta.courseId), meta.kind || 'lecture')) {
+    // Tutorials get no structured summary; a failed attempt from before the rule must not keep being retried.
+    if (meta.notesError) await patchLecture(id, { notesStatus: null, notesError: null });
+    return null;
+  }
   const slides = getSlides(id).map((s) => s.text);
   if (!slides.some((s) => s.trim())) return null;
   const course = getCourse(meta.courseId);

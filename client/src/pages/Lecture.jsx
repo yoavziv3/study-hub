@@ -324,7 +324,7 @@ export default function Lecture() {
   // Courses built for other students have the deck and personal notes only (no AI material);
   // a link to an AI tab of such a course falls back to the slides.
   // Also files kept as they are: scanned sheets, and question banks that span the whole course (meta.noAi).
-  const noAi = course?.ai === false || lecture.kind === 'exam' || !!lecture.noAi;
+  const noAi = course?.ai === false || lecture.kind === 'exam' || !!lecture.noAi || (lecture.kind === 'tutorial' && !content);
   const view = noAi && tab !== 'slides' && tab !== 'notes' ? 'slides' : textOnly && tab === 'slides' ? 'summary' : tab;
   const tabs = noAi ? [
     { id: 'slides', label: 'מצגת', icon: <Presentation size={16} /> },
