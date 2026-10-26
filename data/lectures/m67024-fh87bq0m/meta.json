@@ -1,0 +1,27 @@
+{
+  "id": "m67024-fh87bq0m",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "המישור ℝ² וישרים במישור (פרק 1, חלק א)",
+  "originalName": "רשימות הרצאה – המישור ℝ² וישרים במישור.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:45:14.952Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:50:02.562Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:50:02.560Z",
+    "found": 0
+  }
+}

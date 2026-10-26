@@ -113,7 +113,7 @@ export async function addLectureQuestions(lectureId, { count = 6, difficulty = '
 /** Brings a lesson's bank up to `target` questions, a round at a time over stretches of the slides. */
 export async function growBank(lectureId, { target = BANK_TARGET, trigger = 'manual' } = {}) {
   const meta = getLecture(lectureId);
-  if (!meta || meta.noAi || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !bankWriters().length) return 0;
+  if (!meta || meta.noAi || meta.noBank || meta.held || !BANK_KINDS.includes(meta.kind || 'lecture') || !bankWriters().length) return 0;
   if (!bankOk(getCourse(meta.courseId)) || !getContent(lectureId)) return 0;
   const total = Math.max(1, getSlides(lectureId).length);
   const rounds = Math.ceil(target / ROUND) + 3;
@@ -193,7 +193,7 @@ export function queueBank(lectureId, trigger = 'after-lecture') {
 export function growAllBanks({ target = BANK_TARGET } = {}) {
   if (!bankWriters().length) return { queued: 0, waiting: 'no writer available now (Claude at night, Gemini within its quota)' };
   for (const l of listLectures()) {
-    if (l.status === 'ready' && !l.bankDone && !l.noAi && BANK_KINDS.includes(l.kind || 'lecture') && bankOk(getCourse(l.courseId)) && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
+    if (l.status === 'ready' && !l.bankDone && !l.noAi && !l.noBank && BANK_KINDS.includes(l.kind || 'lecture') && bankOk(getCourse(l.courseId)) && bankOf(getContent(l.id)).length < target) queueBank(l.id, 'manual');
   }
   return { queued: pending.length };
 }

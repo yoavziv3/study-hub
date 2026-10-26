@@ -1,0 +1,27 @@
+{
+  "id": "m67024-fh877cua",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "קבוצות, מספרים ומספרים מרוכבים (פרק 0)",
+  "originalName": "רשימות הרצאה – קבוצות, מספרים ומספרים מרוכבים.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 8,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:45:14.949Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:47:43.431Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:47:43.429Z",
+    "found": 1
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "calc-fjtp3x0h",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "לוגיקה (פרק 1)",
+  "originalName": "ספר הקורס – לוגיקה.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 8,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:47:16.121Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:49:48.517Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:49:48.515Z",
+    "found": 0
+  }
+}

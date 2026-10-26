@@ -25,14 +25,14 @@ export function siteGaps() {
     // already has its material still counts toward the question banks below.
     const missing = !aiKindOk(course, kind) ? [] : [
       !c?.summary && 'סיכום',
-      kind !== 'homework' && !c?.notes && 'סיכום מובנה',
+      kind !== 'homework' && !l.noNotes && !c?.notes && 'סיכום מובנה',
       !c?.quiz?.length && 'שאלות',
       kind !== 'homework' && !c?.flashcards?.length && 'כרטיסיות',
     ].filter(Boolean);
     if (missing.length) {
       lessons.push({ id: l.id, title: l.title || l.originalFile, course: getCourse(l.courseId)?.short || l.courseId, missing, error: l.aiError || l.notesError || null, since: l.updatedAt || l.createdAt || null });
     }
-    if (BANK_KINDS.includes(kind) && c && bankOk(course)) {
+    if (BANK_KINDS.includes(kind) && c && bankOk(course) && !l.noBank) {
       const have = (c.quiz?.length || 0) + (c.extraQuiz?.length || 0);
       banks.items++;
       banks.have += Math.min(have, BANK_TARGET);

@@ -74,6 +74,9 @@ function spawnCli(args, input, { onLine, signal, timeoutMs = onLine ? 0 : CLI_TI
     let out = '';
     let err = '';
     let buf = '';
+    // Decode as a stream: a Hebrew letter split between two chunks must not turn into two U+FFFD characters.
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
     child.stdout.on('data', (d) => {
       const s = d.toString();
       out += s;

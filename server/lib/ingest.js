@@ -56,7 +56,7 @@ function guessCourse(fileName, text) {
  * Register an uploaded file and queue it for processing.
  * courseId may be 'auto' (or empty) to detect the course from the content.
  */
-export async function addLectureFile({ filePath, originalName, courseId, lessonNumber, unitNumber, title, content = null, move = false, source = null, kind = null }) {
+export async function addLectureFile({ filePath, originalName, courseId, lessonNumber, unitNumber, title, content = null, move = false, source = null, kind = null, extra = null }) {
   const ext = path.extname(originalName).toLowerCase();
   if (!ACCEPTED.includes(ext)) throw new Error(`סוג קובץ לא נתמך: ${ext}`);
   const known = courseId && courseId !== 'auto' && getCourse(courseId);
@@ -85,6 +85,7 @@ export async function addLectureFile({ filePath, originalName, courseId, lessonN
     error: null,
     createdAt: new Date().toISOString(),
     ...(source ? { source } : {}),
+    ...(extra || {}),
   };
   await saveLecture(meta);
   enqueue(id, content ? { content } : {});
@@ -345,6 +346,11 @@ export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
   if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !lessonsReady()) return null;
+  // Topics cut from a course book (meta.noNotes) are already structured text: summary and questions only.
+  if (meta.noNotes) {
+    if (meta.notesError) await patchLecture(id, { notesStatus: null, notesError: null });
+    return null;
+  }
   if (!aiKindOk(getCourse(meta.courseId), meta.kind || 'lecture')) {
     // Tutorials get no structured summary; a failed attempt from before the rule must not keep being retried.
     if (meta.notesError) await patchLecture(id, { notesStatus: null, notesError: null });

@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos80cyv",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "קבוצות (פרק 2)",
+  "originalName": "ספר הקורס – קבוצות.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 10,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.492Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T15:53:27.988Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T15:53:27.986Z",
+    "found": 0
+  }
+}
