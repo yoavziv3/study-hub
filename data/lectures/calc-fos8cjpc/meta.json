@@ -1,0 +1,27 @@
+{
+  "id": "calc-fos8cjpc",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "אינדוקציה (פרק 4)",
+  "originalName": "ספר הקורס – אינדוקציה.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 6,
+  "unitNumber": null,
+  "slideCount": 18,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-26T15:51:07.501Z",
+  "noNotes": true,
+  "noBank": true,
+  "announced": true,
+  "updatedAt": "2026-10-26T16:03:45.436Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-26T16:03:45.434Z",
+    "found": 0
+  }
+}
