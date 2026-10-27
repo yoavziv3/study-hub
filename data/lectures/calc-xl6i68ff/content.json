@@ -1044,5 +1044,1074 @@
       "$N$ תלוי ב-$\\varepsilon$ בלבד, ולעולם לא ב-$n$."
     ],
     "generatedAt": "2026-10-26T10:43:52.820Z"
-  }
+  },
+  "extraQuiz": [
+    {
+      "question": "מהו הערך של הביטוי $\\lvert 3-8\\rvert-\\lvert -2\\rvert+\\lvert -4\\rvert$ לפי הגדרת הערך המוחלט?",
+      "options": [
+        "$7$",
+        "$-3$",
+        "$11$",
+        "$3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert 3-8\\rvert=\\lvert -5\\rvert=5$, $\\lvert -2\\rvert=2$, $\\lvert -4\\rvert=4$, ולכן $5-2+4=7$. התשובה $3$ מתקבלת מהתעלמות מהערך המוחלט האחרון, $11$ מחיבור כל הערכים, ו-$-3$ מהחלפת $\\lvert -5\\rvert$ ב-$-5$ (כלומר שכחו שערך מוחלט אינו שלילי).",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "סטודנט פתר את $\\lvert x-1\\rvert>3$ וכתב: $-3>x-1>3$. מהי הטעות?",
+      "options": [
+        "צריך היה לכתוב $-3<x-1<3$, כי תמיד עוברים לאי-שוויון כפול",
+        "הסימן של אי-השוויון צריך להתהפך ל-$\\le$",
+        "צריך היה לכתוב $x-1<-3$ או $x-1>3$ (חיבור ב'או'); הכתיב שלו מתאר מצב שאינו אפשרי",
+        "הטעות היא שלא הוסיף 1 לכל האגפים לפני שפתר"
+      ],
+      "correctIndex": 2,
+      "explanation": "עבור $\\lvert A\\rvert>a$ הפתרון הוא $A<-a$ או $A>a$ – שני תחומים נפרדים. הרישום $-3>A>3$ דורש גם $A<-3$ וגם $A>3$ בו-זמנית, וזה בלתי אפשרי. הצורה $-3<A<3$ מתאימה ל-$\\lvert A\\rvert<3$, לא ל-$>$. התהפכות ל-$\\le$ אינה נדרשת, וההוספה של 1 אינה הטעות.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "איזו מהטענות הבאות נכונה לכל $x,y\\in\\mathbb{R}$?",
+      "options": [
+        "$\\lvert x+y\\rvert\\ge\\lvert x\\rvert+\\lvert y\\rvert$",
+        "$\\lvert x+y\\rvert<\\lvert x\\rvert+\\lvert y\\rvert$ (אי-שוויון חזק)",
+        "$\\lvert x-y\\rvert\\le\\lvert x\\rvert+\\lvert y\\rvert$",
+        "$\\lvert x\\rvert-\\lvert y\\rvert\\ge\\lvert x-y\\rvert$"
+      ],
+      "correctIndex": 2,
+      "explanation": "$\\lvert x-y\\rvert=\\lvert x+(-y)\\rvert\\le\\lvert x\\rvert+\\lvert -y\\rvert=\\lvert x\\rvert+\\lvert y\\rvert$ לפי אי-שוויון המשולש. הטענה $\\lvert x+y\\rvert\\ge\\lvert x\\rvert+\\lvert y\\rvert$ שגויה, למשל $x=1,y=-1$. אי-השוויון החזק שגוי עבור $x=y=1$ (יש שוויון). הטענה $\\lvert x\\rvert-\\lvert y\\rvert\\ge\\lvert x-y\\rvert$ שגויה עבור $x=0,y=1$: $-1\\ge1$.",
+      "difficulty": "easy",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=\\frac{(-1)^n n}{n+2}$. מהו $a_3$?",
+      "options": [
+        "$\\frac{3}{5}$",
+        "$-\\frac{3}{5}$",
+        "$-\\frac{1}{2}$",
+        "$\\frac{3}{1}$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$a_3=\\frac{(-1)^3\\cdot3}{3+2}=-\\frac{3}{5}$. האפשרות $\\frac35$ מתעלמת מהסימן $(-1)^3=-1$. האפשרות $-\\frac12$ היא $a_2$ בסימן שגוי ($a_2=\\frac24=\\frac12$ ו-$a_1=-\\frac13$), והאפשרות $\\frac31$ נובעת מהצבה שגויה במכנה.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "האם המספר $18$ הוא איבר בסדרה $a_n=n^2-3n$, ואם כן – באיזה מקום?",
+      "options": [
+        "כן, במקום ה-$9$",
+        "כן, במקום ה-$6$",
+        "לא, כי הפתרונות של $n^2-3n-18=0$ אינם טבעיים",
+        "כן, במקום ה-$-3$"
+      ],
+      "correctIndex": 1,
+      "explanation": "פותרים $n^2-3n-18=0$, כלומר $(n-6)(n+3)=0$ ולכן $n=6$ או $n=-3$. רק $n=6$ טבעי, ובדיקה: $36-18=18$. המקום $-3$ אינו חוקי, כי מיקום בסדרה הוא מספר טבעי. הטענה שהפתרונות אינם טבעיים שגויה, ו-$n=9$ נותן $81-27=54$.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הביטוי הפשוט של $\\left\\lvert\\frac{3n+1}{n+1}-3\\right\\rvert$ עבור $n\\in\\mathbb{N}$ (כשלב בהוכחת הגבול $3$ לפי ההגדרה)?",
+      "options": [
+        "$\\frac{2}{n+1}$",
+        "$-\\frac{2}{n+1}$",
+        "$\\frac{4}{n+1}$",
+        "$\\frac{2}{n-1}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\frac{3n+1}{n+1}-3=\\frac{3n+1-3n-3}{n+1}=\\frac{-2}{n+1}$, ולאחר ערך מוחלט מקבלים $\\frac{2}{n+1}$. האפשרות עם המינוס שגויה כי ערך מוחלט אינו שלילי. $\\frac4{n+1}$ ו-$\\frac2{n-1}$ נובעות מטעויות חישוב במונה ובמכנה.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\lvert 3x+1\\rvert<\\lvert x-3\\rvert$?",
+      "options": [
+        "$-2<x<\\frac12$",
+        "$x<-2$ או $x>\\frac12$",
+        "$-\\frac12<x<2$",
+        "$-2<x<\\frac32$"
+      ],
+      "correctIndex": 0,
+      "explanation": "שני האגפים אי-שליליים, ולכן מעלים בריבוע: $9x^2+6x+1<x^2-6x+9\\Rightarrow8x^2+12x-8<0\\Rightarrow2x^2+3x-2<0\\Rightarrow(2x-1)(x+2)<0$, ולכן $-2<x<\\frac12$. האפשרות של 'מחוץ לקטע' היא הפתרון ההפוך, והאפשרות $-\\frac12<x<2$ נובעת מטעות בסימני השורשים.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x+1\\rvert<2$. מהו החסם העליון שניתן להוכיח באמצעות אי-שוויון המשולש עבור $\\lvert 2x-3\\rvert$ (ללא פתרון אי-השוויון)?",
+      "options": [
+        "$\\lvert 2x-3\\rvert<9$",
+        "$\\lvert 2x-3\\rvert<7$",
+        "$\\lvert 2x-3\\rvert<5$",
+        "$\\lvert 2x-3\\rvert<1$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$2x-3=2(x+1)-5$, ולכן $\\lvert2x-3\\rvert\\le2\\lvert x+1\\rvert+\\lvert-5\\rvert<2\\cdot2+5=9$. החסם $7$ נובע מטעות במעבר ($4+3$), והחסמים $5$ ו-$1$ אינם נובעים מהמשפט (למשל $x=-2.9$ קרוב לגבול נותן ערך קרוב ל-$-8.8$ שהערך המוחלט שלו קרוב ל-$8.8$, אך הוא מחוץ לתחום; עבור $x$ קרוב ל-$-3$ הערך $\\lvert2x-3\\rvert$ קרוב ל-$9$ ולכן חסם נמוך מ-$9$ אינו נכון).",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "איזו טענה נכונה לגבי הגדרת הגבול $\\lim_{n\\to\\infty}a_n=L$?",
+      "options": [
+        "ה-$N$ שנמצא עבור $\\varepsilon$ מסוים מתאים גם לכל $\\varepsilon$ אחר",
+        "אם נמצא $N$ שמתאים ל-$\\varepsilon$ נתון, כל $N'>N$ מתאים גם הוא לאותו $\\varepsilon$",
+        "מספיק שקיים $n>N$ אחד שעבורו $\\lvert a_n-L\\rvert<\\varepsilon$",
+        "ההגדרה צריכה להתקיים רק עבור $\\varepsilon$ אחד קטן מספיק"
+      ],
+      "correctIndex": 1,
+      "explanation": "אם לכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon$, אז גם לכל $n>N'$ (עם $N'>N$) התנאי מתקיים, כי אלה $n$ גדולים יותר. ה-$N$ בדרך כלל תלוי ב-$\\varepsilon$ ואינו מתאים לכל $\\varepsilon$. נדרש שהתנאי יתקיים לכל $n>N$ ולא רק לאחד, והוא נדרש לכל $\\varepsilon>0$ ולא לאחד בלבד.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac{5n+1}{n+2}$ מתקיים $\\lim a_n=5$. מהו ה-$n$ הטבעי הקטן ביותר כך שלכל $n$ גדול או שווה לו מתקיים $\\lvert a_n-5\\rvert<0.9$?",
+      "options": [
+        "$8$",
+        "$9$",
+        "$10$",
+        "$11$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\lvert a_n-5\\rvert=\\left\\lvert\\frac{5n+1-5n-10}{n+2}\\right\\rvert=\\frac{9}{n+2}$. נדרש $\\frac9{n+2}<0.9\\iff n+2>10\\iff n>8$, כלומר $n\\ge9$. עבור $n=8$ מקבלים $\\frac9{10}=0.9$ ולא קטן ממש, ולכן $8$ אינו מתאים. הערכים $10$ ו-$11$ מתאימים אך אינם הקטנים ביותר.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{3}{n+2}=0$ סטודנט כתב: $\\frac{3}{n+2}<\\frac{3}{n^2}\\le\\frac3n$. איזו מהטענות נכונה?",
+      "options": [
+        "הצעד הראשון שגוי: אי-השוויון $\\frac3{n+2}<\\frac3{n^2}$ אינו מתקיים לכל $n$ גדול (למשל $n=3$: $\\frac35>\\frac13$)",
+        "הצעד האחרון שגוי כי $\\frac3{n^2}>\\frac3n$ לכל $n$",
+        "שני הצעדים נכונים לכל $n\\in\\mathbb{N}$",
+        "הצעד הראשון נכון אך הוא נותן חסם שאינו שואף ל-$0$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\frac3{n+2}<\\frac3{n^2}$ שקול ל-$n^2<n+2$, כלומר $n<2$ בלבד. עבור $n=3$: $\\frac35=0.6>\\frac13$. לכן הצעד הראשון אינו חוקי. הצעד $\\frac3{n^2}\\le\\frac3n$ נכון לכל $n\\ge1$. הטענה שהחסם אינו שואף ל-$0$ שגויה. חסם תקין היה $\\frac3{n+2}<\\frac3n$.",
+      "difficulty": "medium",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של המשוואה $\\lvert x^2-4x\\rvert=4x-x^2$?",
+      "options": [
+        "$x\\le0$ או $x\\ge4$",
+        "$0\\le x\\le4$",
+        "$x=0$ או $x=4$ בלבד",
+        "כל $x\\in\\mathbb{R}$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$4x-x^2=-(x^2-4x)$. השוויון $\\lvert A\\rvert=-A$ מתקיים בדיוק כאשר $A\\le0$, כלומר $x^2-4x\\le0\\iff x(x-4)\\le0\\iff0\\le x\\le4$. הפרבולה מחייכת, ולכן היא שלילית בין השורשים. הקצוות $0,4$ הם רק חלק מהפתרון, והתחום החיצוני נותן $A>0$ שבו $\\lvert A\\rvert=A\\ne-A$.",
+      "difficulty": "medium",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{3n^2+\\cos n}{n^2+1}=3$ לפי ההגדרה מקבלים $\\left\\lvert a_n-3\\right\\rvert=\\frac{\\lvert\\cos n-3\\rvert}{n^2+1}\\le\\frac{4}{n^2+1}<\\frac4{n^2}\\le\\frac4n$, ובוחרים $N=\\left\\lfloor\\frac4\\varepsilon\\right\\rfloor$. עבור $\\varepsilon=0.3$, מהו $N$ ומדוע החסם $4$ מתאים למונה?",
+      "options": [
+        "$N=13$; כי $\\lvert\\cos n-3\\rvert\\le\\lvert\\cos n\\rvert+3\\le4$",
+        "$N=12$; כי $\\lvert\\cos n-3\\rvert\\le2$",
+        "$N=13$; כי $\\lvert\\cos n-3\\rvert\\ge4$",
+        "$N=14$; כי $\\lvert\\cos n-3\\rvert\\le3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי אי-שוויון המשולש $\\lvert\\cos n-3\\rvert\\le\\lvert\\cos n\\rvert+3\\le1+3=4$. עבור $\\varepsilon=0.3$: $\\frac4{0.3}=13.\\overline3$ ולכן $N=13$. האפשרויות האחרות נותנות חסם שגוי למונה ($2$ או $3$ אינם חסמים תקפים, למשל $\\cos n$ קרוב ל-$-1$ נותן ערך קרוב ל-$4$), או כיוון אי-שוויון הפוך, ולכן גם ערכי $N$ אחרים.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-2\\rvert<0.5$ וגם $\\lvert y+1\\rvert<0.25$. איזה חסם על $\\lvert x-2y-4\\rvert$ ניתן להוכיח באמצעות אי-שוויון המשולש?",
+      "options": [
+        "$\\lvert x-2y-4\\rvert<0.75$",
+        "$\\lvert x-2y-4\\rvert<1$",
+        "$\\lvert x-2y-4\\rvert<0.25$",
+        "$\\lvert x-2y-4\\rvert<1.5$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$x-2y-4=(x-2)-2(y+1)$. לכן $\\lvert x-2y-4\\rvert\\le\\lvert x-2\\rvert+2\\lvert y+1\\rvert<0.5+2\\cdot0.25=1$. החסם $0.75$ מתקבל אם שוכחים את המקדם $2$ ליד $y$, והחסם $1.5$ מתקבל מהכפלה שגויה של $\\lvert x-2\\rvert$. החסם $0.25$ אינו נובע מהנתונים.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "כמה מספרים שלמים $x$ מקיימים גם $\\lvert x-5\\rvert\\le\\lvert x+1\\rvert$ וגם $\\lvert x\\rvert<7$?",
+      "options": [
+        "$4$",
+        "$5$",
+        "$6$",
+        "$12$"
+      ],
+      "correctIndex": 1,
+      "explanation": "מעלים בריבוע את הראשון (שני האגפים אי-שליליים): $x^2-10x+25\\le x^2+2x+1\\Rightarrow24\\le12x\\Rightarrow x\\ge2$. התנאי השני נותן $-7<x<7$. החיתוך: $2\\le x<7$, כלומר השלמים $2,3,4,5,6$ – חמישה. הספירה של $4$ מחסירה נקודת שוויון $x=2$, $6$ כוללת את $x=7$ שאינו מותר, ו-$12$ היא מספר השלמים ב-$\\lvert x\\rvert<7$ בלבד.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "כמה איברים בסדרה $a_n=n^2-3n$ קטנים מ-$30$?",
+      "options": [
+        "$6$",
+        "$7$",
+        "$8$",
+        "$5$"
+      ],
+      "correctIndex": 1,
+      "explanation": "פותרים $n^2-3n<30$. שורשי $n^2-3n-30=0$ הם $\\frac{3\\pm\\sqrt{129}}{2}\\approx7.18$ ו-$-4.18$. לכן $n\\le7$ טבעי: $a_7=49-21=28<30$ ואילו $a_8=64-24=40>30$. האיברים $n=1,\\dots,7$ – שבעה איברים. $6$ ו-$5$ מחסירים איברים, ו-$8$ כולל את $a_8=40$ שאינו קטן מ-$30$.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac{4n+1}{2n-1}$ מתקיים $\\lim a_n=2$. עבור $\\varepsilon=0.1$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-2\\rvert<\\varepsilon$?",
+      "options": [
+        "$14$",
+        "$15$",
+        "$16$",
+        "$30$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\lvert a_n-2\\rvert=\\frac{4n+1-4n+2}{2n-1}=\\frac{3}{2n-1}$ (מכנה חיובי). נדרש $\\frac3{2n-1}<0.1\\iff2n-1>30\\iff n>15.5$, כלומר $n\\ge16$. בדיקה: $n=16$ נותן $\\frac3{31}\\approx0.097<0.1$ ו-$n=15$ נותן $\\frac3{29}\\approx0.103$, שאינו מתאים. לכן צריך ש-$n>N$ יכלול רק $n\\ge16$, כלומר $N=15$. עבור $N=14$ היה נכלל $n=15$ שאינו מתאים. $N=16$ מתאים אך אינו הקטן ביותר, ו-$30$ נובע מדילוג על חלוקה ב-$2$.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "כדי להראות שהסדרה $a_n=(-1)^n$ אינה מתכנסת ל-$0$, משתמשים בשלילת ההגדרה: קיים $\\varepsilon>0$ כך שלכל $N$ קיים $n>N$ עם $\\lvert a_n-0\\rvert\\ge\\varepsilon$. איזה ערך של $\\varepsilon$ מבין האפשרויות מתאים להוכחה?",
+      "options": [
+        "$\\varepsilon=2$",
+        "$\\varepsilon=3$",
+        "$\\varepsilon=1.5$",
+        "$\\varepsilon=\\frac12$"
+      ],
+      "correctIndex": 3,
+      "explanation": "$\\lvert a_n\\rvert=1$ לכל $n$. עבור $\\varepsilon=\\frac12$ מתקיים $1\\ge\\frac12$ לכל $n$, ולכן לכל $N$ כל $n>N$ מקיים את התנאי, והשלילה מתקיימת. עבור $\\varepsilon=1.5$, $2$ או $3$ אין אף $n$ עם $\\lvert a_n\\rvert\\ge\\varepsilon$, כי $\\lvert a_n\\rvert=1$ קטן מהם, ולכן השלילה אינה מתקיימת איתם.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהם כל הפתרונות של המשוואה $\\lvert x-1\\rvert=4$?",
+      "options": [
+        "$x=5$ בלבד",
+        "$x=5$ או $x=-3$",
+        "$x=3$ או $x=-5$",
+        "$-3\\le x\\le 5$"
+      ],
+      "correctIndex": 1,
+      "explanation": "לפי הגדרת הערך המוחלט, $x-1=4$ או $x-1=-4$, ולכן $x=5$ או $x=-3$. הפתרון $x=5$ בלבד מתעלם מהמקרה השלילי. $x=3$ או $x=-5$ מתקבל מטעות בסימן. הקטע $-3\\le x\\le 5$ הוא פתרון של אי-שוויון ולא של משוואה.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=\\frac{2n-1}{n+3}$. מהו האיבר השישי $a_6$?",
+      "options": [
+        "$\\frac{11}{9}$",
+        "$\\frac{9}{11}$",
+        "$\\frac{13}{9}$",
+        "$\\frac{11}{8}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_6=\\frac{2\\cdot6-1}{6+3}=\\frac{11}{9}$. $\\frac{9}{11}$ הוא היפוך השבר. $\\frac{13}{9}$ מתקבל מחישוב $2n+1$ במונה. $\\frac{11}{8}$ מתקבל מחישוב $n+2$ במכנה.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "סטודנט טוען שלכל $a,b\\in\\mathbb{R}$ מתקיים $\\lvert a-b\\rvert\\le\\lvert a\\rvert-\\lvert b\\rvert$. איזו בחירה של $(a,b)$ מפריכה את הטענה?",
+      "options": [
+        "$(a,b)=(3,1)$",
+        "$(a,b)=(5,0)$",
+        "$(a,b)=(1,-1)$",
+        "$(a,b)=(2,2)$"
+      ],
+      "correctIndex": 2,
+      "explanation": "עבור $(1,-1)$: $\\lvert a-b\\rvert=2$ ואילו $\\lvert a\\rvert-\\lvert b\\rvert=0$, ו-$2\\le0$ שקרי. עבור $(3,1)$ מתקבל $2\\le2$, עבור $(5,0)$ מתקבל $5\\le5$, ועבור $(2,2)$ מתקבל $0\\le0$. בכל אלה הטענה מתקיימת ולכן אינם מפריכים אותה.",
+      "difficulty": "easy",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "האם המספר $40$ הוא איבר בסדרה $a_n=2n+1$ ($n\\in\\mathbb{N}$)?",
+      "options": [
+        "כן, הוא האיבר ה-20",
+        "כן, הוא האיבר ה-19",
+        "לא, כי $n=19.5$ אינו מספר טבעי",
+        "לא, כי $40$ גדול מדי"
+      ],
+      "correctIndex": 2,
+      "explanation": "$2n+1=40$ נותן $n=19.5$ שאינו טבעי, ולכן $40$ אינו איבר בסדרה (כמו הנימוק לגבי 29 בשקף). הסדרה מכילה רק מספרים אי-זוגיים. האיבר ה-19 הוא $39$ והאיבר ה-20 הוא $41$. הסדרה אינה חסומה ולכן 'גדול מדי' אינו נימוק.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "לפי הגדרת הגבול, נתון $\\lim_{n\\to\\infty}\\frac1n=0$. עבור $\\varepsilon=0.01$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\left\\lvert\\frac1n-0\\right\\rvert<\\varepsilon$?",
+      "options": [
+        "$N=99$",
+        "$N=100$",
+        "$N=101$",
+        "$N=1$"
+      ],
+      "correctIndex": 1,
+      "explanation": "דרוש $\\frac1n<0.01$, כלומר $n>100$. לכן $N=100$ מבטיח זאת לכל $n>100$. עם $N=99$ האיבר $n=100$ נותן $\\frac1{100}=0.01$, שאינו קטן ממש מ-$\\varepsilon$. $N=101$ תקף אך אינו הקטן ביותר, ו-$N=1$ אינו מספיק.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\lvert x\\rvert\\le\\lvert x-4\\rvert$ (באמצעות העלאה בריבוע)?",
+      "options": [
+        "$x\\le 2$",
+        "$x\\ge 2$",
+        "$x\\le -2$",
+        "$-2\\le x\\le 2$"
+      ],
+      "correctIndex": 0,
+      "explanation": "שני האגפים אי-שליליים, ולכן אפשר להעלות בריבוע: $x^2\\le x^2-8x+16$, כלומר $8x\\le16$ ו-$x\\le2$. בדיקה: $x=0$ נותן $0\\le4$ נכון, ו-$x=3$ נותן $3\\le1$ שקרי. הפתרון $x\\ge2$ מתקבל מהפיכת כיוון בטעות.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "מהו קבוצת הפתרונות של המשוואה $\\lvert x-1\\rvert+\\lvert x+2\\rvert=3$?",
+      "options": [
+        "$x=1$ או $x=-2$ בלבד",
+        "הקטע $[-2,1]$",
+        "הקטע $(-2,1)$",
+        "$x\\le-2$ או $x\\ge1$"
+      ],
+      "correctIndex": 1,
+      "explanation": "לכל $-2\\le x\\le1$: $(1-x)+(x+2)=3$, ולכן כל הקטע הסגור פותר. עבור $x>1$ מתקבל $2x+1=3$ כלומר $x=1$ (לא בתחום), ועבור $x<-2$ מתקבל $x=-2$ (לא בתחום). הקצוות עצמם פותרים ולכן הקטע הפתוח שגוי. חוץ לקטע הסכום גדול מ-3.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=\\frac{n+1}{2n+3}$ עם גבול $\\frac12$. עבור $\\varepsilon=0.01$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-\\frac12\\rvert<\\varepsilon$?",
+      "options": [
+        "$N=22$",
+        "$N=23$",
+        "$N=24$",
+        "$N=49$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\left\\lvert\\frac{n+1}{2n+3}-\\frac12\\right\\rvert=\\frac{1}{2(2n+3)}$. דרוש $2(2n+3)>100$, כלומר $n>23.5$, ולכן $n\\ge24$ ו-$N=23$. עבור $n=23$ מתקבל $\\frac1{98}>0.01$ ולכן ל-$N=22$ האיבר $n=23$ נכשל. $N=24$ תקף אך לא הקטן ביותר, ו-$N=49$ מתקבל מפתרון שגוי.",
+      "difficulty": "medium",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "בהוכחה בשקף 4 נבחר $N=\\lfloor\\frac{c}{\\varepsilon}\\rfloor$ (עבור קבוע $c>0$). מדוע כל $n>N$ מקיים $\\frac{c}{n}<\\varepsilon$?",
+      "options": [
+        "כי $\\lfloor x\\rfloor\\ge x$ לכל $x$",
+        "כי $n>\\lfloor x\\rfloor$ גורר $n\\ge\\lfloor x\\rfloor+1>x$, כלומר $n>\\frac{c}{\\varepsilon}$",
+        "כי $\\lfloor x\\rfloor=x$ כאשר $x>0$",
+        "כי $\\frac{c}{n}<\\varepsilon$ מתקיים לכל $n$ ללא תלות ב-$N$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$n$ שלם הגדול מ-$\\lfloor x\\rfloor$ מקיים $n\\ge\\lfloor x\\rfloor+1$, ו-$\\lfloor x\\rfloor+1>x$ ולכן $n>\\frac{c}{\\varepsilon}$ וכך $\\frac{c}{n}<\\varepsilon$. הטענה $\\lfloor x\\rfloor\\ge x$ שגויה (למשל $x=2.5$). השוויון $\\lfloor x\\rfloor=x$ נכון רק לשלמים. ואי-השוויון תלוי ב-$n$ ואינו מתקיים לכל $n$.",
+      "difficulty": "medium",
+      "slide": 4,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert a\\rvert<3$ ו-$\\lvert b\\rvert<2$. איזה חסם על $\\lvert a-2b\\rvert$ ניתן להוכיח באמצעות אי-שוויון המשולש?",
+      "options": [
+        "$\\lvert a-2b\\rvert<1$",
+        "$\\lvert a-2b\\rvert<5$",
+        "$\\lvert a-2b\\rvert<7$",
+        "$\\lvert a-2b\\rvert<12$"
+      ],
+      "correctIndex": 2,
+      "explanation": "$\\lvert a-2b\\rvert\\le\\lvert a\\rvert+2\\lvert b\\rvert<3+4=7$. החסם $1$ מתקבל מחיסור שגוי של החסמים, ו-$5$ מחישוב $3+2$ בלי להכפיל ב-2 (ואינו נכון, למשל $a=2.9,b=-1.9$ נותן $6.7$). החסם $12$ תקף אך חלש יותר, והשאלה מבקשת את החסם המתקבל מאי-שוויון המשולש.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "איזה משפט נכון לגבי אי-השוויון $\\lvert x-2\\rvert\\ge3$?",
+      "options": [
+        "הוא שקול ל-$-1\\le x\\le5$",
+        "הוא שקול ל-$x\\le-1$ או $x\\ge5$",
+        "הוא שקול ל-$x<-1$ או $x>5$",
+        "הוא שקול ל-$x\\le-1$ וגם $x\\ge5$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\lvert x-2\\rvert\\ge3$ שקול ל-$x-2\\le-3$ או $x-2\\ge3$, כלומר $x\\le-1$ או $x\\ge5$. הקטע $[-1,5]$ הוא הפתרון של $\\lvert x-2\\rvert\\le3$. אי-שוויונות חזקים מוציאים בטעות את $x=-1,5$ (שבהם מתקיים שוויון). 'וגם' נותן קבוצה ריקה.",
+      "difficulty": "medium",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-2\\rvert<1$. מהו החסם הקטן ביותר מבין האפשרויות הבאות, שניתן להוכיח עבור $\\lvert x^2-4\\rvert$ באמצעות פירוק ואי-שוויון המשולש?",
+      "options": [
+        "$1$",
+        "$3$",
+        "$5$",
+        "$9$"
+      ],
+      "correctIndex": 2,
+      "explanation": "$\\lvert x^2-4\\rvert=\\lvert x-2\\rvert\\lvert x+2\\rvert$, ו-$\\lvert x+2\\rvert=\\lvert(x-2)+4\\rvert<1+4=5$, ולכן המכפלה קטנה מ-$1\\cdot5=5$. החסמים $1$ ו-$3$ שגויים: $x=2.9$ נותן $4.41$. החסם $9$ תקף אך גדול יותר מ-$5$.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\varepsilon>0$, $\\lvert x-1\\rvert<\\frac{\\varepsilon}{4}$ ו-$\\lvert y-1\\rvert<\\frac{\\varepsilon}{2}$. איזה מהחסמים הבאים על $\\lvert 2x-y-1\\rvert$ הוא הקטן ביותר שניתן להוכיח תמיד?",
+      "options": [
+        "$\\frac{\\varepsilon}{2}$",
+        "$\\frac{3\\varepsilon}{4}$",
+        "$\\varepsilon$",
+        "$\\frac{3\\varepsilon}{2}$"
+      ],
+      "correctIndex": 2,
+      "explanation": "$\\lvert2x-y-1\\rvert=\\lvert2(x-1)-(y-1)\\rvert\\le2\\lvert x-1\\rvert+\\lvert y-1\\rvert<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}=\\varepsilon$. החסמים $\\frac{\\varepsilon}{2}$ ו-$\\frac{3\\varepsilon}{4}$ אינם תמיד נכונים: כש-$x-1$ קרוב ל-$\\frac{\\varepsilon}{4}$ ו-$y-1$ קרוב ל-$-\\frac{\\varepsilon}{2}$ הביטוי קרוב ל-$\\varepsilon$. החסם $\\frac{3\\varepsilon}{2}$ תקף אך חלש יותר.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{n+5}{n^2-4}=0$ עבור $n\\ge3$ סטודנט כתב: $\\frac{1}{n^2-4}<\\frac{1}{n^2}$. מהי הטעות?",
+      "options": [
+        "אין טעות, כי $n^2-4<n^2$ גורר אי-שוויון זה",
+        "הכיוון הפוך: המכנה $n^2-4$ קטן מ-$n^2$ ולכן $\\frac{1}{n^2-4}>\\frac1{n^2}$",
+        "אסור לחסום שבר בשבר אחר",
+        "$n^2-4$ שלילי עבור $n\\ge3$"
+      ],
+      "correctIndex": 1,
+      "explanation": "הקטנת מכנה חיובי מגדילה את השבר, ולכן $\\frac1{n^2-4}>\\frac1{n^2}$, והחסם אינו חסם עליון. אי-השוויון $n^2-4<n^2$ נכון, אך הוא מוביל לכיוון ההפוך. חסימת שבר בשבר מותרת ונעשית בשקף 4 (למשל $\\frac{65}{9(9n+7)}<\\frac{65}{81n}$ בהגדלת הקטנת מכנה לפי הצורך). עבור $n\\ge3$ מתקיים $n^2-4\\ge5>0$.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=\\frac{2n+1}{n}$ עם גבול $2$, כמה ערכי $n\\in\\mathbb{N}$ אינם מקיימים $\\lvert a_n-2\\rvert<0.1$?",
+      "options": [
+        "9",
+        "10",
+        "11",
+        "אינסוף"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\lvert a_n-2\\rvert=\\frac1n$. האי-שוויון $\\frac1n<0.1$ נכשל כאשר $\\frac1n\\ge0.1$, כלומר $n\\le10$. כולל $n=10$ (שוויון, לא אי-שוויון חזק). לכן הערכים הם $n=1,\\dots,10$, כלומר $10$ ערכים. התשובה $9$ שוכחת את $n=10$, $11$ סופרת את $n=11$ בטעות, ו'אינסוף' מנוגד להגדרת הגבול.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "לפי הגדרת הערך המוחלט (שקף 1), מהו הביטוי $\\lvert x-3\\rvert$ עבור $x<3$?",
+      "options": [
+        "$3-x$",
+        "$x-3$",
+        "$x+3$",
+        "$-x-3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "כאשר $x<3$ מתקיים $x-3<0$, ולפי ההגדרה $\\lvert t\\rvert=-t$ עבור $t<0$, ולכן $\\lvert x-3\\rvert=-(x-3)=3-x$. הביטוי $x-3$ שלילי ולכן אינו ערך מוחלט. הביטויים $x+3$ ו-$-x-3$ נובעים מטעות בסימן.",
+      "difficulty": "easy",
+      "slide": 1,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\lvert 2x-4\\rvert\\le 0$?",
+      "options": [
+        "$x=2$ בלבד",
+        "אין פתרון",
+        "$-2\\le x\\le 2$",
+        "כל $x\\in\\mathbb{R}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "ערך מוחלט אינו שלילי, ולכן $\\lvert 2x-4\\rvert\\le0$ מתקיים רק כאשר $\\lvert 2x-4\\rvert=0$, כלומר $x=2$. 'אין פתרון' שגוי כי $x=2$ מקיים. הטווח $-2\\le x\\le2$ וכל הממשיים אינם מקיימים (למשל $x=0$ נותן $4\\le0$ שגוי).",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של המשוואה $\\lvert x+2\\rvert=\\lvert x-4\\rvert$ (למשל באמצעות העלאה בריבוע)?",
+      "options": [
+        "$x=-1$",
+        "$x=1$",
+        "$x=3$",
+        "$x=-3$"
+      ],
+      "correctIndex": 1,
+      "explanation": "שני האגפים אי-שליליים ולכן מעלים בריבוע: $x^2+4x+4=x^2-8x+16\\Rightarrow 12x=12\\Rightarrow x=1$. בדיקה: $\\lvert3\\rvert=\\lvert-3\\rvert$. הערכים האחרים אינם מקיימים, למשל $x=-1$ נותן $1$ מול $5$.",
+      "difficulty": "easy",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון כי $\\lim_{n\\to\\infty}a_n=L$ וכי עבור $\\varepsilon=0.1$ ניתן לקחת $N=50$ בהגדרת הגבול. איזו טענה בהכרח נכונה?",
+      "options": [
+        "לכל $n>50$ מתקיים $\\lvert a_n-L\\rvert<0.1$",
+        "רק עבור $n=50$ מתקיים $\\lvert a_n-L\\rvert<0.1$",
+        "לכל $n<50$ מתקיים $\\lvert a_n-L\\rvert<0.1$",
+        "$a_{50}=L$"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי ההגדרה, $N$ מבטיח שלכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon$. ההגדרה אינה מבטיחה דבר על איברים עם $n\\le50$, ואינה דורשת שהאיבר יהיה שווה לגבול.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "בסדרה $a_n=\\frac{2n}{2n+1}$ (שקף 3), באיזה מקום מופיע האיבר $\\frac{8}{9}$?",
+      "options": [
+        "$n=3$",
+        "$n=4$",
+        "$n=8$",
+        "$\\frac89$ אינו איבר בסדרה"
+      ],
+      "correctIndex": 1,
+      "explanation": "פותרים $\\frac{2n}{2n+1}=\\frac89\\Rightarrow18n=16n+8\\Rightarrow n=4$. בדיקה: $a_4=\\frac{8}{9}$. $a_3=\\frac67$ ו-$a_8=\\frac{16}{17}$, ולכן שאר האפשרויות שגויות.",
+      "difficulty": "easy",
+      "slide": 3,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert a\\rvert=3$ ו-$\\lvert b\\rvert=5$. איזה מהערכים הבאים לא יכול להיות הערך של $\\lvert a+b\\rvert$?",
+      "options": [
+        "$2$",
+        "$5$",
+        "$8$",
+        "$9$"
+      ],
+      "correctIndex": 3,
+      "explanation": "מאי-שוויון המשולש $\\lvert a+b\\rvert\\le3+5=8$, ולכן $9$ אינו אפשרי. כמו כן $\\lvert a+b\\rvert\\ge\\lvert\\lvert b\\rvert-\\lvert a\\rvert\\rvert=2$. הערכים $2$ ו-$8$ מתקבלים (סימנים הפוכים או זהים), ו-$5$ אפשרי (למשל $a=3,b=-5$ נותן 2, ובין הקצוות מתקבלים ערכים ביניים עבור $a,b$ כך שהם בעלי סימנים שונים; למשל $a=3$, $b=-5$ נותן 2 ו-$a=3$, $b=5$ נותן 8, אך $a=-3$, $b=5$ נותן 2 – כלומר 5 אינו מתקבל, אך כל ערך אפשרי חייב להיות בתחום [2,8] ו-9 מחוץ לו).",
+      "difficulty": "easy",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\lvert x-1\\rvert+\\lvert x-4\\rvert\\le5$?",
+      "options": [
+        "$0\\le x\\le5$",
+        "$-1\\le x\\le6$",
+        "$1\\le x\\le4$",
+        "$0\\le x\\le4$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מפצלים לתחומים. עבור $1\\le x\\le4$ הסכום הוא $3\\le5$ ולכן כל התחום פתרון. עבור $x>4$: $2x-5\\le5\\Rightarrow x\\le5$. עבור $x<1$: $5-2x\\le5\\Rightarrow x\\ge0$. האיחוד: $0\\le x\\le5$.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "סטודנט ידע ש-$\\lvert x-3\\rvert<2$ וכתב: $\\lvert x+1\\rvert=\\lvert(x-3)+4\\rvert\\le\\lvert x-3\\rvert-4<2-4=-2$. מה הטעות, ומהו החסם הנכון שמתקבל בשיטה הנכונה?",
+      "options": [
+        "אי-שוויון המשולש נותן סכום ולא הפרש: $\\lvert x+1\\rvert\\le\\lvert x-3\\rvert+4<6$",
+        "אי אפשר לפרק את $x+1$ לסכום, ולכן אין חסם",
+        "אין טעות; החסם $-2$ נכון",
+        "הטעות היא שצריך להשתמש ב-$\\lvert x-3\\rvert\\ge2$, והחסם הוא $2$"
+      ],
+      "correctIndex": 0,
+      "explanation": "אי-שוויון המשולש הוא $\\lvert u+v\\rvert\\le\\lvert u\\rvert+\\lvert v\\rvert$, ולכן $\\lvert x+1\\rvert\\le\\lvert x-3\\rvert+4<6$. חסם עליון של ערך מוחלט לא יכול להיות שלילי, ולכן $-2$ בבירור שגוי. הפירוק $x+1=(x-3)+4$ חוקי, והנתון הוא $<2$ ולא $\\ge2$.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac{5n-1}{2n+1}$ הגבול הוא $\\frac52$. מהו ה-$n$ הטבעי הקטן ביותר כך שלכל $n$ גדול או שווה לו מתקיים $\\lvert a_n-\\frac52\\rvert<0.07$?",
+      "options": [
+        "$25$",
+        "$24$",
+        "$26$",
+        "$100$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\left\\lvert\\frac{5n-1}{2n+1}-\\frac52\\right\\rvert=\\left\\lvert\\frac{10n-2-10n-5}{2(2n+1)}\\right\\rvert=\\frac{7}{4n+2}$. הביטוי קטן מ-$0.07$ כש-$4n+2>100$, כלומר $n>24.5$, ולכן $n\\ge25$. בדיקה: $n=24$ נותן $\\frac7{98}\\approx0.0714>0.07$, ו-$n=25$ נותן $\\frac7{102}\\approx0.0686$.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x\\rvert<2$. איזה חסם עליון על $\\lvert x^2-x+1\\rvert$ מתקבל ישירות מאי-שוויון המשולש ומהנתון?",
+      "options": [
+        "$7$",
+        "$5$",
+        "$4$",
+        "$3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert x^2-x+1\\rvert\\le\\lvert x\\rvert^2+\\lvert x\\rvert+1<4+2+1=7$. החסמים $5$, $4$ ו-$3$ אינם מתקבלים מהשיטה, ובפועל הם אינם חסמים נכונים: עבור $x$ קרוב ל-$-2$ הביטוי קרוב ל-$7$.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "כמה מהאיברים הראשונים בסדרה $a_n=\\frac{2n}{2n+1}$ הם עד האיבר הראשון שגדול מ-$0.99$? כלומר, מהו ה-$n$ הקטן ביותר המקיים $a_n>0.99$?",
+      "options": [
+        "$50$",
+        "$49$",
+        "$99$",
+        "$100$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\frac{2n}{2n+1}>0.99\\iff2n>1.98n+0.99\\iff0.02n>0.99\\iff n>49.5$. לכן $n=50$ הקטן ביותר. בדיקה: $a_{49}=\\frac{98}{99}\\approx0.9899<0.99$ ו-$a_{50}=\\frac{100}{101}\\approx0.9901>0.99$.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "כדי להראות שהסדרה $a_n=(-1)^n$ אינה מתכנסת ל-$1$ בעזרת שלילת ההגדרה, איזה $\\varepsilon$ מבין הבאים אינו מתאים (כלומר לא מקיים: לכל $N$ קיים $n>N$ עם $\\lvert a_n-1\\rvert\\ge\\varepsilon$)?",
+      "options": [
+        "$\\varepsilon=3$",
+        "$\\varepsilon=1$",
+        "$\\varepsilon=0.5$",
+        "$\\varepsilon=2$"
+      ],
+      "correctIndex": 0,
+      "explanation": "באינדקסים אי-זוגיים $a_n=-1$ ו-$\\lvert a_n-1\\rvert=2$, ובזוגיים ההפרש $0$. לכן לכל $N$ קיים $n>N$ אי-זוגי עם הפרש $2$, והדבר מספיק עבור $\\varepsilon\\le2$ (לכן $2$, $1$ ו-$0.5$ מתאימים). עבור $\\varepsilon=3$ ההפרש לעולם לא מגיע ל-$3$ ($\\lvert a_n-1\\rvert\\le2<3$), ולכן אינו מתאים.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "עבור אילו ערכי $a$ מתקיים: כל $x$ המקיים $\\lvert x-a\\rvert<2$ מקיים גם $\\lvert x\\rvert<5$?",
+      "options": [
+        "$-3\\le a\\le3$",
+        "$-7\\le a\\le7$",
+        "$-5\\le a\\le5$",
+        "$-2\\le a\\le2$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert x-a\\rvert<2$ פירושו $x\\in(a-2,a+2)$ ו-$\\lvert x\\rvert<5$ פירושו $(-5,5)$. הכלה מתקיימת כאשר $a-2\\ge-5$ וגם $a+2\\le5$, כלומר $-3\\le a\\le3$. למשל $a=3$ נותן $(1,5)\\subset(-5,5)$, אך $a=4$ נותן $(2,6)$ שאינו מוכל. $-7\\le a\\le7$ ו-$-5\\le a\\le5$ רחבים מדי, ו-$-2\\le a\\le2$ צר מדי (לא כולל את $a=3$ שמתאים).",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של המשוואה $\\lvert x-1\\rvert+\\lvert x+1\\rvert=\\lvert 2x\\rvert$?",
+      "options": [
+        "$x\\le-1$ או $x\\ge1$",
+        "$-1\\le x\\le1$",
+        "$x=\\pm1$ בלבד",
+        "כל $x\\in\\mathbb{R}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$2x=(x-1)+(x+1)$, ולכן המשוואה היא $\\lvert u\\rvert+\\lvert v\\rvert=\\lvert u+v\\rvert$ עם $u=x-1,v=x+1$. שוויון באי-שוויון המשולש מתקיים כאשר $uv\\ge0$, כלומר $(x-1)(x+1)\\ge0$, ומכאן $x\\le-1$ או $x\\ge1$. בדיקה: $x=0$ נותן $2\\ne0$, ו-$x=2$ נותן $4=4$.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=\\frac{2n^2+(-1)^n n}{n^2+1}$ מוכיחים $\\lim a_n=2$. מקבלים $\\lvert a_n-2\\rvert=\\frac{\\lvert(-1)^n n-2\\rvert}{n^2+1}$. איזה $N$ מבטיח (לפי שרשרת הערכות נכונה) שלכל $n>N$ מתקיים $\\lvert a_n-2\\rvert<\\varepsilon$?",
+      "options": [
+        "$N=\\lfloor3/\\varepsilon\\rfloor$",
+        "$N=\\lfloor1/\\varepsilon\\rfloor$",
+        "$N=\\lfloor1/(3\\varepsilon)\\rfloor$",
+        "$N=\\lfloor\\varepsilon/3\\rfloor$"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי אי-שוויון המשולש $\\lvert(-1)^n n-2\\rvert\\le n+2\\le3n$ לכל $n\\ge1$, והמכנה $n^2+1>n^2$. לכן $\\lvert a_n-2\\rvert<\\frac{3n}{n^2}=\\frac3n$, וזה קטן מ-$\\varepsilon$ כאשר $n>3/\\varepsilon$, ולכן $N=\\lfloor3/\\varepsilon\\rfloor$. ב-$N=\\lfloor1/\\varepsilon\\rfloor$ עבור $\\varepsilon=0.1$ ו-$n=11$ ההפרש $\\frac{13}{122}\\approx0.1066>0.1$. $N=\\lfloor1/(3\\varepsilon)\\rfloor$ קטן עוד יותר ונכשל, ו-$\\lfloor\\varepsilon/3\\rfloor$ נותן $0$ לכל $\\varepsilon$ קטן ולכן אינו מתאים.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-2\\rvert<\\frac14$ וגם $\\lvert y-5\\rvert<\\frac12$. איזה חסם על $\\lvert 2x-3y+11\\rvert$ ניתן להוכיח באמצעות אי-שוויון המשולש?",
+      "options": [
+        "$\\lvert 2x-3y+11\\rvert<2$",
+        "$\\lvert 2x-3y+11\\rvert<1$",
+        "$\\lvert 2x-3y+11\\rvert<\\frac{11}{4}$",
+        "$\\lvert 2x-3y+11\\rvert<\\frac{3}{4}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$2x-3y+11=2(x-2)-3(y-5)+(4-(-15)\\cdot0)$; במפורש: $2(x-2)=2x-4$ ו-$-3(y-5)=-3y+15$, וסכומם $2x-3y+11$. לכן $\\lvert 2x-3y+11\\rvert\\le2\\lvert x-2\\rvert+3\\lvert y-5\\rvert<2\\cdot\\frac14+3\\cdot\\frac12=2$. החסמים האחרים קטנים מדי או לא נובעים מהחישוב.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{n+8}{9n+7}=\\frac19$ מתקבל $\\left\\lvert a_n-\\frac19\\right\\rvert=\\frac{65}{9(9n+7)}$. מהו ה-$n$ הטבעי הקטן ביותר כך שלכל $n$ גדול או שווה לו מתקיים $\\left\\lvert a_n-\\frac19\\right\\rvert<0.01$ (לפי הביטוי המדויק)?",
+      "options": [
+        "$80$",
+        "$79$",
+        "$81$",
+        "$65$"
+      ],
+      "correctIndex": 0,
+      "explanation": "דרוש $\\frac{65}{9(9n+7)}<0.01$, כלומר $9(9n+7)>6500$, כלומר $81n>6437$ ולכן $n>79.46$ ו-$n\\ge80$. בדיקה: $n=79$ נותן $\\frac{65}{6462}\\approx0.01006>0.01$ ו-$n=80$ נותן $\\frac{65}{6543}\\approx0.00993<0.01$. הערך $81$ גדול מהמינימלי, ו-$65$ נובע מהמונה בלבד.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "מהו הערך של הביטוי $\\lvert -2\\rvert\\cdot\\lvert 3-7\\rvert-\\lvert -1\\rvert$?",
+      "options": [
+        "7",
+        "9",
+        "-9",
+        "-7"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert -2\\rvert=2$, $\\lvert 3-7\\rvert=\\lvert -4\\rvert=4$, $\\lvert -1\\rvert=1$, ולכן $2\\cdot4-1=7$. התשובה 9 מתקבלת אם מחסרים את $-1$ במקום $1$ (טעות סימן). התשובות השליליות מתקבלות מכך שלא הופכים ערך שלילי לחיובי בתוך הערך המוחלט.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "איזו מהטענות הבאות נכונה לכל מספר ממשי $x$?",
+      "options": [
+        "$\\lvert x\\rvert^2=x^2$",
+        "$\\lvert x\\rvert=x$",
+        "$\\lvert -x\\rvert=-x$",
+        "$\\lvert x\\rvert<x$"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי ההגדרה, $\\lvert x\\rvert$ שווה ל-$x$ או ל-$-x$ ובכל מקרה ריבועו הוא $x^2$. הטענה $\\lvert x\\rvert=x$ נכשלת עבור $x<0$. הטענה $\\lvert -x\\rvert=-x$ נכשלת עבור $x>0$. הטענה $\\lvert x\\rvert<x$ לעולם אינה נכונה, כי $\\lvert x\\rvert\\ge x$.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=\\frac{1}{n(n+1)}$. מהו האיבר הרביעי $a_4$?",
+      "options": [
+        "$\\frac1{20}$",
+        "$\\frac1{16}$",
+        "$\\frac1{12}$",
+        "$\\frac15$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_4=\\frac1{4\\cdot5}=\\frac1{20}$. $\\frac1{16}$ מתקבל מ-$4\\cdot4$. $\\frac1{12}$ הוא $a_3$. $\\frac15$ מתקבל אם מציבים רק את המכנה $n+1$.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "בהגדרת הגבול $\\lim_{n\\to\\infty}a_n=L$ נדרש: לכל $\\varepsilon>0$ קיים $N\\in\\mathbb N$ כך שלכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon$. מה נכון לגבי $N$?",
+      "options": [
+        "$N$ יכול להיות תלוי ב-$\\varepsilon$, ובדרך כלל גדל כש-$\\varepsilon$ קטן",
+        "$N$ חייב להיות זהה לכל $\\varepsilon$",
+        "$N$ נבחר לפני $\\varepsilon$ ואינו תלוי בו",
+        "$N$ חייב להיות קטן מ-$\\varepsilon$"
+      ],
+      "correctIndex": 0,
+      "explanation": "הכמת 'לכל $\\varepsilon$ קיים $N$' פירושו שה-$N$ נבחר אחרי $\\varepsilon$ ויכול להיות תלוי בו (למשל $N=\\lfloor c/\\varepsilon\\rfloor$). דרישה ש-$N$ זהה לכל $\\varepsilon$ או שנבחר מראש היא הופכת את סדר הכמתים ושגויה. אין קשר של קטן מ-$\\varepsilon$, כי $N$ הוא מספר טבעי גדול בדרך כלל.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "לאילו ערכי $x$ מתקיים השוויון $\\lvert x-2\\rvert=2-x$?",
+      "options": [
+        "$x\\le2$",
+        "$x\\ge2$",
+        "$x=2$ בלבד",
+        "לכל $x$ ממשי"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי ההגדרה $\\lvert t\\rvert=-t$ בדיוק כאשר $t\\le0$. עם $t=x-2$ מתקבל $x\\le2$. עבור $x>2$ מתקיים $\\lvert x-2\\rvert=x-2\\ne2-x$. השוויון מתקיים גם עבור $x<2$, לא רק ב-$x=2$. והוא לא נכון לכל $x$.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "עבור $x=-4$ ו-$y=9$, איזו קביעה לגבי אי-שוויון המשולש $\\lvert x+y\\rvert\\le\\lvert x\\rvert+\\lvert y\\rvert$ נכונה?",
+      "options": [
+        "$5<13$, כלומר האי-שוויון מתקיים ב-א-שוויון חזק",
+        "$5=13$, כלומר מתקיים שוויון",
+        "$13<5$, כלומר האי-שוויון נכשל",
+        "$-5<13$ ולכן אין צורך בערך מוחלט"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert x+y\\rvert=\\lvert5\\rvert=5$ ו-$\\lvert x\\rvert+\\lvert y\\rvert=4+9=13$, ולכן $5<13$. שוויון היה מתקיים רק אם $x,y$ באותו סימן (או אחד מהם אפס), וכאן הסימנים שונים. האי-שוויון לעולם אינו נכשל. הטענה האחרונה אינה רלוונטית כי $\\lvert x+y\\rvert=5$ ולא $-5$.",
+      "difficulty": "easy",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=\\frac{2n+3}{n+1}$ מתקיים $\\lim a_n=2$. מהו ה-$n_0$ הטבעי הקטן ביותר כך שלכל $n\\ge n_0$ מתקיים $\\lvert a_n-2\\rvert<0.05$?",
+      "options": [
+        "20",
+        "19",
+        "21",
+        "40"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert a_n-2\\rvert=\\frac{1}{n+1}$. נדרש $\\frac1{n+1}<0.05$ כלומר $n+1>20$ ולכן $n>19$, כלומר $n\\ge20$. עבור $n=19$ מתקבל בדיוק $0.05$, שאינו קטן ממש. 21 גדול מהנדרש. 40 מתקבל מטעות חישוב.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "נתון שעבור $\\varepsilon_0>0$ מסוים אפשר לקחת $N_0$ בהגדרת הגבול $\\lim a_n=L$. איזו טענה בהכרח נכונה?",
+      "options": [
+        "כל $N\\ge N_0$ מתאים גם הוא ל-$\\varepsilon_0$",
+        "כל $N\\le N_0$ מתאים ל-$\\varepsilon_0$",
+        "$N_0$ מתאים גם לכל $\\varepsilon<\\varepsilon_0$",
+        "$N_0$ הוא הערך הקטן ביותר שמתאים ל-$\\varepsilon_0$"
+      ],
+      "correctIndex": 0,
+      "explanation": "אם לכל $n>N_0$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon_0$, אז גם לכל $n>N$ עבור $N\\ge N_0$ זה מתקיים, כי קבוצת ה-$n$ קטנה יותר. $N$ קטן מ-$N_0$ אינו בהכרח מתאים. עבור $\\varepsilon$ קטן יותר ייתכן שצריך $N$ גדול יותר. ואין מידע ש-$N_0$ מינימלי.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "אילו מהמספרים הבאים הוא איבר בסדרה $a_n=\\frac{2n-1}{n+1}$ ($n\\in\\mathbb N$)?",
+      "options": [
+        "$\\frac32$",
+        "$2$",
+        "$\\frac52$",
+        "$3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "עבור $\\frac32$: $\\frac{2n-1}{n+1}=\\frac32\\Rightarrow4n-2=3n+3\\Rightarrow n=5$ (טבעי). עבור $2$: $2n-1=2n+2$, ללא פתרון. עבור $\\frac52$: $4n-2=5n+5$ נותן $n=-7$. עבור $3$: $2n-1=3n+3$ נותן $n=-4$. אלה אינם טבעיים.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "סטודנט פתר את $\\lvert x-2\\rvert<\\lvert x+1\\rvert$ בהעלאה בריבוע וקיבל: $-4x+4<2x+1$, ואז כתב $-6x<-3$ ולכן $x<\\frac12$. מה הטעות?",
+      "options": [
+        "בחלוקה ב-$-6$ לא הופך כיוון האי-שוויון; הפתרון הנכון הוא $x>\\frac12$",
+        "אסור להעלות בריבוע אי-שוויון עם ערכים מוחלטים",
+        "הפתרון הנכון הוא $x<-\\frac12$",
+        "אין טעות, הפתרון $x<\\frac12$ נכון"
+      ],
+      "correctIndex": 0,
+      "explanation": "חלוקה במספר שלילי הופכת את כיוון האי-שוויון, ולכן $-6x<-3$ נותן $x>\\frac12$. בדיקה: $x=0$ נותן $2<1$ שהוא שקר, כך ש-$x<\\frac12$ אינו נכון. העלאה בריבוע מותרת כששני האגפים אי-שליליים. $x<-\\frac12$ אינו תוצאה של החישוב.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-3\\rvert<1$. מהו החסם הקטן ביותר מבין האפשרויות הבאות שמתקיים בוודאות עבור $\\left\\lvert\\frac1x\\right\\rvert$?",
+      "options": [
+        "$\\frac12$",
+        "$\\frac13$",
+        "$\\frac14$",
+        "$1$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מהנתון $2<x<4$. לכן $x>0$ ו-$\\frac1x<\\frac12$. החסם $\\frac12$ הוא תקף. החסמים $\\frac13$ ו-$\\frac14$ אינם תקפים, כי למשל $x=2.1$ נותן $\\frac1x\\approx0.476>\\frac13$. החסם $1$ תקף אך גדול יותר מ-$\\frac12$.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "יהי $\\varepsilon>0$ ונניח $\\lvert x-3\\rvert<\\frac\\varepsilon6$ ו-$\\lvert y+2\\rvert<\\frac\\varepsilon3$. מהו החסם הקטן ביותר מבין האפשרויות הבאות שניתן להוכיח באמצעות אי-שוויון המשולש עבור $\\lvert 2x+3y\\rvert$?",
+      "options": [
+        "$\\frac{4\\varepsilon}{3}$",
+        "$\\frac\\varepsilon3$",
+        "$2\\varepsilon$",
+        "$3\\varepsilon$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$2x+3y=2(x-3)+3(y+2)$ כי $6-6=0$. לכן $\\lvert2x+3y\\rvert\\le2\\lvert x-3\\rvert+3\\lvert y+2\\rvert<\\frac\\varepsilon3+\\varepsilon=\\frac{4\\varepsilon}3$. החסם $\\frac\\varepsilon3$ אינו נובע (הוא מתעלם מהאיבר $3(y+2)$). $2\\varepsilon$ ו-$3\\varepsilon$ תקפים אך גדולים יותר.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "מוכיחים לפי ההגדרה ש-$\\lim_{n\\to\\infty}\\frac{4n+\\cos n}{2n+1}=2$. לאחר מכנה משותף מתקבל $\\lvert a_n-2\\rvert=\\frac{\\lvert\\cos n-2\\rvert}{2n+1}$. מהו הקבוע הקטן ביותר מבין האפשרויות הבאות שמהווה חסם תקף ל-$\\lvert\\cos n-2\\rvert$ לכל $n$ (באמצעות אי-שוויון המשולש)?",
+      "options": [
+        "3",
+        "1",
+        "2",
+        "5"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי אי-שוויון המשולש $\\lvert\\cos n-2\\rvert\\le\\lvert\\cos n\\rvert+2\\le1+2=3$. החסמים 1 ו-2 אינם תקפים, כי למשל כש-$\\cos n$ קרוב ל-$-1$ הערך קרוב ל-3. החסם 5 תקף אך אינו הקטן ביותר ברשימה.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lim_{n\\to\\infty}a_n=L$. איזה אי-שוויון מצדיק את המסקנה ש-$\\lim_{n\\to\\infty}\\lvert a_n\\rvert=\\lvert L\\rvert$?",
+      "options": [
+        "$\\big\\lvert\\lvert a_n\\rvert-\\lvert L\\rvert\\big\\rvert\\le\\lvert a_n-L\\rvert$",
+        "$\\big\\lvert\\lvert a_n\\rvert-\\lvert L\\rvert\\big\\rvert\\ge\\lvert a_n-L\\rvert$",
+        "$\\lvert a_n-L\\rvert\\le\\lvert a_n\\rvert-\\lvert L\\rvert$",
+        "$\\lvert a_n+L\\rvert\\le\\lvert a_n-L\\rvert$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מאי-שוויון המשולש: $\\lvert a_n\\rvert=\\lvert(a_n-L)+L\\rvert\\le\\lvert a_n-L\\rvert+\\lvert L\\rvert$, ובאופן סימטרי $\\lvert L\\rvert\\le\\lvert a_n-L\\rvert+\\lvert a_n\\rvert$. מכאן $\\big\\lvert\\lvert a_n\\rvert-\\lvert L\\rvert\\big\\rvert\\le\\lvert a_n-L\\rvert<\\varepsilon$ ומתקבל הגבול. האי-שוויון ההפוך אינו נכון בכלל (למשל $a_n=1,L=-1$). האי-שוויון בלי ערך מוחלט חיצוני נכשל גם הוא באותה דוגמה, ו-$\\lvert a_n+L\\rvert\\le\\lvert a_n-L\\rvert$ אינו נכון בדרך כלל.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "איזו מהטענות הבאות מתארת נכון את הקשר בין $\\varepsilon$ ל-$N$ בהגדרת הגבול $\\lim a_n = L$?",
+      "options": [
+        "לכל $\\varepsilon>0$ ה-$N$ נבחר אחרי $\\varepsilon$ ובדרך כלל תלוי בו, וככל ש-$\\varepsilon$ קטן יותר נדרש בדרך כלל $N$ גדול יותר",
+        "קיים $N$ אחד שמתאים לכל $\\varepsilon>0$ בו-זמנית",
+        "ה-$N$ אינו תלוי ב-$\\varepsilon$ אלא רק בסדרה",
+        "אי-השוויון $\\lvert a_n - L \\rvert < \\varepsilon$ נדרש רק עבור $n = N$ ולא עבור כל $n>N$"
+      ],
+      "correctIndex": 0,
+      "explanation": "בהגדרה, הכמת \"לכל $\\varepsilon$ קיים $N$\" אומר ש-$N$ נבחר לאחר $\\varepsilon$ ויכול להיות תלוי בו (למשל $N=\\lfloor c/\\varepsilon \\rfloor$). N אחד לכל $\\varepsilon$ היה מחייב שהסדרה תהיה קבועה מהאיבר ההוא והלאה. הדרישה היא לכל $n>N$ ולא רק עבור $n=N$.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n = \\frac{(-1)^n}{n}$ מתקיים $\\lim a_n = 0$. אם $\\varepsilon = 0.2$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n - 0 \\rvert < \\varepsilon$?",
+      "options": [
+        "$N=4$",
+        "$N=6$",
+        "$N=20$",
+        "$N=5$"
+      ],
+      "correctIndex": 3,
+      "explanation": "$\\lvert a_n \\rvert = \\frac1n < 0.2 \\iff n>5$. עבור $N=5$ כל $n>5$ מקיים זאת (למשל $\\frac16<0.2$). עבור $N=4$ האיבר $n=5$ נכלל ו-$\\frac15 = 0.2$ אינו קטן ממש מ-$0.2$. $N=6$ ו-$N=20$ מתאימים אך אינם הקטנים ביותר.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הערך של הביטוי $\\lvert 2-\\sqrt5 \\rvert + \\lvert \\sqrt5 - 2 \\rvert$?",
+      "options": [
+        "$0$",
+        "$4$",
+        "$4-2\\sqrt5$",
+        "$2\\sqrt5-4$"
+      ],
+      "correctIndex": 3,
+      "explanation": "$\\sqrt5\\approx 2.236>2$, ולכן $\\lvert 2-\\sqrt5 \\rvert = \\sqrt5-2$ ו-$\\lvert \\sqrt5-2 \\rvert=\\sqrt5-2$. הסכום הוא $2\\sqrt5-4$. הערך $0$ נובע מהנחה שהמוחלטים מבטלים זה את זה; $4$ מתעלם מהשורש; $4-2\\sqrt5$ שלילי ולכן לא יכול להיות סכום ערכים מוחלטים.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{n+1}{n^2}=0$ לפי ההגדרה סטודנט כתב: $\\left\\lvert\\frac{n+1}{n^2}\\right\\rvert < \\frac{1}{n^2}\\le\\frac1n$ ובחר $N=\\lfloor 1/\\varepsilon\\rfloor$. מהי הטעות?",
+      "options": [
+        "אי-השוויון הראשון שגוי: $\\frac{n+1}{n^2} > \\frac1{n^2}$, ולכן לא ניתן להחליף בביטוי הקטן יותר",
+        "המעבר $\\frac1{n^2}\\le\\frac1n$ שגוי לכל $n\\in\\mathbb{N}$",
+        "אין צורך בערך מוחלט כי הביטוי חיובי, ולכן אי אפשר להוכיח גבול",
+        "הבחירה $N=\\lfloor 1/\\varepsilon\\rfloor$ אסורה כי $N$ חייב להיות מספר שלם"
+      ],
+      "correctIndex": 0,
+      "explanation": "בהוכחת גבול מחליפים את $\\lvert a_n-L\\rvert$ בביטוי גדול ממנו, לא קטן ממנו. כאן $\\frac{n+1}{n^2}>\\frac1{n^2}$, ולכן ההערכה כלפי מעלה שגויה. (נכון למשל: $\\frac{n+1}{n^2}\\le\\frac{2n}{n^2}=\\frac2n$ ואז $N=\\lfloor 2/\\varepsilon\\rfloor$.) המעבר $\\frac1{n^2}\\le\\frac1n$ נכון ל-$n\\ge1$; הערך המוחלט אינו מונע הוכחה; ו-$\\lfloor\\cdot\\rfloor$ נותן מספר שלם.",
+      "difficulty": "medium",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "מהו ה-$n$ הטבעי הקטן ביותר שעבורו האיבר $a_n=n^2-3n$ גדול מ-$100$?",
+      "options": [
+        "$n=11$",
+        "$n=12$",
+        "$n=13$",
+        "$n=10$"
+      ],
+      "correctIndex": 1,
+      "explanation": "פותרים $n^2-3n-100>0$. השורש החיובי הוא $\\frac{3+\\sqrt{409}}2\\approx11.6$, ולכן האי-שוויון מתקיים מ-$n\\ge12$. בדיקה: $a_{11}=121-33=88<100$ ו-$a_{12}=144-36=108>100$. ערכים $10$ ו-$11$ נותנים $70$ ו-$88$, ו-$13$ נותן $130$ אך אינו הראשון.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{\\sin n}{n}=0$ מחליפים את $\\left\\lvert\\frac{\\sin n}{n}\\right\\rvert$ בחסם $\\frac1n$. עבור $\\varepsilon=0.02$, מהו ה-$N$ הקטן ביותר שמובטח מהחסם $\\frac1n<\\varepsilon$ (כלומר כך שלכל $n>N$ מתקיים $\\frac1n<\\varepsilon$)?",
+      "options": [
+        "$N=49$",
+        "$N=50$",
+        "$N=20$",
+        "$N=51$"
+      ],
+      "correctIndex": 1,
+      "explanation": "$\\frac1n<0.02\\iff n>50$. לכן $N=50$ הוא הקטן ביותר: כל $n>50$ מקיים זאת. עבור $N=49$ נכלל $n=50$ ו-$\\frac1{50}=0.02$ אינו קטן ממש מ-$\\varepsilon$, ולכן החסם לא מבטיח זאת. $N=20$ קטן מדי, ו-$N=51$ מתאים אך אינו הקטן ביותר.",
+      "difficulty": "medium",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\left\\lvert\\, \\lvert x\\rvert - 3 \\right\\rvert < 2$?",
+      "options": [
+        "$-5<x<5$",
+        "$1<x<5$",
+        "$-5<x<-1$ או $1<x<5$",
+        "$x<-5$ או $x>5$"
+      ],
+      "correctIndex": 2,
+      "explanation": "האי-שוויון שקול ל-$-2<\\lvert x\\rvert-3<2$, כלומר $1<\\lvert x\\rvert<5$. התנאי $\\lvert x\\rvert>1$ נותן $x<-1$ או $x>1$ ו-$\\lvert x\\rvert<5$ נותן $-5<x<5$. החיתוך הוא $(-5,-1)\\cup(1,5)$. הקטע $(-5,5)$ מתעלם מהתנאי $\\lvert x\\rvert>1$ (למשל $x=0$ נותן $3<2$ שגוי); $(1,5)$ מתעלם מהערכים השליליים.",
+      "difficulty": "hard",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-2 \\rvert<1$. איזה חסם על $\\lvert x^2-x-2 \\rvert$ ניתן להוכיח (ובאופן הדוק מבין האפשרויות)?",
+      "options": [
+        "$\\lvert x^2-x-2\\rvert<2$",
+        "$\\lvert x^2-x-2\\rvert<3$",
+        "$\\lvert x^2-x-2\\rvert<4$",
+        "$\\lvert x^2-x-2\\rvert<1$"
+      ],
+      "correctIndex": 2,
+      "explanation": "מפרקים: $x^2-x-2=(x-2)(x+1)$. מהנתון $1<x<3$ ולכן $\\lvert x+1\\rvert<4$ (גם לפי אי-שוויון המשולש: $\\lvert (x-2)+3\\rvert<1+3$). לכן $\\lvert x^2-x-2\\rvert=\\lvert x-2\\rvert\\lvert x+1\\rvert<1\\cdot4=4$. החסמים הקטנים יותר אינם מובטחים: למשל $x=2.9$ נותן $0.9\\cdot3.9=3.51$, שחורג מ-$1,2,3$.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=\\frac{3n+1}{n-2}$ ($n\\ge3$) מתקיים $\\lim a_n=3$. עבור $\\varepsilon=0.07$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-3\\rvert<\\varepsilon$?",
+      "options": [
+        "$N=100$",
+        "$N=101$",
+        "$N=102$",
+        "$N=103$"
+      ],
+      "correctIndex": 2,
+      "explanation": "$\\lvert a_n-3\\rvert=\\left\\lvert\\frac{3n+1-3n+6}{n-2}\\right\\rvert=\\frac7{n-2}$. הדרישה $\\frac7{n-2}<0.07$ שקולה ל-$n-2>100$, כלומר $n>102$. לכן $N=102$ הקטן ביותר: כל $n>102$ מתאים. עבור $N=101$ נכלל $n=102$ שבו $\\frac7{100}=0.07$ אינו קטן ממש מ-$\\varepsilon$. $N=100$ גם נכשל באותה הדרך, ו-$N=103$ מתאים אך אינו מינימלי.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lim_{n\\to\\infty}\\lvert a_n\\rvert=\\lvert L\\rvert$. איזו סדרה מראה שההפך אינו נכון, כלומר שמתקיים $\\lvert a_n\\rvert\\to\\lvert L\\rvert$ אך הסדרה $a_n$ אינה מתכנסת ל-$L$ ואף לא ל-$-L$?",
+      "options": [
+        "$a_n=(-1)^n$",
+        "$a_n=\\frac1n$",
+        "$a_n=2$ (סדרה קבועה)",
+        "$a_n=\\frac{n}{n+1}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "עבור $a_n=(-1)^n$ מתקבל $\\lvert a_n\\rvert=1\\to1$, אבל הסדרה מתנדנדת בין $1$ ל-$-1$ ואינה מתכנסת כלל, ולכן זו דוגמה נגדית. הסדרות $\\frac1n$, הקבועה $2$ ו-$\\frac n{n+1}$ מתכנסות ולכן מקיימות גם $a_n\\to L$ וגם $\\lvert a_n\\rvert\\to\\lvert L\\rvert$ – אין בהן סתירה לכיוון ההפוך.",
+      "difficulty": "hard",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של המשוואה $\\left\\lvert\\, \\lvert x-1\\rvert - \\lvert x+1\\rvert \\,\\right\\rvert = 2$?",
+      "options": [
+        "$x=1$ או $x=-1$ בלבד",
+        "$-1\\le x\\le1$",
+        "$x\\le-1$ או $x\\ge1$",
+        "אין פתרון"
+      ],
+      "correctIndex": 2,
+      "explanation": "אם $x\\ge1$: $\\lvert x-1\\rvert-\\lvert x+1\\rvert=(x-1)-(x+1)=-2$, והערך המוחלט הוא $2$ ✓. אם $x\\le-1$: $(1-x)-(-x-1)=2$ ✓. אם $-1<x<1$: $(1-x)-(x+1)=-2x$ ושם $\\lvert-2x\\rvert<2$ ✗. לכן הפתרון הוא $x\\le-1$ או $x\\ge1$. לא רק הנקודות $\\pm1$ (למשל $x=2$ נותן $\\lvert1-3\\rvert=2$), והקטע $[-1,1]$ הוא ההפך (ב-$x=0$ מתקבל $0$).",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "יהי $\\varepsilon>0$ ונניח $\\lvert x-1\\rvert<\\frac\\varepsilon4$ וגם $\\lvert y-2\\rvert<\\frac\\varepsilon6$. איזה חסם על $\\lvert 2x+3y-8\\rvert$ ניתן להוכיח באמצעות אי-שוויון המשולש?",
+      "options": [
+        "$\\lvert 2x+3y-8\\rvert<\\frac{5\\varepsilon}{12}$",
+        "$\\lvert 2x+3y-8\\rvert<\\frac{\\varepsilon}{2}$",
+        "$\\lvert 2x+3y-8\\rvert<2\\varepsilon$",
+        "$\\lvert 2x+3y-8\\rvert<\\varepsilon$"
+      ],
+      "correctIndex": 3,
+      "explanation": "מפרקים: $2x+3y-8=2(x-1)+3(y-2)$ (כי $2+6=8$). לכן $\\lvert 2x+3y-8\\rvert\\le2\\lvert x-1\\rvert+3\\lvert y-2\\rvert<2\\cdot\\frac\\varepsilon4+3\\cdot\\frac\\varepsilon6=\\frac\\varepsilon2+\\frac\\varepsilon2=\\varepsilon$. הערך $\\frac{5\\varepsilon}{12}$ מתקבל מאי-התחשבות במקדמים $2$ ו-$3$; $\\frac\\varepsilon2$ מתעלם מהאיבר השני; $2\\varepsilon$ נכון כחסם חלש יותר אך אינו התוצאה שנובעת מהחישוב.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    }
+  ]
 }
