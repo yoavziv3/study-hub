@@ -11,6 +11,14 @@ export function aiKindOk(course, kind = 'lecture') {
 }
 export const bankOk = (course) => course?.ai !== false && course?.bank !== false;
 
+/**
+ * The subjects the site carries (the owner's rule): calculus, linear algebra, accounting, economics, physics and
+ * information systems. A Moodle course of another student is built (and its files imported) only when its name is
+ * one of these – English, Java, probability, Hebrew… never are, however many students sign in with them.
+ */
+const SITE_SUBJECTS = [/חדו/, /אלגברה לינארית/, /חשבונאות/, /כלכלה/, /פיזיקה|פיסיקה/, /מערכות מידע/];
+export const subjectOk = (...names) => names.some((n) => SITE_SUBJECTS.some((re) => re.test(String(n || ''))));
+
 export const DEFAULT_COURSES = [
   {
     id: 'econ',

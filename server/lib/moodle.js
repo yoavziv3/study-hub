@@ -13,6 +13,7 @@ import { gradeRows } from '../../shared/grades.js';
 import { addAnnouncements, syncDeadlines, announceMaterial, adminAlert, pendingAssignments, setSubmission, linkFileKey } from './updates.js';
 import { syncCatalog } from './catalog.js';
 import { startRun } from './runlog.js';
+import { subjectOk } from './courses.js';
 
 const SITE = process.env.MOODLE_URL || 'https://moodle.bgu.ac.il/moodle';
 const STATE_FILE = path.join(DATA_DIR, 'moodle.json');
@@ -681,6 +682,7 @@ async function syncRemote(result) {
   state.remoteInfo ||= {};
   for (const mc of list) {
     if (state.map[mc.moodleId] || (state.remoteIgnore || []).includes(mc.moodleId)) continue;
+    if (!subjectOk(mc.fullname, mc.shortname)) continue; // not one of the site's subjects (courses.js)
     state.remoteInfo[mc.moodleId] = { shortname: mc.shortname, fullname: mc.fullname };
     if (!state.remote[mc.moodleId]) {
       const course = await createCourseFromMoodle(mc);

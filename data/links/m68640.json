@@ -1,0 +1,26 @@
+[
+  {
+    "id": 3383067,
+    "type": "zoom",
+    "name": "כניסה לשיעורים מקוונים",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3383067",
+    "section": "מבוא",
+    "ext": ""
+  },
+  {
+    "id": 3460445,
+    "type": "file",
+    "name": "סיכום הרצאה מספר 1",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3460445",
+    "section": "סיכומים וקבצים ",
+    "ext": "docx"
+  },
+  {
+    "id": 3460422,
+    "type": "file",
+    "name": "תרגיל קצר לחזרה על הנלמד בשיעור - לא להגשה",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3460422",
+    "section": "תרגילים ",
+    "ext": "docx"
+  }
+]

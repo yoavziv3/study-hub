@@ -1,0 +1,28 @@
+{
+  "id": "m68771-5rtm9oml",
+  "courseId": "m68771",
+  "autoCourse": false,
+  "title": "חוברת תרגילים תשפז",
+  "originalName": "חוברת תרגילים תשפז.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": null,
+  "slideCount": 50,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T20:49:05.457Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68771,
+    "fileKey": "68771:3402102:/חוברת תרגילים תשפז.pdf",
+    "section": "קבצים לשיעורים ולתרגולים",
+    "module": "חוברת תרגילים תשפז",
+    "timemodified": 1791007275,
+    "initial": true
+  },
+  "updatedAt": "2026-10-27T20:49:06.052Z",
+  "announced": true
+}

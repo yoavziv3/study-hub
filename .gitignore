@@ -40,3 +40,4 @@ backups/
 # The Mac's key for students' sealed portal sign-ins, and its portal sessions – never commit
 portal-key.json
 portal-sessions.json
+quarantine/
