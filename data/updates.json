@@ -2858,6 +2858,36 @@
       "fileKey": "68380:assign202930:/Problem_set 2.pdf",
       "createdAt": "2026-10-27T10:08:12.588Z",
       "addedAt": "2026-10-27T10:10:39.998Z"
+    },
+    {
+      "id": "mvqj8ld26tcz",
+      "key": "announcement:895124",
+      "type": "announcement",
+      "courseId": "econ",
+      "title": "תרגיל 2 זמין באתר + פתיחת ההגשה לתרגיל 1",
+      "body": "שלום לכולם תרגיל 2 זמין באתר\n\nלפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5\n\nבנוסף, עקב תקלה במודל תלמידים כתבו שלא הצליחו להגיש את תרגיל 1. פתחתי את תיבת ההגשה שוב. מי שלא הצליח להגיש -- נא לעשות זאת כעת.\n\nלהתראות\n\nאיתי",
+      "author": "איתי שורץ",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895124",
+      "createdAt": "2026-10-27T10:10:23.000Z",
+      "addedAt": "2026-10-27T10:18:16.742Z",
+      "analysis": {
+        "kind": "deadline",
+        "groups": [],
+        "classType": "",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "תיבת ההגשה של תרגיל 1 נפתחה מחדש; מי שלא הגיש יגיש עכשיו, ולפתור שאלות 1 ו-2 בתרגיל 2.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-27T10:18:36.035Z"
+      }
     }
   ],
   "deadlines": [
