@@ -2,7 +2,7 @@
   "id": "is-urjxqkkc",
   "courseId": "is",
   "autoCourse": false,
-  "title": "יסודות מערכות מידע - שיעור 04",
+  "title": "תשתיות IT: זיכרון, קלט/פלט, תקשורת ואינטרנט",
   "originalName": "יסודות מערכות מידע - שיעור 04.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -22,8 +22,14 @@
     "module": "יסודות מערכות מידע - שיעור 04",
     "timemodified": 1793113456
   },
-  "updatedAt": "2026-10-27T19:39:30.247Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-10-27T20:35:37.683Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T20:33:09.988Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }

@@ -2,7 +2,7 @@
   "id": "calc-39ap3cwt",
   "courseId": "calc",
   "autoCourse": false,
-  "title": "הרצאה 2",
+  "title": "ערך מוחלט, צפיפות הרציונליים, קטעים וקרנות והגדרת גבול של סדרה",
   "originalName": "הרצאה 2.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -22,7 +22,14 @@
     "module": "הרצאות של מוטקה- קבוצה 3",
     "timemodified": 1793128398
   },
-  "updatedAt": "2026-10-27T19:56:15.914Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
-  "announced": true
+  "updatedAt": "2026-10-27T20:29:23.640Z",
+  "aiError": null,
+  "announced": true,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T20:28:33.460Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }
