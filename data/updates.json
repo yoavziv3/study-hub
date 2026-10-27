@@ -2888,6 +2888,20 @@
       "fileKey": "67017:3465805:/הרצאה 3.pdf",
       "createdAt": "2026-10-27T19:56:16.407Z",
       "addedAt": "2026-10-27T20:09:25.553Z"
+    },
+    {
+      "id": "mvran35vxiic",
+      "key": "material:m67024-an2xa6tl",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "m67024",
+      "title": "תרגול חדש באלגברה לינארית להנדסה: תרגול 2 - ישרים ומישורים במרחב",
+      "body": "",
+      "lectureId": "m67024-an2xa6tl",
+      "source": "moodle",
+      "fileKey": "67024:3457967:/תרגול 2 - ישרים ומישורים במרחב.pdf",
+      "createdAt": "2026-10-27T23:05:22.319Z",
+      "addedAt": "2026-10-27T23:05:22.627Z"
     }
   ],
   "deadlines": [

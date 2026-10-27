@@ -1,0 +1,27 @@
+{
+  "id": "m67024-an2xa6tl",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "תרגול 2 - ישרים ומישורים במרחב",
+  "originalName": "תרגול 2 - ישרים ומישורים במרחב.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T23:05:22.319Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3457967:/תרגול 2 - ישרים ומישורים במרחב.pdf",
+    "section": "סיכומי הרצאות ותירגולים",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1793141883
+  },
+  "updatedAt": "2026-10-27T23:05:22.627Z",
+  "announced": true
+}
