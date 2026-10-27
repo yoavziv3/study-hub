@@ -3037,6 +3037,160 @@
       "difficulty": "hard",
       "slide": 4,
       "generated": true
+    },
+    {
+      "question": "איזה אי-שוויון מתאר את כל המספרים $x$ שמרחקם מהנקודה $-2$ על ציר המספרים קטן מ-$3$?",
+      "options": [
+        "$\\lvert x+2\\rvert<3$",
+        "$\\lvert x-2\\rvert<3$",
+        "$\\lvert x+2\\rvert>3$",
+        "$\\lvert x-3\\rvert<2$"
+      ],
+      "correctIndex": 0,
+      "explanation": "המרחק של $x$ מ-$a$ הוא $\\lvert x-a\\rvert$, ועבור $a=-2$ מקבלים $\\lvert x-(-2)\\rvert=\\lvert x+2\\rvert$, ולכן התנאי הוא $\\lvert x+2\\rvert<3$. הביטוי $\\lvert x-2\\rvert<3$ מתאר מרחק מהנקודה 2. הביטוי $\\lvert x+2\\rvert>3$ מתאר מרחק גדול מ-3. הביטוי $\\lvert x-3\\rvert<2$ מתאר מרחק מהנקודה 3.",
+      "difficulty": "easy",
+      "slide": 1,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=(-1)^n\\cdot n$. מהו הסכום $a_1+a_2+a_3+a_4$?",
+      "options": [
+        "$2$",
+        "$-2$",
+        "$10$",
+        "$0$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_1=-1,\\ a_2=2,\\ a_3=-3,\\ a_4=4$, ולכן הסכום הוא $-1+2-3+4=2$. הערך $-2$ מתקבל אם מתבלבלים בסימנים ($(-1)^n$ חיובי ל-$n$ זוגי). הערך $10$ מתקבל אם מתעלמים מהסימנים. הערך $0$ מתקבל מחישוב שגוי.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "איזו נוסחה לאיבר ה-$n$-י מתאימה לסדרה $2,4,8,16,32,\\dots$ ?",
+      "options": [
+        "$a_n=2^n$",
+        "$a_n=2n$",
+        "$a_n=n^2$",
+        "$a_n=2^{n-1}$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_1=2^1=2,\\ a_2=4,\\ a_3=8,\\dots$ מתאים. הנוסחה $2n$ נותנת $2,4,6,8$. הנוסחה $n^2$ נותנת $1,4,9$. הנוסחה $2^{n-1}$ נותנת $1,2,4,8$ ולכן האיבר הראשון שגוי.",
+      "difficulty": "easy",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x\\rvert\\ge5$ ו-$\\lvert y\\rvert\\le2$. איזה חסם תחתון על $\\lvert x+y\\rvert$ ניתן להוכיח באמצעות אי-שוויון המשולש, והוא הטוב ביותר מבין האפשרויות (כלומר החסם שאכן מתקיים תמיד והוא הגדול ביותר)?",
+      "options": [
+        "$\\lvert x+y\\rvert\\ge3$",
+        "$\\lvert x+y\\rvert\\ge7$",
+        "$\\lvert x+y\\rvert\\ge5$",
+        "$\\lvert x+y\\rvert\\ge10$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert x\\rvert=\\lvert(x+y)+(-y)\\rvert\\le\\lvert x+y\\rvert+\\lvert y\\rvert$, ולכן $\\lvert x+y\\rvert\\ge\\lvert x\\rvert-\\lvert y\\rvert\\ge5-2=3$. החסם הדוק: עבור $x=5,y=-2$ מקבלים $\\lvert x+y\\rvert=3$. החסמים $7$, $5$ ו-$10$ אינם מתקיימים תמיד, כי עבור $x=5,y=-2$ הערך הוא $3$.",
+      "difficulty": "medium",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "איזה מהמספרים הבאים הוא איבר בסדרה $a_n=\\frac{n}{n+2}$ ($n\\in\\mathbb N$)?",
+      "options": [
+        "$\\frac34$",
+        "$1$",
+        "$0$",
+        "$\\frac54$"
+      ],
+      "correctIndex": 0,
+      "explanation": "פותרים $\\frac{n}{n+2}=\\frac34\\Rightarrow 4n=3n+6\\Rightarrow n=6$, מספר טבעי ולכן $\\frac34=a_6$. עבור $1$: $n=n+2$ אין פתרון. עבור $0$: מתקבל $n=0$ שאינו טבעי. עבור $\\frac54$: $4n=5n+10\\Rightarrow n=-10$ שאינו טבעי.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "סטודנט טוען ש-$\\lim_{n\\to\\infty}a_n=5$ משום שבדק ומצא ש-$\\lvert a_n-5\\rvert<0.001$ לכל $n=1,2,\\dots,1000$. מה הבעיה בנימוק?",
+      "options": [
+        "בדיקה של מספר סופי של איברים ובערך $\\varepsilon$ אחד אינה מספיקה: ההגדרה דורשת לכל $\\varepsilon>0$ קיום $N$ כך שהאי-שוויון מתקיים לכל $n>N$",
+        "הנימוק נכון כי $0.001$ קטן מספיק",
+        "ההגדרה דורשת $\\lvert a_n-5\\rvert=0$ לאיברים הראשונים",
+        "צריך לבדוק רק את $n=1000$ ולא את כל האיברים"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי ההגדרה, צריך להראות שלכל $\\varepsilon>0$ קיים $N$ כך שמ-$N$ והלאה (אינסוף איברים) האי-שוויון מתקיים. בדיקה של 1000 איברים ראשונים עבור $\\varepsilon$ יחיד אינה מוכיחה דבר, כי האיברים אחריהם יכולים להתרחק. האפשרות 'קטן מספיק' שגויה כי אין $\\varepsilon$ מיוחד שמספיק. הדרישה ל-$=0$ אינה חלק מההגדרה. בדיקת איבר בודד לא מספיקה.",
+      "difficulty": "medium",
+      "slide": 3,
+      "generated": true
+    },
+    {
+      "question": "מהו הפתרון של אי-השוויון $\\lvert x+2\\rvert-\\lvert x-3\\rvert\\ge1$?",
+      "options": [
+        "$x\\ge1$",
+        "$x\\ge2$",
+        "$1\\le x<3$",
+        "$x>3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מפצלים למקרים. עבור $x\\ge3$: $(x+2)-(x-3)=5\\ge1$, מתקיים תמיד. עבור $-2\\le x<3$: $(x+2)-(3-x)=2x-1\\ge1\\Rightarrow x\\ge1$, ולכן $1\\le x<3$. עבור $x<-2$: $-(x+2)-(3-x)=-5\\ge1$, אין פתרון. האיחוד: $x\\ge1$. האפשרות $1\\le x<3$ שוכחת את $x\\ge3$; האפשרות $x>3$ שוכחת את $[1,3]$; האפשרות $x\\ge2$ נובעת מטעות בחישוב.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "בהוכחת $\\lim_{n\\to\\infty}\\frac{2n^2-\\sin n}{n^2+1}=2$ לפי ההגדרה מתקבל $\\lvert a_n-2\\rvert=\\frac{\\lvert\\sin n+2\\rvert}{n^2+1}$. איזו המשך נכון של ההוכחה (הערכה ובחירת $N$)?",
+      "options": [
+        "$\\frac{\\lvert\\sin n+2\\rvert}{n^2+1}\\le\\frac{3}{n^2+1}<\\frac3{n^2}\\le\\frac3n$, ולכן $N=\\lfloor\\frac3\\varepsilon\\rfloor$",
+        "$\\frac{\\lvert\\sin n+2\\rvert}{n^2+1}\\le\\frac{1}{n^2+1}<\\frac1n$, ולכן $N=\\lfloor\\frac1\\varepsilon\\rfloor$",
+        "$\\frac{\\lvert\\sin n+2\\rvert}{n^2+1}\\le\\frac{3}{n^2+1}<\\frac3n$, ולכן $N=\\lfloor\\frac\\varepsilon3\\rfloor$",
+        "$\\frac{\\lvert\\sin n+2\\rvert}{n^2+1}\\le\\frac{3}{n^2+1}<\\frac3{n^2}$ ו-$\\frac3{n^2}\\ge\\frac3n$, ולכן $N=\\lfloor\\frac3\\varepsilon\\rfloor$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מאי-שוויון המשולש $\\lvert\\sin n+2\\rvert\\le\\lvert\\sin n\\rvert+2\\le3$. אחר כך $n^2+1>n^2$ ו-$\\frac1{n^2}\\le\\frac1n$ לכל $n\\ge1$, ולכן $\\frac3n<\\varepsilon$ כשמתקיים $n>\\frac3\\varepsilon$, כלומר $N=\\lfloor\\frac3\\varepsilon\\rfloor$. האפשרות עם המונה 1 שגויה כי $\\lvert\\sin n+2\\rvert$ יכול לעלות על 1 (למשל $n=2$ נותן בערך 2.9). האפשרות עם $N=\\lfloor\\frac\\varepsilon3\\rfloor$ הופכת את התלות ב-$\\varepsilon$ (N צריך לגדול כש-$\\varepsilon$ קטן). האפשרות האחרונה שגויה כי $\\frac3{n^2}\\le\\frac3n$ ולא להפך.",
+      "difficulty": "hard",
+      "slide": 4,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lvert x-2\\rvert<1$. מהו החסם הקטן ביותר מבין האפשרויות שאפשר להוכיח עבור $\\lvert x^2-3x+2\\rvert$?",
+      "options": [
+        "$2$",
+        "$1$",
+        "$3$",
+        "$4$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$x^2-3x+2=(x-1)(x-2)$. מהנתון $1<x<3$, ולכן $\\lvert x-1\\rvert=\\lvert(x-2)+1\\rvert\\le\\lvert x-2\\rvert+1<2$. לכן $\\lvert(x-1)(x-2)\\rvert<2\\cdot1=2$. החסם $1$ אינו נכון: עבור $x=2.9$ מקבלים $1.9\\cdot0.9=1.71>1$. החסמים $3$ ו-$4$ נכונים אך אינם הקטנים ביותר.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון $\\lim_{n\\to\\infty}a_n=L$. לפי הגדרת הגבול עבור $\\varepsilon=1$ קיים $N$ כך שלכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<1$. איזו מסקנה נובעת בהכרח באמצעות אי-שוויון המשולש?",
+      "options": [
+        "לכל $n,m>N$ מתקיים $\\lvert a_n-a_m\\rvert<2$",
+        "לכל $n,m>N$ מתקיים $\\lvert a_n-a_m\\rvert<1$",
+        "לכל $n,m>N$ מתקיים $a_n=a_m$",
+        "לכל $n>N$ מתקיים $a_n<L$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert a_n-a_m\\rvert=\\lvert(a_n-L)+(L-a_m)\\rvert\\le\\lvert a_n-L\\rvert+\\lvert a_m-L\\rvert<1+1=2$. החסם 1 אינו מובטח: למשל $a_n=L+0.9$ ו-$a_m=L-0.9$ מקיימים את הנתון אך ההפרש 1.8. השוויון $a_n=a_m$ אינו נובע (הסדרה אינה בהכרח קבועה). הטענה $a_n<L$ שגויה כי $a_n$ יכול להיות גדול מ-$L$.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
+    },
+    {
+      "question": "נתון שלכל $n\\in\\mathbb N$ מתקיים $\\lvert a_n-2\\rvert<\\frac1n$ וגם $\\lvert b_n+1\\rvert<\\frac2n$. עבור $\\lvert a_n+b_n-1\\rvert<0.1$ אנו רוצים $N$ שמובטח (באמצעות אי-שוויון המשולש) שכל $n>N$ מקיים זאת. מהו ה-$N$ הקטן ביותר מבין האפשרויות שמבטיח זאת?",
+      "options": [
+        "$30$",
+        "$20$",
+        "$25$",
+        "$40$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert a_n+b_n-1\\rvert=\\lvert(a_n-2)+(b_n+1)\\rvert\\le\\lvert a_n-2\\rvert+\\lvert b_n+1\\rvert<\\frac1n+\\frac2n=\\frac3n$. עבור $n>30$ כלומר $n\\ge31$ מקבלים $\\frac3n\\le\\frac3{31}<0.1$, ולכן $N=30$ מבטיח. עבור $N=25$ האיבר $n=26$ נותן חסם $\\frac3{26}\\approx0.115>0.1$, ולכן לא מובטח; כך גם $N=20$. הערך $40$ מבטיח אך אינו הקטן ביותר מבין האפשרויות.",
+      "difficulty": "hard",
+      "slide": 2,
+      "generated": true
     }
   ]
 }
