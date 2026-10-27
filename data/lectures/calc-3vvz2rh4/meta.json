@@ -1,0 +1,35 @@
+{
+  "id": "calc-3vvz2rh4",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "ערך מוחלט, קטעים, צפיפות הרציונליים והגדרת הגבול של סדרה",
+  "originalName": "הרצאה 2.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T19:56:15.902Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3465805:/הרצאה 2.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 8",
+    "timemodified": 1793128955
+  },
+  "updatedAt": "2026-10-27T20:06:00.136Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T20:04:12.174Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

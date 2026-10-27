@@ -1,0 +1,35 @@
+{
+  "id": "calc-3vwd2y8l",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הגדרת הגבול, יחידות הגבול וסדרות חסומות",
+  "originalName": "הרצאה 3.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 5,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T19:56:16.407Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3465805:/הרצאה 3.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 8",
+    "timemodified": 1793128955
+  },
+  "updatedAt": "2026-10-27T20:09:25.554Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T20:08:39.800Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

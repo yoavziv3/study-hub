@@ -1,0 +1,35 @@
+{
+  "id": "calc-39b1llrp",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "גבול של סדרה: הערך השלם, יחידות הגבול וסדרות חסומות",
+  "originalName": "הרצאה 3.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 5,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T19:38:42.346Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464422:/הרצאה 3.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 3",
+    "timemodified": 1793128398
+  },
+  "updatedAt": "2026-10-27T19:59:19.592Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T19:58:33.589Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

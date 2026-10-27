@@ -1,0 +1,28 @@
+{
+  "id": "calc-39ap3cwt",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 2",
+  "originalName": "הרצאה 2.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T19:38:41.895Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464422:/הרצאה 2.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 3",
+    "timemodified": 1793128398
+  },
+  "updatedAt": "2026-10-27T19:56:15.914Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

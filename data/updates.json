@@ -2916,6 +2916,113 @@
       "fileKey": "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
       "createdAt": "2026-10-27T15:40:57.134Z",
       "addedAt": "2026-10-27T16:23:33.845Z"
+    },
+    {
+      "id": "mvr3vvzemh1p",
+      "key": "material:calc-39ap3cwt",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 2",
+      "body": "",
+      "lectureId": "calc-39ap3cwt",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 2.pdf",
+      "createdAt": "2026-10-27T19:38:41.895Z",
+      "addedAt": "2026-10-27T19:56:15.914Z"
+    },
+    {
+      "id": "mvr3x55atycf",
+      "key": "announcement:895185",
+      "type": "announcement",
+      "courseId": "econ",
+      "title": "התרגולים של איברהים מחר בשעות 8:00 ו־16:00 יתקיימו בזום",
+      "body": "שלום לכולם,\n\nמחר שני התרגולים שלי (איברהים), בשעות 8:00 ו־16:00, יתקיימו בזום באופן חד־פעמי. החל מהשבוע הבא נחזור לתרגולים פרונטליים כרגיל.\n\nשימו לב: התרגולים בקורס מתחילים רבע שעה לאחר השעה הרשומה במערכת ומסתיימים רבע שעה לפני סיום השעתיים. כלומר:\n\n•\nהתרגול הראשון: 8:15–9:45\n\n•\nהתרגול השני: 16:15–17:45\n\nלהלן הקישורים לתרגולים:\n\nתרגול בשעה 8:00: [קישור לזום] - https://us02web.zoom.us/j/89085115854?pwd=FFYcICH2x6T9NiFco52KATEppz1LT7.1\n\nתרגול בשעה 16:00: [קישור לזום] - https://us02web.zoom.us/j/88295733538?pwd=aaxWn7y2j2J5UDDu9e8b5A9IJ1SPMK.1\n\nאשמח אם תפיצו את ההודעה הזו בקבוצת הוואטסאפ שלכם, כדי לוודא שכולם מעודכנים.\n\nתודה ובהצלחה!\n\nאיברהים",
+      "author": "איברהים ברייה",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895185",
+      "createdAt": "2026-10-27T18:23:11.000Z",
+      "addedAt": "2026-10-27T19:57:14.446Z",
+      "analysis": {
+        "kind": "room-change",
+        "groups": [
+          "12",
+          "31"
+        ],
+        "classType": "תרגיל",
+        "room": "זום",
+        "day": "",
+        "time": "8:00 ו־16:00",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "התרגולים של איברהים מחר יתקיימו בזום באופן חד־פעמי; היכנסו לקישור שבהודעה.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-27T19:58:00.888Z"
+      }
+    },
+    {
+      "id": "mvr3ztpjr8wt",
+      "key": "material:calc-39b1llrp",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: גבול של סדרה: הערך השלם, יחידות הגבול וסדרות חסומות",
+      "body": "",
+      "lectureId": "calc-39b1llrp",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 3.pdf",
+      "createdAt": "2026-10-27T19:38:42.346Z",
+      "addedAt": "2026-10-27T19:59:19.591Z"
+    },
+    {
+      "id": "mvr430ddib1l",
+      "key": "material:calc-3ahqekks",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: מושגי יסוד: קבוצות, מספרים ממשיים וערך מוחלט",
+      "body": "",
+      "lectureId": "calc-3ahqekks",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 1.pdf",
+      "createdAt": "2026-10-27T19:39:37.671Z",
+      "addedAt": "2026-10-27T20:01:48.193Z",
+      "fileKeys": [
+        "67017:3464422:/הרצאה 1.pdf",
+        "67017:3465805:/הרצאה 1.pdf"
+      ]
+    },
+    {
+      "id": "mvr48erqrytu",
+      "key": "material:calc-3vvz2rh4",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: ערך מוחלט, קטעים, צפיפות הרציונליים והגדרת הגבול של סדרה",
+      "body": "",
+      "lectureId": "calc-3vvz2rh4",
+      "source": "moodle",
+      "fileKey": "67017:3465805:/הרצאה 2.pdf",
+      "createdAt": "2026-10-27T19:56:15.902Z",
+      "addedAt": "2026-10-27T20:06:00.134Z"
+    },
+    {
+      "id": "mvr4ct9t4prd",
+      "key": "material:calc-3vwd2y8l",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הגדרת הגבול, יחידות הגבול וסדרות חסומות",
+      "body": "",
+      "lectureId": "calc-3vwd2y8l",
+      "source": "moodle",
+      "fileKey": "67017:3465805:/הרצאה 3.pdf",
+      "createdAt": "2026-10-27T19:56:16.407Z",
+      "addedAt": "2026-10-27T20:09:25.553Z"
     }
   ],
   "deadlines": [
