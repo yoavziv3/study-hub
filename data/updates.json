@@ -2817,6 +2817,47 @@
       "body": "מועד א׳: 15/01/2027 · מועד ב׳: 05/02/2027",
       "createdAt": "2026-10-26T19:04:13.091Z",
       "addedAt": "2026-10-26T19:04:13.091Z"
+    },
+    {
+      "id": "mvqdpawhj0cm",
+      "key": "material:calc-xl6i68ff:1793086998641",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "עודכן בחדו\"א 1: ערך מוחלט, אי-שוויון המשולש וגבול של סדרה",
+      "body": "",
+      "lectureId": "calc-xl6i68ff",
+      "source": "moodle",
+      "fileKey": "67017:3464425:/תרגול 2 - ערך מוחלט אי שוויון המשולש וסדרות.pdf",
+      "createdAt": "2026-10-26T07:24:26.286Z",
+      "addedAt": "2026-10-27T07:43:18.641Z"
+    },
+    {
+      "id": "mvqivrhe44yc",
+      "key": "deadline:assign:202930",
+      "type": "deadline",
+      "courseId": "econ",
+      "title": "הגשה חדשה במבוא לכלכלה: תרגיל 2",
+      "body": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
+      "dueAt": "2026-11-02T21:59:00.000Z",
+      "deadlineId": "mvqivrhe8mpm",
+      "createdAt": "2026-10-27T10:08:18.148Z",
+      "addedAt": "2026-10-27T10:08:18.148Z"
+    },
+    {
+      "id": "mvqiysxqfxb4",
+      "key": "material:econ-ivn6zql2",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "econ",
+      "title": "שיעורי בית / תרגילים חדשים במבוא לכלכלה: תרגיל 2 – טכנולוגיה ופונקציית ההיצע (שאלות 1–2)",
+      "body": "",
+      "lectureId": "econ-ivn6zql2",
+      "source": "moodle",
+      "fileKey": "68380:assign202930:/Problem_set 2.pdf",
+      "createdAt": "2026-10-27T10:08:12.588Z",
+      "addedAt": "2026-10-27T10:10:39.998Z"
     }
   ],
   "deadlines": [
@@ -2826,7 +2867,7 @@
       "moodleKey": "assign:202001",
       "courseId": "econ",
       "title": "תרגיל 1",
-      "dueAt": "2026-10-25T21:59:00.000Z",
+      "dueAt": "2026-11-03T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3450717",
       "intro": "תרגילים לעשות מתוך התרגיל:\n\n1,\n\n2א,ב,ג\n\n4\n\n5 א,ב\n\n6",
       "submitted": true,
@@ -2845,12 +2886,23 @@
       "submitted": true,
       "draft": false,
       "done": false
+    },
+    {
+      "id": "mvqivrhe8mpm",
+      "source": "moodle",
+      "moodleKey": "assign:202930",
+      "courseId": "econ",
+      "title": "תרגיל 2",
+      "dueAt": "2026-11-02T21:59:00.000Z",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
+      "intro": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
+      "submitted": false,
+      "draft": false,
+      "done": false
     }
   ],
   "reminded": {
-    "mvf5i5q1b2xp": [
-      3
-    ]
+    "mvf5i5q1b2xp": []
   },
   "settings": {
     "notify": true,

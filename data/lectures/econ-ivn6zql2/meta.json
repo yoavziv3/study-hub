@@ -1,0 +1,41 @@
+{
+  "id": "econ-ivn6zql2",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגיל 2 – טכנולוגיה ופונקציית ההיצע (שאלות 1–2)",
+  "originalName": "Problem_set 2.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T10:08:12.588Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:assign202930:/Problem_set 2.pdf",
+    "section": "",
+    "module": "תרגיל 2",
+    "timemodified": 1793095635,
+    "note": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
+    "assignment": {
+      "id": 202930,
+      "name": "תרגיל 2",
+      "dueAt": "2026-11-02T21:59:00.000Z",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
+      "instructions": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\nתרגיל 1 שאלה 5"
+    }
+  },
+  "updatedAt": "2026-10-27T10:10:40.001Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-27T10:10:39.995Z",
+    "found": 0
+  },
+  "announced": true
+}
