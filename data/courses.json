@@ -3201,7 +3201,53 @@
     "aiKinds": [
       "lecture"
     ],
-    "bank": false
+    "bank": false,
+    "grading": {
+      "components": [
+        {
+          "name": "בוחן מגן 1",
+          "weight": 7,
+          "kind": "quiz",
+          "shield": true
+        },
+        {
+          "name": "בוחן מגן 2",
+          "weight": 7,
+          "kind": "quiz",
+          "shield": true
+        },
+        {
+          "name": "טקסט חופשי",
+          "weight": 7,
+          "kind": "homework",
+          "shield": false
+        },
+        {
+          "name": "תרגילי סטאק מקוונים",
+          "weight": 3,
+          "kind": "homework",
+          "shield": false
+        },
+        {
+          "name": "בחינה בכתב",
+          "weight": 76,
+          "kind": "exam",
+          "shield": false
+        }
+      ],
+      "complete": true,
+      "minExam": null,
+      "passGrade": 56,
+      "notes": [
+        "מתוך 10 הגשות (טקסט חופשי) יילקחו בחשבון 8 הטובות ביותר",
+        "אין דרישת סף לציון בבחינה הסופית או בכל מרכיב אחר"
+      ],
+      "source": "catalog",
+      "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1",
+      "hash": "42d7ebdd4aa40e08",
+      "checkedAt": "2026-10-27T07:43:40.290Z",
+      "extractedAt": "2026-10-27T07:43:40.290Z"
+    }
   },
   {
     "id": "m68589",
