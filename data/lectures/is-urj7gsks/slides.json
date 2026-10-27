@@ -1,0 +1,134 @@
+[
+  {
+    "n": 1,
+    "text": "מבוא למערכות מידע\nתשתיות ,ITחומרה ותקשורת\n\nד\"ר דוד קודיש | אוקטובר 2026"
+  },
+  {
+    "n": 2,
+    "text": "מה נלמד בשיעור זה?\n\n2"
+  },
+  {
+    "n": 3,
+    "text": "מבנה החומרה וCPU-\nזיכרון\n\n3"
+  },
+  {
+    "n": 4,
+    "text": "Transistor, Bit, Byte, Character\n\nייצוג נתונים\nTransistor\n\nbit\n\nByte\n\nCharacter\n\nטרנזיסטור\n\nביט\n\nבית\n\nתו\n\nמרכיב אלקטרוני בשבב\nמחזיק ביט אחד:\nפתוח/סגור\nמיליארדי טרנזיסטורים\nבכל מעבד מודרני\n\nהיחידה הקטנה ביותר\nערך אחד בלבד 0 :או 1\n = 0כבוי ()OFF\n = 1דלוק ()ON\n\n 8ביטים = בית אחד\n 256 = 2⁸ערכים\nאפשריים\n'01000001 = 'A\n = 00100000רווח\n00000000 = NULL\n\nכל אות ,ספרה ,או סימן\nמיוצג על ידי בית אחד+\n'A' = 65 = 01000001\nתו עברי = +2בתים\n= 4בתים\n\nגודל טרנזיסטור - 1971 - ~10,000 nm | 2025 - 3 nm :קטן פי 3,000בפחות מ 50-שנה\n\nכל תו על המסך -אות ,ספרה ,סמיילי -הוא שרשרת של ביטים המאוחסנים בטרנזיסטורים פיזיים בשבב\nUnicode Consortium; Intel; TSMC - 2025\n\n4"
+  },
+  {
+    "n": 5,
+    "text": "ASCII & Unicode\n\n- קידוד תווים\n\nUnicode\n\nASCII\n\nUniversal Character Encoding Standard\n\nAmerican Standard Code for Information Interchange\n\n?מה זה\nמעל מיליון תווים אפשריים\n כל סמל ואמוג'י,כל שפה\n\n?מה זה\n) ביטים7( תווים בלבד128\n סימנים בלבד, ספרות,אנגלית\n'A' = 65 = 01000001\n\n:מתאים לקבצים\n סיני/ ערבי/ כל מסמך עברי\nweb pages - HTML, JSON\nWord, Excel - modern apps\n\n:מתאים לקבצים\ncode files: .py, .js, .html\nקבצי טקסט אנגלי בלבד\nמערכות ישנות בלבד\n\n?מתי המחשב בוחר\nexcel_export.txt\n\"World ,\"שלום\nUnicode (UTF-16)\nUnicode Consortium; unicode.org - 2026\n\n5\n\nreport.docx\n\"\"שלום עולם\nUnicode (UTF-8)\n\nreport.txt\n\"Hello World!\"\nASCII"
+  },
+  {
+    "n": 6,
+    "text": "טבלת תווים -\n\nASCII\n\n6"
+  },
+  {
+    "n": 7,
+    "text": "טבלת תווים -\n\nUnicode\n\n7"
+  },
+  {
+    "n": 8,
+    "text": "מעבדת קידוד\nכלי אינטראקטיבי -הקלידו טקסט ,ראו את הביטים ,ופתחו אותו בטבלה אחרת\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/03/encoding-lab\nעובד גם אחרי השיעור\n\n8"
+  },
+  {
+    "n": 9,
+    "text": "SI vs IEC\n\nיחידות מידה -\n - SIעשרוני )(x1,000\nתקן המדידה הבינלאומי\nיצרני כוננים ,מהירות רשת\nיחידה\n\nסמל SI\n\nערך\n\n - IECבינארי )(x1,024\nהועדה הבינלאומית לאלקטרוטכניקה\nזיכרון ,מערכת הפעלה ,סייר קבצים\nסמל IEC\n\nערך\n\nקילו\n\nKB\n\n1,000 B\n\nKiB\n\n1,024 B\n\nמגה\n\nMB\n\n1,000 KB\n\nMiB\n\n1,024 KiB\n\nג'יגה\n\nGB\n\n1,000 MB\n\nGiB\n\n1,024 MiB\n\nטרה\n\nTB\n\n1,000 GB\n\nTiB\n\n1,024 GiB\n\nדוגמה :דיסק 1טרה-בייט אצל היצרן -\n\nספק אינטרנט מציע חיבור של 100מגה-ביט לשנייה -\n\n1,000,000,000,000 bytes → Windows shows: 931 GiB\n\n)100 Mbps = 12.5 MB/s (1 byte = 8 bits\nIEC 80000-13; JEDEC JESD79\n\n9"
+  },
+  {
+    "n": 10,
+    "text": "- Gordon Mooreכרטיס אישיות\nQuick Profile\nתפקיד\n\nמייסד שותף של IntelוFairchild Semiconductor -\n\nחברות\n\n)Fairchild Semiconductor (1957), Intel (1968\n\nלידה -פטירה\n\n ,1929קליפורניה | ,2023הוואי (בגיל )94\n\nהשכלה\n\nכימיה( UC Berkeley :תואר ראשון)( Caltech ,דוקטורט\n)1954\n\nשווי נקי\n\n( ~$7Bפברואר ,2023חודש לפני מותו)\n\nהישג מרכזי\n\nחוק מור :כפילות הטרנזיסטורים כל שנה ( ,)1965עודכן לכל\nשנתיים ()1975\n\nעובדה מפתיעה\n\nתרם עם אשתו $600Mל :)2001( Caltech-אז ,התרומה\nהגדולה אי פעם לאוניברסיטה\n)Sources: Wikipedia (Gordon Moore, Moore's law\n\n10"
+  },
+  {
+    "n": 11,
+    "text": "- Gordon Mooreסיפורים ששווה לזכור\nהדרך לפסגה\n\nישראל ומורשת\n\nההתחלה\nב 1956-מור הצטרף ל ,William Shockley -חתן פרס נובל.\nאבל הניהול של Shockleyהיה אוטוריטרי ולא אהוד.\nב 1957-מור ו 7-עמיתים עזבו יחד ,ונודעו בכינוי \"the\n\"( Traitorous Eightלא ידוע מי טבע אותו).\nבאותו יום הקימו את ,Fairchild Semiconductorשהפכה\nלחממה של עמק הסיליקון.\n\nהזווית הישראלית\nב 1974-המהנדס הישראלי Dov Frohmanסייע לIntel-\nלהקים מרכז תכנון שבבים בחיפה :הראשון מחוץ לארה\"ב.\nבמעבדת חיפה תוכנן ,Intel 8088המעבד של הIBM PC-\nהמקורי (.)1981\nב Intel 2017-רכשה את Mobileyeהישראלית ב:$15.3B-\nאז ,הרכישה הגדולה אי פעם של חברת טק ישראלית.\n\nהפריצה\nבאפריל 1965מור פרסם מאמר בElectronics Magazine -\nבו הבחין :כמות הטרנזיסטורים על שבב מכפילה את עצמה\nבכל שנה.\nב 1975-עדכן לכל שנתיים .התחזית החזיקה עשורים,\nוהתעשייה תכננה לפיה.\nב 1968-הקים עם Robert Noyceאת .Intelהוא שימש\nכמנכ\"ל .1987–1979\n\nמורשת\nב 1965-חזה עד 65,000רכיבים לשבב ב .1975-ב2025-\nמעבד צרכני מכיל 184מיליארד טרנזיסטורים.\nמנכ\"ל Intelדאז\" :Pat Gelsinger ,הגדיר את תעשיית\nהטכנולוגיה בתובנה ובחזון שלו\".\nמור נפטר ב 24-במרץ 2023בביתו בהוואי ,בגיל .94\n\n)Sources: Wikipedia (Gordon Moore, Traitorous eight, Moore's law, Dov Frohman, Intel 8088, IBM PC, Mobileye, Transistor count\n\n11"
+  },
+  {
+    "n": 12,
+    "text": "גידול הטרנזיסטורים -חוק מור\nסקאלה לוגריתמית :כל שלב = פי .10קו ישר = הכפלה כל ~ 2שנים (חוק מור)\nחוק מור:\nהכפלה כל ~ 2שנים\n1971 - Intel 4004\n 2,300טרנזיסטורים\n2026 - NVIDIA Rubin\n 336מיליארד\nגידול כולל:\nx 146,000,000\n\nWikipedia: Transistor count; Our World in Data; Intel; Apple; NVIDIA - 2026\n\n12"
+  },
+  {
+    "n": 13,
+    "text": "1970-2020 מעבדים-מגמות במיקרו\n\nHorowitz et al. / K. Rupp - 50 Years of Microprocessor Trend Data; researchgate.net/387511607\n\n13"
+  },
+  {
+    "n": 14,
+    "text": "רכיבי המחשב\n\n14"
+  },
+  {
+    "n": 15,
+    "text": "מחשב נייד -רכיבים פנימיים\n\n15"
+  },
+  {
+    "n": 16,
+    "text": "CPU (Central Processing Unit)\nApple\n:דגמים\nM5 Ultra (Desktop)\nM5 Pro / M5 Max (Laptop)\n:ארכיטקטורה\nARM / TSMC 3nm; M6: 2nm\n) (נייד18 / ) ליבות (נייח36 עד\n גרפיקה ובינה מלאכותית על צ'יפ,מעבד\nאחד\n\n16\n\n:המעבד\nAMD\n\nIntel\n\n:דגמים\nRyzen 9 9950X3D2 (Desktop)\nRyzen 9 9955HX3D (Laptop)\n:ארכיטקטורה\nZen 5 / TSMC 4nm\n) (נייד16 / ) ליבות (נייח16\nמתחרה מרכזי של אינטל\n\n:דגמים\nCore Ultra 7 270K Plus (Desktop)\nCore Ultra X9 388H (Laptop)\n:ארכיטקטורה\nDesktop: Arrow Lake / TSMC N3B\nLaptop: Panther Lake / Intel 18A\n) (נייד16 / ) ליבות (נייח24\nמעבד המסחרי הראשון-יצרה את המיקרו\n\nSources: Intel ARK; AMD product page & newsroom; Apple Newsroom; Wikipedia (Apple M5/M6, Zen 5, Intel 4004, AMD)"
+  },
+  {
+    "n": 17,
+    "text": "CPU\n\n מרכיבים עיקרייםALU\n\nCache Memory\n\nGPU\n\nNPU\n\nיחידת הביצוע של המעבד\nשלושה סוגי פעולות:\n חישוב -חיבור ,חיסור,כפל ,חילוק\n לוגיקה -השוואות והחלטות העברת נתונים -העתקהוהזזה\nכל פעולה מתפרקת לפעולות\nבסיסיות אלו\n\nזיכרון מהיר המשובץ על גבי\nפיסת הסיליקון\nשלוש רמות היררכיות:\n- L1: fastest, per-core\n- L2: medium, per-core\nor shared\n- L3: largest, shared by\nall cores\nמתווך בין זיכרון RAM\nלליבות המעבד\n\nיחידת עיבוד גרפי משולבת\nבתוך המעבד\nעיבוד מקבילי של אלפי\nמשימות בו-זמנית\nתמונה ,וידאו ותלת-ממד\nמספיק לרוב המשתמשים\nללא כרטיס מסך נפרד\n\nיחידה ייעודית לעיבוד\nמשימות בינה מלאכותית\nשימושים :זיהוי פנים ,תרגום\nבזמן אמת ,עוזרי בינה\nמלאכותית\nדגמים נוכחיים:\n- Intel 388H: 50 TOPS\n- AMD HX 475: 60\nTOPS\n- Snapdragon X2 Elite:\n80 TOPS\nMicrosoft requires 40+\nTOPS for Copilot+ PC\n\nIntel.com; AMD.com; Apple.com; Qualcomm.com; Microsoft Copilot+ PC specs - 2026\n\n17"
+  },
+  {
+    "n": 18,
+    "text": "ליבות מעבד -מקביליות וביצועים\nכל ליבה יכולה לבצע פעולה בנפרד -יותר ליבות = יותר עבודה במקביל\nליבה אחת\n\nD\n\nC\n\n 4ליבות -תיאוריה\n\nB\n\nA\n\n 4ליבות -מציאות\nA\n\nA\n\nB\n\nB\nC\n\nC\n\nD\n\nמהיר x4\n\n 4יחידות זמן\n\nיחידה\nאחת\n\nD\n\nמהיר x2-3\n\n~ 2יחידות\n\nאפור = חלק סדרתי /המתנה /תקורה\n\nחלק סדרתי\n\nעלות תיאום\n\nתחרות על משאבים\n\n)(Amdahl's Law\n\n)(Synchronization Overhead\n\n)(Resource Contention\n\nלא כל עבודה ניתנת לפיצול.\nחלק מהמשימות חייב לרוץ\nבסדר קבוע על ליבה אחת.\n\nהליבות צריכות לתאם ביניהן:\nחלוקת עבודה ,נעילות וסנכרון\nגוזלים זמן עיבוד.\n\nכל הליבות חולקות זיכרון\nמטמון ורוחב פס -נוצר\nצוואר בקבוק משותף.\n\nמעבד עם 4ליבות לא מהיר פי - 4בפועל השיפור הוא פי 2-3בלבד ,תלוי באופי המשימות\nמעבדים נפוצים ב 8-24 :2026-ליבות למחשב אישי 64-128 ,ליבות לשרתים\nAmdahl's Law (1967); Intel, AMD, 2026\n\n18"
+  },
+  {
+    "n": 19,
+    "text": "סוגי ליבות במעבדים מודרניים\nלא כל הליבות שוות -ארכיטקטורה היברידית ()big.LITTLE / Hybrid\n\n - E-coresליבות יעילות\n\n - P-coresליבות ביצועים\n\n - LP E-coresחסכוניות\n\nמאפיינים\n\nמאפיינים\n\nמאפיינים\n\nמהירות שעון4.0-5.8 GHz :\nמהירות גבוהה ,צריכת חשמל גבוהה\nארכיטקטורה מורכבת ומתקדמת\n\nמהירות שעון3.0-4.3 GHz :\nיעילות אנרגטית ,צריכה נמוכה\nארכיטקטורה פשוטה יותר ,גודל קטן\n\nמהירות שעון2.0-2.5 GHz :\nצריכת חשמל מינימלית\nפועלות כשכל שאר הליבות ישנות\n\nמשימות אופייניות\n\nמשימות אופייניות\n\nמשימות אופייניות\n\nמשחקים ועיבוד גרפי\nעריכת וידאו ותמונות\nקומפילציה של קוד AI ,מקומי\nכל משימה שדורשת כוח מרבי\n\nריבוי משימות -הרבה תוכנות פתוחות\nהורדות ברקע ,עדכוני מערכת\nשירותי מערכת הפעלה\nמשימות מרובות במקביל\n\nהתראות ,דואר נכנס ,הודעות\nניטור חיישנים ומצב מערכת\nתהליכי רקע קלים ()idle\nחיסכון דרמטי בסוללה במחשבים ניידים\n\nאנלוגיה\n\nאנלוגיה\n\nאנלוגיה\n\nספרינטר -מהיר מאוד אבל צורך הרבה אנרגיה\n\nרץ למרחקים ארוכים -לא הכי מהיר אבל יעיל ועקבי\n\nהולך רגל -איטי אבל כמעט לא צורך אנרגיה\n\nמהירות שעון ()Clock Speed\n\nחום ()Thermal Throttling\n\n = 1 GHzמיליארד מחזורי שעון בשנייה\nטורבו :מאיץ לזמן קצר מעל הבסיס .המספר הגדול במפרט = שיא הטורבו\nדוגמה - Core Ultra 7 270K Plus :בסיס ,3.7 GHzטורבו עד 5.5 GHz\n\nטורבו = יותר חשמל = יותר חום .ה 270K Plus-צורך 125Wבבסיס ועד 250Wבטורבו\nמעבד שמגיע לטמפרטורת הגבול מאט את עצמו כדי לא להינזק\nלכן נייד דק מחזיק טורבו פחות זמן ממחשב שולחני עם קירור טוב\n\n\" 16ליבות - \"5.2 GHz ,המספרים לא מספרים את כל הסיפור .סוג הליבה ,הטורבו והקירור קובעים את הביצועים בפועל\nSources: Intel Panther Lake, 2026; Intel ARK (Core Ultra 7 270K Plus); ARM big.LITTLE Architecture\n\n19"
+  },
+  {
+    "n": 20,
+    "text": "מעבדת ליבות\nכלי אינטראקטיבי 100 -תהליכים ,כמה ליבות וזיכרון משותף :למה 8ליבות לא עובדות פי 8\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/03/cores-lab\nעובד גם אחרי השיעור\n\n20"
+  },
+  {
+    "n": 21,
+    "text": "מעבדת חום\nכלי אינטראקטיבי -למה נייד איטי ממחשב שולחני באותו ,GHzואיך iPadבלי מאוורר עדיין מהיר\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/03/heat-lab\nעובד גם אחרי השיעור\n\n21"
+  },
+  {
+    "n": 22,
+    "text": "PassMark Benchmark\n\n- ביצועי מעבדים\n\n = ליבה בודדת | מדד גבוה יותר = ביצועים טובים יותרSingle-Thread | = ריבוי ליבותCPU Mark\nTDP\n\nSingle-Thread\n\nCPU Mark\n\nליבות\n\nסוג\n\nדגם\n\n25W\n\n4,245\n\n36,504\n\n16\n\nLaptop\n\nIntel Core Ultra X9 388H\n\n28W\n\n4,285\n\n38,807\n\n12\n\nLaptop\n\nAMD Ryzen AI 9 HX 475\n\nN/A\n\n5,932\n\n57,209\n\n18\n\nLaptop\n\nApple M5 Pro (18-core)\n\n200W\n\n4,671\n\n72,080\n\n16\n\nDesktop\n\nAMD Ryzen 9 9950X3D2\n\n125W\n\n5,073\n\n68,523\n\n24\n\nDesktop\n\nIntel Core Ultra 7 270K Plus\n\nPassMark Software | cpubenchmark.net - 2026-10\n\n22"
+  },
+  {
+    "n": 23,
+    "text": "CPU / GPU / NPU\n\nהשוואה -\nCPU\n\nNPU\n\nGPU\n\nשם מלא\n\nCentral Processing Unit\n\nGraphics Processing Unit\n\nNeural Processing Unit\n\nארכיטקטורה\n\nמספר ליבות חזקות ()24–8\n\nאלפי ליבות קטנות ומקביליות\n\nמותאם לזיהוי דפוסים וחישובי רשתות\nנוירונים\n\nחוזקה\n\nמשימות סדרתיות ולוגיקה מורכבת\n\nעיבוד מקבילי מסיבי\n\n AIביעילות אנרגטית גבוהה\n\nשימוש עיקרי\n\nמערכת הפעלה ,אפליקציות ,חישובים\nכלליים\n\nגרפיקה ,משחקים ,עריכת וידאו ,אימון AI\n\nטשטוש רקע ,עוזרי AIמקומיים ,תרגום\nבזמן אמת\n\nמדד עיקרי\n\n + GHzמספר ליבות\n\n + VRAMליבות CUDA / Shaders\n\n( TOPSטריליון פעולות/שנייה)\n\nצריכת חשמל\n\nבינונית – גבוהה\n\nגבוהה מאוד (כרטיס נפרד)\n\nנמוכה מאוד\n\n23"
+  },
+  {
+    "n": 24,
+    "text": "מהו ?GPUיחידת עיבוד גרפי\n• מעבד שמכיל אלפי ליבות קטנות ,מותאם לביצוע אלפי חישובים במקביל\n• במקור פותח לעיבוד גרפיקה -כל פיקסל על המסך דורש חישוב נפרד\n• כיום משמש גם לעריכת וידאו ,אנימציה ,מחשוב מדעי ,ואימון מודלי AI\n\nשני סוגים:\n\n GPUמשולב Integrated -\n•\n•\n•\n•\n\nמובנה בתוך המעבד ()CPU\nללא זיכרון ייעודי -משתמש ב RAM-של המערכת\nמספיק לגלישה ,סרטונים ,עבודה משרדית\nדוגמאותIntel Iris Xe, AMD Radeon, Apple :\n\n GPUנפרד Discrete -\n•\n•\n•\n•\n\nכרטיס מסך עצמאי עם מעבד וזיכרון משלו ()VRAM\nביצועים גבוהים משמעותית\nנדרש למשחקים ,תלת-ממד ,עריכת וידאו כבדה ,אימון\nAI\nיצרנים מוביליםNVIDIA, AMD :\n\nNVIDIA, AMD, Intel | nvidia.com, amd.com, intel.com\n\n24"
+  },
+  {
+    "n": 25,
+    "text": "GPU\n\n- מפרטים חשובים\n המפרטים העיקריים שחשוב להכיר- )Discrete GPU( כרטיסי מסך נפרדים\n\n• צריכת חשמל בוואט- TDP • ליבות לחישוב מקבילי- CUDA Cores / Shaders • ) טוב יותר- זיכרון ייעודי (ככל שיותר- VRAM\nNPU- חשמל מ100 אבל צורך פיRTX 5090: 3,352 TOPS\n\n...מתאים ל\n\nTDP\n\nליבות עיבוד\n\nVRAM\n\nדגם\n\n עריכת וידאו,משחקים\n\n250W\n\n6,144 CUDA\n\n12GB GDDR7\n\nNVIDIA RTX 5070\n\n מקומיAI ,עבודה מקצועית\n\n360W\n\n10,752 CUDA\n\n16GB GDDR7\n\nNVIDIA RTX 5080\n\nממד- תלת:הדגם החזק ביותר\nAI-ו\n\n575W\n\n21,760 CUDA\n\n32GB GDDR7\n\nNVIDIA RTX 5090\n\n-אלטרנטיבה תחרותית ל\nNVIDIA\n\n304W\n\n4,096 Shaders\n\n16GB GDDR6\n\nAMD RX 9070 XT\n\nמחיר/ יחס ביצועים:תקציבי\n\n190W\n\n20 Xe2 Cores\n\n12GB GDDR6\n\nIntel Arc B580\n\nNVIDIA, AMD, Intel | nvidia.com/en-us/geforce, amd.com/en/products/graphics, intel.com\n\n25"
+  },
+  {
+    "n": 26,
+    "text": "GPU: NVIDIA\n\nמרכזי נתונים\n GPUלאימון AIשונה לחלוטין מה GPU-הביתי :כוח עצום ,זיכרון ענק ,מחיר בהתאם\n - NVIDIAהמובילה בפער גדול:\n\nהערות\n\nדגם\n\nזיכרון\n\nTDP\n\nNVIDIA H100 SXM\n\n80GB HBM3\n\n≤700W\n\nמשמש לאימון ולהרצה של מודלי AIגדולים\n\n)NVIDIA B200 (Blackwell\n\n180GB HBM3e\n\n≤1,000W\n\n 208מיליארד טרנזיסטורים בשתי פיסות סיליקון\nבאריזה אחת\n\n)NVIDIA B300 (Blackwell Ultra\n\n288GB HBM3e\n\n)NVIDIA Rubin (Vera Rubin\n\n288GB HBM4\n\n 60%יותר זיכרון לעומת .B200צריכה לפי סוג\n1,100-1,400W\nהקירור\nלא פורסם\n\nהדור החדש ביותר ,נשלח מאוגוסט 2026\n\nהשוק ושרשרת האספקה:\n•\n•\n•\n•\n\nהביקוש עולה על ההיצע OpenAI, Google, Meta, Microsoft -משקיעות עשרות מיליארדי דולר בבניית חוות ,GPUו GPU-בודד\nעולה עשרות אלפי דולרים\nצוואר בקבוק :תלות גבוהה ב TSMC-וביכולות הייצור והאריזה המתקדמות בטייוואן\nמתחרים AMD :עם MI355Xוהדור הבא MI455Xב ,2027-וה TPU-של ,Googleשבב ייעודי ל AI-בלבד\n NVIDIAהפכה לחברה היקרה בעולם (שווי שוק ~ 5.2$טריליון 26 ,באוקטובר )2026\nNVIDIA; Lenovo, Supermicro datasheets; AMD; Google Cloud; Silicon Analysts; companiesmarketcap.com\n\n26"
+  },
+  {
+    "n": 27,
+    "text": "מהו ?NPUיחידת עיבוד נוירונית\n• שבב ייעודי לביצוע משימות AIבצריכת חשמל נמוכה\n• למה לא להשתמש ב CPU-או ?GPU\n• ה NPU-מותאם לזיהוי דפוסים (תמונות ,קול ,טקסט) באמצעות רשתות נוירונים\n• חסכוני פי 10מ - CPU-כמו מיקרוגל לעומת להב גז :שניהם מחממים ,אבל אחד בנוי בדיוק לזה\nשימושים יומיומיים:\n•\n•\n•\n•\n•\n\nטשטוש רקע בשיחות וידאו ()Zoom, Teams\nעוזרי AIמקומיים Windows Copilot -רץ על המחשב בלי ענן\nתרגום בזמן אמת וכתוביות חיות ()Live Captions\nשיפור תמונות ועריכת וידאו אוטומטית\nזיהוי פנים ,טביעת אצבע וקול ()Windows Hello\n Microsoftמגדירה :מחשב Copilot+ PCחייב לכלול NPUבעוצמת TOPS +40לפחות\n\nMicrosoft, Intel, Qualcomm | microsoft.com, intel.com, qualcomm.com\n\n27"
+  },
+  {
+    "n": 28,
+    "text": "NPU\n\n- מפרטים חשובים\n) (טריליון פעולות לשנייהTOPS : המדד המרכזי. לא קונים אותו בנפרד- משובץ בתוך המעבדNPU-ה\nהערות\n\nTOPS\n\nNPU\n\nמעבד\n\n על שבבNPU- גרפיקה ו, מעבד:Mac-ב\n גם הגרפיקה.אחד עם זיכרון משותף\n אחדTOPS ולכן אין נתון,AI מריצה\n\nN/A\n\nApple Neural Engine\n\nApple M5 / M6\n\n עם כרטיס המסך,Panther Lake דור\n180-מגיע ל\n\n50\n\nIntel NPU 5\n\nIntel Core Ultra X9 388H\n\nNPU- ה, למחשבים ניידיםARM מעבד\nהחזק בקטגוריה\n\n80\n\nHexagon NPU 6\n\nQualcomm Snapdragon X2\nElite\n\n לניידיםAMD הדור החדש של\n\n60\n\nXDNA 2\n\nAMD Ryzen AI 9 HX 475\n\n רץ עלAI- ה, חלשNPU :מעבד שולחני\nכרטיס המסך\n\n13\n\nIntel AI Boost\n\nIntel Core Ultra 7 270K Plus\n\n+Copilot לתקןMicrosoft דרישת\n\n40+\n\nN/A\n\nCopilot+ PC)(מינימום\n\nIntel, AMD, Apple, Qualcomm, Microsoft | ark.intel.com, amd.com, apple.com, qualcomm.com, learn.microsoft.com\n\n28"
+  },
+  {
+    "n": 29,
+    "text": "מבנה החומרה וCPU-\n\nזיכרון\n\n29"
+  },
+  {
+    "n": 30,
+    "text": "Memory Hierarchy\n\nמבנה הזיכרון\n\nמהיר\n\nמהירות\n\nקיבולת\n\n?נדיף\n\n< 1 ns\n\n< 1 KB\n\n✓\n\n1 - 40 ns\n\n256 KB - 64 MB\n\n✓\n\n50 - 100 ns\n\n4 - 64 GB\n\n✓\n\n0.1 - 10 ms\n\n256 GB - 20 TB\n\n✗\n\n10 ms - 1 s\n\n-\n\n✗\n\nרגיסטרים\n\nיקר\n\nRegisters\n\nמטמון\nCache (L1/L2/L3)\n\nזיכרון ראשי\nRAM\n\nאחסון\nSSD / HDD\n\nפלט/קלט\nאיטי\nזול\n\nI/O Devices\n\n קיבולת קטנה יותר, עלות גבוהה יותר, גישה מהירה יותר- ככל שעולים בפירמידה\nSources: Patterson & Hennessy, Computer Organization and Design, RISC-V Ed., 2nd ed. (2020) | Intel ARK (2025) | Micron Technology (2025)\n\n30"
+  },
+  {
+    "n": 31,
+    "text": "סוגי זיכרון\nRegisters\n\nCache\n\nROM & BIOS\n\nרגיסטרים\n\nזיכרון מטמון\n\nקושחה ואתחול\n\nנדיף\n\nנדיף\n\nבלתי נדיף\n\nממוקמים ישירות בתוך המעבד\n\nממוקם בתוך המעבד\n\nשומרים ערכים שהמעבד צריך לחישובים\n\nמפחית פניות לזיכרון הראשי\n\nBIOS = Basic Input/Output System\n\nהזיכרון המהיר ביותר במחשב\n\nשלוש רמות היררכיות:\n\nקיים במחשבים ובמכשירים שונים\n\nגודל :בתים בודדים\n\n)L1: fastest, smallest (per-core\nL2: medium | L3: largest, shared\n\nככל שהרמה נמוכה יותר -מהיר וקטן\nיותר\n\nROM = Read Only Memory\n\nמאוחסן על זיכרון קריאה בלבד ניתן\nלעדכון\nתפקידים :בדיקת תקינות ,איתור מערכת\nהפעלה ,טעינה לזיכרון\n\n31"
+  },
+  {
+    "n": 32,
+    "text": "RAM\n\nזיכרון עבודה -\nזיכרון וירטואלי\n\nמאפייני RAM\n\nמה קורה כש RAM-מתמלא לגמרי?\nמערכת ההפעלה דוחסת זיכרון ,ואז מעבירה חלק ממנו\nלאחסון\nRAM = Random Access Memory\n\nזיכרון העבודה של המחשב -כל מה שרץ כרגע מאוחסן כאן\nנדיף :כל הנתונים נמחקים עם כיבוי המחשב\nיותר = RAMיותר תוכנות בו-זמנית ,או תוכנות כבדות יותר\nגדלים נפוצים :ניידים 8-32ג'יגה-בייט ,שרתים עד טרה-בייט\nתקן נוכחי:\nDDR5 SDRAM\n\nמרחיב את הזיכרון הפיזי ומאפשר הרצת תוכנות נוספות\nגישה לדיסק איטית בסדרי גודל -גורמת להאטה משמעותית\nמחשב אישי :קובץ החלפה על ה( SSD-אוטומטי ברקע)\nטלפון חכם :כמעט לא משתמש באחסון -סוגר אפליקציות\nברקע\nבמובייל :האפליקציה נסגרת ונטענת מחדש בפתיחה הבאה\n\nפתרון בשני המקרים :לרכוש זיכרון RAMנוסף\n\nמחיר (:)2026\n)16GB ~$300 | 32GB $430-600 (4-5x in a year\nעליית מחיר :ביקוש גבוה לבינה מלאכותית ממצה את הייצור\n\nImage: DDR5 SDRAM by smial, CC BY-SA 2.0 DE, Wikimedia Commons | RAM prices: capitalandcompute.net DDR5 tracker, Oct 2026\n\n32"
+  },
+  {
+    "n": 33,
+    "text": "זיכרון וירטואלי :מחשב מול טלפון\nמה קורה כשה RAM-מתמלא? המחשב מעביר לאחסון ,הטלפון סוגר אפליקציות\nסרקו כדי לצפות\n\nlive.themathbible.com\n/tool/03/virtual-memory\n 34שניות · ללא קול\n\n33"
+  }
+]

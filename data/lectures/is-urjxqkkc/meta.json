@@ -1,0 +1,28 @@
+{
+  "id": "is-urjxqkkc",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "יסודות מערכות מידע - שיעור 04",
+  "originalName": "יסודות מערכות מידע - שיעור 04.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 48,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-27T15:40:57.134Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68600,
+    "fileKey": "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
+    "section": "הרצאות",
+    "module": "יסודות מערכות מידע - שיעור 04",
+    "timemodified": 1793113456
+  },
+  "updatedAt": "2026-10-27T16:23:33.846Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}

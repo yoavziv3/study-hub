@@ -2888,6 +2888,34 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-10-27T10:18:36.035Z"
       }
+    },
+    {
+      "id": "mvqvlje14otk",
+      "key": "material:is-urj7gsks",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "is",
+      "title": "הרצאה חדשה במערכות מידע: יסודות מערכות מידע - שיעור 03",
+      "body": "",
+      "lectureId": "is-urj7gsks",
+      "source": "moodle",
+      "fileKey": "68600:3465632:/יסודות מערכות מידע - שיעור 03.pdf",
+      "createdAt": "2026-10-27T15:40:56.190Z",
+      "addedAt": "2026-10-27T16:04:16.105Z"
+    },
+    {
+      "id": "mvqwacphl97o",
+      "key": "material:is-urjxqkkc",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "is",
+      "title": "הרצאה חדשה במערכות מידע: יסודות מערכות מידע - שיעור 04",
+      "body": "",
+      "lectureId": "is-urjxqkkc",
+      "source": "moodle",
+      "fileKey": "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
+      "createdAt": "2026-10-27T15:40:57.134Z",
+      "addedAt": "2026-10-27T16:23:33.845Z"
     }
   ],
   "deadlines": [
