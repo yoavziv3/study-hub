@@ -58,6 +58,24 @@ export async function studentDeadlines(env, user, courses, fresh = false, reques
         action: e.action?.name || '',
         actionable: !!e.action?.actionable,
       }));
+      // Moodle's calendar names a module by its course-module id (the number in …/mod/assign/view.php?id=…), which is
+      // not the assignment's own id (the one mod_assign_* and the Mac use). Without the real id the submission status
+      // fails and the site's own copy of the same homework shows up as a second, identical deadline.
+      const cmidOf = (u) => Number(/[?&]id=(\d+)/.exec(u || '')?.[1]) || 0;
+      const idByCmid = new Map(known.map((a) => [cmidOf(a.url), Number(a.id)]).filter(([c]) => c));
+      const unknown = list.filter((e) => e.module === 'assign' && !idByCmid.has(cmidOf(e.url)));
+      if (unknown.length) {
+        const courseids = [...new Set(unknown.map((e) => e.moodleCourseId).filter(Boolean))];
+        const found = courseids.length ? await rest(env, token, 'mod_assign_get_assignments', { courseids }).catch(() => null) : null;
+        for (const c of found?.courses || []) for (const a of c.assignments || []) idByCmid.set(Number(a.cmid), Number(a.id));
+      }
+      for (const e of list) {
+        const real = e.module === 'assign' ? idByCmid.get(cmidOf(e.url)) : 0;
+        if (!real) continue;
+        e.legacyKey = e.moodleKey; // what students' "done" marks and sent reminders were keyed by before this
+        e.instance = real;
+        e.moodleKey = `assign:${real}`;
+      }
       // Submitted assignments drop off Moodle's list, so the site's own homework is checked one by one too.
       const ids = [...new Set([...list.filter((e) => e.module === 'assign').map((e) => Number(e.instance)), ...known.map((a) => Number(a.id))])].slice(0, 15);
       const status = Object.fromEntries(await Promise.all(ids.map((id) =>

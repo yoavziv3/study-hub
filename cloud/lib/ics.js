@@ -43,8 +43,8 @@ export function calendarFeed({ user, deadlines, progress, courses }) {
   const short = Object.fromEntries(courses.map((c) => [c.id, c.short]));
   const done = progress.deadlinesDone || {};
   const items = [
-    ...deadlines.filter((d) => !done[d.moodleKey] && !d.submitted).map((d) => ({
-      uid: `${d.moodleKey}@study-hub`,
+    ...deadlines.filter((d) => !done[d.moodleKey] && !done[d.legacyKey] && !d.submitted).map((d) => ({
+      uid: `${d.legacyKey || d.moodleKey}@study-hub`,
       title: d.title,
       course: short[d.courseId] || d.courseName,
       dueAt: d.dueAt,

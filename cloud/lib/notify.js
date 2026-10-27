@@ -139,7 +139,7 @@ export function dueNotifications({ user, progress, courses, feedCourses = course
     const days = String(user.reminder_days || '3,1').split(',').map(Number).filter(Boolean);
     const done = progress.deadlinesDone || {};
     const list = [
-      ...deadlines.filter((d) => !d.submitted && !done[d.moodleKey]).map((d) => ({ key: d.moodleKey, title: d.title, dueAt: d.dueAt, courseId: d.courseId, draft: d.draft })),
+      ...deadlines.filter((d) => !d.submitted && !done[d.moodleKey] && !done[d.legacyKey]).map((d) => ({ key: d.legacyKey || d.moodleKey, title: d.title, dueAt: d.dueAt, courseId: d.courseId, draft: d.draft })),
       ...(progress.manualDeadlines || []).filter((d) => !d.done).map((d) => ({ key: `manual:${d.id}`, title: d.title, dueAt: d.dueAt, courseId: d.courseId })),
     ];
     for (const d of list) {

@@ -254,7 +254,8 @@ export function AppProvider({ children }) {
             p.manualDeadlines = (p.manualDeadlines || []).map((x) => (x.id === d.id ? { ...x, done: !x.done } : x));
           } else {
             p.deadlinesDone ||= {};
-            if (p.deadlinesDone[d.moodleKey]) delete p.deadlinesDone[d.moodleKey];
+            // legacyKey: the key the cloud used for this assignment before it knew the assignment's own id.
+            if (p.deadlinesDone[d.moodleKey] || p.deadlinesDone[d.legacyKey]) { delete p.deadlinesDone[d.moodleKey]; delete p.deadlinesDone[d.legacyKey]; }
             else p.deadlinesDone[d.moodleKey] = Date.now();
           }
           return p;
@@ -285,7 +286,7 @@ export function AppProvider({ children }) {
     if (!STATIC) return feed;
     const done = progress.deadlinesDone || {};
     const deadlines = [
-      ...personal.map((d) => ({ ...d, source: 'moodle', intro: d.action || '', submitted: !!d.submitted, draft: !!d.draft, done: !!done[d.moodleKey] })),
+      ...personal.map((d) => ({ ...d, source: 'moodle', intro: d.action || '', submitted: !!d.submitted, draft: !!d.draft, done: !!(done[d.moodleKey] || done[d.legacyKey]) })),
       ...(progress.manualDeadlines || []).map((d) => ({ ...d, source: 'manual' })),
     ].sort((a, b) => a.dueAt.localeCompare(b.dueAt));
     // Reminders: one per deadline, for the closest threshold already crossed (default 3 days and 1 day before).
