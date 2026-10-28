@@ -2902,6 +2902,18 @@
       "fileKey": "67024:3457967:/תרגול 2 - ישרים ומישורים במרחב.pdf",
       "createdAt": "2026-10-27T23:05:22.319Z",
       "addedAt": "2026-10-27T23:05:22.627Z"
+    },
+    {
+      "id": "mvrt4nq0a6sv",
+      "key": "announcement:895263",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "תזכורת לקבוצה 2 (של מתן זיו-אב) - השיעור היום ב-35/116",
+      "body": "שימו לב שהשיעור עבר מהכיתה המקורית לכיתה 116 בבניין 35.",
+      "author": "מתן זיו-אב",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895263",
+      "createdAt": "2026-10-28T07:38:23.000Z",
+      "addedAt": "2026-10-28T07:42:55.512Z"
     }
   ],
   "deadlines": [
