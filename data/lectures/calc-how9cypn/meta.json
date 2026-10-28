@@ -22,7 +22,8 @@
     "module": "הרצאות של מוטקה- קבוצה 3",
     "timemodified": 1793213615
   },
-  "updatedAt": "2026-10-28T19:10:35.927Z",
+  "updatedAt": "2026-10-28T20:15:33.115Z",
   "aiError": "יצירת הסיכום נכשלה",
-  "announced": true
+  "announced": true,
+  "aiRetries": 2
 }
