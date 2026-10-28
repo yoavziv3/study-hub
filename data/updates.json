@@ -2964,6 +2964,20 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895400",
       "createdAt": "2026-10-28T14:09:38.000Z",
       "addedAt": "2026-10-28T14:13:19.098Z"
+    },
+    {
+      "id": "mvshp0gljvjv",
+      "key": "material:calc-how9cypn",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 4",
+      "body": "",
+      "lectureId": "calc-how9cypn",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 4.pdf",
+      "createdAt": "2026-10-28T19:10:30.482Z",
+      "addedAt": "2026-10-28T19:10:35.925Z"
     }
   ],
   "deadlines": [

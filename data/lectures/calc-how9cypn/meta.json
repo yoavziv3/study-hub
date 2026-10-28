@@ -1,0 +1,28 @@
+{
+  "id": "calc-how9cypn",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 4",
+  "originalName": "הרצאה 4.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T19:10:30.482Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464422:/הרצאה 4.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 3",
+    "timemodified": 1793213615
+  },
+  "updatedAt": "2026-10-28T19:10:35.927Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}
