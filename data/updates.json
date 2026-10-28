@@ -2928,6 +2928,18 @@
       "fileKey": "68380:3466099:/תרגיל 1 מבוא לכלכלה תעשיה וניהול.pdf",
       "createdAt": "2026-10-28T08:59:38.922Z",
       "addedAt": "2026-10-28T08:59:39.531Z"
+    },
+    {
+      "id": "mvrxnp8q1sur",
+      "key": "announcement:895302",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "לקבוצה של מישל",
+      "body": "שלום לכולם,\n\nשיעורים של יום רביעי יתקיימו בבניין 32 בחדר 307 (עד להודעה חדשה).\n\nבברכה,\n\nמישל",
+      "author": "מישל אברמוב",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895302",
+      "createdAt": "2026-10-28T09:42:16.000Z",
+      "addedAt": "2026-10-28T09:49:42.410Z"
     }
   ],
   "deadlines": [
