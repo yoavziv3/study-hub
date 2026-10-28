@@ -1,0 +1,30 @@
+{
+  "id": "m67024-kxu58imi",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "LES 2",
+  "originalName": "LES 2.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 7,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T20:41:26.493Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3442285:/LES 2.pdf",
+    "section": "סיכומי הרצאות ותירגולים",
+    "module": "סיכומים של ליאורה",
+    "timemodified": 1793215845
+  },
+  "updatedAt": "2026-10-28T20:41:27.301Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

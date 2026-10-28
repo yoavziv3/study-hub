@@ -2978,6 +2978,20 @@
       "fileKey": "67017:3464422:/הרצאה 4.pdf",
       "createdAt": "2026-10-28T19:10:30.482Z",
       "addedAt": "2026-10-28T19:10:35.925Z"
+    },
+    {
+      "id": "mvskxuronejm",
+      "key": "material:m67024-kxu58imi",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "m67024",
+      "title": "הרצאה חדשה באלגברה לינארית להנדסה: LES 2",
+      "body": "",
+      "lectureId": "m67024-kxu58imi",
+      "source": "moodle",
+      "fileKey": "67024:3442285:/LES 2.pdf",
+      "createdAt": "2026-10-28T20:41:26.493Z",
+      "addedAt": "2026-10-28T20:41:27.300Z"
     }
   ],
   "deadlines": [
