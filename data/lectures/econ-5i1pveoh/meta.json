@@ -23,12 +23,12 @@
     "assignment": {
       "id": 202001,
       "name": "תרגיל 1",
-      "dueAt": "2026-11-03T21:59:00.000Z",
+      "dueAt": null,
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3450717",
       "instructions": "תרגילים לעשות מתוך התרגיל:\n1,\n2א,ב,ג\n4\n5 א,ב\n6"
     }
   },
-  "updatedAt": "2026-10-27T10:08:12.258Z",
+  "updatedAt": "2026-10-28T05:23:59.466Z",
   "aiError": null,
   "announced": true
 }
