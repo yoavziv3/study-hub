@@ -2940,6 +2940,18 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895302",
       "createdAt": "2026-10-28T09:42:16.000Z",
       "addedAt": "2026-10-28T09:49:42.410Z"
+    },
+    {
+      "id": "mvs4l6emj42x",
+      "key": "announcement:895381",
+      "type": "announcement",
+      "courseId": "acc",
+      "title": "תרגול לשבוע הבא",
+      "body": "שלום לכולם,\n\nשבוע הבא נפתור בתרגול את שאלות 3,4,5,6 בפרק 4 בנושא מאזן\n\nנתראה,\n\nעומר.",
+      "author": "עומר עזריה",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895381",
+      "createdAt": "2026-10-28T12:54:29.000Z",
+      "addedAt": "2026-10-28T13:03:41.998Z"
     }
   ],
   "deadlines": [
