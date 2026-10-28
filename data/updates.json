@@ -2914,6 +2914,20 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895263",
       "createdAt": "2026-10-28T07:38:23.000Z",
       "addedAt": "2026-10-28T07:42:55.512Z"
+    },
+    {
+      "id": "mvrvvc7fuw7m",
+      "key": "material:econ-vvbqhogh",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "econ",
+      "title": "שיעורי בית / תרגילים חדשים במבוא לכלכלה: תרגיל 1 מבוא לכלכלה תעשיה וניהול",
+      "body": "",
+      "lectureId": "econ-vvbqhogh",
+      "source": "moodle",
+      "fileKey": "68380:3466099:/תרגיל 1 מבוא לכלכלה תעשיה וניהול.pdf",
+      "createdAt": "2026-10-28T08:59:38.922Z",
+      "addedAt": "2026-10-28T08:59:39.531Z"
     }
   ],
   "deadlines": [

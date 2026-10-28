@@ -1,0 +1,30 @@
+{
+  "id": "econ-vvbqhogh",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגיל 1 מבוא לכלכלה תעשיה וניהול",
+  "originalName": "תרגיל 1 מבוא לכלכלה תעשיה וניהול.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 4,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T08:59:38.922Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3466099:/תרגיל 1 מבוא לכלכלה תעשיה וניהול.pdf",
+    "section": "הקדמה ומבוא ומודל עקומת התמורה",
+    "module": "פתרון תרגיל 1",
+    "timemodified": 1793177713
+  },
+  "updatedAt": "2026-10-28T08:59:39.533Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}
