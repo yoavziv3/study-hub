@@ -10,9 +10,9 @@
   "unitNumber": null,
   "slideCount": 36,
   "hasPdf": true,
-  "status": "ready",
-  "stage": "ready",
-  "error": null,
+  "status": "error",
+  "stage": "converting",
+  "error": "ENOENT: no such file or directory, rename '/Users/yuive/Desktop/projects/study/data/lectures/calc-v562k1mb/meta.json.33969.tmp' -> '/Users/yuive/Desktop/projects/study/data/lectures/calc-v562k1mb/meta.json'",
   "createdAt": "2026-10-19T06:18:18.236Z",
   "source": {
     "type": "moodle",
@@ -23,7 +23,7 @@
       "67017:3459906:/solutions.pdf"
     ]
   },
-  "updatedAt": "2026-10-21T21:48:59.036Z",
+  "updatedAt": "2026-10-29T21:51:09.937Z",
   "aiError": null,
   "announced": true
 }
