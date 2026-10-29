@@ -1,0 +1,30 @@
+{
+  "id": "phys-t9vlm4o0",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "תרגול 2 30.10.2026",
+  "originalName": "תרגול 2 30.10.2026.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-29T17:22:31.354Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3468096:/תרגול 2 30.10.2026.pdf",
+    "section": "קבצים להרצאות ולתרגולים",
+    "module": "קובץ עזר לתרגול 2",
+    "timemodified": 1793293981
+  },
+  "updatedAt": "2026-10-29T17:22:31.612Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}
