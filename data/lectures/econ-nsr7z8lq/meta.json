@@ -1,0 +1,27 @@
+{
+  "id": "econ-nsr7z8lq",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגול 1 - עקומת התמורה (2)",
+  "originalName": "תרגול 1 - עקומת התמורה (2).pptx",
+  "kind": "tutorial",
+  "originalFile": "original.pptx",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 15,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T22:01:28.273Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3467307:/תרגול 1 - עקומת התמורה (2).pptx",
+    "section": "הקדמה ומבוא ומודל עקומת התמורה",
+    "module": "תרגול 1",
+    "timemodified": 1793220980
+  },
+  "updatedAt": "2026-10-29T10:44:36.279Z",
+  "announced": true
+}

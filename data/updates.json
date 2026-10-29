@@ -2913,7 +2913,8 @@
       "author": "מתן זיו-אב",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895263",
       "createdAt": "2026-10-28T07:38:23.000Z",
-      "addedAt": "2026-10-28T07:42:55.512Z"
+      "addedAt": "2026-10-28T07:42:55.512Z",
+      "analysisTries": 1
     },
     {
       "id": "mvrvvc7fuw7m",
@@ -2992,6 +2993,48 @@
       "fileKey": "67024:3442285:/LES 2.pdf",
       "createdAt": "2026-10-28T20:41:26.493Z",
       "addedAt": "2026-10-28T20:41:27.300Z"
+    },
+    {
+      "id": "mvtf25h3vfsx",
+      "key": "material:econ-nsr7z8lq",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "econ",
+      "title": "תרגול חדש במבוא לכלכלה: תרגול 1 - עקומת התמורה (2)",
+      "body": "",
+      "lectureId": "econ-nsr7z8lq",
+      "source": "moodle",
+      "fileKey": "68380:3467307:/תרגול 1 - עקומת התמורה (2).pptx",
+      "createdAt": "2026-10-28T22:01:28.273Z",
+      "addedAt": "2026-10-29T10:44:36.279Z"
+    },
+    {
+      "id": "mvtf25lgwt2d",
+      "key": "material:acc-pz572m9k",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "acc",
+      "title": "שיעורי בית / תרגילים חדשים בחשבונאות: פתרון פרק 2 - זהות חשבונאית",
+      "body": "",
+      "lectureId": "acc-pz572m9k",
+      "source": "moodle",
+      "fileKey": "68470:3383659:/פתרון פרק 2 - זהות חשבונאית.pdf",
+      "createdAt": "2026-10-28T23:02:25.551Z",
+      "addedAt": "2026-10-29T10:44:36.436Z"
+    },
+    {
+      "id": "mvtft0vqg9b4",
+      "key": "material:acc-pz5xdppw",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: דוח על המצב הכספי (מאזן)",
+      "body": "",
+      "lectureId": "acc-pz5xdppw",
+      "source": "moodle",
+      "fileKey": "68470:3467328:/דוח על המצב הכספי (מאזן).pptx",
+      "createdAt": "2026-10-28T23:02:26.500Z",
+      "addedAt": "2026-10-29T11:05:30.038Z"
     }
   ],
   "deadlines": [

@@ -1,0 +1,30 @@
+{
+  "id": "acc-pz572m9k",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "פתרון פרק 2 - זהות חשבונאית",
+  "originalName": "פתרון פרק 2 - זהות חשבונאית.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T23:02:25.551Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3383659:/פתרון פרק 2 - זהות חשבונאית.pdf",
+    "section": "פתרונות לתרגילים",
+    "module": "פתרון לשאלות בפרק 2 בחוברת בנושא זהות חשבונאית",
+    "timemodified": 1788672347
+  },
+  "updatedAt": "2026-10-29T10:44:36.437Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

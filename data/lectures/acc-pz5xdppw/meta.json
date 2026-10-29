@@ -1,0 +1,29 @@
+{
+  "id": "acc-pz5xdppw",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "דוח על המצב הכספי (מאזן)",
+  "originalName": "דוח על המצב הכספי (מאזן).pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 8,
+  "unitNumber": null,
+  "slideCount": 13,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-28T23:02:26.500Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3467328:/דוח על המצב הכספי (מאזן).pptx",
+    "section": "מצגות עומר",
+    "module": "דוח על המצב הכספי (מאזן)",
+    "timemodified": 1793225714
+  },
+  "updatedAt": "2026-10-29T11:23:03.699Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true,
+  "aiRetries": 1
+}
