@@ -1,0 +1,28 @@
+{
+  "id": "phys-sx1ib7bg",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "שיעור 2 30.10.2026",
+  "originalName": "שיעור 2 30.10.2026.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 40,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-29T17:12:32.484Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3468094:/שיעור 2 30.10.2026.pdf",
+    "section": "קבצים להרצאות ולתרגולים",
+    "module": "קובץ עזר לשיעור 2 30.10.2026",
+    "timemodified": 1793293804
+  },
+  "updatedAt": "2026-10-29T17:12:35.723Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

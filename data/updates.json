@@ -3143,6 +3143,20 @@
       "fileKey": "67017:3467954:/קבוצה 73 (רביעי 1400-1600)/Calc_eng_27a_2_3.pdf",
       "createdAt": "2026-10-29T13:37:46.788Z",
       "addedAt": "2026-10-29T13:37:47.291Z"
+    },
+    {
+      "id": "mvtsx40a3pcf",
+      "key": "material:phys-sx1ib7bg",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "phys",
+      "title": "הרצאה חדשה בפיזיקה: שיעור 2 30.10.2026",
+      "body": "",
+      "lectureId": "phys-sx1ib7bg",
+      "source": "moodle",
+      "fileKey": "68587:3468094:/שיעור 2 30.10.2026.pdf",
+      "createdAt": "2026-10-29T17:12:32.484Z",
+      "addedAt": "2026-10-29T17:12:35.722Z"
     }
   ],
   "deadlines": [
