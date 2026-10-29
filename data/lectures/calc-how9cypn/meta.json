@@ -20,9 +20,12 @@
     "fileKey": "67017:3464422:/הרצאה 4.pdf",
     "section": "ספר ורשימות מהכיתה",
     "module": "הרצאות של מוטקה- קבוצה 3",
-    "timemodified": 1793213615
+    "timemodified": 1793213615,
+    "linkedKeys": [
+      "67017:3465805:/הרצאה 4.pdf"
+    ]
   },
-  "updatedAt": "2026-10-28T21:16:43.718Z",
+  "updatedAt": "2026-10-29T18:00:35.149Z",
   "aiError": "יצירת הסיכום נכשלה",
   "announced": true,
   "aiRetries": 3
