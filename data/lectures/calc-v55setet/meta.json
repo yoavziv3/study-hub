@@ -10,9 +10,9 @@
   "unitNumber": null,
   "slideCount": 7,
   "hasPdf": true,
-  "status": "ready",
-  "stage": "ready",
-  "error": null,
+  "status": "error",
+  "stage": "converting",
+  "error": "ENOENT: no such file or directory, rename '/Users/yuive/Desktop/projects/study/data/lectures/calc-v55setet/meta.json.33969.tmp' -> '/Users/yuive/Desktop/projects/study/data/lectures/calc-v55setet/meta.json'",
   "createdAt": "2026-10-19T06:18:17.871Z",
   "source": {
     "type": "moodle",
@@ -23,7 +23,7 @@
       "67017:3459906:/booklet.pdf"
     ]
   },
-  "updatedAt": "2026-10-21T21:48:59.029Z",
+  "updatedAt": "2026-10-29T20:22:43.973Z",
   "aiError": null,
   "announced": true
 }

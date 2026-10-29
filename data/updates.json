@@ -3187,6 +3187,22 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895737",
       "createdAt": "2026-10-29T18:32:41.000Z",
       "addedAt": "2026-10-29T18:39:38.301Z"
+    },
+    {
+      "id": "mvtzpmo3l5zw",
+      "key": "material:calc-v55setet:1793305363971",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "calc",
+      "title": "עודכן בחדו\"א 1: חוברת תרגילים – מספרים ממשיים וסדרות",
+      "body": "",
+      "lectureId": "calc-v55setet",
+      "source": "moodle",
+      "fileKeys": [
+        "67017:3459906:/booklet.pdf"
+      ],
+      "createdAt": "2026-10-19T06:18:17.871Z",
+      "addedAt": "2026-10-29T20:22:43.971Z"
     }
   ],
   "deadlines": [
