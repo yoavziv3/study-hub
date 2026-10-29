@@ -54,5 +54,13 @@
     "href": "https://moodle.bgu.ac.il/moodle/mod/zoom/view.php?id=3372443",
     "section": "קישורי זום",
     "ext": ""
+  },
+  {
+    "id": 3467942,
+    "type": "file",
+    "name": "מתווה המילואים בקורס",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3467942",
+    "section": "מילואים והתאמות",
+    "ext": "pdf"
   }
 ]
