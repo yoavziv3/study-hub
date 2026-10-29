@@ -1,0 +1,34 @@
+[
+  {
+    "n": 1,
+    "text": "אי שוויונות\n\nתרגילים\n\nפתח את אי השוויון\nמשתמש בשיטת\n\nהנחש\n\nmatrix\nbegin\nend\n2\n1x\nנעביר הכל שמאלה\n\nLeftrightarrow\nmatrix\nbegin\nright\ngeq\nend\nleft\n0\n2\n1x\n5\n5\n2\nx\n\ngeq\n0\n2\n\nנציכ\n\nאת\n\nהאפסים על 3\n\n2\n\nהמספרים\n\n5\n\n2\nx\n\n4\n2\n1x\n\n2\nx"
+  },
+  {
+    "n": 2,
+    "text": "5\nx\n\nX t 2\n\nmatrix\nbegin\nright\nend\nleft\n6\n5\n2\n\nII\n\n0\n\nmatrix\nbegin\nright\nend\nleft\n3\n5\n2\n\nשל\n\n0\n\nmatrix\nbegin\nend\n0\n5\n2\n\nבביטוי\n\nמספרי הביניים\n\nleq\n5\n2\nx\n\nסופית\n\nאת\n\nנדיכ\n\n0\n\nsupset\n\nתשובה\n\nfrac\n1x\n1\n\n1\n\nLeftrightarrow\nfrac\n0\n2\n1x\n2\n1\n\nfrac\n\n2\n\nn\n\na\n\n0\n\n2\n\nנחש"
+  },
+  {
+    "n": 3,
+    "text": "לפי מקרים\n\nfrac\n1x\nk\n1\n\nfrac\n\ncdot\nx\n\nfrac\n\n2\n1\n0\nx\n\n2\n1\n0\nx\n\nprofline\n\nx1\n\n1x\n\nאו\n\n יום1\n\np\n1\n\n1x\n\n0\n1x\n\n0\nx\n1\n\nאו\n\nx1\n\nx1\n\ncdot\nx"
+  },
+  {
+    "n": 4,
+    "text": "30\n\nsqrt\n2\nx\n\nפתרו\n\nתחום ההגדרה\n\ngeq\n0\n2\nx\n\nנודה להעלות בריבוע\n\nאת\n\ngeq\n2\nx\n\nהאופים אבל לא ידוע אם אבף\n\nימין\n\nנחלק למגרים\n\nחיוב\n\nהתיק עם תה\n\nאו\n\ngeq\n0\nx\n\nleq\n0\n2\nx\n\nאבשו להעלות בריבוע\n\nsqrt\n2\nx\n\nright\nsqrt\nleft\n1\n0\n2\nx\n\nמתקיים לכל\n\nכי אגף שמאל תמיד חיובי\n\nוגם\nleq\n0\n2\nx\n\n7 01\n\nsupset\n\n2\n\nn\n\n2\nL1xe\ngeq\n0\nx\n3D 1\n0\n\n2\n1x\n\nוגם\n\nleq\n0\n2\nx\n0\n7\n1\n\nmathbb\nin\nR\nx\n\nKI\nleq\n2\nx\n\n9\n2\n\nmathbb\nin\nR\nx\n\nleq\n0\n2\nx"
+  },
+  {
+    "n": 5,
+    "text": ""
+  },
+  {
+    "n": 6,
+    "text": ""
+  },
+  {
+    "n": 7,
+    "text": ""
+  },
+  {
+    "n": 8,
+    "text": ""
+  }
+]

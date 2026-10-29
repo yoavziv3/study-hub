@@ -1,0 +1,22 @@
+[
+  {
+    "n": 1,
+    "text": "הגדרת הגבול הקדמה\nאי שוויונות1 ערכים מוחלטים\n\nLeftrightarrow\nright\nleft\na\nx\nLeftrightarrow\nright\nleft\na\nx\n\nright\nleft\nleq\nb\na\n\ntimes\n1\nאו\n\na\nx\n\nmathbb\nforall\nib\nRn\na\n\nx\n1x 0\n\nbegin\nendend\ngeq\nmatrix\nbegin matrix\n\nהמשולש\n\nתזכורת\n\nו\n\nאי שוויון\n\nright\nleft\nleq\n3\nx\n1\n\nright\nleft\nin\n4\n2\nx\n\nכלומר"
+  },
+  {
+    "n": 2,
+    "text": "פתרון\nfrac\nK\n\nright\nleft\nleq\nb\na\n\nו\n\nmathbb\nforall\nib\nRn\nn\na\n\nright\nleft\nleq\n4\n3\n2\nx\n1\nh\nn\nk\n\nright\nleft\nleq\n6\n3\n5\n2\nx\n1\n\nright\ninfty\nleft\n\nהמשולש\n\nאי שוויון\n\nz"
+  },
+  {
+    "n": 3,
+    "text": ""
+  },
+  {
+    "n": 4,
+    "text": ""
+  },
+  {
+    "n": 5,
+    "text": ""
+  }
+]

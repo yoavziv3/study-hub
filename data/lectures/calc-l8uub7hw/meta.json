@@ -1,0 +1,27 @@
+{
+  "id": "calc-l8uub7hw",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "Calc eng 27a 2 3",
+  "originalName": "Calc_eng_27a_2_3.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 27,
+  "unitNumber": 27,
+  "slideCount": 5,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-29T13:37:46.788Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3467954:/קבוצה 73 (רביעי 1400-1600)/Calc_eng_27a_2_3.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "תרגולים של ליעד",
+    "timemodified": 1793279910
+  },
+  "updatedAt": "2026-10-29T13:37:47.292Z",
+  "announced": true
+}
