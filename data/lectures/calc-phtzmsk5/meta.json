@@ -2,7 +2,7 @@
   "id": "calc-phtzmsk5",
   "courseId": "calc",
   "autoCourse": false,
-  "title": "הרצאה 5-4 השלמה",
+  "title": "כלל הסנדוויץ' וסדרה אפסה כפול סדרה חסומה",
   "originalName": "הרצאה 5-4 השלמה.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -22,8 +22,14 @@
     "module": "הרצאות של מוטקה- קבוצה 8",
     "timemodified": 1793347852
   },
-  "updatedAt": "2026-10-30T10:32:17.129Z",
-  "aiError": "יצירת הסיכום נכשלה",
+  "updatedAt": "2026-10-30T11:14:25.656Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 1
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-10-30T11:14:24.118Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)"
 }

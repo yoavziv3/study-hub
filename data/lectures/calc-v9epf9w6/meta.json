@@ -1,0 +1,30 @@
+{
+  "id": "calc-v9epf9w6",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "תרגול 1",
+  "originalName": "תרגול 1.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 19,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-30T11:05:54.869Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3468267:/תרגול 1.pdf",
+    "section": "תרגולים בזום - ליאור",
+    "module": "תרגול 1",
+    "timemodified": 1793357203
+  },
+  "updatedAt": "2026-10-30T11:14:27.597Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

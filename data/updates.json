@@ -3272,6 +3272,34 @@
       "fileKey": "67017:3465805:/הרצאה 5-4 השלמה.pdf",
       "createdAt": "2026-10-30T08:24:30.226Z",
       "addedAt": "2026-10-30T09:54:02.330Z"
+    },
+    {
+      "id": "mvuvkebw22mg",
+      "key": "material:calc-v9epf9w6",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "תרגול חדש בחדו\"א 1: תרגול 1",
+      "body": "",
+      "lectureId": "calc-v9epf9w6",
+      "source": "moodle",
+      "fileKey": "67017:3468267:/תרגול 1.pdf",
+      "createdAt": "2026-10-30T11:05:54.869Z",
+      "addedAt": "2026-10-30T11:14:27.596Z"
+    },
+    {
+      "id": "mvuvkfcz5lz8",
+      "key": "material:calc-v9f6ukvk",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "תרגול חדש בחדו\"א 1: תרגול 2",
+      "body": "",
+      "lectureId": "calc-v9f6ukvk",
+      "source": "moodle",
+      "fileKey": "67017:3468268:/תרגול 2.pdf",
+      "createdAt": "2026-10-30T11:05:55.495Z",
+      "addedAt": "2026-10-30T11:14:28.931Z"
     }
   ],
   "deadlines": [
