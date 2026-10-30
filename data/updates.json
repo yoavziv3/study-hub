@@ -3244,6 +3244,34 @@
       "deadlineId": "mvu2viyg2zq3",
       "createdAt": "2026-10-29T21:51:17.945Z",
       "addedAt": "2026-10-29T21:51:17.945Z"
+    },
+    {
+      "id": "mvuro2h47msl",
+      "key": "material:calc-phtkt4fp",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 5-4 השלמה",
+      "body": "",
+      "lectureId": "calc-phtkt4fp",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 5-4 השלמה.pdf",
+      "createdAt": "2026-10-30T08:24:29.694Z",
+      "addedAt": "2026-10-30T09:25:20.392Z"
+    },
+    {
+      "id": "mvusoz4q2epa",
+      "key": "material:calc-phtzmsk5",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 5-4 השלמה",
+      "body": "",
+      "lectureId": "calc-phtzmsk5",
+      "source": "moodle",
+      "fileKey": "67017:3465805:/הרצאה 5-4 השלמה.pdf",
+      "createdAt": "2026-10-30T08:24:30.226Z",
+      "addedAt": "2026-10-30T09:54:02.330Z"
     }
   ],
   "deadlines": [

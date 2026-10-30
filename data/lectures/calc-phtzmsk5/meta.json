@@ -1,0 +1,29 @@
+{
+  "id": "calc-phtzmsk5",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 5-4 השלמה",
+  "originalName": "הרצאה 5-4 השלמה.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 5,
+  "unitNumber": 5,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-10-30T08:24:30.226Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3465805:/הרצאה 5-4 השלמה.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 8",
+    "timemodified": 1793347852
+  },
+  "updatedAt": "2026-10-30T10:32:17.129Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true,
+  "aiRetries": 1
+}
