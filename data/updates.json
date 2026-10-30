@@ -3325,6 +3325,19 @@
       "deadlineId": "mvjtcv79u4ok",
       "createdAt": "2026-10-30T20:09:47.621Z",
       "addedAt": "2026-10-30T20:09:47.621Z"
+    },
+    {
+      "id": "mvvj5tqs2p4v",
+      "key": "reminder:mvqivrhe8mpm:3:2026-11-02T21:59:00.000Z",
+      "type": "reminder",
+      "courseId": "econ",
+      "title": "⏰ בעוד 3 ימים: תרגיל 2 (מבוא לכלכלה)",
+      "body": "להגשה עד יום שני, 2.11, 23:59",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
+      "dueAt": "2026-11-02T21:59:00.000Z",
+      "deadlineId": "mvqivrhe8mpm",
+      "createdAt": "2026-10-30T22:14:58.516Z",
+      "addedAt": "2026-10-30T22:14:58.516Z"
     }
   ],
   "deadlines": [
@@ -3384,6 +3397,9 @@
   "reminded": {
     "mvf5i5q1b2xp": [],
     "mvjtcv79u4ok": [
+      3
+    ],
+    "mvqivrhe8mpm": [
       3
     ]
   },
