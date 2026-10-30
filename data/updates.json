@@ -2914,7 +2914,27 @@
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895263",
       "createdAt": "2026-10-28T07:38:23.000Z",
       "addedAt": "2026-10-28T07:42:55.512Z",
-      "analysisTries": 1
+      "analysisTries": 1,
+      "analysis": {
+        "kind": "room-change",
+        "groups": [
+          "2"
+        ],
+        "classType": "שעור",
+        "room": "בניין 35 חדר 116",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "2026-10-28",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "השיעור של קבוצה 2 מתקיים היום בבניין 35 בכיתה 116.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:21:29.505Z"
+      }
     },
     {
       "id": "mvrvvc7fuw7m",
@@ -2940,7 +2960,25 @@
       "author": "מישל אברמוב",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895302",
       "createdAt": "2026-10-28T09:42:16.000Z",
-      "addedAt": "2026-10-28T09:49:42.410Z"
+      "addedAt": "2026-10-28T09:49:42.410Z",
+      "analysis": {
+        "kind": "room-change",
+        "groups": [],
+        "classType": "שעור",
+        "room": "בניין 32 חדר 307",
+        "day": "יום רביעי",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": true,
+        "start": "",
+        "end": "",
+        "headline": "שיעורי יום רביעי עוברים לבניין 32 חדר 307 עד להודעה חדשה.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:21:39.011Z"
+      }
     },
     {
       "id": "mvs4l6emj42x",
@@ -2952,7 +2990,28 @@
       "author": "עומר עזריה",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895381",
       "createdAt": "2026-10-28T12:54:29.000Z",
-      "addedAt": "2026-10-28T13:03:41.998Z"
+      "addedAt": "2026-10-28T13:03:41.998Z",
+      "analysis": {
+        "kind": "material",
+        "groups": [
+          "11",
+          "21"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "בתרגול בשבוע הבא יפתרו שאלות 3,4,5,6 בפרק 4 (מאזן); כדאי להתכונן מראש.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:21:45.728Z"
+      }
     },
     {
       "id": "mvs72ph6igg1",
@@ -2964,7 +3023,25 @@
       "author": "יואב פרץ שביט",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895400",
       "createdAt": "2026-10-28T14:09:38.000Z",
-      "addedAt": "2026-10-28T14:13:19.098Z"
+      "addedAt": "2026-10-28T14:13:19.098Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "2026-10-28",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "תרגול הזום של איברהים מבוטל היום; צפו בהקלטה מהבוקר כדי להשלים את החומר.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:21:50.803Z"
+      }
     },
     {
       "id": "mvshp0gljvjv",
@@ -3186,7 +3263,28 @@
       "author": "מוטקה פורת",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895737",
       "createdAt": "2026-10-29T18:32:41.000Z",
-      "addedAt": "2026-10-29T18:39:38.301Z"
+      "addedAt": "2026-10-29T18:39:38.301Z",
+      "analysis": {
+        "kind": "material",
+        "groups": [
+          "3",
+          "8"
+        ],
+        "classType": "שעור",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "יעלה סרטון השלמה של כ-30 דקות במדיה עד 10:00 מחר; לצפות לפני התרגול וההרצאה.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:21:57.230Z"
+      }
     },
     {
       "id": "mvtzpmo3l5zw",
@@ -3230,7 +3328,25 @@
       "author": "צוות הקורס",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895751",
       "createdAt": "2026-10-29T21:42:54.000Z",
-      "addedAt": "2026-10-29T21:51:15.393Z"
+      "addedAt": "2026-10-29T21:51:15.393Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [],
+        "classType": "",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "סיכום שבועי: הגשת דף 1 ומבדק 1 עד 1.11 ב-23:59, דף 2 ומבדק 2 עד 8.11, ללא איחורים.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:22:01.220Z"
+      }
     },
     {
       "id": "mvu2viyg3l0i",
@@ -3311,7 +3427,25 @@
       "author": "צוות הקורס",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895814",
       "createdAt": "2026-10-30T12:00:15.000Z",
-      "addedAt": "2026-10-30T12:02:08.902Z"
+      "addedAt": "2026-10-30T12:02:08.902Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [],
+        "classType": "",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "סיכום שבועי: הגשה 1 נסגרת ב־2.11 ב־23:59, שעות קבלה ומתווה מילואים פורסמו.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-30T23:22:06.477Z"
+      }
     },
     {
       "id": "mvveouat57zt",
