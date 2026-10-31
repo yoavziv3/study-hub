@@ -154,8 +154,9 @@ export const lessonsReady = () => lessonRoute().length > 0;
  * check(raw, by) → the checked result, throwing when the output isn't usable. A failure on one provider moves on to
  * the next; the last provider's error is thrown when all fail. Returns { ...check's result, by }.
  */
-export async function generateLesson({ build, check }) {
-  const route = lessonRoute();
+export async function generateLesson({ build, check, only = null }) {
+  // only: 'gemini' – the course's material is written by Gemini alone (course.aiBy), whatever the usual route is.
+  const route = only === 'gemini' ? (geminiReady() ? ['gemini'] : []) : lessonRoute();
   if (!route.length) throw new Error(NO_AI);
   let failure = null;
   for (const by of route) {

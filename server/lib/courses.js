@@ -3,10 +3,14 @@
  * Which kinds of material get AI study material (summary, topics, questions, cards) in a course: lectures, and the
  * owner's own homework and exam-prep units. Tutorials go up as slides and files only (nobody reads a summary of a
  * worked-examples sheet), past exams as they are. A course built for other students can list the kinds it wants in
- * `aiKinds` (linear algebra: lectures only), and `bank: false` keeps it out of the question-bank growth.
+ * `aiKinds` (`[]`: none – calculus and linear algebra lectures go up as they are), `aiFrom: 'upload'` (physics: only files
+ * the owner gives directly) and `aiBy: 'gemini'` (which provider writes the lessons, ai.js generateLesson); `bank: false`
+ * keeps it out of the question-bank growth.
  */
-export function aiKindOk(course, kind = 'lecture') {
+export function aiKindOk(course, kind = 'lecture', meta = null) {
   if (course?.ai === false || kind === 'exam' || kind === 'tutorial') return false;
+  // aiFrom: 'upload' – AI only for files the owner gives directly (upload / inbox), not for what the Moodle sync brings in.
+  if (course?.aiFrom === 'upload' && (meta?.source?.fileKey || meta?.source?.moodleId)) return false;
   return !course?.aiKinds || course.aiKinds.includes(kind);
 }
 export const bankOk = (course) => course?.ai !== false && course?.bank !== false;

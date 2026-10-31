@@ -23,7 +23,7 @@ export function siteGaps() {
     const c = getContent(l.id);
     // What a lesson should have: nothing is expected of a tutorial (or a kind the course leaves out), but one that
     // already has its material still counts toward the question banks below.
-    const missing = !aiKindOk(course, kind) ? [] : [
+    const missing = !aiKindOk(course, kind, l) ? [] : [
       !c?.summary && 'סיכום',
       kind !== 'homework' && !l.noNotes && !c?.notes && 'סיכום מובנה',
       !c?.quiz?.length && 'שאלות',
