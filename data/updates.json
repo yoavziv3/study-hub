@@ -3472,6 +3472,38 @@
       "deadlineId": "mvqivrhe8mpm",
       "createdAt": "2026-10-30T22:14:58.516Z",
       "addedAt": "2026-10-30T22:14:58.516Z"
+    },
+    {
+      "id": "mvwqpnwkfmns",
+      "key": "announcement:895954",
+      "type": "announcement",
+      "courseId": "m67024",
+      "title": "שינוי כיתה להרצאה של לירן",
+      "body": "שלום לכולם,\n\nלידיעת הסטודנטים שלומדים אצלי - ההרצאה של ימי ראשון עוברת לכיתה 212 בבניין 35. ההרצאה של ימי שלישי נותרה באותט מקום.\n\nשבוע טוב,\n\nלירן",
+      "author": "לירן רון",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=895954",
+      "createdAt": "2026-10-31T18:21:40.000Z",
+      "addedAt": "2026-10-31T18:34:07.556Z",
+      "analysis": {
+        "kind": "room-change",
+        "groups": [
+          "9"
+        ],
+        "classType": "שעור",
+        "room": "כיתה 212 בבניין 35",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "ההרצאה של ימי ראשון עוברת לכיתה 212 בבניין 35; הרצאת יום שלישי נשארת במקומה.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-10-31T18:34:18.688Z"
+      }
     }
   ],
   "deadlines": [
