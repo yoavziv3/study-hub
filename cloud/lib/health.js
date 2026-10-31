@@ -177,7 +177,9 @@ export async function systemStatus(env, { courses, macItems, build = null, now =
   }
 
   // ---------- new Moodle files the Mac hasn't summarised and published yet ----------
-  const waiting = mergeUpdates(macItems, cloudItems).slice(macItems.length).filter((i) => i.type === 'material');
+  // A file the Mac still hasn't matched after three days is one that left Moodle (a folder renamed or deleted) – the Mac
+  // imports real files within minutes – so it doesn't count as waiting; a Mac that is off for days is the mac check's alert.
+  const waiting = mergeUpdates(macItems, cloudItems).slice(macItems.length).filter((i) => i.type === 'material' && now - Date.parse(i.addedAt) < 3 * DAY);
   const oldestWait = Math.min(...waiting.map((i) => Date.parse(i.addedAt)));
   const late = waiting.length && now - oldestWait > DAY;
   const files = (n) => (n === 1 ? 'קובץ חדש אחד מחכה' : `${n} קבצים חדשים מחכים`);
