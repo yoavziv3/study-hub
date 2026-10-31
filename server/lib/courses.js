@@ -18,8 +18,17 @@ export const bankOk = (course) => course?.ai !== false && course?.bank !== false
  * (another group of the same course counts) – English, Java, probability, Hebrew, "calculus ג1", "introduction to
  * accounting" and the like never are, however many students sign in with them.
  */
-const SITE_COURSES = [/חדו.{0,2}א\s*1\b/, /אלגברה לינארית להנדסה/, /חשבונאות פיננסית/, /מבוא לכלכלה ל(הנדסת )?תעשי/, /מבוא לפיזיקה|מבוא לפיסיקה/, /יסודות מערכות מידע/];
-export const subjectOk = (...names) => names.some((n) => SITE_COURSES.some((re) => re.test(String(n || ''))));
+const SUBJECTS = {
+  calc: /חדו.{0,2}א\s*1\b/,
+  linear: /אלגברה לינארית להנדסה/,
+  accounting: /חשבונאות פיננסית/,
+  economics: /מבוא לכלכלה ל(הנדסת )?תעשי/,
+  physics: /מבוא לפיזיקה|מבוא לפיסיקה/,
+  systems: /יסודות מערכות מידע/,
+};
+export const subjectOk = (...names) => names.some((n) => Object.values(SUBJECTS).some((re) => re.test(String(n || ''))));
+/** Which of the six subjects a course is (another group of the same course gives the same answer), or null. */
+export const subjectOf = (course) => Object.entries(SUBJECTS).find(([, re]) => [course?.name, course?.short].some((n) => re.test(String(n || ''))))?.[0] || null;
 
 export const DEFAULT_COURSES = [
   {

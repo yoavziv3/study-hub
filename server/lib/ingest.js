@@ -7,6 +7,7 @@ import {
   lectureDir, newLectureId, INBOX_DIR, getContent, listLectures,
 } from './store.js';
 import { aiKindOk } from './courses.js';
+import { reuseFor, shareFrom } from './reuse.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
@@ -158,6 +159,7 @@ export async function retryFailedAI({ auto = false } = {}) {
   let n = 0;
   for (const l of listLectures()) {
     if (l.status !== 'ready' || l.noAi || (!l.aiError && !l.notesError)) continue;
+    if (!aiKindOk(getCourse(l.courseId), l.kind || 'lecture')) continue; // a course that takes no AI for this kind (calculus, linear algebra)
     if (auto && (l.aiRetries || 0) >= AUTO_RETRIES) continue;
     const tries = auto ? (l.aiRetries || 0) + 1 : 0;
     if (l.aiError) {
@@ -259,6 +261,9 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
     await saveContent(id, content);
   } else if (existing && !aiOnly && !regenerate) {
     content = existing;
+  } else if (!aiOnly && !regenerate && (await reuseFor(id))) {
+    // The same lecture of another group already has its summary (reuse.js): no second model call.
+    content = getContent(id);
   } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
     // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
     await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
@@ -301,6 +306,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       await patchLecture(id, { aiError: null, aiRetries: 0, checks: { at: new Date().toISOString(), found: checks.length } });
       run.ok({ by: made.by, title: content.title, summaryChars: content.summary.length, quiz: content.quiz.length, flashcards: content.flashcards.length, glossary: content.glossary.length, topics: content.topics.length }, checks);
       await generateNotes(id);
+      await shareFrom(id).catch((e) => console.error('[reuse]', e.message));
     } catch (e) {
       // Keep the lecture usable (slides, text, chat); study material can be generated later from the lecture menu.
       console.error(`[ingest] ${id} AI analysis failed:`, e.message.slice(0, 200));
