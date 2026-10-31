@@ -22,8 +22,9 @@
     "module": "הרצאות של מוטקה- קבוצה 3",
     "timemodified": 1793347816
   },
-  "updatedAt": "2026-10-31T00:09:49.729Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-10-31T15:48:43.981Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 3
+  "aiRetries": 0,
+  "notesError": null
 }

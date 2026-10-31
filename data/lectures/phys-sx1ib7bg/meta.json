@@ -22,8 +22,9 @@
     "module": "קובץ עזר לשיעור 2 30.10.2026",
     "timemodified": 1793293804
   },
-  "updatedAt": "2026-10-30T11:06:03.716Z",
-  "aiError": "יצירת הסיכום נכשלה",
+  "updatedAt": "2026-10-31T15:53:11.454Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 3
+  "aiRetries": 0,
+  "notesError": null
 }

@@ -22,14 +22,14 @@
     "module": "הרצאות של מוטקה- קבוצה 8",
     "timemodified": 1793347852
   },
-  "updatedAt": "2026-10-31T01:14:52.368Z",
+  "updatedAt": "2026-10-31T15:48:43.982Z",
   "aiError": null,
   "announced": true,
-  "aiRetries": 3,
+  "aiRetries": 0,
   "checks": {
     "at": "2026-10-30T11:14:24.118Z",
     "found": 0
   },
   "notesStatus": null,
-  "notesError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)"
+  "notesError": null
 }

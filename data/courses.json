@@ -1475,7 +1475,8 @@
       "hash": "3695c9bf14751849",
       "checkedAt": "2026-10-28T07:53:04.358Z",
       "extractedAt": "2026-10-28T07:53:04.358Z"
-    }
+    },
+    "aiKinds": []
   },
   {
     "id": "is",
@@ -2058,7 +2059,9 @@
       "hash": "b6f8b92083141e06",
       "checkedAt": "2026-10-30T10:33:18.746Z",
       "extractedAt": "2026-10-30T10:33:18.746Z"
-    }
+    },
+    "aiFrom": "upload",
+    "aiBy": "gemini"
   },
   {
     "id": "m67024",
@@ -3198,9 +3201,7 @@
     "credits": 4.5,
     "passGrade": 56,
     "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1",
-    "aiKinds": [
-      "lecture"
-    ],
+    "aiKinds": [],
     "bank": false,
     "grading": {
       "components": [
