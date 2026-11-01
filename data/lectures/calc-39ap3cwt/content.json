@@ -2161,6 +2161,289 @@
       "difficulty": "hard",
       "slide": 6,
       "generated": true
+    },
+    {
+      "question": "לפי שקף 5, הסדרה $a_n=\\frac{2n+1}{3n-1}$ מתקרבת למספר מסוים. לאיזה מספר היא מתכנסת?",
+      "options": [
+        "$\\frac23$",
+        "$2$",
+        "$\\frac13$",
+        "$0$"
+      ],
+      "correctIndex": 0,
+      "explanation": "בשקף 5 נאמר שהסדרה $a_n=\\frac{2n+1}{3n-1}$ מתכנסת ל-$\\frac23$. אפשר לראות זאת גם מהמרחק: $a_n-\\frac23=\\frac{5}{3(3n-1)}\\to0$. הערך 2 מתקבל אם מתעלמים מהמכנה, ו-$\\frac13$ ו-0 אינם גבול הסדרה (למשל $a_{100}=\\frac{201}{299}\\approx0.67$).",
+      "difficulty": "easy",
+      "slide": 5,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "סדרה $a_n$ מקיימת $L=-2$ ו-$\\varepsilon=0.5$. אם $\\lvert a_n-(-2)\\rvert<0.5$, באיזה קטע נמצא $a_n$?",
+      "options": [
+        "$(-2.5,\\,-1.5)$",
+        "$(1.5,\\,2.5)$",
+        "$(-2.5,\\,-2)$",
+        "$(-2,\\,0.5)$"
+      ],
+      "correctIndex": 0,
+      "explanation": "התנאי $\\lvert a_n-L\\rvert<\\varepsilon$ שקול ל-$a_n\\in(L-\\varepsilon,L+\\varepsilon)=(-2.5,-1.5)$. הקטע $(1.5,2.5)$ מתקבל אם שוכחים שהסימן של $L$ שלילי. הקטע $(-2.5,-2)$ הוא רק חצי מהסביבה, והקטע $(-2,0.5)$ אינו סימטרי סביב $-2$.",
+      "difficulty": "easy",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "לפי שקף 5, נתונה הסדרה $1\\frac12,\\,1\\frac13,\\,1\\frac14,\\dots$ (כלומר $a_n=1+\\frac1{n+1}$). איזו קביעה עליה נכונה?",
+      "options": [
+        "היא יורדת, חסומה (כל איבריה בין 1 ל-$1.5$) ומתכנסת ל-1",
+        "היא יורדת ומתכנסת ל-0",
+        "היא אינה חסומה, כי איבריה הולכים וקטנים",
+        "היא מתכנסת ל-$1.5$, כי זה איברה הראשון"
+      ],
+      "correctIndex": 0,
+      "explanation": "האיברים קטנים משלב לשלב, כולם בקטע $(1,1.5]$, והמרחק מ-1 הוא $\\frac1{n+1}\\to0$, ולכן הגבול 1. הטענה על הגבול 0 שגויה כי המרחקים מ-0 גדולים מ-1. 'איננה חסומה' שגויה כי יש חסם עליון 1.5 וחסם תחתון 1. הגבול אינו האיבר הראשון.",
+      "difficulty": "easy",
+      "slide": 5,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "איזו מהסדרות הבאות חסומה אך אינה מתכנסת?",
+      "options": [
+        "$a_n=(-1)^n$",
+        "$a_n=n$",
+        "$a_n=\\frac1n$",
+        "$a_n=3$ (הסדרה הקבועה)"
+      ],
+      "correctIndex": 0,
+      "explanation": "הסדרה $(-1)^n$ חסומה (כל איבריה בין $-1$ ל-1) אבל קופצת בין שני ערכים ולכן אינה מתכנסת. $a_n=n$ אינה חסומה. $\\frac1n$ חסומה ומתכנסת ל-0. הסדרה הקבועה 3 חסומה ומתכנסת ל-3. חסימות לבדה אינה מבטיחה התכנסות.",
+      "difficulty": "easy",
+      "slide": 5,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac1n$ ו-$L=0$, נבדוק את ההגדרה פעם עם $\\varepsilon=0.1$ ופעם עם $\\varepsilon=0.01$. מהם ה-$N$ הקטנים ביותר שמתאימים בכל מקרה?",
+      "options": [
+        "$N=10$ עבור $\\varepsilon=0.1$, ו-$N=100$ עבור $\\varepsilon=0.01$",
+        "$N=10$ בשני המקרים",
+        "$N=100$ עבור $\\varepsilon=0.1$, ו-$N=10$ עבור $\\varepsilon=0.01$",
+        "$N=11$ עבור $\\varepsilon=0.1$, ו-$N=101$ עבור $\\varepsilon=0.01$"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\frac1n<\\varepsilon\\iff n>\\frac1\\varepsilon$. עבור $\\varepsilon=0.1$ צריך $n>10$ ולכן $N=10$. עבור $\\varepsilon=0.01$ צריך $n>100$ ולכן $N=100$. ככל ש-$\\varepsilon$ קטן, $N$ גדל. הזוג $N=11$ ו-$N=101$ מתאים אך אינו הקטן ביותר, כי ב-$n=11$ ו-$n=101$ כבר מתקיים אי-השוויון, אבל גם $N=10$ ו-$N=100$ מספיקים. ההפך או אותו $N$ בשני המקרים אינם נכונים.",
+      "difficulty": "easy",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "נתונים $L=4$ ו-$\\varepsilon=0.5$, וכן $a_7=3.6$, $a_8=4.5$, $a_9=4.4$. אילו מהאיברים מקיימים $\\lvert a_n-L\\rvert<\\varepsilon$?",
+      "options": [
+        "$a_7$ ו-$a_9$ בלבד",
+        "$a_7$, $a_8$ ו-$a_9$",
+        "$a_9$ בלבד",
+        "$a_8$ ו-$a_9$ בלבד"
+      ],
+      "correctIndex": 0,
+      "explanation": "המרחקים הם $0.4$, $0.5$, $0.4$. האי-שוויון בהגדרה חזק ($<$), ולכן $a_8$ במרחק $0.5$ בדיוק אינו מקיים אותו. רק $a_7$ ו-$a_9$ מקיימים.",
+      "difficulty": "easy",
+      "slide": 5,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=\\frac5n$ ו-$L=0$, כמה איברים של הסדרה נמצאים מחוץ לקטע $(-0.2,\\,0.2)$?",
+      "options": [
+        "25",
+        "24",
+        "26",
+        "20"
+      ],
+      "correctIndex": 0,
+      "explanation": "האיבר מחוץ לקטע אם $\\frac5n\\ge0.2$, כלומר $n\\le25$ (ב-$n=25$ מתקבל בדיוק $0.2$, שאינו בקטע הפתוח). לכן 25 איברים. הערך 24 מתעלם מהשוויון, 26 מוסיף איבר מיותר, ו-20 מקורו בחישוב שגוי.",
+      "difficulty": "easy",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "סטודנט כתב: 'נבחר $\\varepsilon=\\frac14$. מתקיים $\\frac1n<\\frac14\\iff n>4$, ולכן עבור $N=4$ כל $n>N$ מקיים $\\lvert\\frac1n-0\\rvert<\\varepsilon$. מכאן $\\frac1n\\to0$.' מה הטעות בהוכחה?",
+      "options": [
+        "נבדק $\\varepsilon$ אחד בלבד, בעוד שההגדרה דורשת $N$ לכל $\\varepsilon>0$",
+        "האי-שוויון $\\frac1n<\\frac14\\iff n>4$ אינו נכון",
+        "$N$ חייב להיות שווה ל-$\\varepsilon$",
+        "הגבול של $\\frac1n$ הוא $\\frac14$ ולא 0"
+      ],
+      "correctIndex": 0,
+      "explanation": "לפי שקף 6 אסור לבחור $\\varepsilon$ מסוים: צריך להראות שלכל $\\varepsilon>0$ קיים $N$. הטענה $\\frac1n<\\frac14\\iff n>4$ נכונה. אין דרישה ש-$N=\\varepsilon$. והגבול הוא אכן 0.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=(-1)^n$ והמספר $L=0$, לאילו ערכי $\\varepsilon>0$ קיים $N$ כך שלכל $n>N$ מתקיים $\\lvert a_n-0\\rvert<\\varepsilon$?",
+      "options": [
+        "רק עבור $\\varepsilon>1$",
+        "לכל $\\varepsilon>0$",
+        "רק עבור $\\varepsilon\\le1$",
+        "רק עבור $\\varepsilon\\ge1$"
+      ],
+      "correctIndex": 0,
+      "explanation": "כל איברי הסדרה במרחק בדיוק 1 מ-0. התנאי $1<\\varepsilon$ מתקיים מההתחלה רק כאשר $\\varepsilon>1$. עבור $\\varepsilon=1$ אי-השוויון $1<1$ שגוי, ולכן $\\varepsilon\\ge1$ אינו נכון. עבור $\\varepsilon\\le1$ התנאי לא מתקיים לאף $N$. מכיוון שלא מתקיים לכל $\\varepsilon$, הסדרה אינה מתכנסת ל-0.",
+      "difficulty": "medium",
+      "slide": 5,
+      "generated": true
+    },
+    {
+      "question": "עבור הסדרה $a_n=1+\\frac1{n+1}$, הגבול $L=1$ ו-$\\varepsilon=\\frac1{10}$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-1\\rvert<\\varepsilon$?",
+      "options": [
+        "9",
+        "10",
+        "8",
+        "11"
+      ],
+      "correctIndex": 0,
+      "explanation": "$\\lvert a_n-1\\rvert=\\frac1{n+1}<\\frac1{10}\\iff n+1>10\\iff n>9$. לכן $N=9$ הקטן ביותר: ב-$n=9$ מתקבל בדיוק $\\frac1{10}$ שאינו קטן ממש, ולכן $N=8$ לא מספיק. הערכים 10 ו-11 מתאימים אך אינם הקטנים ביותר.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=\\frac{1-2n}{n+1}$ וגבולה $L=-2$. עבור $\\varepsilon=0.03$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon$?",
+      "options": [
+        "99",
+        "100",
+        "98",
+        "101"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_n+2=\\frac{1-2n+2n+2}{n+1}=\\frac3{n+1}$, ולכן $\\lvert a_n+2\\rvert=\\frac3{n+1}<0.03\\iff n+1>100\\iff n>99$. לכן $N=99$. הערך 100 מתקבל מטעות של החלפת $n+1$ ב-$n$. הערך 98 אינו מספיק כי ב-$n=99$ המרחק הוא בדיוק $0.03$.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac1n$ ו-$L=0$ נבחר $\\varepsilon=\\frac27$. איזה מהערכים הבאים של $N$ אינו מבטיח ש-$\\lvert a_n-0\\rvert<\\varepsilon$ לכל $n>N$?",
+      "options": [
+        "$N=2$",
+        "$N=3$",
+        "$N=4$",
+        "$N=10$"
+      ],
+      "correctIndex": 0,
+      "explanation": "צריך $n>\\frac1\\varepsilon=3.5$. עבור $N=2$ הערך $n=3$ מותר, אבל $\\frac13\\approx0.333>\\frac27\\approx0.286$, ולכן $N=2$ אינו מספיק. עבור $N=3$ כל $n\\ge4$ מקיים $\\frac1n\\le\\frac14<\\frac27$. הערכים 4 ו-10 גדולים מ-3 ולכן מתאימים גם הם.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "נתונה הסדרה $a_n=2+\\frac{(-1)^n}{n}$ ו-$L=2$. מהו המקום הקטן ביותר $k$ כך שכל האיברים מהמקום $k$ ואילך נמצאים בקטע $(1.7,\\,2.3)$?",
+      "options": [
+        "$k=4$",
+        "$k=3$",
+        "$k=2$",
+        "$k=5$"
+      ],
+      "correctIndex": 0,
+      "explanation": "המרחק מ-2 הוא $\\frac1n$. נבדוק: $a_1=1$ ו-$a_2=2.5$ מחוץ לקטע, ו-$a_3=2-\\frac13\\approx1.667<1.7$ גם מחוץ לקטע. מ-$n=4$ ואילך $\\frac1n\\le\\frac14<0.3$, ולכן כולם בפנים. $k=5$ מתאים אך אינו הקטן ביותר. $k=2$ ו-$k=3$ שגויים כי $a_2$ ו-$a_3$ מחוץ לקטע.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "הסדרה $a_n$ מתכנסת ל-$L$. איזו מהטענות הבאות אינה נכונה בהכרח?",
+      "options": [
+        "לכל $\\varepsilon>0$ כל איברי הסדרה, מהאיבר הראשון ואילך, נמצאים בקטע $(L-\\varepsilon,L+\\varepsilon)$",
+        "לכל $\\varepsilon>0$, החל ממקום מסוים כל האיברים נמצאים בקטע $(L-\\varepsilon,L+\\varepsilon)$",
+        "ככל ש-$\\varepsilon$ קטן יותר, ייתכן שיידרש $N$ גדול יותר",
+        "לכל $\\varepsilon>0$, מחוץ לקטע $(L-\\varepsilon,L+\\varepsilon)$ נמצא מספר סופי של איברים"
+      ],
+      "correctIndex": 0,
+      "explanation": "ההגדרה דורשת קרבה רק החל ממקום מסוים, ולא מהאיבר הראשון (למשל $a_n=\\frac1n$ ו-$a_1=1$ רחוק מ-0 עבור $\\varepsilon=\\frac12$). שלוש הטענות האחרות נכונות: זו ההגדרה, התלות של $N$ ב-$\\varepsilon$, ומחוץ לקטע יכולים להיות רק איברים שמקומם לכל היותר $N$.",
+      "difficulty": "medium",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "לפי שקף 5, הסדרה $a_n=\\frac{2n+1}{3n-1}$ מתכנסת ל-$L=\\frac23$. עבור $\\varepsilon=\\frac1{30}$, מהו ה-$N\\in\\mathbb{N}$ הקטן ביותר כך שלכל $n>N$ מתקיים $\\lvert a_n-L\\rvert<\\varepsilon$?",
+      "options": [
+        "17",
+        "16",
+        "18",
+        "51"
+      ],
+      "correctIndex": 0,
+      "explanation": "$a_n-\\frac23=\\frac{3(2n+1)-2(3n-1)}{3(3n-1)}=\\frac5{3(3n-1)}>0$. התנאי $\\frac5{3(3n-1)}<\\frac1{30}$ שקול ל-$150<9n-3$, כלומר $n>17$. ב-$n=17$ מתקבל בדיוק $\\frac1{30}$, ולכן $N=17$ הקטן ביותר ו-$N=16$ אינו מספיק. הערך 18 אינו הקטן ביותר. הערך 51 מתקבל מטעות של השמטת הגורם 3 במכנה.",
+      "difficulty": "hard",
+      "slide": 5,
+      "showSlide": true,
+      "generated": true
+    },
+    {
+      "question": "הסדרה $a_n$ מתכנסת ל-3. מכאן שקיים $N$ כך שלכל $n>N$ מתקיים $\\lvert a_n-3\\rvert<1$ (בחירת $\\varepsilon=1$). איזו מסקנה מובטחת לגבי $\\frac1{a_n}$ לכל $n>N$?",
+      "options": [
+        "$\\frac1{a_n}<\\frac12$",
+        "$\\frac1{a_n}<\\frac13$",
+        "$\\frac1{a_n}<\\frac14$",
+        "$\\frac1{a_n}>\\frac12$"
+      ],
+      "correctIndex": 0,
+      "explanation": "מ-$\\lvert a_n-3\\rvert<1$ נובע $2<a_n<4$, ולכן $\\frac14<\\frac1{a_n}<\\frac12$. לכן $\\frac1{a_n}<\\frac12$ מובטח. הטענה $\\frac1{a_n}<\\frac13$ אינה מובטחת: ייתכן $a_n=2.5$ ואז $\\frac1{a_n}=0.4>\\frac13$. הטענה $\\frac1{a_n}<\\frac14$ שגויה עוד יותר, והטענה $\\frac1{a_n}>\\frac12$ הפוכה לגמרי.",
+      "difficulty": "hard",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "עבור $a_n=\\frac1n$ ו-$L=0$, לאילו ערכי $\\varepsilon>0$ מתקיים בדיוק: לכל $n>5$ מתקיים $\\lvert a_n-0\\rvert<\\varepsilon$? (כלומר $N=5$ מתאים.)",
+      "options": [
+        "$\\varepsilon>\\frac16$",
+        "$\\varepsilon\\ge\\frac16$",
+        "$\\varepsilon>\\frac15$",
+        "$\\varepsilon>\\frac17$"
+      ],
+      "correctIndex": 0,
+      "explanation": "האיבר הגדול ביותר עבור $n>5$ הוא $a_6=\\frac16$, ולכן צריך $\\frac16<\\varepsilon$ (ושאר האיברים קטנים יותר). עבור $\\varepsilon=\\frac16$ האי-שוויון $\\frac16<\\frac16$ שגוי, ולכן $\\varepsilon\\ge\\frac16$ אינו נכון. התנאי $\\varepsilon>\\frac15$ מספיק אך אינו מדויק, כי גם $\\varepsilon=0.18$ מתאים. התנאי $\\varepsilon>\\frac17$ כולל ערכים, כמו $\\varepsilon=0.15$, שעבורם $a_6$ לא מתאים.",
+      "difficulty": "hard",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "רוצים להראות שהסדרה $a_n=\\frac1n$ אינה מתכנסת ל-$L=\\frac12$. עבור איזה ערך של $\\varepsilon$ ניתן להסיק זאת, כלומר לאף $N$ לא מתקיים $\\lvert a_n-\\frac12\\rvert<\\varepsilon$ לכל $n>N$?",
+      "options": [
+        "$\\varepsilon=0.1$",
+        "$\\varepsilon=0.5$",
+        "$\\varepsilon=0.6$",
+        "$\\varepsilon=1$"
+      ],
+      "correctIndex": 0,
+      "explanation": "כש-$n$ גדול, $\\frac1n$ קרוב ל-0 ולכן המרחק מ-$\\frac12$ שואף ל-$0.5$. עבור $\\varepsilon=0.1$ לכל $N$ יש $n>N$ שבו המרחק גדול מ-$0.1$ (למשל כל $n\\ge10$ נותן מרחק לפחות $0.4$), ולכן ההגדרה נכשלת. עבור $\\varepsilon=0.5$ מתקיים לכל $n\\ge2$ $\\lvert\\frac1n-\\frac12\\rvert=\\frac12-\\frac1n<\\frac12$, והערכים $0.6$ ו-1 גדולים יותר ולכן מתקיימים גם הם. כך שאין סתירה.",
+      "difficulty": "hard",
+      "slide": 5,
+      "generated": true
+    },
+    {
+      "question": "נניח שסדרה $a_n$ מתכנסת גם ל-$L=2$ וגם ל-$M=4$. הוכחת הסתירה מתבססת על בחירת $\\varepsilon$ מתאים והסתכלות על הקטעים $(L-\\varepsilon,L+\\varepsilon)$ ו-$(M-\\varepsilon,M+\\varepsilon)$. איזה ערך של $\\varepsilon$ מביא לסתירה?",
+      "options": [
+        "$\\varepsilon=1$",
+        "$\\varepsilon=2$",
+        "$\\varepsilon=2.5$",
+        "$\\varepsilon=3$"
+      ],
+      "correctIndex": 0,
+      "explanation": "עבור $\\varepsilon=1$ הקטעים $(1,3)$ ו-$(3,5)$ זרים, ואי אפשר שהחל ממקום מסוים כל האיברים יהיו בשניהם, וזו סתירה. עבור $\\varepsilon=2$ הקטעים $(0,4)$ ו-$(2,6)$ נחתכים ב-$(2,4)$, ועבור $\\varepsilon=2.5$ ו-3 החפיפה גדולה אף יותר, ולכן אין סתירה. נדרש $\\varepsilon\\le1$.",
+      "difficulty": "hard",
+      "slide": 6,
+      "generated": true
+    },
+    {
+      "question": "לכל $n\\in\\mathbb{N}$ בוחרים, לפי צפיפות הרציונליים, מספר רציונלי $q_n$ כלשהו המקיים $0<q_n<\\frac1n$ (הבחירה בלי חוקיות נוספת). איזו טענה נכונה?",
+      "options": [
+        "$q_n\\to0$, כי לכל $\\varepsilon>0$ ולכל $n>\\frac1\\varepsilon$ מתקיים $\\lvert q_n-0\\rvert<\\frac1n<\\varepsilon$",
+        "ייתכן ש-$q_n$ אינה מתכנסת, כי הבחירה שרירותית",
+        "$q_n\\to\\frac1n$",
+        "הסדרה מתכנסת למספר אי-רציונלי, כי הרציונליים אינם סגורים לגבולות"
+      ],
+      "correctIndex": 0,
+      "explanation": "צפיפות הרציונליים מבטיחה קיום $q_n$ בכל קטע $(0,\\frac1n)$. לכל $\\varepsilon>0$ ולכל $n>\\frac1\\varepsilon$ מתקיים $0<q_n<\\frac1n<\\varepsilon$, ולכן $q_n\\to0$, בלי קשר לדרך הבחירה. הטענה על אי-התכנסות שגויה. $\\frac1n$ אינו גבול כי הגבול הוא מספר קבוע ולא תלוי ב-$n$. הגבול הוא 0, שהוא רציונלי.",
+      "difficulty": "hard",
+      "slide": 6,
+      "generated": true
     }
   ]
 }
