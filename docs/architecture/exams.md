@@ -1,0 +1,3 @@
+# Exam schedule (`/exams`, `client/src/pages/Exams.jsx`)
+
+Every student sees their own courses' sittings (מועד א׳/ב׳ and quizzes, for their exam group, own dates replacing the official ones as in the prep page) on one timeline with days left, time and rooms, and a warning when two courses' sittings are within a day or two (`markNear` in `lib/examSchedule.js`). They are already in the cloud's calendar feed (`cloud/lib/ics.js`). The owner also gets "תצוגת ועד": per course the distinct dates across all exam groups and the gaps between consecutive courses' מועד א׳ and ב׳ (`overview`), including courses the site doesn't carry (linear algebra's `exams` live in `data/committee.json`, refreshed with its classes).

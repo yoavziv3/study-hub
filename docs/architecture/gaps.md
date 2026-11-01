@@ -1,0 +1,3 @@
+# What's missing on the site (`server/lib/gaps.js`)
+
+`siteGaps()` (sent in the heartbeat as `mac.gaps`, at most once a minute) lists lessons that are ready but lack a summary, notes, questions or cards, and the question banks' progress (`have`/`want`, lessons still below `BANK_TARGET`, Claude's rounds tonight, `lastAdded`). `shared/system-checks.js` turns it into the `gaps` check on `/system` ("מה חסר באתר") with phone alerts to the owner: a lesson missing material for more than 3 hours (once per lesson), and banks that haven't grown for 30 hours while some are below target (once a day). Exams, scanned/`noAi` files, held items and prep units are not gaps.
