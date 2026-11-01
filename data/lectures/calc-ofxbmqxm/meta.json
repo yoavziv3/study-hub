@@ -10,9 +10,9 @@
   "unitNumber": 3,
   "slideCount": 4,
   "hasPdf": true,
-  "status": "ready",
-  "stage": "ready",
-  "error": null,
+  "status": "error",
+  "stage": "converting",
+  "error": "ENOENT: no such file or directory, rename '/Users/yuive/Desktop/projects/study/data/lectures/calc-ofxbmqxm/meta.json.29953.tmp' -> '/Users/yuive/Desktop/projects/study/data/lectures/calc-ofxbmqxm/meta.json'",
   "createdAt": "2026-11-01T10:18:20.147Z",
   "source": {
     "type": "moodle",
@@ -22,6 +22,6 @@
     "module": "תרגולים של ברנדה",
     "timemodified": 1793528006
   },
-  "updatedAt": "2026-11-01T10:18:20.408Z",
+  "updatedAt": "2026-11-01T12:11:55.681Z",
   "announced": true
 }
