@@ -3753,6 +3753,38 @@
       "body": "בוחן 1: 20/11/2026 09:00 · בוחן 2: 18/12/2026 09:00 · מועד א׳: 20/01/2027 09:00 · מועד ב׳: 11/02/2027",
       "createdAt": "2026-11-01T15:58:46.795Z",
       "addedAt": "2026-11-01T15:58:46.795Z"
+    },
+    {
+      "id": "mvy55eeuegwb",
+      "key": "announcement:896291",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "ביטול שיעור מחר 02.11 קבוצה של אירנה - קבוצה 6",
+      "body": "השיעור של הקבוצה של אירנה  - קבוצה 6 בתאריך 02.11 מבוטל.\n\nהודעה על תאריך השלמת השיעור תפורסם בהקדם.\n\nאירנה",
+      "author": "אירינה לרמן",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896291",
+      "createdAt": "2026-11-01T17:56:21.000Z",
+      "addedAt": "2026-11-01T18:06:02.550Z",
+      "analysis": {
+        "kind": "cancellation",
+        "groups": [
+          "6"
+        ],
+        "classType": "שעור",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "02.11",
+        "onDate": "2026-11-02",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "שיעור קבוצה 6 מחר 02.11 מבוטל; תאריך השלמה יפורסם בהמשך.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-01T18:06:17.986Z"
+      }
     }
   ],
   "deadlines": [
