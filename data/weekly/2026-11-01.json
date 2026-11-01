@@ -1,0 +1,194 @@
+{
+  "week": "2026-11-01",
+  "range": "1.11–7.11",
+  "generatedAt": "2026-11-01T05:07:20.958Z",
+  "days": [
+    {
+      "date": "2026-11-01",
+      "weekday": "ראשון",
+      "items": [
+        {
+          "type": "deadline",
+          "courseId": "calc",
+          "title": "דף הגשה 1: מספרים, אי-שיוויונות ואינדוקציה",
+          "date": "2026-11-01",
+          "time": "23:59"
+        }
+      ],
+      "points": 3,
+      "level": "light"
+    },
+    {
+      "date": "2026-11-02",
+      "weekday": "שני",
+      "items": [
+        {
+          "type": "deadline",
+          "courseId": "econ",
+          "title": "תרגיל 2",
+          "date": "2026-11-02",
+          "time": "23:59"
+        }
+      ],
+      "points": 3,
+      "level": "light"
+    },
+    {
+      "date": "2026-11-03",
+      "weekday": "שלישי",
+      "items": [
+        {
+          "type": "deadline",
+          "courseId": "econ",
+          "title": "תרגיל 1",
+          "date": "2026-11-03",
+          "time": "23:59"
+        }
+      ],
+      "points": 3,
+      "level": "light"
+    },
+    {
+      "date": "2026-11-04",
+      "weekday": "רביעי",
+      "items": [],
+      "points": 0,
+      "level": "free"
+    },
+    {
+      "date": "2026-11-05",
+      "weekday": "חמישי",
+      "items": [],
+      "points": 0,
+      "level": "free"
+    },
+    {
+      "date": "2026-11-06",
+      "weekday": "שישי",
+      "items": [],
+      "points": 0,
+      "level": "free"
+    },
+    {
+      "date": "2026-11-07",
+      "weekday": "שבת",
+      "items": [],
+      "points": 0,
+      "level": "free"
+    }
+  ],
+  "courses": [
+    {
+      "courseId": "econ",
+      "short": "מבוא לכלכלה",
+      "deadlines": 2,
+      "exams": 0,
+      "soon": [],
+      "newMaterial": [
+        "עקומת התמורה, יתרון יחסי ועלויות אלטרנטיביות",
+        "תרגיל 1 מבוא לכלכלה תעשיה וניהול",
+        "תרגול 1 - עקומת התמורה (2)",
+        "תרגיל 2 – טכנולוגיה ופונקציית ההיצע (שאלות 1–2)"
+      ],
+      "advice": "יש כמה הגשות השבוע – התחילו מהקרובה ביותר.",
+      "adviceBy": "fixed"
+    },
+    {
+      "courseId": "calc",
+      "short": "חדו\"א 1",
+      "deadlines": 1,
+      "exams": 0,
+      "soon": [
+        {
+          "courseId": "calc",
+          "label": "בוחן 1",
+          "date": "2026-11-20",
+          "quiz": true
+        }
+      ],
+      "newMaterial": [
+        "לוגיקה (פרק 1)",
+        "אי שוויונים ואינדוקציה מתמטית",
+        "מושגי יסוד: קבוצות, מספרים ממשיים וערך מוחלט",
+        "תרגול 1",
+        "קבוצות (פרק 2)",
+        "ערך מוחלט, אי-שוויון המשולש וגבול של סדרה"
+      ],
+      "advice": "יש הגשה השבוע – כדאי להתחיל בה כבר בתחילת השבוע.",
+      "adviceBy": "fixed"
+    },
+    {
+      "courseId": "is",
+      "short": "מערכות מידע",
+      "deadlines": 0,
+      "exams": 0,
+      "soon": [],
+      "newMaterial": [
+        "תשתיות IT, חומרה ותקשורת: ייצוג נתונים, מעבדים (CPU/GPU/NPU) וזיכרון",
+        "תשתיות IT: זיכרון, קלט/פלט, תקשורת ואינטרנט"
+      ],
+      "advice": "עלה חומר חדש – עברו על הסיכום וענו על שאלות התרגול.",
+      "adviceBy": "fixed"
+    },
+    {
+      "courseId": "acc",
+      "short": "חשבונאות",
+      "deadlines": 0,
+      "exams": 0,
+      "soon": [],
+      "newMaterial": [
+        "פתרון פרק 2 - זהות חשבונאית",
+        "דוח על המצב הכספי (מאזן)"
+      ],
+      "advice": "עלה חומר חדש – עברו על הסיכום וענו על שאלות התרגול.",
+      "adviceBy": "fixed"
+    },
+    {
+      "courseId": "phys",
+      "short": "פיזיקה",
+      "deadlines": 0,
+      "exams": 0,
+      "soon": [],
+      "newMaterial": [
+        "מבוא למכניקה וקינמטיקה: תנועה בקו ישר",
+        "שיעור 2 30.10.2026",
+        "תרגול 2 30.10.2026"
+      ],
+      "advice": "עלה חומר חדש – עברו על הסיכום וענו על שאלות התרגול.",
+      "adviceBy": "fixed"
+    },
+    {
+      "courseId": "m67024",
+      "short": "אלגברה לינארית להנדסה",
+      "deadlines": 0,
+      "exams": 0,
+      "soon": [
+        {
+          "courseId": "m67024",
+          "label": "בוחן 1",
+          "date": "2026-11-19",
+          "quiz": true
+        }
+      ],
+      "newMaterial": [
+        "קבוצות, מספרים ומספרים מרוכבים (פרק 0)",
+        "sheets-01-08",
+        "sheets-01-08-sol",
+        "מספרים מרוכבים, חיתוך קבוצות במישור ושוויון ישרים",
+        "תרגול 1 - קבוצות ומספרים מרוכבים",
+        "9321-stack-grade-guide"
+      ],
+      "advice": "בוחן מתקרב – התחילו לחזור על החומר כבר השבוע.",
+      "adviceBy": "fixed"
+    }
+  ],
+  "total": 9,
+  "level": "medium",
+  "levelLabel": "שבוע בינוני",
+  "busiest": "2026-11-01",
+  "headline": "שבוע עם כמה הגשות – כדאי לפזר את העבודה ולא להשאיר הכל לרגע האחרון.",
+  "headlineBy": "fixed",
+  "checks": [
+    "ה AI לא זמין ({\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand) – נוסח קבוע"
+  ]
+}
