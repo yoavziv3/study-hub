@@ -1,0 +1,35 @@
+{
+  "id": "econ-i3apvl0e",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "מפונקציית ייצור לפונקציית עלויות",
+  "originalName": "הרצאה 3 26_27.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 26,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-01T07:20:33.285Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3468917:/הרצאה 3 26_27.pdf",
+    "section": "פונקציית העלות והיצע ",
+    "module": "הרצאה 3",
+    "timemodified": 1793517115
+  },
+  "updatedAt": "2026-11-01T07:23:49.219Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-01T07:23:01.164Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

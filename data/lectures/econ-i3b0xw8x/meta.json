@@ -1,0 +1,35 @@
+{
+  "id": "econ-i3b0xw8x",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "בעיית היצרן ופונקציית ההיצע: מקסום רווח והחלטת ייצור",
+  "originalName": "הרצאה 3.5 26_27.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 28,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-01T07:20:33.681Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3468918:/הרצאה 3.5 26_27.pdf",
+    "section": "פונקציית העלות והיצע ",
+    "module": "הרצאה 3.1",
+    "timemodified": 1793517131
+  },
+  "updatedAt": "2026-11-01T07:27:02.693Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-01T07:26:12.767Z",
+    "found": 2
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

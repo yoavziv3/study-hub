@@ -3515,6 +3515,34 @@
       "url": "/weekly",
       "createdAt": "2026-11-01T05:07:20.958Z",
       "addedAt": "2026-11-01T05:07:20.958Z"
+    },
+    {
+      "id": "mvxi7hwiakvj",
+      "key": "material:econ-i3apvl0e",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "econ",
+      "title": "הרצאה חדשה במבוא לכלכלה: מפונקציית ייצור לפונקציית עלויות",
+      "body": "",
+      "lectureId": "econ-i3apvl0e",
+      "source": "moodle",
+      "fileKey": "68380:3468917:/הרצאה 3 26_27.pdf",
+      "createdAt": "2026-11-01T07:20:33.285Z",
+      "addedAt": "2026-11-01T07:23:49.218Z"
+    },
+    {
+      "id": "mvxibn6rms20",
+      "key": "material:econ-i3b0xw8x",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "econ",
+      "title": "הרצאה חדשה במבוא לכלכלה: בעיית היצרן ופונקציית ההיצע: מקסום רווח והחלטת ייצור",
+      "body": "",
+      "lectureId": "econ-i3b0xw8x",
+      "source": "moodle",
+      "fileKey": "68380:3468918:/הרצאה 3.5 26_27.pdf",
+      "createdAt": "2026-11-01T07:20:33.681Z",
+      "addedAt": "2026-11-01T07:27:02.691Z"
     }
   ],
   "deadlines": [
