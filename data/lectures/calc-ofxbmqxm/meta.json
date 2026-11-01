@@ -1,0 +1,27 @@
+{
+  "id": "calc-ofxbmqxm",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "תרגול 3 - חסימות והתכנסות של סדרות כולל אריתמטיקה של גבולות",
+  "originalName": "תרגול 3 - חסימות והתכנסות של סדרות כולל אריתמטיקה של גבולות.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 4,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-01T10:18:20.147Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464425:/תרגול 3 - חסימות והתכנסות של סדרות כולל אריתמטיקה של גבולות.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1793528006
+  },
+  "updatedAt": "2026-11-01T10:18:20.408Z",
+  "announced": true
+}

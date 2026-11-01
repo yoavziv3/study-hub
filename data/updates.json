@@ -3577,6 +3577,20 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-01T08:31:05.787Z"
       }
+    },
+    {
+      "id": "mvxofxiumx77",
+      "key": "material:calc-ofxbmqxm",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "תרגול חדש בחדו\"א 1: תרגול 3 - חסימות והתכנסות של סדרות כולל אריתמטיקה של גבולות",
+      "body": "",
+      "lectureId": "calc-ofxbmqxm",
+      "source": "moodle",
+      "fileKey": "67017:3464425:/תרגול 3 - חסימות והתכנסות של סדרות כולל אריתמטיקה של גבולות.pdf",
+      "createdAt": "2026-11-01T10:18:20.147Z",
+      "addedAt": "2026-11-01T10:18:20.406Z"
     }
   ],
   "deadlines": [
