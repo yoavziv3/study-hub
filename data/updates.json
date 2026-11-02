@@ -3849,6 +3849,19 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-02T10:29:16.493Z"
       }
+    },
+    {
+      "id": "mvz6dw8yacdq",
+      "key": "reminder:mvqivrhe8mpm:1:2026-11-02T21:59:00.000Z",
+      "type": "reminder",
+      "courseId": "econ",
+      "title": "⏰ בעוד 11 שעות: תרגיל 2 (מבוא לכלכלה)",
+      "body": "להגשה עד יום שני, 2.11, 23:59",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
+      "dueAt": "2026-11-02T21:59:00.000Z",
+      "deadlineId": "mvqivrhe8mpm",
+      "createdAt": "2026-11-02T11:28:24.706Z",
+      "addedAt": "2026-11-02T11:28:24.706Z"
     }
   ],
   "deadlines": [
@@ -3887,7 +3900,7 @@
       "dueAt": "2026-11-02T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
       "intro": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
-      "submitted": true,
+      "submitted": false,
       "draft": false,
       "done": false
     },
@@ -3911,7 +3924,8 @@
       3
     ],
     "mvqivrhe8mpm": [
-      3
+      3,
+      1
     ]
   },
   "settings": {
