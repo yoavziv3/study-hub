@@ -3819,6 +3819,36 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-02T05:32:05.157Z"
       }
+    },
+    {
+      "id": "mvz49ja8qff1",
+      "key": "announcement:896442",
+      "type": "announcement",
+      "courseId": "acc",
+      "title": "תרגול לשבוע הבא",
+      "body": "שלום לכולם,\n\nלתרגול ברביעי הבא יש לעשות את שאלות 9,10,12 בפרק 4 בנושא דוח רווח והפסד.\n\nבהצלחה,\n\nסגל הקורס.",
+      "author": "עומר עזריה",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896442",
+      "createdAt": "2026-11-02T10:03:03.000Z",
+      "addedAt": "2026-11-02T10:29:02.048Z",
+      "analysis": {
+        "kind": "material",
+        "groups": [],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "יש להכין לתרגול ביום רביעי הבא שאלות 9, 10 ו-12 בפרק 4 (דוח רווח והפסד).",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-02T10:29:16.493Z"
+      }
     }
   ],
   "deadlines": [
