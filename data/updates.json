@@ -3959,7 +3959,25 @@
       "author": "איגור פורטנוב",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896587",
       "createdAt": "2026-11-02T17:54:58.000Z",
-      "addedAt": "2026-11-02T18:04:07.670Z"
+      "addedAt": "2026-11-02T18:04:07.670Z",
+      "analysis": {
+        "kind": "room-change",
+        "groups": [],
+        "classType": "תרגיל",
+        "room": "מקוון",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "2026-11-03",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "התרגול מחר יתקיים אונליין; היכנסו דרך קישור התרגול ההיברידי התואם לקבוצה שלכם.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-02T18:19:10.629Z"
+      }
     }
   ],
   "deadlines": [
