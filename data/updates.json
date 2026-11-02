@@ -3948,6 +3948,18 @@
       "fileKey": "68380:3470801:/תרגול 2 חלק ב טכנולוגית ייצור.pptx",
       "createdAt": "2026-11-02T14:47:09.261Z",
       "addedAt": "2026-11-02T14:47:43.987Z"
+    },
+    {
+      "id": "mvzkisfqnvxn",
+      "key": "announcement:896587",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "תרגול מקוון מחר",
+      "body": "שלום כולם, אני מרגיש לא טוב ואעשה מחר תרגול מקוון כסדרו. השתמשו בקישור לתרגול היברידי התואם.",
+      "author": "איגור פורטנוב",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896587",
+      "createdAt": "2026-11-02T17:54:58.000Z",
+      "addedAt": "2026-11-02T18:04:07.670Z"
     }
   ],
   "deadlines": [
