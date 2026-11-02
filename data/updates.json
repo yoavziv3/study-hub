@@ -3785,6 +3785,40 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-01T18:06:17.986Z"
       }
+    },
+    {
+      "id": "mvytnct1etn7",
+      "key": "announcement:896346",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "התרגול לקבוצה של השעה 8 היום של שירן ",
+      "body": "שלום כולם\n\nהתרגול של 8 היום יתחיל רק בשעה 8:20\n\nמתנצלת על חוסר הנוחות\n\nשירן",
+      "author": "שירן כהן",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896346",
+      "createdAt": "2026-11-02T05:19:10.000Z",
+      "addedAt": "2026-11-02T05:31:51.061Z",
+      "analysis": {
+        "kind": "time-change",
+        "groups": [
+          "43",
+          "51",
+          "93"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "8:20",
+        "date": "",
+        "onDate": "2026-11-02",
+        "repeats": false,
+        "start": "08:20",
+        "end": "",
+        "headline": "התרגול של שעה 8 היום יתחיל באיחור, רק בשעה 8:20.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-02T05:32:05.157Z"
+      }
     }
   ],
   "deadlines": [
