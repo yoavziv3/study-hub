@@ -1,0 +1,27 @@
+{
+  "id": "calc-my21nbyp",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 4 וחצי - סיכום השיעור קבוצה 8",
+  "originalName": "הרצאה 4 וחצי - סיכום השיעור קבוצה 8.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-02T19:11:59.196Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3465805:/הרצאה 4 וחצי - סיכום השיעור קבוצה 8.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 8",
+    "timemodified": 1793645495
+  },
+  "updatedAt": "2026-11-02T19:11:59.349Z",
+  "announced": true
+}

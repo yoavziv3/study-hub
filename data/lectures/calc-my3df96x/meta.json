@@ -1,0 +1,27 @@
+{
+  "id": "calc-my3df96x",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 3 - סיכום השיעור קבוצה 8",
+  "originalName": "הרצאה 3 - סיכום השיעור קבוצה 8.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 5,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-02T19:12:00.915Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3465805:/הרצאה 3 - סיכום השיעור קבוצה 8.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 8",
+    "timemodified": 1793645495
+  },
+  "updatedAt": "2026-11-02T19:12:01.124Z",
+  "announced": true
+}
