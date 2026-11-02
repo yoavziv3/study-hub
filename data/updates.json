@@ -3862,6 +3862,18 @@
       "deadlineId": "mvqivrhe8mpm",
       "createdAt": "2026-11-02T11:28:24.706Z",
       "addedAt": "2026-11-02T11:28:24.706Z"
+    },
+    {
+      "id": "mvz7g6yr62dn",
+      "key": "announcement:896482",
+      "type": "announcement",
+      "courseId": "calc",
+      "title": "שינוי כיתה קבוע לקבוצה של שירן (יום ב, 14-16)",
+      "body": "שלום,\n\nהתרגול של השעה 14:00-16:00 מתקיים באופן קבוע בבניין 90, כיתה 145.\n\nנתראה,\nשירן.",
+      "author": "שירן כהן",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896482",
+      "createdAt": "2026-11-02T11:55:30.000Z",
+      "addedAt": "2026-11-02T11:58:11.523Z"
     }
   ],
   "deadlines": [
