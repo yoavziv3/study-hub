@@ -4132,6 +4132,20 @@
       "fileKey": "67017:3465805:/הרצאה 1 - סיכום השיעור קבוצה 8.pdf",
       "createdAt": "2026-11-02T19:12:02.342Z",
       "addedAt": "2026-11-02T19:12:02.546Z"
+    },
+    {
+      "id": "mvznasjngtip",
+      "key": "material:calc-nasemjz8",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 4 וחצי - סיכום השיעור קבוצה 3",
+      "body": "",
+      "lectureId": "calc-nasemjz8",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 4 וחצי - סיכום השיעור קבוצה 3.pdf",
+      "createdAt": "2026-11-02T19:21:53.231Z",
+      "addedAt": "2026-11-02T19:21:53.411Z"
     }
   ],
   "deadlines": [
