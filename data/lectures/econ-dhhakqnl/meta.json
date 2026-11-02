@@ -1,0 +1,27 @@
+{
+  "id": "econ-dhhakqnl",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגול 2 חלק ב טכנולוגית ייצור",
+  "originalName": "תרגול 2 חלק ב טכנולוגית ייצור.pptx",
+  "kind": "tutorial",
+  "originalFile": "original.pptx",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 18,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-02T14:47:09.261Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3470801:/תרגול 2 חלק ב טכנולוגית ייצור.pptx",
+    "section": "טכנולוגיית הייצור",
+    "module": "תרגול 2 חלק ב",
+    "timemodified": 1793630651
+  },
+  "updatedAt": "2026-11-02T14:47:43.987Z",
+  "announced": true
+}

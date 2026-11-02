@@ -1,0 +1,27 @@
+{
+  "id": "econ-dhfpwj6g",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "תרגול 2 חלק א המשך עקומת התמורה",
+  "originalName": "תרגול 2 חלק א המשך עקומת התמורה.pptx",
+  "kind": "tutorial",
+  "originalFile": "original.pptx",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 31,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-02T14:47:07.221Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:3470799:/תרגול 2 חלק א המשך עקומת התמורה.pptx",
+    "section": "טכנולוגיית הייצור",
+    "module": "תרגול 2",
+    "timemodified": 1793630600
+  },
+  "updatedAt": "2026-11-02T14:47:40.542Z",
+  "announced": true
+}

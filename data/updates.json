@@ -3906,6 +3906,48 @@
       "body": "בוחן 1: 19/11/2026 18:00 · בוחן 2: 17/12/2026 18:00 · מועד א׳: 26/01/2027 09:00 · מועד ב׳: 17/02/2027",
       "createdAt": "2026-11-02T12:27:22.401Z",
       "addedAt": "2026-11-02T12:27:22.401Z"
+    },
+    {
+      "id": "mvzdi5fh1abx",
+      "key": "material:econ-dhfpwj6g",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "econ",
+      "title": "תרגול חדש במבוא לכלכלה: תרגול 2 חלק א המשך עקומת התמורה",
+      "body": "",
+      "lectureId": "econ-dhfpwj6g",
+      "source": "moodle",
+      "fileKey": "68380:3470799:/תרגול 2 חלק א המשך עקומת התמורה.pptx",
+      "createdAt": "2026-11-02T14:47:07.221Z",
+      "addedAt": "2026-11-02T14:47:40.541Z"
+    },
+    {
+      "id": "mvzdi6qsqubz",
+      "key": "material:econ-dhgfk13e",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "econ",
+      "title": "תרגול חדש במבוא לכלכלה: תרגול 2 חלק ב טכנולוגית ייצור",
+      "body": "",
+      "lectureId": "econ-dhgfk13e",
+      "source": "moodle",
+      "fileKey": "68380:3470799:/תרגול 2 חלק ב טכנולוגית ייצור.pptx",
+      "createdAt": "2026-11-02T14:47:08.144Z",
+      "addedAt": "2026-11-02T14:47:42.244Z"
+    },
+    {
+      "id": "mvzdi837uesv",
+      "key": "material:econ-dhhakqnl",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "econ",
+      "title": "תרגול חדש במבוא לכלכלה: תרגול 2 חלק ב טכנולוגית ייצור",
+      "body": "",
+      "lectureId": "econ-dhhakqnl",
+      "source": "moodle",
+      "fileKey": "68380:3470801:/תרגול 2 חלק ב טכנולוגית ייצור.pptx",
+      "createdAt": "2026-11-02T14:47:09.261Z",
+      "addedAt": "2026-11-02T14:47:43.987Z"
     }
   ],
   "deadlines": [
