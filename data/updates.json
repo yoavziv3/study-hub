@@ -4218,6 +4218,36 @@
       "fileKey": "67017:3471548:/tar3.pdf",
       "createdAt": "2026-11-03T11:32:56.547Z",
       "addedAt": "2026-11-03T11:32:56.747Z"
+    },
+    {
+      "id": "mw0ziccxw3h6",
+      "key": "announcement:896884",
+      "type": "announcement",
+      "courseId": "m67024",
+      "title": "תרגול מקוון מחר",
+      "body": "שלום כולם, אני מרגיש לא טוב ואעשה מחר תרגול מקוון כסדרו. השתמשו בקישור לתרגול היברידי התואם.",
+      "author": "איגור פורטנוב",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896884",
+      "createdAt": "2026-11-03T17:41:07.000Z",
+      "addedAt": "2026-11-03T17:51:27.249Z",
+      "analysis": {
+        "kind": "room-change",
+        "groups": [],
+        "classType": "תרגיל",
+        "room": "מקוון",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "2026-11-04",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "התרגול מחר יתקיים אונליין; יש להשתמש בקישור לתרגול ההיברידי התואם.",
+        "urgent": true,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-03T17:51:41.293Z"
+      }
     }
   ],
   "deadlines": [
