@@ -4146,6 +4146,34 @@
       "fileKey": "67017:3464422:/הרצאה 4 וחצי - סיכום השיעור קבוצה 3.pdf",
       "createdAt": "2026-11-02T19:21:53.231Z",
       "addedAt": "2026-11-02T19:21:53.411Z"
+    },
+    {
+      "id": "mvznaso1u23j",
+      "key": "material:calc-my21nbyp:1793647313569",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "עודכן בחדו\"א 1: הרצאה 4 וחצי - סיכום השיעור קבוצה 8",
+      "body": "",
+      "lectureId": "calc-my21nbyp",
+      "source": "moodle",
+      "fileKey": "67017:3465805:/הרצאה 4 וחצי - סיכום השיעור קבוצה 8.pdf",
+      "createdAt": "2026-11-02T19:11:59.196Z",
+      "addedAt": "2026-11-02T19:21:53.569Z"
+    },
+    {
+      "id": "mw0a3bl330dl",
+      "key": "material:acc-a35zvkhf",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: יחידה 5- דוחות כספיים - מתוקן",
+      "body": "",
+      "lectureId": "acc-a35zvkhf",
+      "source": "moodle",
+      "fileKey": "68470:3442321:/יחידה 5- דוחות כספיים - מתוקן.pptx",
+      "createdAt": "2026-11-03T05:59:48.765Z",
+      "addedAt": "2026-11-03T05:59:56.007Z"
     }
   ],
   "deadlines": [
