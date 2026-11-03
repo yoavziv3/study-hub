@@ -1,0 +1,27 @@
+{
+  "id": "calc-lzko2gwo",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "tar3",
+  "originalName": "tar3.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-03T11:32:56.547Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3471548:/tar3.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "תרגולים מקוונים של איגור",
+    "timemodified": 1793702671
+  },
+  "updatedAt": "2026-11-03T11:32:56.748Z",
+  "announced": true
+}

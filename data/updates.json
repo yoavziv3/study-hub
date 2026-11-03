@@ -4204,6 +4204,20 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-03T09:05:37.372Z"
       }
+    },
+    {
+      "id": "mw0lzktn0puf",
+      "key": "material:calc-lzko2gwo",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "תרגול חדש בחדו\"א 1: tar3",
+      "body": "",
+      "lectureId": "calc-lzko2gwo",
+      "source": "moodle",
+      "fileKey": "67017:3471548:/tar3.pdf",
+      "createdAt": "2026-11-03T11:32:56.547Z",
+      "addedAt": "2026-11-03T11:32:56.747Z"
     }
   ],
   "deadlines": [
