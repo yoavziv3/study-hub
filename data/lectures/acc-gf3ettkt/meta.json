@@ -1,0 +1,30 @@
+{
+  "id": "acc-gf3ettkt",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "פתרון פרק 4 - עריכת דוחות כספיים",
+  "originalName": "פתרון פרק 4 - עריכת דוחות כספיים.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 15,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-04T18:32:35.334Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3383662:/פתרון פרק 4 - עריכת דוחות כספיים.pdf",
+    "section": "פתרונות לתרגילים",
+    "module": "פתרונות לפרק 4 בחוברת תרגילים - עריכת דוחות כספיים",
+    "timemodified": 1788672347
+  },
+  "updatedAt": "2026-11-04T18:32:36.363Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

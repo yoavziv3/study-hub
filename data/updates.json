@@ -4507,6 +4507,20 @@
       "body": "מועד א׳: 31/01/2027 09:00 · מועד ב׳: 21/02/2027",
       "createdAt": "2026-11-04T16:32:40.659Z",
       "addedAt": "2026-11-04T16:32:40.659Z"
+    },
+    {
+      "id": "mw2gf47ew5pn",
+      "key": "material:acc-gf3ettkt",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "acc",
+      "title": "שיעורי בית / תרגילים חדשים בחשבונאות: פתרון פרק 4 - עריכת דוחות כספיים",
+      "body": "",
+      "lectureId": "acc-gf3ettkt",
+      "source": "moodle",
+      "fileKey": "68470:3383662:/פתרון פרק 4 - עריכת דוחות כספיים.pdf",
+      "createdAt": "2026-11-04T18:32:35.334Z",
+      "addedAt": "2026-11-04T18:32:36.362Z"
     }
   ],
   "deadlines": [
