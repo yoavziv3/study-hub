@@ -4248,6 +4248,20 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-03T17:51:41.293Z"
       }
+    },
+    {
+      "id": "mw1kf5m0yc13",
+      "key": "material:m67024-kf5cqqol",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "m67024",
+      "title": "תרגול חדש באלגברה לינארית להנדסה: תרגול 3 - מערכות משוואות לינאריות",
+      "body": "",
+      "lectureId": "m67024-kf5cqqol",
+      "source": "moodle",
+      "fileKey": "67024:3457967:/תרגול 3 - מערכות משוואות לינאריות.pdf",
+      "createdAt": "2026-11-04T03:36:50.138Z",
+      "addedAt": "2026-11-04T03:36:50.472Z"
     }
   ],
   "deadlines": [

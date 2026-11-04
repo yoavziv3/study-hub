@@ -1,0 +1,27 @@
+{
+  "id": "m67024-kf5cqqol",
+  "courseId": "m67024",
+  "autoCourse": false,
+  "title": "תרגול 3 - מערכות משוואות לינאריות",
+  "originalName": "תרגול 3 - מערכות משוואות לינאריות.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 4,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-04T03:36:50.138Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67024,
+    "fileKey": "67024:3457967:/תרגול 3 - מערכות משוואות לינאריות.pdf",
+    "section": "סיכומי הרצאות ותירגולים",
+    "module": "תרגולים של ברנדה",
+    "timemodified": 1793763108
+  },
+  "updatedAt": "2026-11-04T03:36:50.472Z",
+  "announced": true
+}
