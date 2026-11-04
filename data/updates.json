@@ -4404,7 +4404,25 @@
       "author": "רותם רווה",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=897023",
       "createdAt": "2026-11-04T09:47:59.000Z",
-      "addedAt": "2026-11-04T10:01:45.324Z"
+      "addedAt": "2026-11-04T10:01:45.324Z",
+      "analysis": {
+        "kind": "deadline",
+        "groups": [],
+        "classType": "",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "8.11",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "יש להירשם לקבוצת עבודה של 4 משתתפים עד 8.11, אחרת תשובצו אוטומטית.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-04T10:04:48.433Z"
+      }
     }
   ],
   "deadlines": [
