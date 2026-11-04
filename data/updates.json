@@ -4437,6 +4437,20 @@
       "fileKey": "67024:3442285:/LES 3.pdf",
       "createdAt": "2026-11-04T11:06:02.162Z",
       "addedAt": "2026-11-04T11:06:02.705Z"
+    },
+    {
+      "id": "mw22p7o8s6l3",
+      "key": "material:calc-2p7fgx9i",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "calc",
+      "title": "הרצאה חדשה בחדו\"א 1: הרצאה 6 - סיכום השיעור קבוצה 3",
+      "body": "",
+      "lectureId": "calc-2p7fgx9i",
+      "source": "moodle",
+      "fileKey": "67017:3464422:/הרצאה 6 - סיכום השיעור קבוצה 3.pdf",
+      "createdAt": "2026-11-04T12:08:32.477Z",
+      "addedAt": "2026-11-04T12:08:32.792Z"
     }
   ],
   "deadlines": [

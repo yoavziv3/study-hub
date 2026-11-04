@@ -1,0 +1,27 @@
+{
+  "id": "calc-2p7fgx9i",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "הרצאה 6 - סיכום השיעור קבוצה 3",
+  "originalName": "הרצאה 6 - סיכום השיעור קבוצה 3.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 6,
+  "unitNumber": 6,
+  "slideCount": 7,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-04T12:08:32.477Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3464422:/הרצאה 6 - סיכום השיעור קבוצה 3.pdf",
+    "section": "ספר ורשימות מהכיתה",
+    "module": "הרצאות של מוטקה- קבוצה 3",
+    "timemodified": 1793792684
+  },
+  "updatedAt": "2026-11-04T12:08:32.793Z",
+  "announced": true
+}
