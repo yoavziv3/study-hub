@@ -1,0 +1,36 @@
+{
+  "id": "econ-uo2agjek",
+  "courseId": "econ",
+  "autoCourse": false,
+  "title": "Problem sets (1)",
+  "originalName": "Problem_sets (1).pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 1,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-04T08:23:42.233Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68380,
+    "fileKey": "68380:assign203459:/Problem_sets (1).pdf",
+    "section": "",
+    "module": "תרגיל 3",
+    "timemodified": 1793778571,
+    "note": "תרגיל 2 שאלה 3\n\n כל תרגיל 3",
+    "assignment": {
+      "id": 203459,
+      "name": "תרגיל 3",
+      "dueAt": "2026-11-09T21:59:00.000Z",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3472288",
+      "instructions": "תרגיל 2 שאלה 3\n כל תרגיל 3"
+    }
+  },
+  "updatedAt": "2026-11-04T08:23:44.467Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true
+}
