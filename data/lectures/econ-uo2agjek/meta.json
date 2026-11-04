@@ -30,7 +30,8 @@
       "instructions": "תרגיל 2 שאלה 3\n כל תרגיל 3"
     }
   },
-  "updatedAt": "2026-11-04T08:23:44.467Z",
+  "updatedAt": "2026-11-04T08:29:13.524Z",
   "aiError": "יצירת הסיכום נכשלה",
-  "announced": true
+  "announced": true,
+  "aiRetries": 1
 }

@@ -4331,7 +4331,25 @@
       "author": "איתי שורץ",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896976",
       "createdAt": "2026-11-04T07:50:36.000Z",
-      "addedAt": "2026-11-04T08:23:45.995Z"
+      "addedAt": "2026-11-04T08:23:45.995Z",
+      "analysis": {
+        "kind": "material",
+        "groups": [],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "תרגיל 3 עלה למודל; יש לפתור את שאלה 3 מתרגיל 2 ואת כל תרגיל 3.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-04T08:29:14.439Z"
+      }
     },
     {
       "id": "mw1uo6s61i7x",
@@ -4356,7 +4374,25 @@
       "author": "צוות הקורס",
       "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=896975",
       "createdAt": "2026-11-04T07:47:52.000Z",
-      "addedAt": "2026-11-04T08:23:50.927Z"
+      "addedAt": "2026-11-04T08:23:50.927Z",
+      "analysis": {
+        "kind": "general",
+        "groups": [],
+        "classType": "",
+        "room": "חדר לימוד מינוס 121, קומה מינוס 1, בבית הסטודנט",
+        "day": "ימי שלישי ורביעי",
+        "time": "18:00–20:00",
+        "date": "4.11",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "נפתח מרחב למידה חופשי בימי שלישי ורביעי 18:00–20:00; אפשר להגיע ללא הרשמה לפי מקום פנוי.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-04T08:29:21.254Z"
+      }
     }
   ],
   "deadlines": [
