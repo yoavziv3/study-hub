@@ -10,8 +10,8 @@
   "unitNumber": 3,
   "slideCount": 4,
   "hasPdf": true,
-  "status": "ready",
-  "stage": "ready",
+  "status": "processing",
+  "stage": "queued",
   "error": null,
   "createdAt": "2026-11-04T03:36:50.138Z",
   "source": {
@@ -22,6 +22,7 @@
     "module": "תרגולים של ברנדה",
     "timemodified": 1793763108
   },
-  "updatedAt": "2026-11-04T03:36:50.472Z",
+  "updatedAt": "2026-11-04T05:12:08.712Z",
   "announced": true
+}ue
 }
