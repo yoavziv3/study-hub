@@ -4423,6 +4423,20 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-04T10:04:48.433Z"
       }
+    },
+    {
+      "id": "mw20gu35hhca",
+      "key": "material:m67024-0gto1qga",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "m67024",
+      "title": "הרצאה חדשה באלגברה לינארית להנדסה: LES 3",
+      "body": "",
+      "lectureId": "m67024-0gto1qga",
+      "source": "moodle",
+      "fileKey": "67024:3442285:/LES 3.pdf",
+      "createdAt": "2026-11-04T11:06:02.162Z",
+      "addedAt": "2026-11-04T11:06:02.705Z"
     }
   ],
   "deadlines": [
