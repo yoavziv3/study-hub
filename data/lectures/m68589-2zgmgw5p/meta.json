@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2zgmgw5p",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 4.3 עבודה של כוח משתנה⁩",
+  "originalName": "‎⁨שיעור 4.3 עבודה של כוח משתנה⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:03.304Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474241:/‎⁨שיעור 4.3 עבודה של כוח משתנה⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 4.3 עבודה של כוח משתנה",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:52:03.471Z",
+  "announced": true
+}

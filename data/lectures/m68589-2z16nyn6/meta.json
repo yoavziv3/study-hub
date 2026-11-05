@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z16nyn6",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "שיעור 1.6 זריקה משופעת",
+  "originalName": "שיעור 1.6 זריקה משופעת.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:43.295Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474230:/שיעור 1.6 זריקה משופעת.pdf",
+    "section": "מצגות",
+    "module": "שיעור 1.6 זריקה משופעת",
+    "timemodified": 1793912582
+  },
+  "updatedAt": "2026-11-05T21:51:43.726Z",
+  "announced": true
+}

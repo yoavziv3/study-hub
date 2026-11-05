@@ -1,0 +1,27 @@
+{
+  "id": "m68589-304hp2zj",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "מבחן 2021 מועד ב שאלה 2",
+  "originalName": "מבחן 2021 מועד ב שאלה 2.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:34.237Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474262:/מבחן 2021 מועד ב שאלה 2.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "מבחן 2021 מועד ב שאלה 2",
+    "timemodified": 1793912585
+  },
+  "updatedAt": "2026-11-05T21:52:42.256Z",
+  "announced": true
+}

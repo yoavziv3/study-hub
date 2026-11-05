@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2zmuogj8",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "תרגול 7 2022 מבוא",
+  "originalName": "תרגול 7 2022 מבוא.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 7,
+  "unitNumber": 7,
+  "slideCount": 20,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:11.376Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474252:/תרגול 7 2022 מבוא.pdf",
+    "section": "דפי תרגול וחזרה",
+    "module": "תרגול 7- המשך תנועה מעגלית",
+    "timemodified": 1793912584
+  },
+  "updatedAt": "2026-11-05T21:52:12.578Z",
+  "announced": true
+}

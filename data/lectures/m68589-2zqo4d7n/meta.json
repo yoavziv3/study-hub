@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2zqo4d7n",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "חוברת תרגילים מבוא לפיסיקה2020",
+  "originalName": "חוברת תרגילים מבוא לפיסיקה2020.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": null,
+  "slideCount": 89,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:16.325Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474255:/חוברת תרגילים מבוא לפיסיקה2020.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "חוברת תרגילים- מבוא לפיזיקה",
+    "timemodified": 1793912584
+  },
+  "updatedAt": "2026-11-05T21:52:18.005Z",
+  "announced": true
+}

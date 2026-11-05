@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2zlkc5jn",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "תרגול 3-מבוא 1",
+  "originalName": "תרגול 3-מבוא 1.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 32,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:09.709Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474250:/תרגול 3-מבוא 1.pdf",
+    "section": "דפי תרגול וחזרה",
+    "module": "תרגול 4+5- חוקי ניוטון, חוק ראשון שני ושלישי+ חיכוך סטטי וקינטי",
+    "timemodified": 1793912584
+  },
+  "updatedAt": "2026-11-05T21:52:11.057Z",
+  "announced": true
+}

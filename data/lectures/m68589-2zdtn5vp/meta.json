@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2zdtn5vp",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 4.2 משפט עבודה-אנרגיה⁩",
+  "originalName": "‎⁨שיעור 4.2 משפט עבודה-אנרגיה⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 4,
+  "unitNumber": 4,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:59.676Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474240:/‎⁨שיעור 4.2 משפט עבודה-אנרגיה⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 4.2 משפט עבודה-אנרגיה",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:51:59.887Z",
+  "announced": true
+}

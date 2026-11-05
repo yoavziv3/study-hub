@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z8p6c25",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 3.2 תנועה במעגל אופקי⁩",
+  "originalName": "‎⁨שיעור 3.2 תנועה במעגל אופקי⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 18,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:53.035Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474238:/‎⁨שיעור 3.2 תנועה במעגל אופקי⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 3.2 תנועה במעגל אופקי",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:51:53.294Z",
+  "announced": true
+}

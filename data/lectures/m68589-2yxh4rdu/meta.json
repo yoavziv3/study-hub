@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2yxh4rdu",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 1.1 תנועה על קו ישר במהירות קבועה⁩",
+  "originalName": "‎⁨שיעור 1.1 תנועה על קו ישר במהירות קבועה⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 10,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:38.489Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474225:/‎⁨שיעור 1.1 תנועה על קו ישר במהירות קבועה⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 1.1 תנועה על קו ישר במהירות קבועה",
+    "timemodified": 1793912582
+  },
+  "updatedAt": "2026-11-05T21:51:39.233Z",
+  "announced": true
+}

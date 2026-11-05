@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z7ki9mi",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 2.5 הכוח המדומה⁩",
+  "originalName": "‎⁨שיעור 2.5 הכוח המדומה⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:51.571Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474236:/‎⁨שיעור 2.5 הכוח המדומה⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 2.5 הכוח המדומה",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:51:51.782Z",
+  "announced": true
+}

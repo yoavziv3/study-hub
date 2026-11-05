@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z26tkuf",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "שיעור 2.1 חוקי ניוטון",
+  "originalName": "שיעור 2.1 חוקי ניוטון.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": 2,
+  "slideCount": 2,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:44.597Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474232:/שיעור 2.1 חוקי ניוטון.pdf",
+    "section": "מצגות",
+    "module": "שיעור 2.1 חוקי ניוטון",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:51:44.798Z",
+  "announced": true
+}

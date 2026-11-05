@@ -1,0 +1,27 @@
+{
+  "id": "m68589-309xx7nd",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "פתרון מועד א",
+  "originalName": "פתרון מועד א.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 35,
+  "unitNumber": null,
+  "slideCount": 11,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:41.301Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474276:/פתרון מועד א.pdf",
+    "section": "פתרון מבחנים בקורס",
+    "module": "פתרון מועד א'",
+    "timemodified": 1793912947
+  },
+  "updatedAt": "2026-11-05T21:52:44.697Z",
+  "announced": true
+}

@@ -1,0 +1,30 @@
+{
+  "id": "m68589-2zttwl5y",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨תרגילים פתורים מהחוברת - פרק 1⁩",
+  "originalName": "‎⁨תרגילים פתורים מהחוברת - פרק 1⁩.pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 14,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:20.421Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474257:/‎⁨תרגילים פתורים מהחוברת - פרק 1⁩.pdf",
+    "section": "מבחנים ממועדים קודמים",
+    "module": "תרגילים פתורים מהחוברת - פרק 1",
+    "timemodified": 1793912584
+  },
+  "updatedAt": "2026-11-05T21:52:22.123Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}

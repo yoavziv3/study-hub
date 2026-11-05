@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z0g2z1u",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "שיעור 1.5 זריקה אופקית",
+  "originalName": "שיעור 1.5 זריקה אופקית.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:42.339Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474229:/שיעור 1.5 זריקה אופקית.pdf",
+    "section": "מצגות",
+    "module": "שיעור 1.5 זריקה אופקית",
+    "timemodified": 1793912582
+  },
+  "updatedAt": "2026-11-05T21:51:42.899Z",
+  "announced": true
+}

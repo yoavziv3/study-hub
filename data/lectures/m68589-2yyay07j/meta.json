@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2yyay07j",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "‎⁨שיעור 1.2 תנועה על קו ישר בתאוצה קבועה⁩",
+  "originalName": "‎⁨שיעור 1.2 תנועה על קו ישר בתאוצה קבועה⁩.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 7,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:39.562Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474226:/‎⁨שיעור 1.2 תנועה על קו ישר בתאוצה קבועה⁩.pdf",
+    "section": "מצגות",
+    "module": "שיעור 1.2 תנועה על קו ישר בתאוצה קבועה",
+    "timemodified": 1793912582
+  },
+  "updatedAt": "2026-11-05T21:51:40.063Z",
+  "announced": true
+}

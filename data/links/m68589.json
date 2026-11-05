@@ -54,5 +54,21 @@
     "href": "https://www.youtube.com/watch?v=GGgfn_GSpqc",
     "section": "דפי תרגול וחזרה",
     "ext": ""
+  },
+  {
+    "id": 3474256,
+    "type": "file",
+    "name": "דף נוסחאות למבחן",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3474256",
+    "section": "מבחנים ממועדים קודמים",
+    "ext": "pdf"
+  },
+  {
+    "id": 3474273,
+    "type": "file",
+    "name": "בוחן 2023",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3474273",
+    "section": "מבחנים ובחנים לחזרה",
+    "ext": "pdf"
   }
 ]

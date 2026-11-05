@@ -1,0 +1,27 @@
+{
+  "id": "m68589-2z1q3uu5",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "שיעור 1.7 תנועה יחסית",
+  "originalName": "שיעור 1.7 תנועה יחסית.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:51:43.995Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474231:/שיעור 1.7 תנועה יחסית.pdf",
+    "section": "מצגות",
+    "module": "שיעור 1.7 תנועה יחסית",
+    "timemodified": 1793912583
+  },
+  "updatedAt": "2026-11-05T21:51:44.228Z",
+  "announced": true
+}

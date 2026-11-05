@@ -1,0 +1,27 @@
+{
+  "id": "m68589-3061toki",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "מועד א פתרון, חורף תשפג",
+  "originalName": "מועד א פתרון, חורף תשפג.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 31,
+  "unitNumber": null,
+  "slideCount": 3,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:36.258Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474271:/מועד א פתרון, חורף תשפג.pdf",
+    "section": "מבחנים בקורס",
+    "module": "פיתרון שאלה 2 -מועד א 2023",
+    "timemodified": 1793912947
+  },
+  "updatedAt": "2026-11-05T21:52:42.992Z",
+  "announced": true
+}

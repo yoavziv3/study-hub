@@ -1,0 +1,27 @@
+{
+  "id": "m68589-308c5dog",
+  "courseId": "m68589",
+  "autoCourse": false,
+  "title": "מבוא לפיזיקה - מועד ב - תשפד",
+  "originalName": "מבוא לפיזיקה - מועד ב - תשפד.pdf",
+  "kind": "exam",
+  "originalFile": "original.pdf",
+  "lessonNumber": 34,
+  "unitNumber": null,
+  "slideCount": 6,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T21:52:39.221Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68589,
+    "fileKey": "68589:3474275:/מבוא לפיזיקה - מועד ב - תשפד.pdf",
+    "section": "מבחנים ובחנים לחזרה",
+    "module": "מועד ב' 2024",
+    "timemodified": 1793912947
+  },
+  "updatedAt": "2026-11-05T21:52:43.631Z",
+  "announced": true
+}
