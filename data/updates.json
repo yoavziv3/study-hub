@@ -4531,6 +4531,34 @@
       "body": "מועד א׳: 04/02/2027 13:30 · מועד ב׳: 25/02/2027",
       "createdAt": "2026-11-05T06:47:03.382Z",
       "addedAt": "2026-11-05T06:47:03.382Z"
+    },
+    {
+      "id": "mw3qnillwtfi",
+      "key": "material:phys-qnhk7ugh",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "phys",
+      "title": "הרצאה חדשה בפיזיקה: שיעור 3 6.11.2026",
+      "body": "",
+      "lectureId": "phys-qnhk7ugh",
+      "source": "moodle",
+      "fileKey": "68587:3474026:/שיעור 3 6.11.2026.pdf",
+      "createdAt": "2026-11-05T16:06:49.256Z",
+      "addedAt": "2026-11-05T16:06:50.601Z"
+    },
+    {
+      "id": "mw3qnirmfe1y",
+      "key": "material:phys-qnhvxrea",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "phys",
+      "title": "תרגול חדש בפיזיקה: תרגול 3 6.11.2026",
+      "body": "",
+      "lectureId": "phys-qnhvxrea",
+      "source": "moodle",
+      "fileKey": "68587:3474031:/תרגול 3 6.11.2026.pdf",
+      "createdAt": "2026-11-05T16:06:49.678Z",
+      "addedAt": "2026-11-05T16:06:50.818Z"
     }
   ],
   "deadlines": [

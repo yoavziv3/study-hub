@@ -1,0 +1,27 @@
+{
+  "id": "phys-qnhk7ugh",
+  "courseId": "phys",
+  "autoCourse": false,
+  "title": "שיעור 3 6.11.2026",
+  "originalName": "שיעור 3 6.11.2026.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 48,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T16:06:49.256Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68587,
+    "fileKey": "68587:3474026:/שיעור 3 6.11.2026.pdf",
+    "section": "קבצים להרצאות ולתרגולים",
+    "module": "קובץ עזר לשיעור 3 6.11.2026",
+    "timemodified": 1793894565
+  },
+  "updatedAt": "2026-11-05T16:06:50.601Z",
+  "announced": true
+}
