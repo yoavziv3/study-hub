@@ -1,0 +1,28 @@
+{
+  "id": "acc-wdc8mt42",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 8- רכוש קבוע - מתוקן",
+  "originalName": "יחידה 8- רכוש קבוע - מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 6,
+  "unitNumber": 8,
+  "slideCount": 19,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:53.495Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442327:/יחידה 8- רכוש קבוע - מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 8 - פיננסית - רכוש קבוע",
+    "timemodified": 1793904253
+  },
+  "updatedAt": "2026-11-05T18:47:05.371Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

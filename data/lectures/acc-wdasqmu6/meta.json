@@ -1,0 +1,28 @@
+{
+  "id": "acc-wdasqmu6",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 3 - הזהות החשבונאית -מתוקן",
+  "originalName": "יחידה 3 - הזהות החשבונאית -מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 2,
+  "unitNumber": 3,
+  "slideCount": 23,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:51.628Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442298:/יחידה 3 - הזהות החשבונאית -מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 3 - פיננסית - הזהות החשבונאית",
+    "timemodified": 1793904063
+  },
+  "updatedAt": "2026-11-05T18:46:54.716Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

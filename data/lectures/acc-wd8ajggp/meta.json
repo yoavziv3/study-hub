@@ -1,0 +1,28 @@
+{
+  "id": "acc-wd8ajggp",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 2 - מבוא לחשבונאות פיננסית -מתוקן",
+  "originalName": "יחידה 2 - מבוא לחשבונאות פיננסית -מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 1,
+  "unitNumber": 2,
+  "slideCount": 35,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:48.379Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442290:/יחידה 2 - מבוא לחשבונאות פיננסית -מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 2 - פיננסית - מבוא לחשבונאות פיננסית",
+    "timemodified": 1793903965
+  },
+  "updatedAt": "2026-11-05T18:46:52.716Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

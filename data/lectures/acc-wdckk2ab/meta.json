@@ -1,0 +1,28 @@
+{
+  "id": "acc-wdckk2ab",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון -מתוקן",
+  "originalName": "יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון -מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 7,
+  "unitNumber": 9,
+  "slideCount": 21,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:53.924Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442331:/יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון -מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 9 - פיננסית - ניתוח דוחות כספיים וחוות דעת רואה חשבון",
+    "timemodified": 1793904293
+  },
+  "updatedAt": "2026-11-05T18:47:07.390Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

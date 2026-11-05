@@ -1,0 +1,28 @@
+{
+  "id": "acc-wd81bn3y",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 1 - פתיחת הקורס -מתוקן",
+  "originalName": "יחידה 1 - פתיחת הקורס -מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 1,
+  "unitNumber": 1,
+  "slideCount": 10,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:48.048Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442197:/יחידה 1 - פתיחת הקורס -מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 1 - כללי - פתיחת הקורס",
+    "timemodified": 1793903879
+  },
+  "updatedAt": "2026-11-05T18:46:49.762Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}

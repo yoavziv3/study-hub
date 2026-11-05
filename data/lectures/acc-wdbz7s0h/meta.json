@@ -1,0 +1,28 @@
+{
+  "id": "acc-wdbz7s0h",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "יחידה 7 - רישומי התאמה -מתוקן",
+  "originalName": "יחידה 7 - רישומי התאמה -מתוקן.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 5,
+  "unitNumber": 7,
+  "slideCount": 20,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T18:46:53.156Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3442326:/יחידה 7 - רישומי התאמה -מתוקן.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 7 - פיננסית - רישומי התאמה",
+    "timemodified": 1793904213
+  },
+  "updatedAt": "2026-11-05T18:47:03.674Z",
+  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "announced": true
+}
