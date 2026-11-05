@@ -1,0 +1,27 @@
+{
+  "id": "calc-x2xp5q42",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "booklet",
+  "originalName": "booklet .pdf",
+  "kind": "homework",
+  "originalFile": "original.pdf",
+  "lessonNumber": 2,
+  "unitNumber": null,
+  "slideCount": 9,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-05T19:06:47.705Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3442198:/booklet .pdf",
+    "section": "חוברת תרגילים והגשות",
+    "module": "חוברת תרגילים",
+    "timemodified": 1793905522
+  },
+  "updatedAt": "2026-11-05T19:06:47.865Z",
+  "announced": true
+}

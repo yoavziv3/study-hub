@@ -10,9 +10,9 @@
   "unitNumber": null,
   "slideCount": 36,
   "hasPdf": true,
-  "status": "error",
+  "status": "processing",
   "stage": "converting",
-  "error": "ENOENT: no such file or directory, rename '/Users/yuive/Desktop/projects/study/data/lectures/calc-v562k1mb/meta.json.33969.tmp' -> '/Users/yuive/Desktop/projects/study/data/lectures/calc-v562k1mb/meta.json'",
+  "error": null,
   "createdAt": "2026-10-19T06:18:18.236Z",
   "source": {
     "type": "moodle",
@@ -23,7 +23,16 @@
       "67017:3459906:/solutions.pdf"
     ]
   },
-  "updatedAt": "2026-10-29T21:51:09.937Z",
+  "updatedAt": "2026-11-05T19:06:47.146Z",
+  "aiError": null,
+  "announced": true
+}�ת",
+    "module": "חוברת תרגילים",
+    "linkedKeys": [
+      "67017:3459906:/solutions.pdf"
+    ]
+  },
+  "updatedAt": "2026-11-05T19:06:47.147Z",
   "aiError": null,
   "announced": true
 }

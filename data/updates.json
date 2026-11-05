@@ -4755,6 +4755,36 @@
       "fileKey": "68470:3442331:/יחידה 9- ניתוח דוחות כספיים וחוות דעת רואה חשבון -מתוקן.pptx",
       "createdAt": "2026-11-05T18:46:53.924Z",
       "addedAt": "2026-11-05T18:47:07.389Z"
+    },
+    {
+      "id": "mw3x2x9nx6rm",
+      "key": "material:calc-v562k1mb:1793905607147",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "calc",
+      "title": "עודכן בחדו\"א 1: פתרונות – מספרים ממשיים וסדרות",
+      "body": "",
+      "lectureId": "calc-v562k1mb",
+      "source": "moodle",
+      "fileKeys": [
+        "67017:3459906:/solutions.pdf"
+      ],
+      "createdAt": "2026-10-19T06:18:18.236Z",
+      "addedAt": "2026-11-05T19:06:47.147Z"
+    },
+    {
+      "id": "mw3x2xtlxj57",
+      "key": "material:calc-x2xp5q42",
+      "type": "material",
+      "kind": "homework",
+      "courseId": "calc",
+      "title": "שיעורי בית / תרגילים חדשים בחדו\"א 1: booklet",
+      "body": "",
+      "lectureId": "calc-x2xp5q42",
+      "source": "moodle",
+      "fileKey": "67017:3442198:/booklet .pdf",
+      "createdAt": "2026-11-05T19:06:47.705Z",
+      "addedAt": "2026-11-05T19:06:47.865Z"
     }
   ],
   "deadlines": [
