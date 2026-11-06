@@ -5479,6 +5479,19 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-06T12:15:31.329Z"
       }
+    },
+    {
+      "id": "mw504myf5t4h",
+      "key": "reminder:mvu2viyg2zq3:3:2026-11-08T21:59:00.000Z",
+      "type": "reminder",
+      "courseId": "calc",
+      "title": "⏰ בעוד יומיים: דף הגשה 2: סדרות והתכנסות (חדו\"א 1)",
+      "body": "להגשה עד יום ראשון, 8.11, 23:59",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3468141",
+      "dueAt": "2026-11-08T21:59:00.000Z",
+      "deadlineId": "mvu2viyg2zq3",
+      "createdAt": "2026-11-06T13:19:52.119Z",
+      "addedAt": "2026-11-06T13:19:52.119Z"
     }
   ],
   "deadlines": [
@@ -5570,7 +5583,10 @@
       3,
       1
     ],
-    "mw3wdhimayv1": []
+    "mw3wdhimayv1": [],
+    "mvu2viyg2zq3": [
+      3
+    ]
   },
   "settings": {
     "notify": true,
