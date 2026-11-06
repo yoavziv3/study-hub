@@ -315,7 +315,13 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       content = null;
       const limit = /429|usage_limit/.test(e.message);
       const signedOut = /authenticate|login|OAuth/i.test(e.message);
-      await patchLecture(id, { aiError: limit ? limitText(e.message) : signedOut ? signedOutText(e.message) : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה' });
+      // A used-up quota, a busy model or a dropped connection says nothing about the lesson: give back the automatic try.
+      const passing = limit || /\b503\b|UNAVAILABLE|high demand|aborted|timed? ?out|fetch failed|ECONN/i.test(e.message);
+      const tries = getLecture(id)?.aiRetries || 0;
+      await patchLecture(id, {
+        aiError: limit ? limitText(e.message) : signedOut ? signedOutText(e.message) : e instanceof CheckError ? 'הפלט של ה AI לא עבר את הבדיקות – נסו "יצירת סיכום מחדש"' : 'יצירת הסיכום נכשלה',
+        ...(passing && tries && { aiRetries: tries - 1 }),
+      });
       adminAlert(limit ? `${limitText(e.message)} – חומר חדש נכנס בינתיים בלי סיכום` : signedOut ? `${signedOutText(e.message)} – חומר חדש נכנס בלי סיכום` : 'יצירת סיכום נכשלה');
     }
   }
