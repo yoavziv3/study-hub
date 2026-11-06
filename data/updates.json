@@ -5447,6 +5447,38 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-06T11:25:33.857Z"
       }
+    },
+    {
+      "id": "mw4xtpgzo9ud",
+      "key": "announcement:897498",
+      "type": "announcement",
+      "courseId": "m68589",
+      "title": "שיעורי בית לתרגול",
+      "body": "שלום לכולם\n\nאנחנו כמעט קרובים לסיים קינמטיקה , קחו לעצמכם השבוע לתרגל מחוברת התרגילים:\n\nהתרגילים הבאים, מתוך פרק הקינמטיקה \n\n1, 3, 4, 5, 6, 10, 12, 21, 27, 35, 39, 40, 43, 46.\n\nמציעה להתחיל לתרגל מבחינות לאתגר , שיהיה המון בהצלחה וסופש נעים!\n\nרינת גוטין",
+      "author": "רינת גוטין",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/forum/discuss.php?d=897498",
+      "createdAt": "2026-11-06T12:09:25.000Z",
+      "addedAt": "2026-11-06T12:15:22.931Z",
+      "analysis": {
+        "kind": "material",
+        "groups": [
+          "13"
+        ],
+        "classType": "תרגיל",
+        "room": "",
+        "day": "",
+        "time": "",
+        "date": "",
+        "onDate": "",
+        "repeats": false,
+        "start": "",
+        "end": "",
+        "headline": "מומלץ לתרגל השבוע תרגילים נבחרים מפרק הקינמטיקה במחברת התרגילים, ואז לנסות מבחינות.",
+        "urgent": false,
+        "v": 3,
+        "by": "claude-sonnet-5-5",
+        "at": "2026-11-06T12:15:31.329Z"
+      }
     }
   ],
   "deadlines": [
@@ -5511,7 +5543,7 @@
       "dueAt": "2026-11-09T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3472288",
       "intro": "תרגיל 2 שאלה 3\n\n כל תרגיל 3",
-      "submitted": false,
+      "submitted": true,
       "draft": false,
       "done": false
     },
