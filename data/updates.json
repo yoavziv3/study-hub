@@ -5492,6 +5492,20 @@
       "deadlineId": "mvu2viyg2zq3",
       "createdAt": "2026-11-06T13:19:52.119Z",
       "addedAt": "2026-11-06T13:19:52.119Z"
+    },
+    {
+      "id": "mw5bzsd7od2l",
+      "key": "material:calc-bzqo7dgt",
+      "type": "material",
+      "kind": "tutorial",
+      "courseId": "calc",
+      "title": "תרגול חדש בחדו\"א 1: תרגול 3",
+      "body": "",
+      "lectureId": "calc-bzqo7dgt",
+      "source": "moodle",
+      "fileKey": "67017:3474478:/תרגול 3.pdf",
+      "createdAt": "2026-11-06T18:51:59.048Z",
+      "addedAt": "2026-11-06T18:52:01.243Z"
     }
   ],
   "deadlines": [

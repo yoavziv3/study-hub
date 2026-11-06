@@ -1,0 +1,30 @@
+{
+  "id": "calc-bzqo7dgt",
+  "courseId": "calc",
+  "autoCourse": false,
+  "title": "תרגול 3",
+  "originalName": "תרגול 3.pdf",
+  "kind": "tutorial",
+  "originalFile": "original.pdf",
+  "lessonNumber": 3,
+  "unitNumber": 3,
+  "slideCount": 20,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-06T18:51:59.048Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 67017,
+    "fileKey": "67017:3474478:/תרגול 3.pdf",
+    "section": "תרגולים בזום - ליאור",
+    "module": "תרגול 3",
+    "timemodified": 1793990797
+  },
+  "updatedAt": "2026-11-06T18:52:01.244Z",
+  "noAi": true,
+  "noAiReason": "scanned",
+  "aiError": null,
+  "announced": true
+}
