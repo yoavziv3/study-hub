@@ -22,7 +22,8 @@
     "module": "יחידה 8 - פיננסית - רכוש קבוע",
     "timemodified": 1793904253
   },
-  "updatedAt": "2026-11-05T18:47:05.371Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
-  "announced": true
+  "updatedAt": "2026-11-06T10:09:50.533Z",
+  "aiError": "יצירת הסיכום נכשלה",
+  "announced": true,
+  "aiRetries": 1
 }
