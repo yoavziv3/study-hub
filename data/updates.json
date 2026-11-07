@@ -5506,6 +5506,19 @@
       "fileKey": "67017:3474478:/תרגול 3.pdf",
       "createdAt": "2026-11-06T18:51:59.048Z",
       "addedAt": "2026-11-06T18:52:01.243Z"
+    },
+    {
+      "id": "mw5y82yljlq6",
+      "key": "reminder:mw1uo6s6kf58:3:2026-11-09T21:59:00.000Z",
+      "type": "reminder",
+      "courseId": "econ",
+      "title": "⏰ בעוד 3 ימים: תרגיל 3 (מבוא לכלכלה)",
+      "body": "להגשה עד יום שני, 9.11, 23:59",
+      "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3472288",
+      "dueAt": "2026-11-09T21:59:00.000Z",
+      "deadlineId": "mw1uo6s6kf58",
+      "createdAt": "2026-11-07T05:14:19.773Z",
+      "addedAt": "2026-11-07T05:14:19.773Z"
     }
   ],
   "deadlines": [
@@ -5544,7 +5557,7 @@
       "dueAt": "2026-11-02T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
       "intro": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
-      "submitted": true,
+      "submitted": false,
       "draft": false,
       "done": false
     },
@@ -5570,7 +5583,7 @@
       "dueAt": "2026-11-09T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3472288",
       "intro": "תרגיל 2 שאלה 3\n\n כל תרגיל 3",
-      "submitted": true,
+      "submitted": false,
       "draft": false,
       "done": false
     },
@@ -5599,6 +5612,9 @@
     ],
     "mw3wdhimayv1": [],
     "mvu2viyg2zq3": [
+      3
+    ],
+    "mw1uo6s6kf58": [
       3
     ]
   },
