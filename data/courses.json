@@ -1517,15 +1517,15 @@
       "minExam": null,
       "passGrade": 56,
       "notes": [
-        "אין דרישת סף לאף מרכיב מהציון כדי לעבור את הקורס.",
-        "מטלת סטאק שבה הציון הוא לפחות 80% תיחשב כ-100% לממוצע.",
-        "תרגילי ההגשה מוגשים שבועית בכתב יד ובמתכונת הוגש/לא הוגש."
+        "אין דרישת סף לאף מרכיב מהציון בכדי לעבור את הקורס.",
+        "כל מטלת סטאק שבה הציון הוא לפחות 80% נחשבת כ-100% בממוצע.",
+        "דפי התרגילים מוגשים בכתב יד בלבד ומוערכים בציון הוגש/לא הוגש."
       ],
       "source": "catalog",
       "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=1605&preview=1",
-      "hash": "3695c9bf14751849",
-      "checkedAt": "2026-10-28T07:53:04.358Z",
-      "extractedAt": "2026-10-28T07:53:04.358Z"
+      "hash": "092940b812b41cac",
+      "checkedAt": "2026-11-07T10:09:50.387Z",
+      "extractedAt": "2026-11-07T10:09:50.387Z"
     },
     "aiKinds": [],
     "holdNames": "קבוצה 8"
@@ -3322,7 +3322,7 @@
           "shield": true
         },
         {
-          "name": "טקסט חופשי",
+          "name": "הגשות (מטלות)",
           "weight": 7,
           "kind": "homework",
           "shield": false
@@ -3344,14 +3344,14 @@
       "minExam": null,
       "passGrade": 56,
       "notes": [
-        "מתוך 10 הגשות (טקסט חופשי) יילקחו בחשבון 8 הטובות ביותר",
+        "מתוך 10 הגשות יילקחו בחשבון 8 הטובות ביותר",
         "אין דרישת סף לציון בבחינה הסופית או בכל מרכיב אחר"
       ],
       "source": "catalog",
       "url": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2605&preview=1",
-      "hash": "42d7ebdd4aa40e08",
-      "checkedAt": "2026-10-27T07:43:40.290Z",
-      "extractedAt": "2026-10-27T07:43:40.290Z"
+      "hash": "ae4a27d2f0c69dd6",
+      "checkedAt": "2026-11-07T10:10:37.962Z",
+      "extractedAt": "2026-11-07T10:10:37.962Z"
     }
   },
   {

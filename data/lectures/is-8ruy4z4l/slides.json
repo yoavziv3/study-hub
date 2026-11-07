@@ -1,0 +1,154 @@
+[
+  {
+    "n": 1,
+    "text": "מבוא למערכות מידע\nמערכות הפעלה ותוכנה\n\nד\"ר דוד קודיש | נובמבר 2026"
+  },
+  {
+    "n": 2,
+    "text": "חומרה ותוכנה\nמערכות הפעלה\nתכנות\nפיתוח מוצרים לעומת תוכנות מדף\n\n ERPותוכנות ארגוניות\nרישיונות וזכויות יוצרים\n\n2"
+  },
+  {
+    "n": 3,
+    "text": "חומרה ,תוכנה ומשתמשים\n\n3"
+  },
+  {
+    "n": 4,
+    "text": "חומרה ומערכת ההפעלה\nתוכנה\nיישומים\nApplications\n\nכלי פיתוח\nCompiler / IDE\n\nנתוני משתמש\nUser Data\n\nמערכת ההפעלה\n\nחומרה\n\nניהול זיכרון\n\nמעבד\n\nMemory Management\n\nCPU\n\nתזמון משימות\n\nזיכרון ראשי\n\nTask Scheduling\n\nניהול קבצים\nFile Management\n\nניהול התקנים\nDevice Drivers\n\nממשק משתמש\nUser Interface\n\nRAM\n\nאחסון\nStorage\n\nמסך /מקלדת\nI/O Devices\n\nכרטיס רשת\nNIC / Modem\n\n4"
+  },
+  {
+    "n": 5,
+    "text": "חומרה ותוכנה\n\nמערכות הפעלה\nתכנות\nפיתוח מוצרים לעומת תוכנות מדף\n\n ERPותוכנות ארגוניות\nרישיונות וזכויות יוצרים\n\n5"
+  },
+  {
+    "n": 6,
+    "text": "תפקידי מערכת ההפעלה\nניהול משאבים\n• ניהול משאבים והקצאתם:\n•\n\nקבצים ,זיכרון ראשי ומשני ,התקני קלט/פלט\n\n• תזמון משימות ( )Taskומעקב ()Monitor\n\nממשק עם משתמשים\n• ממשק פקודות ()Command Line\n• ממשק גרפי = )GUI (Graphical User Interface\n• תוכנות שירות ()Utilities\n\n• קביעת עדיפויות\n\n6"
+  },
+  {
+    "n": 7,
+    "text": "Windows 11\n\n7"
+  },
+  {
+    "n": 8,
+    "text": "macOS 27 Golden Gate\n\n8"
+  },
+  {
+    "n": 9,
+    "text": "Ubuntu 26.04 LTS - Resolute Raccoon\n\n9"
+  },
+  {
+    "n": 10,
+    "text": "Windows / macOS / Linux\n\nהשוואה\nWindows\n\nmacOS / iOS\n\nLinux\n\nיצרן\n\nMicrosoft\n\nApple\n\nקהילה +200 +חברות\n\nעלות\n\nתשלום (רישיון)\n\nכלול בחומרה\n\nחינמי (רוב הגרסאות)\n\nממשק משתמש\n\nחלונות ותפריטים\n\nעיצוב נקי ואינטואיטיבי\n\nשורת פקודות +ממשק גרפי\n\nשימוש עיקרי\n\nמחשב אישי ,עסקים\n\niPhone, iPad, Mac\n\nשרתים ,טלפונים ,מכשירים\n\nקוד מקור\n\nסגור\n\nסגור\n\nפתוח לכולם\n\nמודל עסקי\n\nרישיון +מנויים\n\nחומרה +אפליקציות\n\nשירות ותמיכה\n\nהאם ידעת? טלפון האנדרואיד שלך ,שרתי גוגל ,נטפליקס ,אמזון -כולם רצים על לינוקס!\n10"
+  },
+  {
+    "n": 11,
+    "text": "במה כל מערכת מצטיינת?\nWindows\n\nmacOS\n\nLinux\n\nהפופולרי ביותר\nMost Popular Desktop OS\n\nממשק המשתמש הטוב ביותר\nBest User Experience\n\nהביצועים הטובים ביותר\nBest Performance\n\n• אקוסיסטם תוכנות עסקיות עשיר -\nOffice, SAP, ERP\n\n• Appleשולטת על החומרה והתוכנה\nיחד -אפשר לייעל הכל\n\n• ניתן להתקין בלי ממשק גרפי -כל\nהמשאבים לתהליכים\n\n• תאימות לאחור -תוכנות ישנות\nממשיכות לעבוד\n\n• מספר קטן של מכשירים -עיצוב ממוקד\nואחיד\n\n• קוד פתוח -ניתן לכוון ולייעל לכל שימוש\nספציפי\n\n• הסכמי OEMעם כל יצרני המחשבים\n\n• חוויה אחידה iPhone, iPad, Mac -\nמרגישים אותו דבר\n\n• Kernelמעוצב לניהול משאבים יעיל\nומהיר\n\n• אינטגרציה הדוקה עם iCloud,\nAirDrop, Handoff\n\n• שרתים עובדים שנים רצופות ללא\nאתחול\n\n• תקני עיצוב קפדניים לכל אפליקציה\n\n• מאות גרסאות מותאמות -לרשתות,\nאבטחה ,ענן\n\n• רוב הארגונים בנו תשתית ITעל בסיסו\n• נבנה עם מחשבה על משתמש שאינו\nטכני\n\nאין מערכת הפעלה אחת 'הכי טובה' -השאלה היא :הכי טובה לאיזה שימוש?\n11"
+  },
+  {
+    "n": 12,
+    "text": "Linux\n\nהפצות\nDebian\n\nKali\n\nRed Hat\n\nFedora\n\nUbuntu\n\nבסיס הפצות\n\nאבטחת סייבר\n\nקריטי לעסקים\n\nפיתוח\n\nשימוש אישי\n\nFoundation\n\nCybersecurity\n\nMission Critical\n\nDevelopment\n\nPersonal Use\n\nCommunity\n\nOffensive Security\n\nIBM\n\nCommunity + Red\nHat\n\nCanonical Ltd.\n\nמי מאחורי?\n\nמי מאחורי?\n\nמי מאחורי?\n\nמי מאחורי?\n\nמי מאחורי?\n\nקהילת מתנדבים ,בסיס\nלUbuntu -\n\nחברת הכשרות בתחום\nהסייבר\n\nנרכשה ע\"י IBMב-\n 2019ב 34$-מיליארד\n\nפרויקט קהילתי ,בחסות\nRed Hat\n\nמייסדMark :\nShuttleworth, 2004\n\nמודל עסקי:\n\nמודל עסקי:\n\nמודל עסקי:\n\nמודל עסקי:\n\nמודל עסקי:\n\nתרומות ומענקים\n\nהכשרות ואישורים\n()OSCP\n\nמנויים ותמיכה ארגונית\n\nהכנסות עקיפות ל-\nRed Hat\n\nענן ותמיכה עסקית\n\n12"
+  },
+  {
+    "n": 13,
+    "text": "כרטיס אישיות:Linus Torvalds\nQuick Profile\nLinux Foundation ,Fellow ;Git- וLinux יוצר\n\nתפקיד\n\nOSDL / Linux אחר כך,)2003–1997( Transmeta\nFoundation\n\nחברות\n\n1969, Helsinki, Finland\n\nלידה\n\nM.Sc. Computer Science, University of Helsinki\n\nהשכלה\n\n שני פרויקטי קוד פתוח,)2005( Git-) ו1991( Linux יצר\nשמניעים את עולם התוכנה\n\nהישג מרכזי\n\n חודשי עבודה4- אחרי כ, שורות10,000- כ:הגרסה הראשונה\n\nעובדה מפתיעה\n\nSources: Linux Foundation (leadership page) | Wikipedia (Linus Torvalds; History of Linux)\n\n13"
+  },
+  {
+    "n": 14,
+    "text": ":Linus Torvaldsסיפורים ששווה לזכור\nהדרך לפסגה\n\nישראל ומורשת\n\nההתחלה\nב ,1991-בגיל ,21שלח Torvaldsהודעה לקבוצת הדיון\ncomp.os.minix:\n\"I'm doing a (free) operating system (just a hobby,\n\"won't be big and professional like gnu).\nכיום Linuxמריץ את כל 500מחשבי-העל החזקים בעולם\n( ,)TOP500ודרך Androidרץ על יותר מ 3-מיליארד\nמכשירים פעילים.\n\nהזווית הישראלית\nגם חומות האש של Check Pointהישראלית רצות על\n :Linuxמערכת ההפעלה שלהן ,Gaia ,מבוססת על Red\n.Hat Enterprise Linux\n\nהפריצה\nב ,2005-כשבוטל הרישיון החינמי של ,BitKeeperכתב\n Torvaldsאת Gitבעשרה ימים כדי לנהל את קוד Linux.\n Gitהפך לכלי ניהול הגרסאות הדומיננטי :כמעט 95%\nמהמפתחים עבדו בו ב ,2022-ושירותים כמו GitHubו-\n GitLabמבוססים עליו.\n\nמורשת\n Torvaldsידוע בתגובותיו החריפות למפתחים .ב2018-\nהתנצל על ההתקפות האישיות שלו ויצא לפסק זמן כדי ללמוד\nלהבין רגשות של אנשים.\nגר בפורטלנד ,אורגון .ב TED-אמר:\n\"\"I am not a visionary. I'm an engineer.\n\nSources: Wikipedia (History of Linux; Git; Linus Torvalds; OS usage share; RHEL-based products) | Linux Foundation | TechCrunch | TED Blog\n\n14"
+  },
+  {
+    "n": 15,
+    "text": "Open Source\n\nקוד פתוח\nמה זה קוד פתוח?\n\nלמה מתנדבים?\n\nכיצד מרוויחים?\n\nOpen Source\n\n?Why Volunteer\n\nBusiness Models\n\n• קוד המקור נגיש לכולם\n\n• תשוקה ואהבת תכנות\n\n• תמיכה ומנויים Red Hat -\n\n• חופש לשנות ,לשפר ולהפיץ\n\n• למידה ושיפור כישורים\n\n• שירותי ענן Amazon, Canonical -\n\n• שיתוף פעולה גלובלי של מפתחים\n\n• כ 80%-מהקוד נכתב ע\"י מפתחים\nבשכר\n\n• כפל רישוי ()Dual Licensing\n\n• דוגמאותLinux, Python, Firefox :\n\n• SaaSעל גבי קוד פתוח\n\n• מוניטין ,קריירה ועבודה\n\n18,000+\n\nכ80%-\n\n~230\n\nשינויי קוד בגרסה אחת של Kernel Linux\n\nמהקוד נכתב ע\"י מפתחים בשכר\n\nחברות תורמות קוד לכל גרסה\n\nSource: LWN.net, Linux 7.3 development statistics (Oct 2026), https://lwn.net/Articles/1100241/\n\n15"
+  },
+  {
+    "n": 16,
+    "text": "ארגון רזה -בפעולה\nעקרון ארגון רזה\nLean Org Principle - Lecture 1\n\n=\n\nקוד פתוח -כך זה נראה\nHow Open Source does it\n\nמינימום היררכיה ניהולית\n\n←\n\nאלפי תורמים -בלי מנהל אחד שמוביל\n\nקואורדינציה אופקית בין עמיתים\n\n←\n\nביקורת קוד ( )Pull Requestsבמקום\nאישורים מלמעלה\n\nעובדים מונעי-מטרה ,לא פקודות\n\n←\n\nתורמים מונעי תשוקה ,למידה ומוניטין\n\nגמישות -החלטות מהירות ,ללא בירוקרטיה\n\n←\n\nכל forkהוא החלטה עצמאית בלי לבקש\nרשות\n\nללא מנהל אחד ,ללא תקציב מרכזי -לינוקס מריץ את רוב שרתי האינטרנט בעולם\nלדיון :האם אפשר לנהל חברה עסקית כך? מה יעבוד ומה לא?\n\n16"
+  },
+  {
+    "n": 17,
+    "text": "Red Hat\nמערכת הפעלה ארגונית בקוד פתוח\nEnterprise Linux & Open Source Software\n\n17\n\n$34B\n\n1993\n\n$3.4B\n\nIBM, 2019 נרכשה ע\"י\n\nשנת הקמה\n\nהכנסות שנתיות לפני הרכישה\n\nSources: Red Hat (company page, FY2019 results); IBM 2025 Annual Report; Wikipedia\n\n$7.3B\n2 יותר מפי,2025 הכנסות\nIBM תחת"
+  },
+  {
+    "n": 18,
+    "text": "Red Hat\n\nכרטיס חברה\nהמודל העסקי\n\nפרופיל חברה\n\n• הקוד פתוח לציבור ,השירות עולה כסף\n\n• הוקמה ,1993 :מטהRaleigh, NC :\n\n• מנויים שנתיים לתמיכה ועדכונים\n\n• מוצרRed Hat Enterprise Linux (RHEL) :\n\n• הסמכה ואינטגרציה עם מערכות ארגוניות\n\n• כלים נוספיםOpenShift, Ansible, JBoss :\n\n• המחיר $879–$1,429 :לשרת בשנה\n\n• לקוחות :ממשלות ,בנקים ,חברות תקשורת\n\n• פועלת כחברה-בת עצמאית של IBM\n\n• הכנסות בשנת הכספים ( $3.4B :2019לפני הרכישה)\n• נרכשה ע\"י IBMב 2019-ב 34$-מיליארד\n\n• לחברות :שווה לשלם לאמינות ותמיכה\n\n• הכנסות ,$7.3B :2025יותר מפי 2מאז הרכישה\n\n• לרד-האט :גדלה ב 21%–15-בשנה לפני הרכישה\n• צמיחה דו-ספרתית גם היום ( 11-13%ב)2026-\n\n)Sources: Red Hat (company page, FY2018–19 results, subscription FAQ, store) | IBM 2025 Annual Report, Q1–Q2 2026 results | Wikipedia (Red Hat, RHEL\n\n18"
+  },
+  {
+    "n": 19,
+    "text": "Server OS\n\nשרתים\nUnix / Linux 92.2%\n\n8.0%\nWindows Server\n\nכדי שמחשב יהיה שרת טוב צריך שלושה דברים :חומרה מתאימה +מערכת הפעלה לשרת +תוכנת שרת\nמה מיוחד בשרת?\n\nהפצות - Linuxמתוך אתרי Linux\n\n• ממשק פקודות -לרוב ללא GUI\n\n15.2%\n\nUbuntu\n\n1\n\n5.6%\n\nDebian\n\n2\n\n1.1%\n\nCentOS\n\n3\n\n0.3%\n\nAlmaLinux\n\n4\n\n• אמינות גבוהה -שנים פעיל ללא אתחול\n\n0.2%\n\nRocky Linux\n\n5\n\n• עדכוני אבטחה ללא הפסקת שירות\n\n• ניהול משאבים בעדיפות על פני ממשק\n• תמיכה במספר משתמשים בו-זמנית\n\n• תמיכה בוירטואליזציה Virtualization -\n\n 77.2%מאתרי Linuxלא חושפים את ההפצה שלהם\n\nSource: W3Techs Web Technology Surveys, November 2026\n\n19"
+  },
+  {
+    "n": 20,
+    "text": "חומרה ותוכנה\nמערכות הפעלה\n\nתכנות\nפיתוח מוצרים לעומת תוכנות מדף\n\n ERPותוכנות ארגוניות\nרישיונות וזכויות יוצרים\n\n20"
+  },
+  {
+    "n": 21,
+    "text": "כמה דברים שאולי לא ידעת\n1947\n\n1843\n\nהבאג הראשון שנמצא באמת\n\nהתוכנית הראשונה\nThe First Computer Program\n\n~9,000\nכמה שפות תכנות קיימות?\n\nThe First Actual Bug\n\n?How Many Languages Exist\n\n• - )1843( Ada Lovelaceכתבה\nאלגוריתם לחישוב מספרי ברנולי\n\n• עש ( )Mothאמיתי נתקע בממסר של\nHarvard Mark II\n\n• אנציקלופדיית HOPLמתעדת כמעט\n 9,000שפות תכנות\n\n• עבדה עם צ'ארלס באבג' על מנוע מכני\n -שמעולם לא נבנה\n\n• נרשם ביומן\"First actual case of :\n\"bug being found\n\n• רק כמה עשרות מהן בשימוש רחב\nבתעשייה\n\n• - )1957( FORTRANהשפה העילית\nהראשונה שנכנסה לשימוש רחב\n\n• המילה 'באג' כבר הייתה בשימוש\n( ,)Edison, 1878ומכאן הבדיחה\n\n• Top 3לפי Python, C, Java :TIOBE\n\n• לפני כן -בעיקר שפת מכונה ו-\nAssembly\n\n• Grace Hopperהפכה את הסיפור\nלמפורסם; היומן שמור ב-\nSmithsonian\n\nמשפת מכונה ועד בינה מלאכותית -תכנות הוא אחד התחומים הצומחים ביותר בהיסטוריה\nSources: Smithsonian NMAH (Mark II logbook) | hopl.info | TIOBE Index\n\n21"
+  },
+  {
+    "n": 22,
+    "text": "דור ראשון -שפת מכונה\n• הוראות בינאריות - Hex /ישירות למעבד\n• קוד שמובן רק למחשב -רצפים של 0ו1-\n• כל פעולה מוגדרת עד לרמת החוטים הפיזיים\n• זמן כתיבה ארוך מאוד -שגיאות קשות לאיתור\n\nMachine Code\n\n1\nשפת מכונה\nMachine Code\n\nGeneration 1\n22"
+  },
+  {
+    "n": 23,
+    "text": "דור שני -שפת סף\n• שפת סף -תרגום מילולי של שפה בינארית\n• לכל משפחת מעבדים יש קוד Assemblyשלה\n• ההמרה לשפת מכונה -על-ידי תוכנה בשם Assembler\n• עדיין מאוד קשה לתחזוקה\n\nAssembly\n\n2\nשפת סף\nAssembly\n\nGeneration 2\n23"
+  },
+  {
+    "n": 24,
+    "text": "כרטיס ניקוב -כך הזינו תוכנית למחשב\n\n24"
+  },
+  {
+    "n": 25,
+    "text": "דור שלישי -שפות עיליות\n• שפה עשירה ומוכרת -דומה לאנגלית\n• אוצר מילים מוגבל -כ 50-מילות מפתח\n• מתמקדת באלגוריתם ,לא בפרטי החומרה\n• לא תלוי בסוג המעבד; עשוי להיות תלוי בסוג OS\n• תרגום לשפת מכונהCompiler / Interpreter / JIT :\n\n• דוגמאותC++, Python, Java, C# :\n\nHigh-Level Languages\n\n3\nשפות עיליות\nHigh-Level Languages\n\nGeneration 3\n25"
+  },
+  {
+    "n": 26,
+    "text": "TIOBE Index - November 2026\nNov 2026 Nov 2025\n\nProgramming Language\n\nRatings\n\nChange\n\n1\n\n1\n\nPython\n\n20.86%\n\n-2.51%\n\n2\n\n2\n\nC\n\n11.48%\n\n+1.80%\n\n3\n\n4\n\n▲\n\nJava\n\n8.89%\n\n+0.34%\n\n4\n\n3\n\n▼\n\nC++\n\n8.35%\n\n-0.60%\n\n5\n\n5\n\nC#\n\n3.39%\n\n-4.26%\n\n6\n\n6\n\nJavaScript\n\n2.42%\n\n-1.00%\n\n7\n\n12\n\n▲▲\n\nR\n\n2.27%\n\n+0.60%\n\n8\n\n10\n\n▲\n\nSQL\n\n1.91%\n\n+0.11%\n\n9\n\n7\n\n▼\n\nVisual Basic\n\n1.88%\n\n-1.43%\n\n10\n\n11\n\n▲\n\nGo\n\n1.69%\n\n-0.03%\n\n11\n\n14\n\n▲\n\nRust\n\n1.63%\n\n+0.25%\n\nSource: https://www.tiobe.com/tiobe-index/\n\n26\n\nChange"
+  },
+  {
+    "n": 27,
+    "text": "GitHub Octoverse 2025\n\n?מי באמת כותב קוד\n\n2025\n\n2024\n\nChange\n\nProgramming Language\n\nMonthly\nContributors\n\nYoY Growth\n\n1\n\n3\n\n▲\n\nTypeScript\n\n2.64M\n\n+66.6%\n\n2\n\n1\n\n▼\n\nPython\n\n~2.6M\n\n+48.8%\n\n3\n\n2\n\n▼\n\nJavaScript\n\n2.15M\n\n+24.8%\n\n4\n\n4\n\nJava\n\n~1.0M\n\n+20.7%\n\n5\n\n5\n\nC#\n\n~0.75M\n\n+22.2%\n\n ולכן המנצח שונה- סופר תורמים לקוד אמיתיOctoverse ; סופר חיפושיםTIOBE\n משגיאות ההידור בקוד שמודלים כותבים הן שגיאות טיפוס94% : שפות עם טיפוסים מנצחותAI-בעידן ה\nAI מתחילים בטיוטה של סוכןPull Requests- מה40%- ויותר מ, אותו סדר בצמרת:Octoverse 2026\nSource: github.blog - Octoverse 2025 (data: Aug 2025), Octoverse 2026 (Sep 2026) | 2024 ranks: Octoverse 2024\n\n27"
+  },
+  {
+    "n": 28,
+    "text": "דור רביעי -\n• בנייה בגרירה ושחרור -ללא תחביר לשנן\n• לא-מתכנת יכול לבנות אפליקציה עובדת\n• אתריםWix, Shopify :\n• אפליקציות עסקיותPower Apps, Bubble, AppSheet :\n• אוטומציותZapier, Make :\n\nNo Code / Low Code\n\n4\nNo Code / Low Code\nNo Code / Low Code\n\nGeneration 4\n28"
+  },
+  {
+    "n": 29,
+    "text": "Artificial Intelligence\n\n5\nבינה מלאכותית\nArtificial Intelligence\n\nGeneration 5\n29\n\n בינה מלאכותית- דור חמישי\n המחשב כותב קוד, תיאור הבעיה- \"Vibe Coding\" •\nGitHub Copilot, ChatGPT, Claude :• כלים\nCursor, Devin, Claude Code :• סוכנים חכמים\n?• האם כתיבת פרומפט היא תכנות"
+  },
+  {
+    "n": 30,
+    "text": "Compilation\n\nקומפיילר\n\nמחשב המפתח\n\nמחשב המשתמש\nWindows\n\nC / C++ / Go / Rust\nWindows .exe\nSource Code\nmacOS\n\nקוד מקור\n\nקובץ הרצה :שונה לכל\n OSומעבד\n\nmacOS .app\nCompiler\n\nקומפיילר\n\nLinux\n\nLinux ELF\n\nBinary File\n\nקובץ הרצה\n\nהתרגום מתרחש אצל המפתח :המשתמש מקבל קוד מכונה מוכן ,ללא תוכנה נוספת\n30"
+  },
+  {
+    "n": 31,
+    "text": "Interpreter\n\nמפרש\n\nמחשב המפתח\n\nמחשב המשתמש\nWindows\n\nPython / JavaScript / PHP\nמפרש\nPython on Windows\n\n►\nInterpreter\n\nmacOS\n\n זהה לכולם:קוד מקור\n\nמפרש\nPython on macOS\n\nקוד מקור\n\n►\n\nSource Code\n\nInterpreter\n\nLinux\nמפרש\nPython on Linux\n\n►\nInterpreter\n\n קוד המקור נחשף, צריך מפרש מותקן:התרגום מתרחש אצל המשתמש\n31"
+  },
+  {
+    "n": 32,
+    "text": "JIT\n\nJust-In-Time\nמחשב המפתח\n\nמחשב המשתמש\nWindows\n\nJava / C#\nJIT\nBytecode\n\n►\nJIT Runtime\n\nקוד מקור\n\nSource Code\n\nmacOS\n\n זהה לכולם:Bytecode\n\nJIT\nBytecode\n\n►\nJIT Runtime\n\nLinux\n\nבייטקוד\n\nBytecode\n\nJIT\nBytecode\n\n►\nJIT Runtime\n\n)JIT( ) | תרגום סופי אצל המשתמשBytecode( תרגום חלקי אצל המפתח\n32"
+  },
+  {
+    "n": 33,
+    "text": "תרגום קוד לשפת מכונה\nקוד צריך להגיע למעבד בשפת מכונה -יש שלוש שיטות תרגום\n\nCompilation\n\nInterpreter\n\nJIT\n\nקימפול\n\nמפרש\n\nJust-In-Time\n\n• מהיר מאוד בזמן ריצה\n\n• איטי יחסית\n\n• מהיר -אך פחות מCompile -\n\n• שומר על קניין רוחני\n\n• לא שומר על קניין רוחני\n\n• שומר על קניין רוחני\n\n• תלוי במערכת הפעלה ובמעבד\n\n• עובד על כל מערכת הפעלה\n\n• עובד על מגוון רחב\n\n• C, C++, Go, Rust\n\n• Python, JavaScript, PHP\n\n• Java, C#\n\n33"
+  },
+  {
+    "n": 34,
+    "text": "Compilation\n\nקומפיילר\n\nמחשב המשתמש\n\nקובץ בינארי\n\nקומפיילר\n\nקוד מקור\n\nruns directly\n\nExecutable\n\nCompiler\n\nSource Code\n\n• מהיר מאוד בזמן ריצה -הקוד כבר מתורגם\n\n• שומר על קניין רוחני -הקוד המקורי לא נמסר\n• ירוץ רק על מערכת ההפעלה והמעבד שעבורם קומפל ()Windows/macOS, x86/ARM\n• שפות לדוגמהC, C++, Go, Rust :\n\n34"
+  },
+  {
+    "n": 35,
+    "text": "Interpreter\n\nמפרש\n\nהרצה\n\nמפרש\n\nהפצה\n\nקוד מקור\n\nline by line\n\nInterpreter\n\nDistribution\n\nSource Code\n\n• איטי יחסית -כל שורה מתורגמת בזמן ריצה\n\n• לא שומר על קניין רוחני -הקוד המקורי מועבר למשתמש\n• ירוץ על כל מערכת שמותקן עליה המפרש ()Python, Ruby\n• שפות לדוגמהPython, JavaScript, PHP, Bash :\n\n35"
+  },
+  {
+    "n": 36,
+    "text": "דפדפן כמפרש\nindex.html\n\nexample.com/index.html\n\n<!DOCTYPE html>\n\nHello World!\n\n<html>\n<head>\n\nWelcome to my website.\n\n<title>My First Page</title>\n\n</head>\n\nFirst item\n\n<body>\n<h1>Hello World!</h1>\n<p>Welcome to my website.</p>\n<ul>\n\nBrowser\ninterprets\n\n<li>First item</li>\n\nSecond item\nClick here\n\n<li>Second item</li>\n</ul>\n<a href=\"#\">Click here</a>\n</body>\n</html>\n\n36\n\n הדפדפן של כל משתמש מפרש ומציג אותו בזמן אמת- מופץ כמו שהואHTML-קוד ה"
+  },
+  {
+    "n": 37,
+    "text": "Just In Time - JIT\n\nהרצה\n\nקומפיילר\n\nבייטקוד\n\nקוד מקור\n\nNative Code\n\nJIT Compiler\n\nBytecode\n\nSource Code\n\n• מהיר יחסית -מהיר מ Interpreter -אך איטי יותר מCompiler -\n\n• שומר על קניין רוחני -ה Bytecode -לא קריא לאדם\n• ירוץ על מגוון רחב של מערכות ההפעלה -איפה ש JIT -מותקן\n• שפות לדוגמהJava, C#, Kotlin :\n\n37"
+  },
+  {
+    "n": 38,
+    "text": "מעבדת התרגום\nכלי אינטראקטיבי -קומפילציה ,מפרש ו :JIT-מי ירוץ אצל מי ,כמה מהר ,ומי יראה את הקוד\nסרקו כדי לנסות בעצמכם\n\nlive.themathbible.com\n/tool/05/translation-lab\nעובד גם אחרי השיעור\n\n38"
+  }
+]

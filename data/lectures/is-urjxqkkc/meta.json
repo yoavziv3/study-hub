@@ -20,9 +20,12 @@
     "fileKey": "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
     "section": "הרצאות",
     "module": "יסודות מערכות מידע - שיעור 04",
-    "timemodified": 1793113456
+    "timemodified": 1793113456,
+    "linkedKeys": [
+      "68600:3474539:/יסודות מערכות מידע - שיעור 04.pdf"
+    ]
   },
-  "updatedAt": "2026-10-27T20:35:37.683Z",
+  "updatedAt": "2026-11-07T10:09:35.613Z",
   "aiError": null,
   "announced": true,
   "aiRetries": 0,

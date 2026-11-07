@@ -1,0 +1,35 @@
+{
+  "id": "is-8rviz8qc",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "מערכות הפעלה, תוכנות מדף ומערכות ERP ארגוניות",
+  "originalName": "יסודות מערכות מידע - שיעור 06.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 6,
+  "unitNumber": 6,
+  "slideCount": 37,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T10:09:39.419Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68600,
+    "fileKey": "68600:3474541:/יסודות מערכות מידע - שיעור 06.pdf",
+    "section": "הרצאות",
+    "module": "יסודות מערכות מידע - שיעור 06",
+    "timemodified": 1794038543
+  },
+  "updatedAt": "2026-11-07T10:16:34.131Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T10:15:30.805Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

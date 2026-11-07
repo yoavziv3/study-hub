@@ -1,0 +1,35 @@
+{
+  "id": "is-8ruy4z4l",
+  "courseId": "is",
+  "autoCourse": false,
+  "title": "מערכות הפעלה, שפות תכנות ושיטות תרגום קוד",
+  "originalName": "יסודות מערכות מידע - שיעור 05.pdf",
+  "kind": "lecture",
+  "originalFile": "original.pdf",
+  "lessonNumber": 5,
+  "unitNumber": 5,
+  "slideCount": 38,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T10:09:38.669Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68600,
+    "fileKey": "68600:3474538:/יסודות מערכות מידע - שיעור 05.pdf",
+    "section": "הרצאות",
+    "module": "יסודות מערכות מידע - שיעור 05",
+    "timemodified": 1794037251
+  },
+  "updatedAt": "2026-11-07T10:13:26.460Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T10:12:21.838Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

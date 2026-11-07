@@ -2780,7 +2780,11 @@
       "source": "moodle",
       "fileKey": "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
       "createdAt": "2026-10-27T15:40:57.134Z",
-      "addedAt": "2026-10-27T16:23:33.845Z"
+      "addedAt": "2026-10-27T16:23:33.845Z",
+      "fileKeys": [
+        "68600:3465633:/יסודות מערכות מידע - שיעור 04.pdf",
+        "68600:3474539:/יסודות מערכות מידע - שיעור 04.pdf"
+      ]
     },
     {
       "id": "mvr3vvzemh1p",
@@ -5519,6 +5523,34 @@
       "deadlineId": "mw1uo6s6kf58",
       "createdAt": "2026-11-07T05:14:19.773Z",
       "addedAt": "2026-11-07T05:14:19.773Z"
+    },
+    {
+      "id": "mw68wqpnzldq",
+      "key": "material:is-8ruy4z4l",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "is",
+      "title": "הרצאה חדשה במערכות מידע: מערכות הפעלה, שפות תכנות ושיטות תרגום קוד",
+      "body": "",
+      "lectureId": "is-8ruy4z4l",
+      "source": "moodle",
+      "fileKey": "68600:3474538:/יסודות מערכות מידע - שיעור 05.pdf",
+      "createdAt": "2026-11-07T10:09:38.669Z",
+      "addedAt": "2026-11-07T10:13:26.459Z"
+    },
+    {
+      "id": "mw690riqt3z7",
+      "key": "material:is-8rviz8qc",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "is",
+      "title": "הרצאה חדשה במערכות מידע: מערכות הפעלה, תוכנות מדף ומערכות ERP ארגוניות",
+      "body": "",
+      "lectureId": "is-8rviz8qc",
+      "source": "moodle",
+      "fileKey": "68600:3474541:/יסודות מערכות מידע - שיעור 06.pdf",
+      "createdAt": "2026-11-07T10:09:39.419Z",
+      "addedAt": "2026-11-07T10:16:34.130Z"
     }
   ],
   "deadlines": [
@@ -5557,7 +5589,7 @@
       "dueAt": "2026-11-02T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
       "intro": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
-      "submitted": false,
+      "submitted": true,
       "draft": false,
       "done": false
     },
