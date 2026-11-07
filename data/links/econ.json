@@ -14,5 +14,21 @@
     "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3425748",
     "section": "מבוא",
     "ext": "pdf"
+  },
+  {
+    "id": 3474664,
+    "type": "file",
+    "name": "ההיצע המצרפי",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3474664",
+    "section": "הצאכן התחרותי",
+    "ext": "pdf"
+  },
+  {
+    "id": 3474665,
+    "type": "file",
+    "name": "הצרכן התחרותי",
+    "href": "https://moodle.bgu.ac.il/moodle/mod/resource/view.php?id=3474665",
+    "section": "הצאכן התחרותי",
+    "ext": "pdf"
   }
 ]
