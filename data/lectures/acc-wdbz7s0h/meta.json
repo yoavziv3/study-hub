@@ -2,7 +2,7 @@
   "id": "acc-wdbz7s0h",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 7 - רישומי התאמה -מתוקן",
+  "title": "רישומי התאמה: חשבונות חתך, חובות מסופקים ומלאי",
   "originalName": "יחידה 7 - רישומי התאמה -מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,14 @@
     "module": "יחידה 7 - פיננסית - רישומי התאמה",
     "timemodified": 1793904213
   },
-  "updatedAt": "2026-11-06T10:13:31.498Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-11-07T00:19:39.624Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:18:37.553Z",
+    "found": 1
+  },
+  "notesStatus": null,
+  "notesError": null
 }

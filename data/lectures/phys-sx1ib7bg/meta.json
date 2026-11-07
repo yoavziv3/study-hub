@@ -10,8 +10,8 @@
   "unitNumber": 2,
   "slideCount": 40,
   "hasPdf": true,
-  "status": "ready",
-  "stage": "ready",
+  "status": "processing",
+  "stage": "analyzing",
   "error": null,
   "createdAt": "2026-10-29T17:12:32.484Z",
   "source": {
@@ -22,9 +22,11 @@
     "module": "קובץ עזר לשיעור 2 30.10.2026",
     "timemodified": 1793293804
   },
-  "updatedAt": "2026-10-31T15:53:11.454Z",
+  "updatedAt": "2026-11-07T00:30:50.731Z",
   "aiError": null,
   "announced": true,
   "aiRetries": 0,
-  "notesError": null
+  "notesError": null,
+  "aiOk": true,
+  "aiBy": "claude"
 }

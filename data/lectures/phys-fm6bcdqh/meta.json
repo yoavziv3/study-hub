@@ -22,6 +22,9 @@
     "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ב",
     "timemodified": 1792598394
   },
-  "updatedAt": "2026-10-21T18:14:42.865Z",
-  "announced": true
+  "updatedAt": "2026-11-07T00:30:10.462Z",
+  "announced": true,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "phys-flx4mkm2"
 }

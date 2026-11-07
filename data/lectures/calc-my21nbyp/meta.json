@@ -10,8 +10,8 @@
   "unitNumber": 4,
   "slideCount": 3,
   "hasPdf": true,
-  "status": "processing",
-  "stage": "queued",
+  "status": "ready",
+  "stage": "ready",
   "error": null,
   "createdAt": "2026-11-02T19:11:59.196Z",
   "source": {
@@ -22,7 +22,8 @@
     "module": "הרצאות של מוטקה- קבוצה 8",
     "timemodified": 1793645495
   },
-  "updatedAt": "2026-11-02T19:21:53.570Z",
-  "announced": true
-}ue
+  "updatedAt": "2026-11-07T00:30:43.244Z",
+  "announced": true,
+  "held": true,
+  "heldReason": "group"
 }

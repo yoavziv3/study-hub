@@ -2,7 +2,7 @@
   "id": "acc-wdc8mt42",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 8- רכוש קבוע - מתוקן",
+  "title": "רכוש קבוע: עלות, פחת ומכירה",
   "originalName": "יחידה 8- רכוש קבוע - מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,17 @@
     "module": "יחידה 8 - פיננסית - רכוש קבוע",
     "timemodified": 1793904253
   },
-  "updatedAt": "2026-11-06T10:13:31.501Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-11-07T00:30:10.369Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:21:49.873Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "acc-9tdt1h7d"
 }

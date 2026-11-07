@@ -22,6 +22,9 @@
     "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2022 מועד ג",
     "timemodified": 1792598394
   },
-  "updatedAt": "2026-10-21T18:14:43.793Z",
-  "announced": true
+  "updatedAt": "2026-11-07T00:30:10.483Z",
+  "announced": true,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "phys-flxi8czs"
 }

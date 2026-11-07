@@ -22,6 +22,9 @@
     "module": "פתרון מבחן סמסטר מבוא לפיזיקה 2021 מועד ב",
     "timemodified": 1792598394
   },
-  "updatedAt": "2026-10-21T18:14:36.513Z",
-  "announced": true
+  "updatedAt": "2026-11-07T00:30:10.418Z",
+  "announced": true,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "phys-flve0x5w"
 }

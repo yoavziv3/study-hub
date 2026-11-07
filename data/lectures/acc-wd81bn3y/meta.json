@@ -2,7 +2,7 @@
   "id": "acc-wd81bn3y",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 1 - פתיחת הקורס -מתוקן",
+  "title": "פתיחת הקורס: מבנה, כללי עבודה ותמונת הקורס",
   "originalName": "יחידה 1 - פתיחת הקורס -מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,17 @@
     "module": "יחידה 1 - כללי - פתיחת הקורס",
     "timemodified": 1793903879
   },
-  "updatedAt": "2026-11-06T10:13:04.736Z",
-  "aiError": "יצירת הסיכום נכשלה",
+  "updatedAt": "2026-11-07T00:30:10.512Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-06T23:53:31.652Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "acc-9tdsp6zl"
 }

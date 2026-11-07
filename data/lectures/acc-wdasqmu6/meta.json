@@ -2,7 +2,7 @@
   "id": "acc-wdasqmu6",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 3 - הזהות החשבונאית -מתוקן",
+  "title": "הזהות החשבונאית",
   "originalName": "יחידה 3 - הזהות החשבונאית -מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,17 @@
     "module": "יחידה 3 - פיננסית - הזהות החשבונאית",
     "timemodified": 1793904063
   },
-  "updatedAt": "2026-11-06T10:13:31.489Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-11-07T00:30:10.249Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:05:40.353Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "acc-9tdswoo7"
 }

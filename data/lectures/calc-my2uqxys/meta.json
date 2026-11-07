@@ -22,6 +22,8 @@
     "module": "הרצאות של מוטקה- קבוצה 8",
     "timemodified": 1793645495
   },
-  "updatedAt": "2026-11-02T19:12:00.479Z",
-  "announced": true
+  "updatedAt": "2026-11-07T00:30:10.015Z",
+  "announced": true,
+  "held": true,
+  "heldReason": "group"
 }

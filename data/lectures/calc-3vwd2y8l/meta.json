@@ -22,7 +22,7 @@
     "module": "הרצאות של מוטקה- קבוצה 8",
     "timemodified": 1793128955
   },
-  "updatedAt": "2026-10-27T20:09:25.554Z",
+  "updatedAt": "2026-11-07T00:30:10.165Z",
   "aiError": null,
   "aiRetries": 0,
   "checks": {
@@ -31,5 +31,8 @@
   },
   "notesStatus": null,
   "notesError": null,
-  "announced": true
+  "announced": true,
+  "held": true,
+  "heldReason": "group",
+  "dupOf": "calc-my3df96x"
 }

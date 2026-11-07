@@ -2,7 +2,7 @@
   "id": "acc-wdbp9mk4",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 6 - התהליך החשבונאי -מתוקן",
+  "title": "התהליך החשבונאי: רישום כפול, יומן, ספר ראשי ומאזן בוחן",
   "originalName": "יחידה 6 - התהליך החשבונאי -מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,17 @@
     "module": "יחידה 6 - פיננסית - התהליך החשבונאי",
     "timemodified": 1793904169
   },
-  "updatedAt": "2026-11-06T10:13:31.494Z",
-  "aiError": "נוצלה המכסה היומית של Gemini – הסיכום ייכתב לבד כשהיא מתאפסת (10:00 בבוקר)",
+  "updatedAt": "2026-11-07T00:30:10.347Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:15:06.233Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "acc-9tdsypg4"
 }

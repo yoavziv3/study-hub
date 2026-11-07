@@ -2,7 +2,7 @@
   "id": "acc-wdb2hy8l",
   "courseId": "acc",
   "autoCourse": false,
-  "title": "יחידה 4 - הנחות יסוד ועקרונות -מתוקן",
+  "title": "הנחות יסוד ועקרונות חשבונאיים",
   "originalName": "יחידה 4 - הנחות יסוד ועקרונות -מתוקן.pptx",
   "kind": "lecture",
   "originalFile": "original.pptx",
@@ -22,8 +22,17 @@
     "module": "יחידה 4 - פיננסית - הנחות יסוד ועקרונות",
     "timemodified": 1793904123
   },
-  "updatedAt": "2026-11-06T10:13:31.481Z",
-  "aiError": "יצירת הסיכום נכשלה",
+  "updatedAt": "2026-11-07T00:30:10.250Z",
+  "aiError": null,
   "announced": true,
-  "aiRetries": 2
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:02:20.578Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "held": true,
+  "heldReason": "duplicate",
+  "dupOf": "acc-9tdsvxlh"
 }
