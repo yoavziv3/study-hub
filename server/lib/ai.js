@@ -139,7 +139,11 @@ export const geminiStatus = () => ({ provider: geminiReady() ? 'gemini' : 'none'
 // lessons follow AI_PROVIDER, as before.
 const LESSON_MODEL = process.env.AI_LESSON_MODEL || 'claude-sonnet-5-5';
 const LESSON_TIMEOUT = 12 * 60000;
-const lessonsOnClaude = () => process.env.AI_LESSONS === 'claude' && claudeStatus().ready;
+// CLAUDE_UNTIL=YYYY-MM-DD (Israel date, inclusive): until then Claude writes every lesson (also the courses set to
+// Gemini, aiBy) and the question banks at any hour (practice.js) – for a stretch when the owner's plan has room.
+export const claudeBoost = () => !!process.env.CLAUDE_UNTIL
+  && new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(new Date()) <= process.env.CLAUDE_UNTIL;
+const lessonsOnClaude = () => (process.env.AI_LESSONS === 'claude' || claudeBoost()) && claudeStatus().ready;
 
 /** The providers lesson material is tried on, in order: ['claude', 'gemini'], ['gemini'], ['claude'] or []. */
 export function lessonRoute() {
@@ -156,7 +160,7 @@ export const lessonsReady = () => lessonRoute().length > 0;
  */
 export async function generateLesson({ build, check, only = null }) {
   // only: 'gemini' – the course's material is written by Gemini alone (course.aiBy), whatever the usual route is.
-  const route = only === 'gemini' ? (geminiReady() ? ['gemini'] : []) : lessonRoute();
+  const route = only === 'gemini' && !claudeBoost() ? (geminiReady() ? ['gemini'] : []) : lessonRoute();
   if (!route.length) throw new Error(NO_AI);
   let failure = null;
   for (const by of route) {

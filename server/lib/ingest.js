@@ -10,7 +10,7 @@ import { aiKindOk } from './courses.js';
 import { reuseFor, shareFrom } from './reuse.js';
 import { holdIfDuplicate } from './dedupe.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
-import { aiStatus, geminiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
+import { aiStatus, claudeBoost, geminiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
 import { LECTURE_SCHEMA, CLASSIFY_SCHEMA, NOTES_SCHEMA, lectureSystem, lecturePrompt, prepPrompt, classifyPrompt, notesPrompt, DECK_PDF_RULES, DECK_PDF_QUIZ } from './prompts.js';
 
@@ -275,7 +275,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
     // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
     await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
-  } else if (((meta.aiBy || course.aiBy) === 'gemini' ? geminiStatus().ready : lessonsReady()) && aiKindOk(course, meta.kind || 'lecture', meta) && !meta.noAi && slides.some((s) => s.trim())) {
+  } else if (((meta.aiBy || course.aiBy) === 'gemini' && !claudeBoost() ? geminiStatus().ready : lessonsReady()) && aiKindOk(course, meta.kind || 'lecture', meta) && !meta.noAi && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material; so do
     // tutorials and anything outside a course's aiKinds (see aiKindOk).
     await stage(id, 'analyzing');
@@ -366,7 +366,7 @@ const signedOutText = (message = '') => (onGemini(message) ? 'המפתח של Ge
 export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
-  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !((meta.aiBy || getCourse(meta.courseId)?.aiBy) === 'gemini' ? geminiStatus().ready : lessonsReady())) return null;
+  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !((meta.aiBy || getCourse(meta.courseId)?.aiBy) === 'gemini' && !claudeBoost() ? geminiStatus().ready : lessonsReady())) return null;
   // Topics cut from a course book (meta.noNotes) are already structured text: summary and questions only.
   if (meta.noNotes) {
     if (meta.notesError) await patchLecture(id, { notesStatus: null, notesError: null });

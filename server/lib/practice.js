@@ -9,7 +9,7 @@ import { bankOk } from './courses.js';
 import { ROOT, getCourse, getLecture, patchLecture, getContent, saveContent, getSlides, listLectures } from './store.js';
 import fs from 'node:fs';
 import path from 'node:path';
-import { generateJSON, aiStatus, claudeStatus, geminiStatus } from './ai.js';
+import { generateJSON, aiStatus, claudeBoost, claudeStatus, geminiStatus } from './ai.js';
 import { geminiRoom } from './gemini.js';
 import { PRACTICE_SCHEMA, practicePrompt } from './prompts.js';
 import { startRun } from './runlog.js';
@@ -55,7 +55,10 @@ const saveMeta = () => { try { fs.mkdirSync(path.dirname(STATE_FILE), { recursiv
 if (!bankMeta.since) { bankMeta.since = Date.now(); saveMeta(); }
 const nightKey = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(new Date(Date.now() - CLAUDE_FROM * 3600000));
 const claudeTonight = () => (bankMeta.night === nightKey() ? bankMeta : { night: nightKey(), claudeRounds: 0, claudeStopped: false });
-const claudeCanWrite = () => claudeStatus().ready && within(CLAUDE_FROM, CLAUDE_TO) && !claudeTonight().claudeStopped && claudeTonight().claudeRounds < CLAUDE_CAP;
+// Until CLAUDE_UNTIL (ai.js claudeBoost) Claude writes at any hour, up to BANK_CLAUDE_BOOST_CAP rounds a day (default 60).
+const BOOST_CAP = Number(process.env.BANK_CLAUDE_BOOST_CAP) || 60;
+const claudeCap = () => (claudeBoost() ? BOOST_CAP : CLAUDE_CAP);
+const claudeCanWrite = () => claudeStatus().ready && (claudeBoost() || within(CLAUDE_FROM, CLAUDE_TO)) && !claudeTonight().claudeStopped && claudeTonight().claudeRounds < claudeCap();
 const geminiCanWrite = () => geminiStatus().ready && bankHours() && geminiRoom('low') > 0;
 /** Who may write the next round, in order. Empty: the banks wait (for tonight, or for Gemini's quota to reset). */
 export const bankWriters = () => [...(claudeCanWrite() ? ['claude'] : []), ...(geminiCanWrite() ? ['gemini'] : [])];
@@ -65,7 +68,7 @@ const noteRound = (by, added) => {
   saveMeta();
 };
 const stopClaudeTonight = () => { bankMeta = { ...bankMeta, ...claudeTonight(), claudeStopped: true }; saveMeta(); };
-export const bankProgress = () => ({ since: (bankMeta.since ||= Date.now()), ...(claudeTonight().night === bankMeta.night ? { claudeRounds: bankMeta.claudeRounds || 0, claudeStopped: !!bankMeta.claudeStopped } : { claudeRounds: 0, claudeStopped: false }), claudeCap: CLAUDE_CAP, lastAdded: bankMeta.lastAdded || null });
+export const bankProgress = () => ({ since: (bankMeta.since ||= Date.now()), ...(claudeTonight().night === bankMeta.night ? { claudeRounds: bankMeta.claudeRounds || 0, claudeStopped: !!bankMeta.claudeStopped } : { claudeRounds: 0, claudeStopped: false }), claudeCap: claudeCap(), lastAdded: bankMeta.lastAdded || null });
 
 /** One round of new questions for a lesson; returns the questions added. */
 export async function addLectureQuestions(lectureId, { count = 6, difficulty = 'mixed', trigger = 'manual', focus = null, by = null } = {}) {
