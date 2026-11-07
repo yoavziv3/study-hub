@@ -5589,7 +5589,7 @@
       "dueAt": "2026-11-02T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3465439",
       "intro": "לפתור את תרגיל 2 שאלות 1 ,2 (ללא שאלה 3)\n\nתרגיל 1 שאלה 5",
-      "submitted": false,
+      "submitted": true,
       "draft": false,
       "done": false
     },
@@ -5615,7 +5615,7 @@
       "dueAt": "2026-11-09T21:59:00.000Z",
       "url": "https://moodle.bgu.ac.il/moodle/mod/assign/view.php?id=3472288",
       "intro": "תרגיל 2 שאלה 3\n\n כל תרגיל 3",
-      "submitted": false,
+      "submitted": true,
       "draft": false,
       "done": false
     },
