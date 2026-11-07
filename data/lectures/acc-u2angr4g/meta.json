@@ -1,0 +1,35 @@
+{
+  "id": "acc-u2angr4g",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "הדוחות הכספיים: מאזן, דוח רווח והפסד, יתרת רווח והקשר ביניהם",
+  "originalName": "יחידה 10 - ניהולית - מבוא לחשבונאות ניהולית והתנהגות עלויות.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 8,
+  "unitNumber": 10,
+  "slideCount": 30,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T20:05:37.517Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3474846:/יחידה 10 - ניהולית - מבוא לחשבונאות ניהולית והתנהגות עלויות.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 10 - ניהולית - מבוא לחשבונאות ניהולית והתנהגות עלויות",
+    "timemodified": 1794081459
+  },
+  "updatedAt": "2026-11-07T20:09:32.285Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T20:08:02.723Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

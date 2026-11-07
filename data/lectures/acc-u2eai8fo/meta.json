@@ -1,0 +1,35 @@
+{
+  "id": "acc-u2eai8fo",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "העמסת עלויות עקיפות: חלוקה ראשונית ומשנית ומרכזי שירותים",
+  "originalName": "יחידה 14 - ניהולית - שיטות תמחיר.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 11,
+  "unitNumber": 14,
+  "slideCount": 25,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T20:05:42.234Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3474851:/יחידה 14 - ניהולית - שיטות תמחיר.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 14 - ניהולית - שיטות תמחיר",
+    "timemodified": 1794081703
+  },
+  "updatedAt": "2026-11-07T20:41:57.894Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T20:40:38.901Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

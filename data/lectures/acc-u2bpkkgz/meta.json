@@ -1,0 +1,35 @@
+{
+  "id": "acc-u2bpkkgz",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "מבוא לחשבונאות ניהולית והתנהגות עלויות – החלטה על הזמנה מיוחדת",
+  "originalName": "יחידה 11 - ניהולית - מודלים לניהול מלאי.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 9,
+  "unitNumber": 11,
+  "slideCount": 19,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T20:05:38.889Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3474847:/יחידה 11 - ניהולית - מודלים לניהול מלאי.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 11 - ניהולית - מודלים לניהול מלאי",
+    "timemodified": 1794081532
+  },
+  "updatedAt": "2026-11-07T20:12:57.552Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T20:12:01.616Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

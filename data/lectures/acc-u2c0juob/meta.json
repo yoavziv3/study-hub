@@ -1,0 +1,35 @@
+{
+  "id": "acc-u2c0juob",
+  "courseId": "acc",
+  "autoCourse": false,
+  "title": "מודלים לניהול מלאי: שיני מסור וגודל הזמנה אופטימלי (EOQ)",
+  "originalName": "יחידה 12 - ניהולית - בסיסים לחישוב שכר עבודה.pptx",
+  "kind": "lecture",
+  "originalFile": "original.pptx",
+  "lessonNumber": 9,
+  "unitNumber": 12,
+  "slideCount": 15,
+  "hasPdf": true,
+  "status": "ready",
+  "stage": "ready",
+  "error": null,
+  "createdAt": "2026-11-07T20:05:39.284Z",
+  "source": {
+    "type": "moodle",
+    "courseId": 68470,
+    "fileKey": "68470:3474848:/יחידה 12 - ניהולית - בסיסים לחישוב שכר עבודה.pptx",
+    "section": "יחידת הוראה 1 - מצגת וחוברת תרגילים",
+    "module": "יחידה 12 - ניהולית - בסיסים לחישוב שכר עבודה",
+    "timemodified": 1794081596
+  },
+  "updatedAt": "2026-11-07T20:16:18.826Z",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T20:15:03.258Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null,
+  "announced": true
+}

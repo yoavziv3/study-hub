@@ -5584,6 +5584,76 @@
         "by": "claude-sonnet-5-5",
         "at": "2026-11-07T19:55:52.382Z"
       }
+    },
+    {
+      "id": "mw6u7bss0e91",
+      "key": "material:acc-u2angr4g",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: הדוחות הכספיים: מאזן, דוח רווח והפסד, יתרת רווח והקשר ביניהם",
+      "body": "",
+      "lectureId": "acc-u2angr4g",
+      "source": "moodle",
+      "fileKey": "68470:3474846:/יחידה 10 - ניהולית - מבוא לחשבונאות ניהולית והתנהגות עלויות.pptx",
+      "createdAt": "2026-11-07T20:05:37.517Z",
+      "addedAt": "2026-11-07T20:09:32.284Z"
+    },
+    {
+      "id": "mw6ubq6nbs9x",
+      "key": "material:acc-u2bpkkgz",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: מבוא לחשבונאות ניהולית והתנהגות עלויות – החלטה על הזמנה מיוחדת",
+      "body": "",
+      "lectureId": "acc-u2bpkkgz",
+      "source": "moodle",
+      "fileKey": "68470:3474847:/יחידה 11 - ניהולית - מודלים לניהול מלאי.pptx",
+      "createdAt": "2026-11-07T20:05:38.889Z",
+      "addedAt": "2026-11-07T20:12:57.551Z"
+    },
+    {
+      "id": "mw6ug1hlz9gy",
+      "key": "material:acc-u2c0juob",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: מודלים לניהול מלאי: שיני מסור וגודל הזמנה אופטימלי (EOQ)",
+      "body": "",
+      "lectureId": "acc-u2c0juob",
+      "source": "moodle",
+      "fileKey": "68470:3474848:/יחידה 12 - ניהולית - בסיסים לחישוב שכר עבודה.pptx",
+      "createdAt": "2026-11-07T20:05:39.284Z",
+      "addedAt": "2026-11-07T20:16:18.825Z"
+    },
+    {
+      "id": "mw6v73lrvnsf",
+      "key": "material:acc-u2cbjj4w",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: בסיסים לחישוב שכר עבודה ועלות העבודה",
+      "body": "",
+      "lectureId": "acc-u2cbjj4w",
+      "source": "moodle",
+      "fileKey": "68470:3474850:/יחידה 13 - ניהולית - העמסת עלויות עקיפות.pptx",
+      "createdAt": "2026-11-07T20:05:39.680Z",
+      "addedAt": "2026-11-07T20:37:21.279Z"
+    },
+    {
+      "id": "mw6vd11hlxjb",
+      "key": "material:acc-u2eai8fo",
+      "type": "material",
+      "kind": "lecture",
+      "courseId": "acc",
+      "title": "הרצאה חדשה בחשבונאות: העמסת עלויות עקיפות: חלוקה ראשונית ומשנית ומרכזי שירותים",
+      "body": "",
+      "lectureId": "acc-u2eai8fo",
+      "source": "moodle",
+      "fileKey": "68470:3474851:/יחידה 14 - ניהולית - שיטות תמחיר.pptx",
+      "createdAt": "2026-11-07T20:05:42.234Z",
+      "addedAt": "2026-11-07T20:41:57.893Z"
     }
   ],
   "deadlines": [
