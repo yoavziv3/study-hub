@@ -8,6 +8,7 @@ import {
 } from './store.js';
 import { aiKindOk } from './courses.js';
 import { reuseFor, shareFrom } from './reuse.js';
+import { holdIfDuplicate } from './dedupe.js';
 import { convertToPdf, renderSlides, extractSlidesText } from './extract.js';
 import { aiStatus, geminiStatus, generateJSON, generateLesson, lessonsReady } from './ai.js';
 import { announceMaterial, adminAlert } from './updates.js';
@@ -255,6 +256,13 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
 
   const course = getCourse(meta.courseId);
 
+  // A copy of a file already up (or a group the course doesn't carry) is held back with no AI (dedupe.js); a held
+  // copy that Moodle updates stays held and gets no AI either.
+  if (meta.heldReason || (!meta.held && !content && !getContent(id) && (await holdIfDuplicate(id)))) {
+    await stage(id, 'ready');
+    return;
+  }
+
   // Re-processing slides keeps existing study content; only "regenerate" (aiOnly) rewrites it.
   const existing = getContent(id);
   if (content) {
@@ -267,7 +275,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
   } else if (!meta.noAi && meta.kind !== 'exam' && slides.join('').trim().length < MIN_TEXT) {
     // A scanned file (no text layer): there's nothing for the model to read, so it goes up as is – no AI, no error.
     await patchLecture(id, { noAi: true, noAiReason: 'scanned', aiError: null });
-  } else if ((course.aiBy === 'gemini' ? geminiStatus().ready : lessonsReady()) && aiKindOk(course, meta.kind || 'lecture', meta) && !meta.noAi && slides.some((s) => s.trim())) {
+  } else if (((meta.aiBy || course.aiBy) === 'gemini' ? geminiStatus().ready : lessonsReady()) && aiKindOk(course, meta.kind || 'lecture', meta) && !meta.noAi && slides.some((s) => s.trim())) {
     // Courses built for other students (course.ai === false) get slides and files only – no AI material; so do
     // tutorials and anything outside a course's aiKinds (see aiKindOk).
     await stage(id, 'analyzing');
@@ -279,7 +287,7 @@ export async function processLecture(id, { aiOnly = false, content = null, regen
       // Claude writes it (AI_LESSONS=claude) and Gemini steps in when Claude fails; Gemini reads the deck's PDF itself
       // (images of the pages too) and writes a bigger first question set at once (ai.js generateLesson).
       const made = await generateLesson({
-        only: course.aiBy,
+        only: meta.aiBy || course.aiBy, // meta.aiBy: one lesson the owner sent to another writer
         build: (by) => {
           const deck = deckPdf(meta, by);
           return {
@@ -358,7 +366,7 @@ const signedOutText = (message = '') => (onGemini(message) ? 'המפתח של Ge
 export async function generateNotes(id) {
   const meta = getLecture(id);
   const content = getContent(id);
-  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !(getCourse(meta.courseId)?.aiBy === 'gemini' ? geminiStatus().ready : lessonsReady())) return null;
+  if (!meta || !content || meta.noAi || (meta.kind || 'lecture') === 'homework' || !((meta.aiBy || getCourse(meta.courseId)?.aiBy) === 'gemini' ? geminiStatus().ready : lessonsReady())) return null;
   // Topics cut from a course book (meta.noNotes) are already structured text: summary and questions only.
   if (meta.noNotes) {
     if (meta.notesError) await patchLecture(id, { notesStatus: null, notesError: null });
@@ -377,7 +385,7 @@ export async function generateNotes(id) {
   const run = startRun('notes', { trigger: 'after-lecture', input: { lectureId: id, course: course.short, slides: slides.length, summaryChars: content.summary?.length || 0 } });
   try {
     const made = await generateLesson({
-      only: course.aiBy,
+      only: meta.aiBy || course.aiBy,
       build: (by) => {
         const deck = deckPdf(meta, by);
         return {

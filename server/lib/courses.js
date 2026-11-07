@@ -8,9 +8,11 @@
  * keeps it out of the question-bank growth.
  */
 export function aiKindOk(course, kind = 'lecture', meta = null) {
-  if (course?.ai === false || kind === 'exam' || kind === 'tutorial') return false;
+  // Homework goes up as it is, like tutorials and exams (the owner's rule).
+  if (course?.ai === false || kind === 'exam' || kind === 'tutorial' || kind === 'homework') return false;
   // aiFrom: 'upload' – AI only for files the owner gives directly (upload / inbox), not for what the Moodle sync brings in.
-  if (course?.aiFrom === 'upload' && (meta?.source?.fileKey || meta?.source?.moodleId)) return false;
+  // meta.aiOk: a lesson the owner asked to have summarised anyway.
+  if (course?.aiFrom === 'upload' && !meta?.aiOk && (meta?.source?.fileKey || meta?.source?.moodleId)) return false;
   return !course?.aiKinds || course.aiKinds.includes(kind);
 }
 export const bankOk = (course) => course?.ai !== false && course?.bank !== false;

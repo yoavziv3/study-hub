@@ -25,9 +25,11 @@ function readJSON(file, fallback) {
   }
 }
 
+let tmpSeq = 0;
 async function writeJSON(file, value) {
   await fsp.mkdir(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${process.pid}.tmp`;
+  // One tmp file per write: two writes of the same file at once used to share it and leave a mangled mix behind.
+  const tmp = `${file}.${process.pid}.${++tmpSeq}.tmp`;
   await fsp.writeFile(tmp, JSON.stringify(value, null, 2));
   await fsp.rename(tmp, file);
 }
@@ -68,13 +70,13 @@ export function getCourse(id) {
 // ---------- lectures ----------
 export const lectureDir = (id) => path.join(LECTURES_DIR, id);
 
-export function listLectures(courseId) {
+export function listLectures(courseId, { withHeld = false } = {}) {
   const ids = fs.existsSync(LECTURES_DIR) ? fs.readdirSync(LECTURES_DIR) : [];
   const all = ids
     .map((id) => readJSON(path.join(LECTURES_DIR, id, 'meta.json'), null))
     .filter(Boolean)
     // Held items (e.g. exam-prep units waiting for the semester's own decks) stay on disk but out of the site.
-    .filter((m) => !m.held)
+    .filter((m) => withHeld || !m.held)
     .filter((m) => !courseId || m.courseId === courseId);
   return all.sort((a, b) => (a.lessonNumber || 99) - (b.lessonNumber || 99) || (a.unitNumber || 0) - (b.unitNumber || 0) || a.createdAt.localeCompare(b.createdAt));
 }
