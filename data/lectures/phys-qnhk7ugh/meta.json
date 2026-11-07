@@ -2,7 +2,7 @@
   "id": "phys-qnhk7ugh",
   "courseId": "phys",
   "autoCourse": false,
-  "title": "שיעור 3 6.11.2026",
+  "title": "תנועה בתאוצה קבועה בכוח הכובד, ווקטורים ותנועה בקליעה (זריקה משופעת)",
   "originalName": "שיעור 3 6.11.2026.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -10,8 +10,8 @@
   "unitNumber": 3,
   "slideCount": 48,
   "hasPdf": true,
-  "status": "processing",
-  "stage": "queued",
+  "status": "ready",
+  "stage": "ready",
   "error": null,
   "createdAt": "2026-11-05T16:06:49.256Z",
   "source": {
@@ -22,8 +22,16 @@
     "module": "קובץ עזר לשיעור 3 6.11.2026",
     "timemodified": 1793894565
   },
-  "updatedAt": "2026-11-07T00:30:50.751Z",
+  "updatedAt": "2026-11-07T00:37:44.175Z",
   "announced": true,
   "aiOk": true,
-  "aiBy": "claude"
+  "aiBy": "claude",
+  "aiError": null,
+  "aiRetries": 0,
+  "checks": {
+    "at": "2026-11-07T00:36:34.151Z",
+    "found": 0
+  },
+  "notesStatus": null,
+  "notesError": null
 }

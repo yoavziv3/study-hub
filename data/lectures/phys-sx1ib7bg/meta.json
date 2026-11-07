@@ -2,7 +2,7 @@
   "id": "phys-sx1ib7bg",
   "courseId": "phys",
   "autoCourse": false,
-  "title": "שיעור 2 30.10.2026",
+  "title": "תנועה שוות תאוצה, נפילה חופשית וזריקה אנכית",
   "originalName": "שיעור 2 30.10.2026.pdf",
   "kind": "lecture",
   "originalFile": "original.pdf",
@@ -10,8 +10,8 @@
   "unitNumber": 2,
   "slideCount": 40,
   "hasPdf": true,
-  "status": "processing",
-  "stage": "analyzing",
+  "status": "ready",
+  "stage": "ready",
   "error": null,
   "createdAt": "2026-10-29T17:12:32.484Z",
   "source": {
@@ -22,11 +22,16 @@
     "module": "קובץ עזר לשיעור 2 30.10.2026",
     "timemodified": 1793293804
   },
-  "updatedAt": "2026-11-07T00:30:50.731Z",
+  "updatedAt": "2026-11-07T00:34:07.852Z",
   "aiError": null,
   "announced": true,
   "aiRetries": 0,
   "notesError": null,
   "aiOk": true,
-  "aiBy": "claude"
+  "aiBy": "claude",
+  "checks": {
+    "at": "2026-11-07T00:33:09.510Z",
+    "found": 1
+  },
+  "notesStatus": null
 }
