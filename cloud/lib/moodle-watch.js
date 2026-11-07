@@ -99,10 +99,12 @@ export async function watchMoodle(env, courses, now = Date.now(), { force = fals
     if (prev?.seen) {
       for (const [key, it] of found) {
         if (seen.has(key)) continue;
+        // Another group of a carried course (sameAs): its own files aren't on the site; its announcements go under that course.
+        if (course.sameAs && it.type !== 'announcement') continue;
         added++;
         writes.push(db.prepare(
           'INSERT OR IGNORE INTO cloud_updates (key, course_id, type, kind, title, body, url, file_key, author, added_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        ).bind(key, course.id, it.type, it.kind || null, it.title.slice(0, 300), it.body.slice(0, 1500), it.url, it.fileKey || null, it.author || null, now));
+        ).bind(key, course.sameAs || course.id, it.type, it.kind || null, it.title.slice(0, 300), it.body.slice(0, 1500), it.url, it.fileKey || null, it.author || null, now));
       }
     }
     for (const key of found.keys()) seen.add(key);

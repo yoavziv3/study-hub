@@ -3532,7 +3532,8 @@
     ],
     "credits": 0,
     "passGrade": 65,
-    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1"
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1",
+    "sameAs": "phys"
   },
   {
     "id": "m68588",
@@ -3712,6 +3713,7 @@
     ],
     "credits": 0,
     "passGrade": 65,
-    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1"
+    "syllabusUrl": "https://moodle.bgu.ac.il/moodle/local/syllabus_creator/syllabus_view.php?id=2174&preview=1",
+    "sameAs": "phys"
   }
 ]

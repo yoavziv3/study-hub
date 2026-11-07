@@ -693,8 +693,11 @@ async function syncRemote(result) {
     const siteId = state.remote[mc.moodleId];
     const call = remoteRest(mc.moodleId);
     const initial = !state.remoteSynced[mc.moodleId];
-    await syncCourse(mc.moodleId, siteId, { call, via: mc.moodleId, initial }, result);
-    await remoteNews(mc.moodleId, siteId, call, initial, result);
+    // Another group of a course the site carries (course.sameAs): its students get that course's material, so its own
+    // files aren't imported – only its announcements, filed under that course.
+    const sameAs = getCourse(siteId)?.sameAs;
+    if (!sameAs) await syncCourse(mc.moodleId, siteId, { call, via: mc.moodleId, initial }, result);
+    await remoteNews(mc.moodleId, sameAs || siteId, call, initial, result);
     state.remoteSynced[mc.moodleId] = new Date().toISOString();
     result.remote++;
     await save();

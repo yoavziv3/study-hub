@@ -32,10 +32,15 @@ const enrolled = (user) => {
   }
 };
 
-/** Site courses the student may open: those linked to a Moodle course they are enrolled in. */
+/**
+ * Site courses the student may open: those linked to a Moodle course they are enrolled in. A course that is another
+ * group of a carried one (sameAs) stands for that course: every group sees the same material, written once.
+ */
 export function allowedCourseIds(user, courses) {
   const ids = new Set(enrolled(user).map((c) => c.id));
-  return courses.filter((c) => (c.moodleIds || []).some((m) => ids.has(m))).map((c) => c.id);
+  const known = new Set(courses.map((c) => c.id));
+  const mine = courses.filter((c) => (c.moodleIds || []).some((m) => ids.has(m))).map((c) => (known.has(c.sameAs) ? c.sameAs : c.id));
+  return [...new Set(mine)];
 }
 
 /**
@@ -44,7 +49,7 @@ export function allowedCourseIds(user, courses) {
  */
 export async function visibleCourseIds(env, user, courses) {
   const owner = await env.DB.prepare("SELECT value FROM push_meta WHERE key = 'owner'").first();
-  return owner && owner.value === user.moodle_userid ? courses.map((c) => c.id) : allowedCourseIds(user, courses);
+  return owner && owner.value === user.moodle_userid ? courses.filter((c) => !c.sameAs).map((c) => c.id) : allowedCourseIds(user, courses);
 }
 
 export function meView(user, courses) {

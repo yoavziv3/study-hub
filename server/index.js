@@ -71,7 +71,8 @@ app.get('/api/status', async (_req, res) => {
 app.get('/api/courses', (_req, res) => {
   const lectures = listLectures();
   res.json(
-    listCourses().map((c) => {
+    // Another group of a carried course (sameAs) isn't a course of its own on the site.
+    listCourses().filter((c) => !c.sameAs).map((c) => {
       const ls = lectures.filter((l) => l.courseId === c.id);
       const of = (k) => ls.filter((l) => (l.kind || 'lecture') === k).length;
       return {
